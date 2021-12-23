@@ -766,14 +766,14 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   QObject::connect(software, &SoftwarePanel::closeSettings, this, &SettingsWindow::closeSettings);
 
   QList<QPair<QString, QWidget *>> panels = {
-    {"Device", device},
-    {"Network", network_panel(this)},
-    {"Toggles", new TogglesPanel(this)},
-    {"Software", software},
-    {"UIMenu", new UIPanel(this)},
-    {"Driving", new DrivingPanel(this)},
-    {"Developer", new DeveloperPanel(this)},
-    {"Tuning", new TuningPanel(this)},
+    {"장치", device},
+    {"네트워크", network_panel(this)},
+    {"토글메뉴", new TogglesPanel(this)},
+    {"소프트웨어", software},
+    {"UI메뉴", new UIPanel(this)},
+    {"주행", new DrivingPanel(this)},
+    {"사용자설정", new DeveloperPanel(this)},
+    {"튜닝", new TuningPanel(this)},
   };
 
   sidebar_layout->addSpacing(45);
