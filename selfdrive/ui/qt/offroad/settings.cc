@@ -229,9 +229,9 @@ void DevicePanel::updateCalibDescription() {
       if (calib.getCalStatus() != 0) {
         double pitch = calib.getRpyCalib()[1] * (180 / M_PI);
         double yaw = calib.getRpyCalib()[2] * (180 / M_PI);
-        desc += QString(" Your device is pointed %1° %2 and %3° %4.")
-                    .arg(QString::number(std::abs(pitch), 'g', 1), pitch > 0 ? "down" : "up",
-                         QString::number(std::abs(yaw), 'g', 1), yaw > 0 ? "left" : "right");
+        desc += QString(" \n장치가 %1° %2 그리고 %3° %4 위치해 있습니다.")
+                    .arg(QString::number(std::abs(pitch), 'g', 1), pitch > 0 ? "위로" : "아래로",
+                         QString::number(std::abs(yaw), 'g', 1), yaw > 0 ? "오른쪽으로" : "왼쪽으로");
       }
     } catch (kj::Exception) {
       qInfo() << "invalid CalibrationParams";
@@ -242,7 +242,7 @@ void DevicePanel::updateCalibDescription() {
 
 void DevicePanel::reboot() {
   if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
-    if (ConfirmationDialog::confirm("Are you sure you want to reboot?", this)) {
+    if (ConfirmationDialog::confirm("재시작 하시겠습니까?", this)) {
       // Check engaged again in case it changed while the dialog was open
       if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
         Params().putBool("DoReboot", true);
@@ -255,7 +255,7 @@ void DevicePanel::reboot() {
 
 void DevicePanel::poweroff() {
   if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
-    if (ConfirmationDialog::confirm("Are you sure you want to power off?", this)) {
+    if (ConfirmationDialog::confirm("전원을 끄시겠습니까", this)) {
       // Check engaged again in case it changed while the dialog was open
       if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
         Params().putBool("DoShutdown", true);
@@ -289,11 +289,11 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
     desc += QString("LOCAL: %1\nREMOT: %2%3%4\n").arg(commit_local, commit_remote, empty, empty);
     
     if (!last_ping.length()) {
-      desc += QString("Network connection is missing or unstable. Check the connection.");
+      desc += QString("인터넷에 연결되어 있지 않습니다. 업데이트확인을 위해 WiFi를 연결하세요.");
     } else if (commit_local == commit_remote) {
-      desc += QString("Local and remote match. No update required.");
+      desc += QString("로컬과 리모트가 일치합니다. 업데이트가 필요 없습니다.");
     } else {
-      desc += QString("There's an update. Press the OK button to go.");
+      desc += QString("업데이트가 있습니다. 적용하려면 확인버튼을 누르세요.");
     }
     if (ConfirmationDialog::confirm(desc, this)) {
       std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh");
@@ -301,9 +301,9 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   });
 
 
-  auto uninstallBtn = new ButtonControl("Uninstall " + getBrand(), "UNINSTALL");
+  auto uninstallBtn = new ButtonControl("Uninstall " + getBrand(), "제거");
   connect(uninstallBtn, &ButtonControl::clicked, [&]() {
-    if (ConfirmationDialog::confirm("Are you sure you want to uninstall?", this)) {
+    if (ConfirmationDialog::confirm("제거 하시겠습니까?", this)) {
       params.putBool("DoUninstall", true);
     }
   });
@@ -321,20 +321,20 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   QHBoxLayout *presetone_layout = new QHBoxLayout();
   presetone_layout->setSpacing(50);
 
-  QPushButton *presetoneload_btn = new QPushButton("Load Preset1");
+  QPushButton *presetoneload_btn = new QPushButton("프리셋1 불러오기");
   presetoneload_btn->setStyleSheet("height: 120px;border-radius: 15px;background-color: #393939;");
   presetone_layout->addWidget(presetoneload_btn);
   QObject::connect(presetoneload_btn, &QPushButton::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Do you want to load Preset1?", this)) {
+    if (ConfirmationDialog::confirm("프리셋1을 불러올까요?", this)) {
       QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/load_preset1.sh");
     }
   });
 
-  QPushButton *presetonesave_btn = new QPushButton("Save Preset1");
+  QPushButton *presetonesave_btn = new QPushButton("프리셋1 저장하기");
   presetonesave_btn->setStyleSheet("height: 120px;border-radius: 15px;background-color: #393939;");
   presetone_layout->addWidget(presetonesave_btn);
   QObject::connect(presetonesave_btn, &QPushButton::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Do you want to save Preset1?", this)) {
+    if (ConfirmationDialog::confirm("프리셋1을 저장할까요?", this)) {
       QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/save_preset1.sh");
     }
   });
@@ -343,11 +343,11 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   QHBoxLayout *presettwo_layout = new QHBoxLayout();
   presettwo_layout->setSpacing(50);
 
-  QPushButton *presettwoload_btn = new QPushButton("Load Preset2");
+  QPushButton *presettwoload_btn = new QPushButton("프리셋2 불러오기");
   presettwoload_btn->setStyleSheet("height: 120px;border-radius: 15px;background-color: #393939;");
   presettwo_layout->addWidget(presettwoload_btn);
   QObject::connect(presettwoload_btn, &QPushButton::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Do you want to load Preset2?", this)) {
+    if (ConfirmationDialog::confirm("프리셋2을 불러올까요?", this)) {
       QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/load_preset2.sh");
     }
   });
