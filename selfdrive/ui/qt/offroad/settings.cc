@@ -1,7 +1,6 @@
 #include "selfdrive/ui/qt/offroad/settings.h"
 
 #include <cassert>
-#include <cmath>
 #include <string>
 
 #include <QDebug>
@@ -35,83 +34,83 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   std::vector<std::tuple<QString, QString, QString, QString>> toggles{
     {
       "OpenpilotEnabledToggle",
-      "Enable openpilot",
-      "Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature. Changing this setting takes effect when the car is powered off.",
+      "오픈파일럿 사용",
+      "어댑티브 크루즈 컨트롤 및 차선 유지 지원을 위해 오픈파일럿 시스템을 사용하십시오. 이 기능을 사용하려면 항상 주의를 기울여야 합니다. 이 설정을 변경하는 것은 자동차의 전원이 꺼졌을 때 적용됩니다.",
       "../assets/offroad/icon_openpilot.png",
     },
     {
       "IsLdwEnabled",
-      "Enable Lane Departure Warnings",
-      "Receive alerts to steer back into the lane when your vehicle drifts over a detected lane line without a turn signal activated while driving over 31mph (50kph).",
+      "차선이탈 경보 사용",
+      "50km/h이상의 속도로 주행하는 동안 방향 지시등이 활성화되지 않은 상태에서 차량이 감지된 차선 위를 넘어갈 경우 원래 차선으로 다시 방향을 전환하도록 경고를 보냅니다.",
       "../assets/offroad/icon_warning.png",
     },
     {
       "IsRHD",
-      "Enable Right-Hand Drive",
-      "Allow openpilot to obey left-hand traffic conventions and perform driver monitoring on right driver seat.",
+      "우핸들 운전방식 사용",
+      "오픈파일럿이 좌측 교통 규칙을 준수하도록 허용하고 우측 운전석에서 운전자 모니터링을 수행하십시오.",
       "../assets/offroad/icon_openpilot_mirrored.png",
     },
     {
       "IsMetric",
-      "Use Metric System",
-      "Display speed in km/h instead of mph.",
+      "미터법 사용",
+      "mi/h 대신 km/h 단위로 속도를 표시합니다.",
       "../assets/offroad/icon_metric.png",
     },
     {
       "CommunityFeaturesToggle",
-      "Enable Community Features",
-      "Use features, such as community supported hardware, from the open source community that are not maintained or supported by comma.ai and have not been confirmed to meet the standard safety model. Be extra cautious when using these features",
+      "커뮤니티 기능 사용",
+      "comma.ai에서 유지 또는 지원하지 않고 표준 안전 모델에 부합하는 것으로 확인되지 않은 오픈 소스 커뮤니티의 기능을 사용하십시오. 이러한 기능에는 커뮤니티 지원 자동차와 커뮤니티 지원 하드웨어가 포함됩니다. 이러한 기능을 사용할 때는 각별히 주의해야 합니다.",
       "../assets/offroad/icon_shell.png",
     },
     {
       "UploadRaw",
-      "Upload Raw Logs",
-      "Upload full logs and full resolution video by default while on Wi-Fi. If not enabled, individual logs can be marked for upload at useradmin.comma.ai.",
+      "주행 로그 업로드",
+      "업로드 프로세스 활성화 시 모든 로그 및 풀 해상도 비디오를 업로드합니다.(WiFi 사용중에만 작동) 기능이 꺼진 경우, my.comma.ai/useradmin에 업로드를 위해 개별 로그는 기록될 수 있습니다.",
       "../assets/offroad/icon_network.png",
     },
     {
       "RecordFront",
-      "Record and Upload Driver Camera",
-      "Upload data from the driver facing camera and help improve the driver monitoring algorithm.",
+      "운전자 영상 녹화 및 업로드",
+      "운전자 모니터링 카메라에서 데이터를 업로드하고 운전자 모니터링 알고리즘을 개선하십시오.",
       "../assets/offroad/icon_monitoring.png",
     },
     {
       "EndToEndToggle",
-      "\U0001f96c Enable Lane selector Mode \U0001f96c",
-      "Activate lane selection mode. Lane Mode/Lane Less/AUTO can be selected and switched on the screen.",
+      "\U0001f96c 차선 선택 모드 \U0001f96c",
+      "화면에서 차선과 차선 비활성화 모드를 선택할수 있습니다.",
       "../assets/offroad/icon_road.png",
     },
 #ifdef ENABLE_MAPS
     {
       "NavSettingTime24h",
-      "Show ETA in 24h format",
-      "Use 24h format instead of am/pm",
+      "네비게이션 시간 설정",
+      "AM/PM 대신 24시간 설정으로 변경",
       "../assets/offroad/icon_metric.png",
     },
 #endif
 
     {
       "OpkrEnableDriverMonitoring",
-      "Enable Driver Monitoring",
-      "Use the driver monitoring function.",
+      "운전자 모니터링 사용",
+      "운전자 감시 모니터링을 사용합니다.",
       "../assets/offroad/icon_shell.png",
     },
     {
       "OpkrEnableLogger",
-      "Enable Driving Log Record",
-      "Record the driving log locally for data analysis. Only loggers are activated and not uploaded to the server.",
+      "주행로그 기록 사용",
+      "로컬에서 데이터 분석을 위해 주행로그를 기록합니다. 로거만 활성화 되며 서버로 업로드 되지 않습니다.",
       "../assets/offroad/icon_shell.png",
     },
     {
       "OpkrEnableUploader",
-      "Enable Sending Log to Server",
-      "Activate the upload process to transmit system logs and other driving data to the server. Upload it only off-road.",
+      "주행로그 서버 전송",
+      "시스템로그 및 기타 주행데이터를 서버로 전송하기 위해 업로드 프로세스를 활성화 합니다. 오프로드 상태에서만 업로드 합니다.",
       "../assets/offroad/icon_shell.png",
     },
     {
       "CommaStockUI",
-      "Use Comma Stock UI",
-      "Use the Stock UI of the comma on the driving screen. You can switch to real-time by pressing the box in the upper left corner of the driving screen.",
+      "Comma 기본 UI 사용",
+      "주행화면을 콤마의 순정 UI를 사용합니다. 주행화면 좌측상단의 박스를 눌러도 실시간 전환 가능합니다.",
       "../assets/offroad/icon_shell.png",
     },
   };
@@ -121,8 +120,8 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   if (params.getBool("DisableRadar_Allow")) {
     toggles.push_back({
       "DisableRadar",
-      "openpilot Longitudinal Control",
-      "openpilot will disable the car's radar and will take over control of gas and brakes. Warning: this disables AEB!",
+      "오픈파일럿 가감속 컨트롤",
+      "openpilot은 차량의 레이더를 비활성화하고 엑셀레이터와 브레이크를 제어합니다. 경고: 이것은 AEB를 비활성화합니다! ",
       "../assets/offroad/icon_speed_limit.png",
     });
   }
@@ -137,6 +136,8 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
 }
 
 DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
+  Params params = Params();
+
   setSpacing(50);
   addItem(new LabelControl("Dongle ID", getDongleId().value_or("N/A")));
   addItem(new LabelControl("Serial", params.get("HardwareSerial").c_str()));
@@ -145,15 +146,15 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
 
   // offroad-only buttons
 
-  auto dcamBtn = new ButtonControl("Driver Camera", "PREVIEW",
-                                   "Preview the driver facing camera to help optimize device mounting position for best driver monitoring experience. (vehicle must be off)");
+  auto dcamBtn = new ButtonControl("운전자 영상", "미리보기",
+                                   "운전자 모니터링 카메라를 미리 보고 장치 장착 위치를 최적화하여 최상의 운전자 모니터링 환경을 제공하십시오. (차량이 꺼져 있어야 합니다.)");
   connect(dcamBtn, &ButtonControl::clicked, [=]() { emit showDriverView(); });
   addItem(dcamBtn);
 
   if (!params.getBool("Passive")) {
-    auto retrainingBtn = new ButtonControl("Review Training Guide", "REVIEW", "Review the rules, features, and limitations of openpilot");
+    auto retrainingBtn = new ButtonControl("트레이닝가이드 보기", "다시보기", "오픈파일럿에 대한 규칙, 기능, 제한내용 등을 확인하세요.");
     connect(retrainingBtn, &ButtonControl::clicked, [=]() {
-      if (ConfirmationDialog::confirm("Are you sure you want to review the training guide?", this)) {
+      if (ConfirmationDialog::confirm("트레이닝 가이드를 다시 확인하시겠습니까?", this)) {
         emit reviewTrainingGuide();
       }
     });
@@ -169,10 +170,10 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
     addItem(regulatoryBtn);
   }
 
-  auto resetCalibBtn = new ButtonControl("Reset Calibration", "RESET", " ");
+  auto resetCalibBtn = new ButtonControl("캘리브레이션 초기화", "실행", " ");
   connect(resetCalibBtn, &ButtonControl::showDescription, this, &DevicePanel::updateCalibDescription);
   connect(resetCalibBtn, &ButtonControl::clicked, [&]() {
-    if (ConfirmationDialog::confirm("Are you sure you want to reset calibration? Device will be rebooted.", this)) {
+    if (ConfirmationDialog::confirm("캘리브레이션을 초기화 하시겠습니까? 자동 재부팅됩니다.", this)) {
       params.remove("CalibrationParams");
       params.remove("LiveParameters");
       QTimer::singleShot(1000, []() {
@@ -193,12 +194,12 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   QHBoxLayout *power_layout = new QHBoxLayout();
   power_layout->setSpacing(30);
 
-  QPushButton *reboot_btn = new QPushButton("Reboot");
+  QPushButton *reboot_btn = new QPushButton("재시작");
   reboot_btn->setObjectName("reboot_btn");
   power_layout->addWidget(reboot_btn);
   QObject::connect(reboot_btn, &QPushButton::clicked, this, &DevicePanel::reboot);
 
-  QPushButton *poweroff_btn = new QPushButton("Power Off");
+  QPushButton *poweroff_btn = new QPushButton("전원 종료");
   poweroff_btn->setObjectName("poweroff_btn");
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::clicked, this, &DevicePanel::poweroff);
@@ -230,8 +231,8 @@ void DevicePanel::updateCalibDescription() {
         double pitch = calib.getRpyCalib()[1] * (180 / M_PI);
         double yaw = calib.getRpyCalib()[2] * (180 / M_PI);
         desc += QString(" Your device is pointed %1° %2 and %3° %4.")
-                    .arg(QString::number(std::abs(pitch), 'g', 1), pitch > 0 ? "down" : "up",
-                         QString::number(std::abs(yaw), 'g', 1), yaw > 0 ? "left" : "right");
+                    .arg(QString::number(std::abs(pitch), 'g', 1), pitch > 0 ? "up" : "down",
+                         QString::number(std::abs(yaw), 'g', 1), yaw > 0 ? "right" : "left");
       }
     } catch (kj::Exception) {
       qInfo() << "invalid CalibrationParams";
@@ -401,27 +402,6 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
 
   addItem(pandaflashingtbtn);
   addItem(new SwitchOpenpilot()); // opkr
-
-  const char* open_settings = "am start -a android.intent.action.MAIN -n com.android.settings/.Settings";
-  auto open_settings_btn = new ButtonControl("Open Android Settings", "RUN");
-  QObject::connect(open_settings_btn, &ButtonControl::clicked, [=]() {
-    emit closeSettings();
-    std::system(open_settings);
-  });
-  addItem(open_settings_btn);
-  const char* softkey = "am start com.gmd.hidesoftkeys/com.gmd.hidesoftkeys.MainActivity";
-  auto softkey_btn = new ButtonControl("SoftKey RUN/SET", "RUN");
-  QObject::connect(softkey_btn, &ButtonControl::clicked, [=]() {
-    emit closeSettings();
-    std::system(softkey);
-  });
-  addItem(softkey_btn);
-  auto mixplorer_btn = new ButtonControl("RUN Mixplorer", "RUN");
-  QObject::connect(mixplorer_btn, &ButtonControl::clicked, [=]() {
-	  emit closeSettings();
-    std::system("/data/openpilot/selfdrive/assets/addon/script/run_mixplorer.sh");
-  });
-  addItem(mixplorer_btn);
   addItem(uninstallBtn);
   fs_watch = new QFileSystemWatcher(this);
   QObject::connect(fs_watch, &QFileSystemWatcher::fileChanged, [=](const QString path) {
@@ -456,14 +436,15 @@ void SoftwarePanel::updateLabels() {
   osVersionLbl->setText(QString::fromStdString(Hardware::get_os_version()).trimmed());
 }
 
-C2NetworkPanel::C2NetworkPanel(QWidget *parent) : QWidget(parent) {
-  QVBoxLayout *layout = new QVBoxLayout(this);
+QWidget * network_panel(QWidget * parent) {
+#ifdef QCOM
+  QWidget *w = new QWidget(parent);
+  QVBoxLayout *layout = new QVBoxLayout(w);
   layout->setContentsMargins(50, 0, 50, 0);
 
   ListWidget *list = new ListWidget();
   list->setSpacing(30);
   // wifi + tethering buttons
-#ifdef QCOM
   auto wifiBtn = new ButtonControl("Wi-Fi Settings", "OPEN");
   QObject::connect(wifiBtn, &ButtonControl::clicked, [=]() { HardwareEon::launch_wifi(); });
   list->addItem(wifiBtn);
@@ -471,9 +452,6 @@ C2NetworkPanel::C2NetworkPanel(QWidget *parent) : QWidget(parent) {
   auto tetheringBtn = new ButtonControl("Tethering Settings", "OPEN");
   QObject::connect(tetheringBtn, &ButtonControl::clicked, [=]() { HardwareEon::launch_tethering(); });
   list->addItem(tetheringBtn);
-#endif
-  ipaddress = new LabelControl("IP Address", "");
-  list->addItem(ipaddress);
 
   list->addItem(new HotspotOnBootToggle());
 
@@ -484,42 +462,20 @@ C2NetworkPanel::C2NetworkPanel(QWidget *parent) : QWidget(parent) {
 
   layout->addWidget(list);
   layout->addStretch(1);
-}
-
-void C2NetworkPanel::showEvent(QShowEvent *event) {
-  ipaddress->setText(getIPAddress());
-}
-
-QString C2NetworkPanel::getIPAddress() {
-  std::string result = util::check_output("ifconfig wlan0");
-  if (result.empty()) return "";
-
-  const std::string inetaddrr = "inet addr:";
-  std::string::size_type begin = result.find(inetaddrr);
-  if (begin == std::string::npos) return "";
-
-  begin += inetaddrr.length();
-  std::string::size_type end = result.find(' ', begin);
-  if (end == std::string::npos) return "";
-
-  return result.substr(begin, end - begin).c_str();
-}
-
-QWidget *network_panel(QWidget *parent) {
-#ifdef QCOM
-  return new C2NetworkPanel(parent);
 #else
-  return new Networking(parent);
+  Networking *w = new Networking(parent);
 #endif
+  return w;
 }
 
-UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
+UserPanel::UserPanel(QWidget *parent) : QFrame(parent) {
   QVBoxLayout *layout = new QVBoxLayout(this);
 
   layout->setContentsMargins(50, 0, 50, 0);
   layout->setSpacing(30);
 
   // OPKR
+  layout->addWidget(new LabelControl("〓〓〓〓〓〓〓〓【 U I Menu 】〓〓〓〓〓〓〓〓", ""));
   layout->addWidget(new AutoShutdown());
   layout->addWidget(new ForceShutdown());
   layout->addWidget(new VolumeControl());
@@ -559,22 +515,11 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new KRTimeToggle());
   layout->addWidget(new OPKRServerSelect());
   layout->addWidget(new OPKRServerAPI());
-  layout->addWidget(new MapboxEnabledToggle());
   layout->addWidget(new OPKRMapboxStyle());
-  layout->addWidget(new GoogleMapEnabledToggle());
-}
 
-DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
-  QVBoxLayout *layout = new QVBoxLayout(this);
-
-  layout->setContentsMargins(50, 0, 50, 0);
-  layout->setSpacing(30);
-
-  // OPKR
+  layout->addWidget(horizontal_line());
+  layout->addWidget(new LabelControl("〓〓〓〓〓〓〓〓【 DRIVING 】〓〓〓〓〓〓〓〓", ""));
   layout->addWidget(new AutoResumeToggle());
-  layout->addWidget(new RESCountatStandstill());
-  layout->addWidget(new CruiseGapAdjustToggle());
-  layout->addWidget(new StandstillResumeAltToggle());
   layout->addWidget(new VariableCruiseToggle());
   layout->addWidget(new CruisemodeSelInit());
   layout->addWidget(new LaneChangeSpeed());
@@ -593,6 +538,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SpeedLimitOffset());
   layout->addWidget(new SpeedLimitSignType());
   layout->addWidget(new CamDecelDistAdd());
+  layout->addWidget(new CruiseGapAdjustToggle());
   layout->addWidget(new CurvDecelSelect());
   layout->addWidget(new VCurvSpeedUD());
   layout->addWidget(new VCurvSpeed());
@@ -603,32 +549,26 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RESChoice());
   layout->addWidget(new AutoResCondition());
   layout->addWidget(new AutoResLimitTime());
-  layout->addWidget(new AutoRESDelay());
-}
+  layout->addWidget(new RESCountatStandstill());
+  layout->addWidget(new SteerWindDownToggle());
+  layout->addWidget(new MadModeEnabledToggle());
 
-DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
-  QVBoxLayout *layout = new QVBoxLayout(this);
-
-  layout->setContentsMargins(50, 0, 50, 0);
-  layout->setSpacing(30);
-
-  // OPKR
+  layout->addWidget(horizontal_line());
+  layout->addWidget(new LabelControl("〓〓〓〓〓〓〓〓【 DEVELOPER 】〓〓〓〓〓〓〓〓", ""));
   layout->addWidget(new DebugUiOneToggle());
   layout->addWidget(new DebugUiTwoToggle());
   layout->addWidget(new ShowErrorToggle());
   layout->addWidget(new LongLogToggle());
   layout->addWidget(new PrebuiltToggle());
   layout->addWidget(new FPTwoToggle());
-  layout->addWidget(new WhitePandaSupportToggle());
-  layout->addWidget(new BattLessToggle());
-  layout->addWidget(new ComIssueToggle());
   layout->addWidget(new LDWSToggle());
   layout->addWidget(new GearDToggle());
+  layout->addWidget(new ComIssueToggle());
+  layout->addWidget(new WhitePandaSupportToggle());
   layout->addWidget(new SteerWarningFixToggle());
   layout->addWidget(new IgnoreCanErroronISGToggle());
-  layout->addWidget(new FCA11MessageToggle());
-  layout->addWidget(new SteerWindDownToggle());
-  layout->addWidget(new MadModeEnabledToggle());
+  layout->addWidget(new BattLessToggle());
+  layout->addWidget(new GoogleMapEnabledToggle());
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new TimeZoneSelectCombo());
   const char* cal_ok = "cp -f /data/openpilot/selfdrive/assets/addon/param/CalibrationParams /data/params/d/";
@@ -639,7 +579,26 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
     }
   });
   layout->addWidget(calokbtn);
-
+  const char* open_settings = "am start -a android.intent.action.MAIN -n com.android.settings/.Settings";
+  auto open_settings_btn = new ButtonControl("Open Android Settings", "RUN");
+  QObject::connect(open_settings_btn, &ButtonControl::clicked, [=]() {
+    emit closeSettings();
+    std::system(open_settings);
+  });
+  layout->addWidget(open_settings_btn);
+  const char* softkey = "am start com.gmd.hidesoftkeys/com.gmd.hidesoftkeys.MainActivity";
+  auto softkey_btn = new ButtonControl("SoftKey RUN/SET", "RUN");
+  QObject::connect(softkey_btn, &ButtonControl::clicked, [=]() {
+    emit closeSettings();
+    std::system(softkey);
+  });
+  layout->addWidget(softkey_btn);
+  auto mixplorer_btn = new ButtonControl("RUN Mixplorer", "RUN");
+  QObject::connect(mixplorer_btn, &ButtonControl::clicked, [=]() {
+	  emit closeSettings();
+    std::system("/data/openpilot/selfdrive/assets/addon/script/run_mixplorer.sh");
+  });
+  layout->addWidget(mixplorer_btn, 0);
   layout->addWidget(horizontal_line());
   layout->addWidget(new CarSelectCombo());
 
@@ -754,29 +713,27 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     }
   )");
   close_btn->setFixedSize(220, 130);
-  sidebar_layout->addSpacing(5);
+  sidebar_layout->addSpacing(35);
   sidebar_layout->addWidget(close_btn, 0, Qt::AlignCenter);
   QObject::connect(close_btn, &QPushButton::clicked, this, &SettingsWindow::closeSettings);
 
   // setup panels
   DevicePanel *device = new DevicePanel(this);
-  SoftwarePanel *software = new SoftwarePanel(this);
+  UserPanel *user = new UserPanel(this);
   QObject::connect(device, &DevicePanel::reviewTrainingGuide, this, &SettingsWindow::reviewTrainingGuide);
   QObject::connect(device, &DevicePanel::showDriverView, this, &SettingsWindow::showDriverView);
-  QObject::connect(software, &SoftwarePanel::closeSettings, this, &SettingsWindow::closeSettings);
+  QObject::connect(user, &UserPanel::closeSettings, this, &SettingsWindow::closeSettings);
 
   QList<QPair<QString, QWidget *>> panels = {
     {"Device", device},
     {"Network", network_panel(this)},
     {"Toggles", new TogglesPanel(this)},
-    {"Software", software},
-    {"UIMenu", new UIPanel(this)},
-    {"Driving", new DrivingPanel(this)},
-    {"Developer", new DeveloperPanel(this)},
+    {"Software", new SoftwarePanel(this)},
+    {"UserMenu", user},
     {"Tuning", new TuningPanel(this)},
   };
 
-  sidebar_layout->addSpacing(45);
+  sidebar_layout->addSpacing(35);
 
 #ifdef ENABLE_MAPS
   auto map_panel = new MapPanel(this);
@@ -784,7 +741,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   QObject::connect(map_panel, &MapPanel::closeSettings, this, &SettingsWindow::closeSettings);
 #endif
 
-  const int padding = panels.size() > 3 ? 0 : 15;
+  const int padding = panels.size() > 3 ? 8 : 18;
 
   nav_btns = new QButtonGroup(this);
   for (auto &[name, panel] : panels) {
@@ -796,7 +753,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
         color: grey;
         border: none;
         background: none;
-        font-size: 54px;
+        font-size: 60px;
         font-weight: 500;
         padding-top: %1px;
         padding-bottom: %1px;
