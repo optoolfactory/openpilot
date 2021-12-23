@@ -352,18 +352,18 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
     }
   });
 
-  QPushButton *presettwosave_btn = new QPushButton("Save Preset2");
+  QPushButton *presettwosave_btn = new QPushButton("프리셋2 저장하기");
   presettwosave_btn->setStyleSheet("height: 120px;border-radius: 15px;background-color: #393939;");
   presettwo_layout->addWidget(presettwosave_btn);
   QObject::connect(presettwosave_btn, &QPushButton::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Do you want to save Preset2?", this)) {
+    if (ConfirmationDialog::confirm("프리셋2을 저장할까요?", this)) {
       QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/save_preset2.sh");
     }
   });
 
-  auto paraminit_btn = new ButtonControl("Parameters Init", "RUN");
+  auto paraminit_btn = new ButtonControl("파라미터 초기화", "초기화");
   QObject::connect(paraminit_btn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Initialize parameters. Changes in the EON menu are changed to the initial set value. Do you want to proceed?", this)){
+    if (ConfirmationDialog::confirm("파라미터를 초기화 합니다. 이온 메뉴의 각종 변경값들이 최초 설정된 값으로 바뀝니다. 진행하시겠습니까?", this)){
       QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/init_param.sh");
     }
   });
@@ -374,25 +374,25 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   addItem(paraminit_btn);
 
   const char* git_reset = "/data/openpilot/selfdrive/assets/addon/script/git_reset.sh ''";
-  auto gitresetbtn = new ButtonControl("Git Reset", "RUN");
+  auto gitresetbtn = new ButtonControl("Git Reset", "실행");
   QObject::connect(gitresetbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Apply the latest commitment details of Remote Git after forced initialization of local changes. Do you want to proceed?", this)){
+    if (ConfirmationDialog::confirm("로컬변경사항을 강제 초기화 후 리모트Git의 최신 커밋내역을 적용합니다. 진행하시겠습니까?", this)){
       std::system(git_reset);
     }
   });
   addItem(gitresetbtn);
 
   const char* gitpull_cancel = "/data/openpilot/selfdrive/assets/addon/script/gitpull_cancel.sh ''";
-  auto gitpullcanceltbtn = new ButtonControl("Cancel Git Pull", "RUN");
+  auto gitpullcanceltbtn = new ButtonControl("Git Pull 취소", "실행");
   QObject::connect(gitpullcanceltbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Return to the state before GitPull. Do you want to proceed?", this)){
+    if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?", this)){
       std::system(gitpull_cancel);
     }
   });
   addItem(gitpullcanceltbtn);
 
   const char* panda_flashing = "/data/openpilot/selfdrive/assets/addon/script/panda_flashing.sh ''";
-  auto pandaflashingtbtn = new ButtonControl("Panda Flashing", "RUN");
+  auto pandaflashingtbtn = new ButtonControl("판다 플래싱", "실행");
   QObject::connect(pandaflashingtbtn, &ButtonControl::clicked, [=]() {
     if (ConfirmationDialog::confirm("Panda's green LED blinks quickly during panda flashing. Never turn off or disconnect the device arbitrarily. Do you want to proceed?", this)) {
       std::system(panda_flashing);
@@ -403,20 +403,20 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   addItem(new SwitchOpenpilot()); // opkr
 
   const char* open_settings = "am start -a android.intent.action.MAIN -n com.android.settings/.Settings";
-  auto open_settings_btn = new ButtonControl("Open Android Settings", "RUN");
+  auto open_settings_btn = new ButtonControl("안드로이드 설정", "실행");
   QObject::connect(open_settings_btn, &ButtonControl::clicked, [=]() {
     emit closeSettings();
     std::system(open_settings);
   });
   addItem(open_settings_btn);
   const char* softkey = "am start com.gmd.hidesoftkeys/com.gmd.hidesoftkeys.MainActivity";
-  auto softkey_btn = new ButtonControl("SoftKey RUN/SET", "RUN");
+  auto softkey_btn = new ButtonControl("소프트키 실행/설정", "실행");
   QObject::connect(softkey_btn, &ButtonControl::clicked, [=]() {
     emit closeSettings();
     std::system(softkey);
   });
   addItem(softkey_btn);
-  auto mixplorer_btn = new ButtonControl("RUN Mixplorer", "RUN");
+  auto mixplorer_btn = new ButtonControl("Mixplorer 실행", "실행");
   QObject::connect(mixplorer_btn, &ButtonControl::clicked, [=]() {
 	  emit closeSettings();
     std::system("/data/openpilot/selfdrive/assets/addon/script/run_mixplorer.sh");
@@ -464,11 +464,11 @@ C2NetworkPanel::C2NetworkPanel(QWidget *parent) : QWidget(parent) {
   list->setSpacing(30);
   // wifi + tethering buttons
 #ifdef QCOM
-  auto wifiBtn = new ButtonControl("Wi-Fi Settings", "OPEN");
+  auto wifiBtn = new ButtonControl("Wi-Fi 설정", "열기");
   QObject::connect(wifiBtn, &ButtonControl::clicked, [=]() { HardwareEon::launch_wifi(); });
   list->addItem(wifiBtn);
 
-  auto tetheringBtn = new ButtonControl("Tethering Settings", "OPEN");
+  auto tetheringBtn = new ButtonControl("테더링 설정", "열기");
   QObject::connect(tetheringBtn, &ButtonControl::clicked, [=]() { HardwareEon::launch_tethering(); });
   list->addItem(tetheringBtn);
 #endif
@@ -534,17 +534,17 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RecordCount());
   layout->addWidget(new RecordQuality());
   const char* record_del = "rm -f /storage/emulated/0/videos/*";
-  auto recorddelbtn = new ButtonControl("Delete All Recorded Files", "RUN");
+  auto recorddelbtn = new ButtonControl("녹화파일 전부 삭제", "실행");
   QObject::connect(recorddelbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Delete all saved recorded files. Do you want to proceed?", this)){
+    if (ConfirmationDialog::confirm("저장된 녹화파일을 모두 삭제합니다. 진행하시겠습니까?", this)){
       std::system(record_del);
     }
   });
   layout->addWidget(recorddelbtn);
   const char* realdata_del = "rm -rf /storage/emulated/0/realdata/*";
-  auto realdatadelbtn = new ButtonControl("Delete All Driving Logs", "RUN");
+  auto realdatadelbtn = new ButtonControl("주행로그 전부 삭제", "실행");
   QObject::connect(realdatadelbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Delete all saved driving logs. Do you want to proceed?", this)){
+    if (ConfirmationDialog::confirm("저장된 주행로그를 모두 삭제합니다. 진행하시겠습니까?", this)){
       std::system(realdata_del);
     }
   });
@@ -632,9 +632,9 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new TimeZoneSelectCombo());
   const char* cal_ok = "cp -f /data/openpilot/selfdrive/assets/addon/param/CalibrationParams /data/params/d/";
-  auto calokbtn = new ButtonControl("Enable Calibration by Force", "RUN");
+  auto calokbtn = new ButtonControl("캘리브레이션 강제 활성화", "실행");
   QObject::connect(calokbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Force calibration to be set. It's only for checking engagement, so please reset it when you actually drive.", this)){
+    if (ConfirmationDialog::confirm("캘리브레이션을 강제로 설정합니다. 인게이지 확인용이니 실 주행시에는 초기화 하시기 바랍니다.", this)){
       std::system(cal_ok);
     }
   });
@@ -650,9 +650,9 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new MaxRateUp());
   layout->addWidget(new MaxRateDown());
   const char* p_edit_go = "/data/openpilot/selfdrive/assets/addon/script/p_edit.sh ''";
-  auto peditbtn = new ButtonControl("Change Panda Values", "RUN");
+  auto peditbtn = new ButtonControl("판다값 변경 적용", "실행");
   QObject::connect(peditbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Apply the changed panda value. Do you want to proceed? It automatically reboots.", this)){
+    if (ConfirmationDialog::confirm("변경된 판다값을 적용합니다. 진행하시겠습니까? 자동 재부팅됩니다.", this)){
       std::system(p_edit_go);
     }
   });
