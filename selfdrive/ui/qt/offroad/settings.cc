@@ -1,6 +1,7 @@
 #include "selfdrive/ui/qt/offroad/settings.h"
 
 #include <cassert>
+#include <cmath>
 #include <string>
 
 #include <QDebug>
@@ -136,8 +137,6 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
 }
 
 DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
-  Params params = Params();
-
   setSpacing(50);
   addItem(new LabelControl("Dongle ID", getDongleId().value_or("N/A")));
   addItem(new LabelControl("Serial", params.get("HardwareSerial").c_str()));
@@ -231,8 +230,8 @@ void DevicePanel::updateCalibDescription() {
         double pitch = calib.getRpyCalib()[1] * (180 / M_PI);
         double yaw = calib.getRpyCalib()[2] * (180 / M_PI);
         desc += QString(" Your device is pointed %1° %2 and %3° %4.")
-                    .arg(QString::number(std::abs(pitch), 'g', 1), pitch > 0 ? "up" : "down",
-                         QString::number(std::abs(yaw), 'g', 1), yaw > 0 ? "right" : "left");
+                    .arg(QString::number(std::abs(pitch), 'g', 1), pitch > 0 ? "down" : "up",
+                         QString::number(std::abs(yaw), 'g', 1), yaw > 0 ? "left" : "right");
       }
     } catch (kj::Exception) {
       qInfo() << "invalid CalibrationParams";
@@ -402,6 +401,27 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
 
   addItem(pandaflashingtbtn);
   addItem(new SwitchOpenpilot()); // opkr
+
+  const char* open_settings = "am start -a android.intent.action.MAIN -n com.android.settings/.Settings";
+  auto open_settings_btn = new ButtonControl("Open Android Settings", "RUN");
+  QObject::connect(open_settings_btn, &ButtonControl::clicked, [=]() {
+    emit closeSettings();
+    std::system(open_settings);
+  });
+  addItem(open_settings_btn);
+  const char* softkey = "am start com.gmd.hidesoftkeys/com.gmd.hidesoftkeys.MainActivity";
+  auto softkey_btn = new ButtonControl("SoftKey RUN/SET", "RUN");
+  QObject::connect(softkey_btn, &ButtonControl::clicked, [=]() {
+    emit closeSettings();
+    std::system(softkey);
+  });
+  addItem(softkey_btn);
+  auto mixplorer_btn = new ButtonControl("RUN Mixplorer", "RUN");
+  QObject::connect(mixplorer_btn, &ButtonControl::clicked, [=]() {
+	  emit closeSettings();
+    std::system("/data/openpilot/selfdrive/assets/addon/script/run_mixplorer.sh");
+  });
+  addItem(mixplorer_btn);
   addItem(uninstallBtn);
   fs_watch = new QFileSystemWatcher(this);
   QObject::connect(fs_watch, &QFileSystemWatcher::fileChanged, [=](const QString path) {
@@ -436,15 +456,14 @@ void SoftwarePanel::updateLabels() {
   osVersionLbl->setText(QString::fromStdString(Hardware::get_os_version()).trimmed());
 }
 
-QWidget * network_panel(QWidget * parent) {
-#ifdef QCOM
-  QWidget *w = new QWidget(parent);
-  QVBoxLayout *layout = new QVBoxLayout(w);
+C2NetworkPanel::C2NetworkPanel(QWidget *parent) : QWidget(parent) {
+  QVBoxLayout *layout = new QVBoxLayout(this);
   layout->setContentsMargins(50, 0, 50, 0);
 
   ListWidget *list = new ListWidget();
   list->setSpacing(30);
   // wifi + tethering buttons
+#ifdef QCOM
   auto wifiBtn = new ButtonControl("Wi-Fi Settings", "OPEN");
   QObject::connect(wifiBtn, &ButtonControl::clicked, [=]() { HardwareEon::launch_wifi(); });
   list->addItem(wifiBtn);
@@ -452,6 +471,9 @@ QWidget * network_panel(QWidget * parent) {
   auto tetheringBtn = new ButtonControl("Tethering Settings", "OPEN");
   QObject::connect(tetheringBtn, &ButtonControl::clicked, [=]() { HardwareEon::launch_tethering(); });
   list->addItem(tetheringBtn);
+#endif
+  ipaddress = new LabelControl("IP Address", "");
+  list->addItem(ipaddress);
 
   list->addItem(new HotspotOnBootToggle());
 
@@ -462,20 +484,42 @@ QWidget * network_panel(QWidget * parent) {
 
   layout->addWidget(list);
   layout->addStretch(1);
-#else
-  Networking *w = new Networking(parent);
-#endif
-  return w;
 }
 
-UserPanel::UserPanel(QWidget *parent) : QFrame(parent) {
+void C2NetworkPanel::showEvent(QShowEvent *event) {
+  ipaddress->setText(getIPAddress());
+}
+
+QString C2NetworkPanel::getIPAddress() {
+  std::string result = util::check_output("ifconfig wlan0");
+  if (result.empty()) return "";
+
+  const std::string inetaddrr = "inet addr:";
+  std::string::size_type begin = result.find(inetaddrr);
+  if (begin == std::string::npos) return "";
+
+  begin += inetaddrr.length();
+  std::string::size_type end = result.find(' ', begin);
+  if (end == std::string::npos) return "";
+
+  return result.substr(begin, end - begin).c_str();
+}
+
+QWidget *network_panel(QWidget *parent) {
+#ifdef QCOM
+  return new C2NetworkPanel(parent);
+#else
+  return new Networking(parent);
+#endif
+}
+
+UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   QVBoxLayout *layout = new QVBoxLayout(this);
 
   layout->setContentsMargins(50, 0, 50, 0);
   layout->setSpacing(30);
 
   // OPKR
-  layout->addWidget(new LabelControl("〓〓〓〓〓〓〓〓【 U I Menu 】〓〓〓〓〓〓〓〓", ""));
   layout->addWidget(new AutoShutdown());
   layout->addWidget(new ForceShutdown());
   layout->addWidget(new VolumeControl());
@@ -515,11 +559,22 @@ UserPanel::UserPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new KRTimeToggle());
   layout->addWidget(new OPKRServerSelect());
   layout->addWidget(new OPKRServerAPI());
+  layout->addWidget(new MapboxEnabledToggle());
   layout->addWidget(new OPKRMapboxStyle());
+  layout->addWidget(new GoogleMapEnabledToggle());
+}
 
-  layout->addWidget(horizontal_line());
-  layout->addWidget(new LabelControl("〓〓〓〓〓〓〓〓【 DRIVING 】〓〓〓〓〓〓〓〓", ""));
+DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
+  QVBoxLayout *layout = new QVBoxLayout(this);
+
+  layout->setContentsMargins(50, 0, 50, 0);
+  layout->setSpacing(30);
+
+  // OPKR
   layout->addWidget(new AutoResumeToggle());
+  layout->addWidget(new RESCountatStandstill());
+  layout->addWidget(new CruiseGapAdjustToggle());
+  layout->addWidget(new StandstillResumeAltToggle());
   layout->addWidget(new VariableCruiseToggle());
   layout->addWidget(new CruisemodeSelInit());
   layout->addWidget(new LaneChangeSpeed());
@@ -538,7 +593,6 @@ UserPanel::UserPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SpeedLimitOffset());
   layout->addWidget(new SpeedLimitSignType());
   layout->addWidget(new CamDecelDistAdd());
-  layout->addWidget(new CruiseGapAdjustToggle());
   layout->addWidget(new CurvDecelSelect());
   layout->addWidget(new VCurvSpeedUD());
   layout->addWidget(new VCurvSpeed());
@@ -549,26 +603,32 @@ UserPanel::UserPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RESChoice());
   layout->addWidget(new AutoResCondition());
   layout->addWidget(new AutoResLimitTime());
-  layout->addWidget(new RESCountatStandstill());
-  layout->addWidget(new SteerWindDownToggle());
-  layout->addWidget(new MadModeEnabledToggle());
+  layout->addWidget(new AutoRESDelay());
+}
 
-  layout->addWidget(horizontal_line());
-  layout->addWidget(new LabelControl("〓〓〓〓〓〓〓〓【 DEVELOPER 】〓〓〓〓〓〓〓〓", ""));
+DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
+  QVBoxLayout *layout = new QVBoxLayout(this);
+
+  layout->setContentsMargins(50, 0, 50, 0);
+  layout->setSpacing(30);
+
+  // OPKR
   layout->addWidget(new DebugUiOneToggle());
   layout->addWidget(new DebugUiTwoToggle());
   layout->addWidget(new ShowErrorToggle());
   layout->addWidget(new LongLogToggle());
   layout->addWidget(new PrebuiltToggle());
   layout->addWidget(new FPTwoToggle());
+  layout->addWidget(new WhitePandaSupportToggle());
+  layout->addWidget(new BattLessToggle());
+  layout->addWidget(new ComIssueToggle());
   layout->addWidget(new LDWSToggle());
   layout->addWidget(new GearDToggle());
-  layout->addWidget(new ComIssueToggle());
-  layout->addWidget(new WhitePandaSupportToggle());
   layout->addWidget(new SteerWarningFixToggle());
   layout->addWidget(new IgnoreCanErroronISGToggle());
-  layout->addWidget(new BattLessToggle());
-  layout->addWidget(new GoogleMapEnabledToggle());
+  layout->addWidget(new FCA11MessageToggle());
+  layout->addWidget(new SteerWindDownToggle());
+  layout->addWidget(new MadModeEnabledToggle());
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new TimeZoneSelectCombo());
   const char* cal_ok = "cp -f /data/openpilot/selfdrive/assets/addon/param/CalibrationParams /data/params/d/";
@@ -579,26 +639,7 @@ UserPanel::UserPanel(QWidget *parent) : QFrame(parent) {
     }
   });
   layout->addWidget(calokbtn);
-  const char* open_settings = "am start -a android.intent.action.MAIN -n com.android.settings/.Settings";
-  auto open_settings_btn = new ButtonControl("Open Android Settings", "RUN");
-  QObject::connect(open_settings_btn, &ButtonControl::clicked, [=]() {
-    emit closeSettings();
-    std::system(open_settings);
-  });
-  layout->addWidget(open_settings_btn);
-  const char* softkey = "am start com.gmd.hidesoftkeys/com.gmd.hidesoftkeys.MainActivity";
-  auto softkey_btn = new ButtonControl("SoftKey RUN/SET", "RUN");
-  QObject::connect(softkey_btn, &ButtonControl::clicked, [=]() {
-    emit closeSettings();
-    std::system(softkey);
-  });
-  layout->addWidget(softkey_btn);
-  auto mixplorer_btn = new ButtonControl("RUN Mixplorer", "RUN");
-  QObject::connect(mixplorer_btn, &ButtonControl::clicked, [=]() {
-	  emit closeSettings();
-    std::system("/data/openpilot/selfdrive/assets/addon/script/run_mixplorer.sh");
-  });
-  layout->addWidget(mixplorer_btn, 0);
+
   layout->addWidget(horizontal_line());
   layout->addWidget(new CarSelectCombo());
 
@@ -713,27 +754,29 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     }
   )");
   close_btn->setFixedSize(220, 130);
-  sidebar_layout->addSpacing(35);
+  sidebar_layout->addSpacing(5);
   sidebar_layout->addWidget(close_btn, 0, Qt::AlignCenter);
   QObject::connect(close_btn, &QPushButton::clicked, this, &SettingsWindow::closeSettings);
 
   // setup panels
   DevicePanel *device = new DevicePanel(this);
-  UserPanel *user = new UserPanel(this);
+  SoftwarePanel *software = new SoftwarePanel(this);
   QObject::connect(device, &DevicePanel::reviewTrainingGuide, this, &SettingsWindow::reviewTrainingGuide);
   QObject::connect(device, &DevicePanel::showDriverView, this, &SettingsWindow::showDriverView);
-  QObject::connect(user, &UserPanel::closeSettings, this, &SettingsWindow::closeSettings);
+  QObject::connect(software, &SoftwarePanel::closeSettings, this, &SettingsWindow::closeSettings);
 
   QList<QPair<QString, QWidget *>> panels = {
     {"Device", device},
     {"Network", network_panel(this)},
     {"Toggles", new TogglesPanel(this)},
-    {"Software", new SoftwarePanel(this)},
-    {"UserMenu", user},
+    {"Software", software},
+    {"UIMenu", new UIPanel(this)},
+    {"Driving", new DrivingPanel(this)},
+    {"Developer", new DeveloperPanel(this)},
     {"Tuning", new TuningPanel(this)},
   };
 
-  sidebar_layout->addSpacing(35);
+  sidebar_layout->addSpacing(45);
 
 #ifdef ENABLE_MAPS
   auto map_panel = new MapPanel(this);
@@ -741,7 +784,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   QObject::connect(map_panel, &MapPanel::closeSettings, this, &SettingsWindow::closeSettings);
 #endif
 
-  const int padding = panels.size() > 3 ? 8 : 18;
+  const int padding = panels.size() > 3 ? 0 : 15;
 
   nav_btns = new QButtonGroup(this);
   for (auto &[name, panel] : panels) {
@@ -753,7 +796,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
         color: grey;
         border: none;
         background: none;
-        font-size: 60px;
+        font-size: 54px;
         font-weight: 500;
         padding-top: %1px;
         padding-bottom: %1px;
