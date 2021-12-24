@@ -705,7 +705,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.outOfSpace: {
     ET.PERMANENT: NormalPermanentAlert("저장공간 부족"),
-    ET.NO_ENTRY: NoEntryAlert("Out of Storage"),
+    ET.NO_ENTRY: NoEntryAlert("저장공간 부족"),
   },
 
   EventName.belowEngageSpeed: {
@@ -714,8 +714,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.sensorDataInvalid: {
     ET.PERMANENT: Alert(
-      "No Data from Device Sensors",
-      "Reboot your Device",
+      "EON센서로부터 데이터를 받지 못했습니다",
+      "장치를 재시작 하세요",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, .2, creation_delay=1.),
     ET.NO_ENTRY: NoEntryAlert("No Data from Device Sensors"),
@@ -726,23 +726,23 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.soundsUnavailable: {
-    ET.PERMANENT: NormalPermanentAlert("Speaker not found", "Reboot your Device"),
-    ET.NO_ENTRY: NoEntryAlert("Speaker not found"),
+    ET.PERMANENT: NormalPermanentAlert("스피커를 찾을 수 없습니다", "장치를 재시작하세요"),
+    ET.NO_ENTRY: NoEntryAlert("스피커를 찾을 수 없습니다"),
   },
 
   EventName.tooDistracted: {
-    ET.NO_ENTRY: NoEntryAlert("Distraction Level Too High"),
+    ET.NO_ENTRY: NoEntryAlert("운전자 전방주시 매우 불안"),
   },
 
   EventName.overheat: {
-    ET.PERMANENT: NormalPermanentAlert("System Overheated"),
-    ET.SOFT_DISABLE: soft_disable_alert("System Overheated"),
-    ET.NO_ENTRY: NoEntryAlert("System Overheated"),
+    ET.PERMANENT: NormalPermanentAlert("시스템이 과열되었습니다"),
+    ET.SOFT_DISABLE: soft_disable_alert("시스템이 과열되었습니다"),
+    ET.NO_ENTRY: NoEntryAlert("시스템이 과열되었습니다"),
   },
 
   EventName.wrongGear: {
     ET.USER_DISABLE: EngagementAlert(AudibleAlert.disengage),
-    ET.NO_ENTRY: NoEntryAlert("Gear not D"),
+    ET.NO_ENTRY: NoEntryAlert("기어가 드라이브모드가 아닙니다"),
   },
 
   # This alert is thrown when the calibration angles are outside of the acceptable range.
@@ -751,35 +751,35 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # and attaching while making sure the device is pointed straight forward and is level.
   # See https://comma.ai/setup for more information
   EventName.calibrationInvalid: {
-    ET.PERMANENT: NormalPermanentAlert("Calibration Invalid", "Remount Device and Recalibrate"),
-    ET.SOFT_DISABLE: soft_disable_alert("Calibration Invalid: Remount Device & Recalibrate"),
-    ET.NO_ENTRY: NoEntryAlert("Calibration Invalid: Remount Device & Recalibrate"),
+    ET.PERMANENT: NormalPermanentAlert("캘리브레이션 유효하지 않음", "장치 위치 조정 및 재 캘리브레이션"),
+    ET.SOFT_DISABLE: soft_disable_alert("캘리브레이션 유효하지 않음: 장치 위치 조정 및 재 캘리브레이션"),
+    ET.NO_ENTRY: NoEntryAlert("캘리브레이션 유효하지 않음: 장치 위치 조정 및 재 캘리브레이션"),
   },
 
   EventName.calibrationIncomplete: {
     ET.PERMANENT: calibration_incomplete_alert,
-    ET.SOFT_DISABLE: soft_disable_alert("Calibration in Progress"),
-    ET.NO_ENTRY: NoEntryAlert("Calibration in Progress"),
+    ET.SOFT_DISABLE: soft_disable_alert("캘리브레이션 진행 중"),
+    ET.NO_ENTRY: NoEntryAlert("캘리브레이션 진행 중"),
   },
 
   EventName.doorOpen: {
-    ET.SOFT_DISABLE: user_soft_disable_alert("Door Open"),
-    ET.NO_ENTRY: NoEntryAlert("Door Open"),
+    ET.SOFT_DISABLE: user_soft_disable_alert("도어가 열려있습니다"),
+    ET.NO_ENTRY: NoEntryAlert("도어가 열려있습니다"),
   },
 
   EventName.seatbeltNotLatched: {
-    ET.SOFT_DISABLE: user_soft_disable_alert("Seatbelt Unlatched"),
-    ET.NO_ENTRY: NoEntryAlert("Seatbelt Unlatched"),
+    ET.SOFT_DISABLE: user_soft_disable_alert("안전벨트를 체결하세요"),
+    ET.NO_ENTRY: NoEntryAlert("안전벨트를 체결하세요"),
   },
 
   EventName.espDisabled: {
-    ET.SOFT_DISABLE: soft_disable_alert("ESP Off"),
-    ET.NO_ENTRY: NoEntryAlert("ESP Off"),
+    ET.SOFT_DISABLE: soft_disable_alert("ESP 꺼짐"),
+    ET.NO_ENTRY: NoEntryAlert("ESP 꺼짐"),
   },
 
   EventName.lowBattery: {
-    ET.SOFT_DISABLE: soft_disable_alert("Low Battery"),
-    ET.NO_ENTRY: NoEntryAlert("Low Battery"),
+    ET.SOFT_DISABLE: soft_disable_alert("배터리 부족"),
+    ET.NO_ENTRY: NoEntryAlert("배터리 부족"),
   },
 
   # Different openpilot services communicate between each other at a certain
@@ -788,28 +788,28 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # ten times the regular interval, or the average interval is more than 10% too high.
   EventName.commIssue: {
     ET.WARNING: Alert(
-      "Take Control",
-      "Communication Issue between Processes",
+      "핸들을 잡아주세요",
+      "프로세스 간 통신 오류가 있습니다",
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, 1.),
   },
 
   # Thrown when manager detects a service exited unexpectedly while driving
   EventName.processNotRunning: {
-    ET.NO_ENTRY: NoEntryAlert("System Malfunction: Reboot Your Device"),
+    ET.NO_ENTRY: NoEntryAlert("시스템 오작동: 장치를 재시작하세요"),
   },
 
   EventName.radarFault: {
-    ET.SOFT_DISABLE: soft_disable_alert("Radar Error: Restart the Car"),
-    ET.NO_ENTRY: NoEntryAlert("Radar Error: Restart the Car"),
+    ET.SOFT_DISABLE: soft_disable_alert("레이더 오류: 차량을 재시작하세요"),
+    ET.NO_ENTRY: NoEntryAlert("레이더 오류: 차량을 재시작하세요"),
   },
 
   # Every frame from the camera should be processed by the model. If modeld
   # is not processing frames fast enough they have to be dropped. This alert is
   # thrown when over 20% of frames are dropped.
   EventName.modeldLagging: {
-    ET.SOFT_DISABLE: soft_disable_alert("Driving model lagging"),
-    ET.NO_ENTRY: NoEntryAlert("Driving model lagging"),
+    ET.SOFT_DISABLE: soft_disable_alert("주행 모델 지연"),
+    ET.NO_ENTRY: NoEntryAlert("주행 모델 지연"),
   },
 
   # Besides predicting the path, lane lines and lead car data the model also
@@ -818,53 +818,53 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # usually means the model has trouble understanding the scene. This is used
   # as a heuristic to warn the driver.
   EventName.posenetInvalid: {
-    ET.SOFT_DISABLE: soft_disable_alert("Model Output Uncertain"),
-    ET.NO_ENTRY: NoEntryAlert("Model Output Uncertain"),
+    ET.SOFT_DISABLE: soft_disable_alert("전방 영상인식이 원할하지 않습니다"),
+    ET.NO_ENTRY: NoEntryAlert("전방 영상인식이 원할하지 않습니다"),
   },
 
   # When the localizer detects an acceleration of more than 40 m/s^2 (~4G) we
   # alert the driver the device might have fallen from the windshield.
   EventName.deviceFalling: {
-    ET.SOFT_DISABLE: soft_disable_alert("Device Fell Off Mount"),
-    ET.NO_ENTRY: NoEntryAlert("Device Fell Off Mount"),
+    ET.SOFT_DISABLE: soft_disable_alert("장치의 마운트 연결이 불안합니다"),
+    ET.NO_ENTRY: NoEntryAlert("장치의 마운트 연결이 불안합니다"),
   },
 
   EventName.lowMemory: {
-    ET.SOFT_DISABLE: soft_disable_alert("Low Memory: Reboot Your Device"),
-    ET.PERMANENT: NormalPermanentAlert("Low Memory", "Reboot your Device"),
-    ET.NO_ENTRY: NoEntryAlert("Low Memory: Reboot Your Device"),
+    ET.SOFT_DISABLE: soft_disable_alert("메모리 부족: 장치를 재시작하세요"),
+    ET.PERMANENT: NormalPermanentAlert("메모리 부족", "장치를 재시작하세요"),
+    ET.NO_ENTRY: NoEntryAlert("메모리 부족: 장치를 재시작하세요"),
   },
 
   EventName.highCpuUsage: {
     #ET.SOFT_DISABLE: soft_disable_alert("System Malfunction: Reboot Your Device"),
     #ET.PERMANENT: NormalPermanentAlert("System Malfunction", "Reboot your Device"),
-    ET.NO_ENTRY: NoEntryAlert("System Malfunction: Reboot Your Device"),
+    ET.NO_ENTRY: NoEntryAlert("시스템오작동: 장치를 재시작 하세요"),
   },
 
   EventName.accFaulted: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Cruise Faulted"),
-    ET.PERMANENT: NormalPermanentAlert("Cruise Faulted", ""),
-    ET.NO_ENTRY: NoEntryAlert("Cruise Faulted"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("크루즈 오류"),
+    ET.PERMANENT: NormalPermanentAlert("크루즈 오류", ""),
+    ET.NO_ENTRY: NoEntryAlert("크루즈 오류"),
   },
 
   EventName.controlsMismatch: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Controls Mismatch"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("컨트롤 미스매치"),
   },
 
   EventName.roadCameraError: {
-    ET.PERMANENT: NormalPermanentAlert("Camera Error",
+    ET.PERMANENT: NormalPermanentAlert("주행 카메라 오류",
                                        duration=1.,
                                        creation_delay=30.),
   },
 
   EventName.driverCameraError: {
-    ET.PERMANENT: NormalPermanentAlert("Camera Error",
+    ET.PERMANENT: NormalPermanentAlert("운전자 카메라 오류",
                                        duration=1.,
                                        creation_delay=30.),
   },
 
   EventName.wideRoadCameraError: {
-    ET.PERMANENT: NormalPermanentAlert("Camera Error",
+    ET.PERMANENT: NormalPermanentAlert("와이드 주행 카메라 오류",
                                        duration=1.,
                                        creation_delay=30.),
   },
@@ -872,9 +872,9 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # Sometimes the USB stack on the device can get into a bad state
   # causing the connection to the panda to be lost
   EventName.usbError: {
-    ET.SOFT_DISABLE: soft_disable_alert("USB Error: Reboot Your Device"),
-    ET.PERMANENT: NormalPermanentAlert("USB Error: Reboot Your Device", ""),
-    ET.NO_ENTRY: NoEntryAlert("USB Error: Reboot Your Device"),
+    ET.SOFT_DISABLE: soft_disable_alert(""USB 오류: 장치를 재시작 하세요"),
+    ET.PERMANENT: NormalPermanentAlert("USB 오류: 장치를 재시작 하세요", ""),
+    ET.NO_ENTRY: NoEntryAlert("USB 오류: 장치를 재시작 하세요"),
   },
 
   # This alert can be thrown for the following reasons:
@@ -882,25 +882,25 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # - CAN data is received, but some message are not received at the right frequency
   # If you're not writing a new car port, this is usually cause by faulty wiring
   EventName.canError: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("CAN Error: Check Connections"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("CAN 오류: CAN 신호를 확인하세요"),
     ET.PERMANENT: Alert(
-      "CAN Error: Check Connections",
+      "CAN 오류: CAN 신호를 확인하세요",
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, 1., creation_delay=1.),
-    ET.NO_ENTRY: NoEntryAlert("CAN Error: Check Connections"),
+    ET.NO_ENTRY: NoEntryAlert("CAN 오류: CAN 신호를 확인하세요"),
   },
 
   EventName.steerUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("LKAS Fault: Restart the Car"),
-    ET.PERMANENT: NormalPermanentAlert("LKAS Fault: Restart the car to engage"),
-    ET.NO_ENTRY: NoEntryAlert("LKAS Fault: Restart the Car"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("LKAS 오류: 차량을 재시작하세요"),
+    ET.PERMANENT: NormalPermanentAlert("LKAS 오류: 차량을 재시작하세요"),
+    ET.NO_ENTRY: NoEntryAlert("LKAS 오류: 차량을 재시작하세요"),
   },
 
   EventName.brakeUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Cruise Fault: Restart the Car"),
-    ET.PERMANENT: NormalPermanentAlert("Cruise Fault: Restart the car to engage"),
-    ET.NO_ENTRY: NoEntryAlert("Cruise Fault: Restart the Car"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("크루즈 오류: 차량을 재시작하세요"),
+    ET.PERMANENT: NormalPermanentAlert("크루즈 오류: 시작을 위해 차량을 재시작하세요"),
+    ET.NO_ENTRY: NoEntryAlert("크루즈 오류: 차량을 재시작하세요"),
   },
 
   EventName.reverseGear: {
@@ -910,13 +910,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       AlertStatus.normal, AlertSize.full,
       Priority.LOWEST, VisualAlert.none, AudibleAlert.none, .2, creation_delay=0.5),
     ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Reverse Gear"),
-    ET.NO_ENTRY: NoEntryAlert("Reverse Gear"),
+    ET.NO_ENTRY: NoEntryAlert("후진 기어"),
   },
 
   # On cars that use stock ACC the car can decide to cancel ACC for various reasons.
   # When this happens we can no long control the car so the user needs to be warned immediately.
   EventName.cruiseDisabled: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Cruise Is Off"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("크루즈 꺼짐"),
   },
 
   # For planning the trajectory Model Predictive Control (MPC) is used. This is
@@ -932,15 +932,15 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # are received on the car side this usually means the relay hasn't opened correctly
   # and this alert is thrown.
   EventName.relayMalfunction: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Harness Malfunction"),
-    ET.PERMANENT: NormalPermanentAlert("Harness Malfunction", "Check Hardware"),
-    ET.NO_ENTRY: NoEntryAlert("Harness Malfunction"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("하네스 오작동"),
+    ET.PERMANENT: NormalPermanentAlert("하네스 오작동", "장치를 점검하세요"),
+    ET.NO_ENTRY: NoEntryAlert("하네스 오작동"),
   },
 
   EventName.noTarget: {
     ET.IMMEDIATE_DISABLE: Alert(
-      "openpilot Canceled",
-      "No close lead car",
+      "오픈파일럿 시작불가",
+      "선행차량이 없습니다",
       AlertStatus.normal, AlertSize.mid,
       Priority.HIGH, VisualAlert.none, AudibleAlert.none, 3.),
     ET.NO_ENTRY: NoEntryAlert("No Close Lead Car"),
@@ -948,8 +948,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.speedTooLow: {
     ET.IMMEDIATE_DISABLE: Alert(
-      "openpilot Canceled",
-      "Speed too low",
+      "오픈파일럿 시작불가",
+      "차량의 속도가 낮습니다",
       AlertStatus.normal, AlertSize.mid,
       Priority.HIGH, VisualAlert.none, AudibleAlert.none, 3.),
   },
@@ -957,16 +957,16 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # When the car is driving faster than most cars in the training data, the model outputs can be unpredictable.
   EventName.speedTooHigh: {
     ET.WARNING: Alert(
-      "Speed Too High",
-      "Model uncertain at this speed",
+      "속도가 너무 높습니다",
+      "재 작동을 위해 차량의 속도를 낮추세요",
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.HIGH, VisualAlert.steerRequired, AudibleAlert.promptRepeat, 4.),
-    ET.NO_ENTRY: NoEntryAlert("Slow down to engage"),
+    ET.NO_ENTRY: NoEntryAlert("속도가 너무 높습니다"),
   },
 
   EventName.lowSpeedLockout: {
-    ET.PERMANENT: NormalPermanentAlert("Cruise Fault: Restart the car to engage"),
-    ET.NO_ENTRY: NoEntryAlert("Cruise Fault: Restart the Car"),
+    ET.PERMANENT: NormalPermanentAlert("크루즈 오류: 시작을 위해 차량을 재시작하세요"),
+    ET.NO_ENTRY: NoEntryAlert("크루즈 오류: 차량을 재시작하세요"),
   },
 
 }
