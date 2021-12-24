@@ -419,7 +419,7 @@ class KRDateToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  KRDateToggle() : ToggleControl("Display Date on Screen", "Display the current date on the driving screen.", "../assets/offroad/icon_shell.png", Params().getBool("KRDateShow")) {
+  KRDateToggle() : ToggleControl("주행화면 날짜 표시", "주행화면에 현재 날짜를 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("KRDateShow")) {
     QObject::connect(this, &KRDateToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("KRDateShow", status);
@@ -436,7 +436,7 @@ class KRTimeToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  KRTimeToggle() : ToggleControl("Display Time on Screen", "Display the current time on the driving screen.", "../assets/offroad/icon_shell.png", Params().getBool("KRTimeShow")) {
+  KRTimeToggle() : ToggleControl("주행화면 시간 표시", "주행화면에 현재 시간을 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("KRTimeShow")) {
     QObject::connect(this, &KRTimeToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("KRTimeShow", status);
@@ -453,7 +453,7 @@ class GitPullOnBootToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  GitPullOnBootToggle() : ToggleControl("Git Pull On Boot", "If there is an update after the boot, run Git Pull automatically and reboot.", "", Params().getBool("GitPullOnBoot")) {
+  GitPullOnBootToggle() : ToggleControl("부팅 시 Git Pull 자동실행", "부탕 후 업데이트가 있는 경우에 Git Pull을 자동 실행 후 재부팅합니다.", "", Params().getBool("GitPullOnBoot")) {
     QObject::connect(this, &GitPullOnBootToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("GitPullOnBoot", status);
@@ -465,7 +465,7 @@ class StoppingDistAdjToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  StoppingDistAdjToggle() : ToggleControl("Adjust Stopping Distance", "Stop a little further ahead than the radar stop distance. If you approach the car in front of you at a high speed, it may sometimes be difficult to stop enough, so if you are uncomfortable, turn off the function.", "../assets/offroad/icon_shell.png", Params().getBool("StoppingDistAdj")) {
+  StoppingDistAdjToggle() : ToggleControl("정지거리 조정", "레이더 정지거리보다 조금 더 앞에 정지합니다. 일부 울컥거림 현상이 나타날 수 있으니 불편하신분들은 기능을 끄십시오.", "../assets/offroad/icon_shell.png", Params().getBool("StoppingDistAdj")) {
     QObject::connect(this, &StoppingDistAdjToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("StoppingDistAdj", status);
@@ -494,7 +494,7 @@ class StockNaviSpeedToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  StockNaviSpeedToggle() : ToggleControl("Use Stock SafetyCAM Speed", "When decelerating the safety section, use the safety speed from the vehicle navigation system (limited to some vehicles with the corresponding data).", "../assets/offroad/icon_shell.png", Params().getBool("StockNaviSpeedEnabled")) {
+  StockNaviSpeedToggle() : ToggleControl("순정네비 과속카메라 사용", "안전구간 감속 시 차량 순정 내비게이션의 안전속도를 이용(해당 데이터가 있는 일부 차량에 한함) .", "../assets/offroad/icon_shell.png", Params().getBool("StockNaviSpeedEnabled")) {
     QObject::connect(this, &StockNaviSpeedToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("StockNaviSpeedEnabled", status);
@@ -542,7 +542,7 @@ class IgnoreCanErroronISGToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  IgnoreCanErroronISGToggle() : ToggleControl("Ignore Can Error on ISG", "Turn this on, if can error occurs on ISG operation.", "../assets/offroad/icon_shell.png", Params().getBool("IgnoreCANErroronISG")) {
+  IgnoreCanErroronISGToggle() : ToggleControl("ISG 작동시 캔에러 무시", "ISG 작동시 캔에러가 발생하면 이 옵션을 켜세요", "../assets/offroad/icon_shell.png", Params().getBool("IgnoreCANErroronISG")) {
     QObject::connect(this, &IgnoreCanErroronISGToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("IgnoreCANErroronISG", status);
@@ -554,7 +554,7 @@ class StockLKASEnabledatDisenagedStatusToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  StockLKASEnabledatDisenagedStatusToggle() : ToggleControl("StockLKAS Enabled at Disengagement", "Turn this on, if you want to use Stock LKAS at OP disengaged status. Seems this related to cluster error when OP active because Stock CAN messages over PANDA or not.", "../assets/offroad/icon_shell.png", Params().getBool("StockLKASEnabled")) {
+  StockLKASEnabledatDisenagedStatusToggle() : ToggleControl("해제시 순정 LKAS 활성", "OP 해제 상태에서 Stock LKAS를 사용하려면 이 옵션을 켜십시오. PANDA를 통한 Stock CAN 메시지 여부에 따라 OP 활성 시 클러스터 오류와 관련이 있는 것 같습니다. ", "../assets/offroad/icon_shell.png", Params().getBool("StockLKASEnabled")) {
     QObject::connect(this, &StockLKASEnabledatDisenagedStatusToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("StockLKASEnabled", status);
@@ -566,7 +566,7 @@ class FCA11MessageToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  FCA11MessageToggle() : ToggleControl("Enable FCA11 Message", "Turn this on, if you get an error with forward collision warning.(reboot required)", "../assets/offroad/icon_shell.png", Params().getBool("FCA11Message")) {
+  FCA11MessageToggle() : ToggleControl("FCA11 사용", "전방 추돌 신호를 SCC12 대신 FCA11을 사용합니다. 인게이지 혹은 부팅시 전방충돌오류가 날 때 사용합니다. 신호가 없는차는 캔오류가 날 수 있으니 주의바랍니다.(재부팅 필요)", "../assets/offroad/icon_shell.png", Params().getBool("FCA11Message")) {
     QObject::connect(this, &FCA11MessageToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("FCA11Message", status);
@@ -578,7 +578,7 @@ class StandstillResumeAltToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  StandstillResumeAltToggle() : ToggleControl("Standstill Resume Alternative", "Turn this on, if auto resume doesn't work at standstill. some cars only(ex. GENESIS). before enable, try to adjust RES message counts above.(reboot required)", "../assets/offroad/icon_shell.png", Params().getBool("StandstillResumeAlt")) {
+  StandstillResumeAltToggle() : ToggleControl("자동재출발 옵션", "정지 상태에서 자동 출발이 작동하지 않는 경우 이 기능을 켜십시오. 일부 차량 전용(ex. GENESIS). 활성화하기 전에 위의 RES 메시지 수를 조정하십시오.(재부팅 필요) ", "../assets/offroad/icon_shell.png", Params().getBool("StandstillResumeAlt")) {
     QObject::connect(this, &StandstillResumeAltToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("StandstillResumeAlt", status);
