@@ -359,7 +359,7 @@ void TimeZoneSelectCombo::refresh() {
 }
 
 //UI
-AutoShutdown::AutoShutdown() : AbstractControl("EON AutoShutdown", "EON is automatically turned off after the set time while the engine is turned off (offload) after driving (onload).", "../assets/offroad/icon_shell.png") {
+AutoShutdown::AutoShutdown() : AbstractControl("EON 자동 종료", "운행(온로드) 후 시동을 끈 상태(오프로드)에서 설정시간 이후에 자동으로 이온이 꺼집니다.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -415,33 +415,33 @@ AutoShutdown::AutoShutdown() : AbstractControl("EON AutoShutdown", "EON is autom
 void AutoShutdown::refresh() {
   QString option = QString::fromStdString(params.get("OpkrAutoShutdown"));
   if (option == "0") {
-    label.setText(QString::fromStdString("AlwaysOn"));
+    label.setText(QString::fromStdString("항상켜기"));
   } else if (option == "1") {
-    label.setText(QString::fromStdString("RightOff"));
+    label.setText(QString::fromStdString("바로끄기"));
   } else if (option == "2") {
-    label.setText(QString::fromStdString("30sec"));
+    label.setText(QString::fromStdString("30초"));
   } else if (option == "3") {
-    label.setText(QString::fromStdString("1min"));
+    label.setText(QString::fromStdString("1분"));
   } else if (option == "4") {
-    label.setText(QString::fromStdString("3mins"));
+    label.setText(QString::fromStdString("3분"));
   } else if (option == "5") {
-    label.setText(QString::fromStdString("5mins"));
+    label.setText(QString::fromStdString("5분"));
   } else if (option == "6") {
-    label.setText(QString::fromStdString("10mins"));
+    label.setText(QString::fromStdString("10분"));
   } else if (option == "7") {
-    label.setText(QString::fromStdString("30mins"));
+    label.setText(QString::fromStdString("30분"));
   } else if (option == "8") {
-    label.setText(QString::fromStdString("1hour"));
+    label.setText(QString::fromStdString("1시간"));
   } else if (option == "9") {
-    label.setText(QString::fromStdString("3hours"));
+    label.setText(QString::fromStdString("3시간"));
   } else if (option == "10") {
-    label.setText(QString::fromStdString("5hours"));
+    label.setText(QString::fromStdString("5시간"));
   }
   btnminus.setText("－");
   btnplus.setText("＋");
 }
 
-ForceShutdown::ForceShutdown() : AbstractControl("EON ForceShutdown", "If the screen is turned off while off-road without driving (on-road X), force it to turn off after a certain period of time. When a touch event occurs, the off time is reset.", "../assets/offroad/icon_shell.png") {
+ForceShutdown::ForceShutdown() : AbstractControl("EON 강제 종료", "운행을 하지 않고(온로드 진입X) 오프로드상태에서 화면이 꺼진경우 일정시간 이후에 강제로 꺼지게 합니다. 터치이벤트 발생시 꺼지는 시간이 리셋됩니다.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -497,24 +497,24 @@ ForceShutdown::ForceShutdown() : AbstractControl("EON ForceShutdown", "If the sc
 void ForceShutdown::refresh() {
   QString option = QString::fromStdString(params.get("OpkrForceShutdown"));
   if (option == "0") {
-    label.setText(QString::fromStdString("AlwaysOn"));
+    label.setText(QString::fromStdString("항상켜기"));
   } else if (option == "1") {
-    label.setText(QString::fromStdString("1min"));
+    label.setText(QString::fromStdString("1분"));
   } else if (option == "2") {
-    label.setText(QString::fromStdString("3mins"));
+    label.setText(QString::fromStdString("3분"));
   } else if (option == "3") {
-    label.setText(QString::fromStdString("5mins"));
+    label.setText(QString::fromStdString("5분"));
   } else if (option == "4") {
-    label.setText(QString::fromStdString("10mins"));
+    label.setText(QString::fromStdString("10분"));
   } else if (option == "5") {
-    label.setText(QString::fromStdString("30mins"));
+    label.setText(QString::fromStdString("30분"));
   }
   btnminus.setText("－");
   btnplus.setText("＋");
 }
 
 
-VolumeControl::VolumeControl() : AbstractControl("EON Volume Control(%)", "Adjust the volume of EON. Android Default/Manual Settings", "../assets/offroad/icon_shell.png") {
+VolumeControl::VolumeControl() : AbstractControl("EON 볼륨 조절(%)", "EON의 볼륨을 조절합니다. 안드로이드 기본값/수동설정", "../assets/offroad/icon_shell.png") {
 
   effect.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/addon/sound/ding.wav"));
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
@@ -575,9 +575,9 @@ VolumeControl::VolumeControl() : AbstractControl("EON Volume Control(%)", "Adjus
 void VolumeControl::refresh() {
   QString option = QString::fromStdString(params.get("OpkrUIVolumeBoost"));
   if (option == "0") {
-    label.setText(QString::fromStdString("Default"));
+    label.setText(QString::fromStdString("기본값"));
   } else if (option == "-5") {
-    label.setText(QString::fromStdString("Mute"));
+    label.setText(QString::fromStdString("음소거"));
   } else {
     label.setText(QString::fromStdString(params.get("OpkrUIVolumeBoost")));
   }
@@ -596,7 +596,7 @@ void VolumeControl::playsound() {
   }
 }
 
-BrightnessControl::BrightnessControl() : AbstractControl("EON Brightness Control(%)", "Manually adjust the brightness of the EON screen.", "../assets/offroad/icon_shell.png") {
+BrightnessControl::BrightnessControl() : AbstractControl("EON 밝기 조절(%)", "EON화면의 밝기를 수동 조절합니다.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -654,7 +654,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON Brightness Control
 void BrightnessControl::refresh() {
   QString option = QString::fromStdString(params.get("OpkrUIBrightness"));
   if (option == "0") {
-    label.setText(QString::fromStdString("Auto"));
+    label.setText(QString::fromStdString("자동조절"));
   } else {
     label.setText(QString::fromStdString(params.get("OpkrUIBrightness")));
   }
@@ -662,7 +662,7 @@ void BrightnessControl::refresh() {
   btnplus.setText("＋");
 }
 
-BrightnessOffControl::BrightnessOffControl() : AbstractControl("Brightness at SCR Off(%)", "When using the EON screen off function, the brightness is reduced according to the automatic brightness ratio.", "../assets/offroad/icon_shell.png") {
+BrightnessOffControl::BrightnessOffControl() : AbstractControl("EON 화면끄기 밝기(%)", "EON 화면 꺼짐 기능 사용시 자동밝기 비율에 따라 밝기를 감소시킵니다.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -720,7 +720,7 @@ BrightnessOffControl::BrightnessOffControl() : AbstractControl("Brightness at SC
 void BrightnessOffControl::refresh() {
   QString option = QString::fromStdString(params.get("OpkrUIBrightnessOff"));
   if (option == "0") {
-    label.setText(QString::fromStdString("Dark"));
+    label.setText(QString::fromStdString("완전꺼짐"));
   } else {
     label.setText(QString::fromStdString(params.get("OpkrUIBrightnessOff")));
   }
@@ -728,7 +728,7 @@ void BrightnessOffControl::refresh() {
   btnplus.setText("＋");
 }
 
-AutoScreenOff::AutoScreenOff() : AbstractControl("EON SCR Off Timer", "Turn off the EON screen or reduce brightness to protect the screen after driving starts. It automatically brightens or turns on when a touch or event occurs.", "../assets/offroad/icon_shell.png") 
+AutoScreenOff::AutoScreenOff() : AbstractControl("EON 화면끄기 시간", "주행 시작 후 화면보호를 위해 이온화면이 꺼지게 하거나 밝기를 줄입니다. 터치나 이벤트 발생시 자동으로 밝아지거나 켜집니다.", "../assets/offroad/icon_shell.png") 
 {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
@@ -788,19 +788,19 @@ void AutoScreenOff::refresh()
 {
   QString option = QString::fromStdString(params.get("OpkrAutoScreenOff"));
   if (option == "-2") {
-    label.setText(QString::fromStdString("AlwaysOn"));
+    label.setText(QString::fromStdString("항상켜기"));
   } else if (option == "-1") {
-    label.setText(QString::fromStdString("15secs"));
+    label.setText(QString::fromStdString("15초"));
   } else if (option == "0") {
-    label.setText(QString::fromStdString("30secs"));
+    label.setText(QString::fromStdString("30초"));
   } else {
-    label.setText(QString::fromStdString(params.get("OpkrAutoScreenOff")) + "min(s)");
+    label.setText(QString::fromStdString(params.get("OpkrAutoScreenOff")) + "분");
   }
   btnminus.setText("－");
   btnplus.setText("＋");
 }
 
-ChargingMin::ChargingMin() : AbstractControl("BAT MinCharging Value", "Sets the minimum battery charge value.", "../assets/offroad/icon_shell.png") {
+ChargingMin::ChargingMin() : AbstractControl("배터리 최소 충전 값", "배터리 최소 충전값을 설정합니다.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
