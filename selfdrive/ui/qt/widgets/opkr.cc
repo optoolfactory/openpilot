@@ -5565,7 +5565,7 @@ void OPKRMapboxStyle::refresh() {
   }
 }
 
-RESCountatStandstill::RESCountatStandstill() : AbstractControl("RES Count at Standstill", "Comma Default: 25, this value cannot be acceptable at some cars. So adjust the number if you want to. It generates RES CAN messages when leadcar is moving. If departure is failed, increase the number. In opposite, if CAN error occurs, decrease the number.", "../assets/offroad/icon_shell.png") {
+RESCountatStandstill::RESCountatStandstill() : AbstractControl("정지시 RES 카운트", "컴마 기본값: 25, 이 값은 일부 차량에서 허용되지 않습니다. 따라서 원하는 경우 숫자를 조정하십시오. 선행차가 움직일 때 RES CAN 메시지를 생성합니다. 출발에 실패하면 숫자를 늘립니다. 반대로 CAN 에러가 발생하면 숫자를 줄이십시오. ", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
