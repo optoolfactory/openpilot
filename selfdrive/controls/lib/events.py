@@ -872,7 +872,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # Sometimes the USB stack on the device can get into a bad state
   # causing the connection to the panda to be lost
   EventName.usbError: {
-    ET.SOFT_DISABLE: soft_disable_alert(""USB 오류: 장치를 재시작 하세요"),
+    ET.SOFT_DISABLE: soft_disable_alert("USB 오류: 장치를 재시작 하세요"),
     ET.PERMANENT: NormalPermanentAlert("USB 오류: 장치를 재시작 하세요", ""),
     ET.NO_ENTRY: NoEntryAlert("USB 오류: 장치를 재시작 하세요"),
   },
