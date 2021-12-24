@@ -167,7 +167,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.drawText(r, Qt::AlignHCenter, net_type);
 
   // metrics
-  drawMetric(p, "SYS TEMP", temp_status.first, temp_status.second, 378);
+  drawMetric(p, "시스템 온도", temp_status.first, temp_status.second, 378);
   drawMetric(p, panda_status.first, "", panda_status.second, 558);
   drawMetric(p, connect_status.first, "", connect_status.second, 716);
 
