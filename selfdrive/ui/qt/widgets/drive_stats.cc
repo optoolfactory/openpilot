@@ -43,7 +43,7 @@ DriveStats::DriveStats(QWidget* parent) : QFrame(parent) {
 
   add_stats_layouts("전체 주행", all_);
   main_layout->addStretch();
-  add_stats_layouts("지난 ", week_);
+  add_stats_layouts("지난 주", week_);
 
   QString OPKR_SERVER = QString::fromStdString(Params().get("OPKRServer"));
   QString TARGET_SERVER = "";
