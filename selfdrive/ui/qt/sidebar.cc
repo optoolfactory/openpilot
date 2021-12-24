@@ -96,9 +96,9 @@ void Sidebar::updateState(const UIState &s) {
   ItemStatus connectStatus;
   auto last_ping = deviceState.getLastAthenaPingTime();
   if (last_ping == 0) {
-    connectStatus = ItemStatus{"NETWORK\nOFFLINE", warning_color};
+    connectStatus = ItemStatus{"네트워크\n연결안됨", warning_color};
   } else {
-    connectStatus = nanos_since_boot() - last_ping < 80e9 ? ItemStatus{"NETWORK\nONLINE", good_color} : ItemStatus{"NETWORK\nERROR", danger_color};
+    connectStatus = nanos_since_boot() - last_ping < 80e9 ? ItemStatus{"네트워크\n연결됨", good_color} : ItemStatus{"네트워크\n에러", danger_color};
   }
   setProperty("connectStatus", QVariant::fromValue(connectStatus));
 
@@ -111,9 +111,9 @@ void Sidebar::updateState(const UIState &s) {
   }
   setProperty("tempStatus", QVariant::fromValue(ItemStatus{QString("%1℃").arg((int)deviceState.getAmbientTempC()), tempColor}));
 
-  ItemStatus pandaStatus = {"VEHICLE\nONLINE", good_color};
+  ItemStatus pandaStatus = {"판다\n연결됨", good_color};
   if (s.scene.pandaType == cereal::PandaState::PandaType::UNKNOWN) {
-    pandaStatus = {"NO\nPANDA", danger_color};
+    pandaStatus = {"판다\n연결안됨", danger_color};
   } else if (s.scene.started && !sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK() && s.scene.gpsAccuracyUblox != 0.00) {
     pandaStatus = {"ONLINE\nGPS Search", warning_color};
   } else if (s.scene.satelliteCount > 0) {
