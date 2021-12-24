@@ -152,7 +152,7 @@ GitHash::GitHash() : AbstractControl("Commit (Local/Remote)", "", "") {
   hlayout->addWidget(&remote_hash);
 }
 
-OpenpilotView::OpenpilotView() : AbstractControl("Driving Camera", "Preview the open pilot driving screen.", "") {
+OpenpilotView::OpenpilotView() : AbstractControl("오픈파일럿 주행화면 미리보기", "오픈파일럿 주행화면을 미리보기 합니다.", "") {
 
   // setup widget
   hlayout->addStretch(1);
@@ -185,9 +185,9 @@ void OpenpilotView::refresh() {
   bool param = params.getBool("IsOpenpilotViewEnabled");
   QString car_param = QString::fromStdString(params.get("CarParams"));
   if (param) {
-    btn.setText("UNVIEW");
+    btn.setText("미리보기해제");
   } else {
-    btn.setText("PREVIEW");
+    btn.setText("미리보기");
   }
   if (car_param.length()) {
     btn.setEnabled(false);
