@@ -5119,7 +5119,7 @@ void OCurvOffset::refresh() {
   btnplus.setText("＋");
 }
 
-GetOffAlert::GetOffAlert() : AbstractControl("EON Detach Alert Sound", "Device alert you a alarm to detach the EON when ignition off.(NO Alert/KOR/ENG)", "../assets/offroad/icon_shell.png") {
+GetOffAlert::GetOffAlert() : AbstractControl("이온 탈착 경고음", "시동이 꺼지면 장치가 이온을 분리하도록 경보를 알려줍니다.(알리지 않음/한국어/영어)", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
