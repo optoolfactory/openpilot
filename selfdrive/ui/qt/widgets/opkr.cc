@@ -5022,7 +5022,7 @@ void VCurvSpeed::refresh4() {
   btn4.setText("↕");
 }
 
-VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel(ModelSpeed: CarSpeed)", "Adjust the curve deceleration speed according to the model speed. (interpolation value)", "../assets/offroad/icon_shell.png") {
+VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("비전 곡선 감속(모델스피드:차스피드)", "모델 속도에 따라 커브 감속 속도를 조정합니다. (보간 값) ", "../assets/offroad/icon_shell.png") {
 
   btn.setStyleSheet(R"(
     padding: 0;
@@ -5624,7 +5624,7 @@ void RESCountatStandstill::refresh() {
   btnplus.setText("+");
 }
 
-SpeedLimitSignType::SpeedLimitSignType() : AbstractControl("SafetyCam SignType", "Select SafetyCam SignType (Circle/Rectangle)", "../assets/offroad/icon_shell.png") {
+SpeedLimitSignType::SpeedLimitSignType() : AbstractControl("과속카메라 표시 유형", "과속카메라 표시 유형을 선택하세요 (원/사각형)", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -5754,7 +5754,7 @@ void RadarLongHelperOption::refresh() {
   btnplus.setText("▶");
 }
 
-CurvDecelSelect::CurvDecelSelect() : AbstractControl("Curv Decel Option", "None, Vision+OSM, Vision Only, OSM Only", "../assets/offroad/icon_shell.png") {
+CurvDecelSelect::CurvDecelSelect() : AbstractControl("곡선 감속 옵션", "없음, 비전+OSM, 비전, OSM", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -5810,11 +5810,11 @@ CurvDecelSelect::CurvDecelSelect() : AbstractControl("Curv Decel Option", "None,
 void CurvDecelSelect::refresh() {
   QString option = QString::fromStdString(params.get("CurvDecelOption"));
   if (option == "0") {
-    label.setText(QString::fromStdString("None"));
+    label.setText(QString::fromStdString("없음"));
   } else if (option == "1") {
-    label.setText(QString::fromStdString("Vision+OSM"));
+    label.setText(QString::fromStdString("비전+OSM"));
   } else if (option == "2") {
-    label.setText(QString::fromStdString("Vision Only"));
+    label.setText(QString::fromStdString("비전"));
   } else {
     label.setText(QString::fromStdString("OSM Only"));
   }
