@@ -279,7 +279,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.startup: {
-    ET.PERMANENT: StartupAlert("오픈파일럿 사용준비가 되었습니다")
+    ET.PERMANENT: StartupAlert("오픈파일럿 사용준비가 되었습니다",
+                               "안전운전을 위해 항상 핸들을 잡고 도로교통 상황을 주시하세요",)
   },
 
   EventName.startupMaster: {
