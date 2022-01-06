@@ -25,7 +25,7 @@ PairingQRWidget::PairingQRWidget(QWidget* parent) : QWidget(parent) {
   main_layout->addWidget(qrCode, 0, Qt::AlignCenter);
 
   QTimer* timer = new QTimer(this);
-  timer->start(30 * 1000);
+  timer->start(5 * 60 * 1000);
   connect(timer, &QTimer::timeout, this, &PairingQRWidget::refresh);
 }
 
@@ -128,6 +128,7 @@ PrimeUserWidget::PrimeUserWidget(QWidget* parent) : QWidget(parent) {
     TARGET_SERVER = util::getenv("API_HOST", "https://api.retropilot.org").c_str();
   }
 
+  // set up API requests
   if (auto dongleId = getDongleId()) {
     QString url = TARGET_SERVER + "/v1/devices/" + *dongleId + "/owner";
     RequestRepeater *repeater = new RequestRepeater(this, url, "ApiCache_Owner", 6);
@@ -138,7 +139,7 @@ PrimeUserWidget::PrimeUserWidget(QWidget* parent) : QWidget(parent) {
 void PrimeUserWidget::replyFinished(const QString &response) {
   QJsonDocument doc = QJsonDocument::fromJson(response.toUtf8());
   if (doc.isNull()) {
-    qDebug() << "JSON Parse failed on getting username and points";
+    qDebug() << "JSON Parse failed on getting points";
     return;
   }
 
@@ -182,9 +183,13 @@ SetupWidget::SetupWidget(QWidget* parent) : QFrame(parent) {
 
   QWidget* finishRegistration = new QWidget;
   QVBoxLayout* finishRegistationLayout = new QVBoxLayout(finishRegistration);
-  finishRegistationLayout->setMargin(30);
-  finishRegistationLayout->setSpacing(10);
+  finishRegistationLayout->setMargin(0);
+  finishRegistationLayout->setSpacing(0);
 
+  QLabel* opkr = new QLabel("OPKR");
+  opkr->setStyleSheet("font-size: 85px;"); // TODO: fit width
+  finishRegistationLayout->addWidget(opkr, 0, Qt::AlignCenter);
+  finishRegistationLayout->addSpacing(35);
   QPixmap hkgpix("../assets/addon/img/hkg.png");
   QLabel *hkg = new QLabel();
   hkg->setPixmap(hkgpix.scaledToWidth(450, Qt::SmoothTransformation));
@@ -192,7 +197,7 @@ SetupWidget::SetupWidget(QWidget* parent) : QFrame(parent) {
   finishRegistationLayout->addWidget(hkg, 0, Qt::AlignCenter);
 
   QPushButton* finishButton = new QPushButton("Show QR Code");
-  finishButton->setFixedHeight(150);
+  finishButton->setFixedHeight(100);
   finishButton->setStyleSheet(R"(
     border-radius: 30px;
     font-size: 45px;
@@ -286,5 +291,20 @@ void SetupWidget::replyFinished(const QString &response, bool success) {
   if (doc.isNull()) {
     qDebug() << "JSON Parse failed on getting pairing and prime status";
     return;
+  }
+
+  QJsonObject json = doc.object();
+  if (!json["is_paired"].toBool() && !showQr) {
+    mainLayout->setCurrentIndex(0);
+  } else if (!json["is_paired"].toBool() && showQr) {
+    mainLayout->setCurrentIndex(1);
+  } else {
+    bool prime = json["prime"].toBool();
+
+    if (prime) {
+      mainLayout->setCurrentWidget(primeUser);
+    } else {
+      mainLayout->setCurrentWidget(primeAd);
+    }
   }
 }
