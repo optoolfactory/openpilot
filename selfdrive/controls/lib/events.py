@@ -1,5 +1,6 @@
+import os
 from enum import IntEnum
-from typing import Dict, Union, Callable
+from typing import Dict, Union, Callable, List, Optional
 
 from cereal import log, car
 import cereal.messaging as messaging
@@ -42,33 +43,33 @@ EVENT_NAME = {v: k for k, v in EventName.schema.enumerants.items()}
 
 class Events:
   def __init__(self):
-    self.events = []
-    self.static_events = []
+    self.events: List[int] = []
+    self.static_events: List[int] = []
     self.events_prev = dict.fromkeys(EVENTS.keys(), 0)
 
   @property
-  def names(self):
+  def names(self) -> List[int]:
     return self.events
 
-  def __len__(self):
+  def __len__(self) -> int:
     return len(self.events)
 
-  def add(self, event_name, static=False):
+  def add(self, event_name: int, static: bool=False) -> None:
     if static:
       self.static_events.append(event_name)
     self.events.append(event_name)
 
-  def clear(self):
+  def clear(self) -> None:
     self.events_prev = {k: (v + 1 if k in self.events else 0) for k, v in self.events_prev.items()}
     self.events = self.static_events.copy()
 
-  def any(self, event_type):
+  def any(self, event_type: str) -> bool:
     for e in self.events:
       if event_type in EVENTS.get(e, {}).keys():
         return True
     return False
 
-  def create_alerts(self, event_types, callback_args=None):
+  def create_alerts(self, event_types: List[str], callback_args=None):
     if callback_args is None:
       callback_args = []
 
@@ -129,7 +130,7 @@ class Alert:
     self.creation_delay = creation_delay
 
     self.alert_type = ""
-    self.event_type = None
+    self.event_type: Optional[str] = None
 
   def __str__(self) -> str:
     return f"{self.alert_text_1}/{self.alert_text_2} {self.priority} {self.visual_alert} {self.audible_alert}"
@@ -139,14 +140,14 @@ class Alert:
 
 
 class NoEntryAlert(Alert):
-  def __init__(self, alert_text_2, visual_alert=VisualAlert.none):
+  def __init__(self, alert_text_2: str, visual_alert: car.CarControl.HUDControl.VisualAlert=VisualAlert.none):
     super().__init__("openpilot Unavailable", alert_text_2, AlertStatus.normal,
                      AlertSize.mid, Priority.LOW, visual_alert,
                      AudibleAlert.refuse, 3.)
 
 
 class SoftDisableAlert(Alert):
-  def __init__(self, alert_text_2):
+  def __init__(self, alert_text_2: str):
     super().__init__("TAKE CONTROL IMMEDIATELY", alert_text_2,
                      AlertStatus.userPrompt, AlertSize.full,
                      Priority.MID, VisualAlert.steerRequired,
@@ -155,13 +156,13 @@ class SoftDisableAlert(Alert):
 
 # less harsh version of SoftDisable, where the condition is user-triggered
 class UserSoftDisableAlert(SoftDisableAlert):
-  def __init__(self, alert_text_2):
+  def __init__(self, alert_text_2: str):
     super().__init__(alert_text_2),
     self.alert_text_1 = "openpilot will disengage"
 
 
 class ImmediateDisableAlert(Alert):
-  def __init__(self, alert_text_2):
+  def __init__(self, alert_text_2: str):
     super().__init__("TAKE CONTROL IMMEDIATELY", alert_text_2,
                      AlertStatus.critical, AlertSize.full,
                      Priority.HIGHEST, VisualAlert.steerRequired,
@@ -260,12 +261,41 @@ def joystick_alert(CP: car.CarParams, sm: messaging.SubMaster, metric: bool, sof
   vals = f"Gas: {round(gb * 100.)}%, Steer: {round(steer * 100.)}%"
   return NormalPermanentAlert("Joystick Mode", vals)
 
-
+# opkr
+def can_error_alert(CP: car.CarParams, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
+  if os.path.isfile('/data/log/can_missing.txt'):
+    f = open('/data/log/can_missing.txt', 'r')
+    add = f.readline()
+    add_int = int(add, 0)
+    f.close()
+    return Alert(
+      "CAN Error: %s is missing\n Decimal Value : %d" % (add, add_int),
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .2)
+  elif os.path.isfile('/data/log/can_timeout.txt'):
+    f = open('/data/log/can_timeout.txt', 'r')
+    add = f.readline()
+    add_int = int(add, 0)
+    f.close()
+    return Alert(
+      "CAN Error: %s is timeout\n Decimal Value : %d" % (add, add_int),
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .2)
+  else:
+    return Alert(
+      "CAN Error: Need more to check in parser.cc",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .2)
 
 EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # ********** events with no alerts **********
 
   EventName.stockFcw: {},
+
+  EventName.lkasDisabled: {},
 
   # ********** events only containing alerts displayed in all states **********
 
@@ -882,12 +912,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # - CAN data is received, but some message are not received at the right frequency
   # If you're not writing a new car port, this is usually cause by faulty wiring
   EventName.canError: {
+    ET.PERMANENT: can_error_alert,
     ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("CAN Error: Check Connections"),
-    ET.PERMANENT: Alert(
-      "CAN Error: Check Connections",
-      "",
-      AlertStatus.normal, AlertSize.small,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, 1., creation_delay=1.),
+    # ET.PERMANENT: Alert(
+    #   "CAN Error: Check Connections",
+    #   "",
+    #   AlertStatus.normal, AlertSize.small,
+    #   Priority.LOW, VisualAlert.none, AudibleAlert.none, 1., creation_delay=1.),
     ET.NO_ENTRY: NoEntryAlert("CAN Error: Check Connections"),
   },
 
