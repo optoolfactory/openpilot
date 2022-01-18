@@ -507,6 +507,9 @@ class CarState(CarStateBase):
       ("ComfortBandUpper", "SCC14", 0),
       ("ComfortBandLower", "SCC14", 0),
 
+      ("CR_FCA_Alive", "FCA11", 0),
+      ("Supplemental_Counter", "FCA11", 0),
+
       ("UNIT", "TPMS11", 0),
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),
@@ -538,6 +541,8 @@ class CarState(CarStateBase):
       signals += [
         ("FCA_CmdAct", "FCA11", 0),
         ("CF_VSM_Warn", "FCA11", 0),
+        ("CR_FCA_Alive", "FCA11", 0),
+        ("Supplemental_Counter", "FCA11", 0),
       ]
       checks += [("FCA11", 50)]
 
