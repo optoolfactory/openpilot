@@ -659,7 +659,7 @@ class CarController():
           elif 0.5 < self.dRel < 5.0 and self.vRel < 0:
             accel = self.accel - (3.0 * DT_CTRL)
           elif 0.5 < self.dRel < 5.0:
-            accel = faccel
+            accel = min(-0.5, faccel)
           elif 0.5 < self.dRel:
             pass
           else:
