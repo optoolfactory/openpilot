@@ -86,13 +86,6 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       update_sample(&torque_driver, torque_driver_new);
     }
 
-    if (addr == 882 && !OP_SCC_live) { // disengage at not D gear for hev or ev
-      int geat_stat = (GET_BYTES_04(to_push) >> 16) & 0xf; // Elect gear stat
-      if (controls_allowed && geat_stat != 5) {
-        controls_allowed = 0;
-      }
-    }
-
     if (addr == 1056 && !OP_SCC_live) { // for cars without long control
       // 2 bits: 13-14
       int cruise_engaged = GET_BYTES_04(to_push) & 0x1; // ACC main_on signal
