@@ -102,6 +102,7 @@ class CarController():
     self.standstill_resume_alt = self.params.get_bool("StandstillResumeAlt")
     self.auto_res_delay = int(self.params.get("AutoRESDelay", encoding="utf8")) * 100
     self.auto_res_delay_timer = 0
+    selt.stopped = False
 
     self.longcontrol = CP.openpilotLongitudinalControl
     #self.scc_live is true because CP.radarOffCan is False
@@ -600,6 +601,7 @@ class CarController():
         faccel = actuators.accel if enabled else 0
         accel = actuators.oaccel if enabled else 0
         stopping = (actuators.longControlState == LongCtrlState.stopping)
+        radar_recog = (0 < CS.lead_distance <= 149)
         if 0 < CS.lead_distance <= 149 and self.radar_helper_option == 1:
           # neokii's logic, opkr mod
           stock_weight = 0.
@@ -658,18 +660,36 @@ class CarController():
               self.change_accel_fast = False
           elif 0.5 < self.dRel < 5.0 and self.vRel < 0:
             accel = self.accel - (3.0 * DT_CTRL)
-          elif 0.5 < self.dRel < 5.0:
+            self.stopped = False
+          elif 0.5 < self.dRel < 4.5:
             accel = min(-0.5, faccel)
+            if stopping:
+              self.stopped = True
+            else:
+              self.stopped = False
           elif 0.5 < self.dRel:
+            self.stopped = False
             pass
           else:
+            self.stopped = False
             accel = aReqValue
         elif 0 < CS.lead_distance <= 4.0: # use radar by force to stop anyway below 4.0m if lead car is detected.
           stock_weight = interp(CS.lead_distance, [2.5, 4.0], [1., 0.])
           accel = accel * (1. - stock_weight) + aReqValue * stock_weight
-        elif 1.0 < self.dRel < 5.0 and self.vRel < 0:
+        elif 0.5 < self.dRel < 5.0 and self.vRel < 0:
           accel = self.accel - (3.0 * DT_CTRL)
+          self.stopped = False
+        elif 0.5 < self.dRel < 5.0:
+          accel = min(-0.5, faccel)
+          if stopping:
+            self.stopped = True
+          else:
+            self.stopped = False
+        elif 0.5 < self.dRel:
+          self.stopped = False
+          pass
         else:
+          self.stopped = False
           stock_weight = 0.
         accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
         self.aq_value = accel
@@ -677,10 +697,10 @@ class CarController():
          self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.acc_standstill, self.gapsettingdance, CS.scc11))
         if (CS.brake_check or CS.cancel_check) and self.car_fingerprint != CAR.NIRO_EV:
           can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, 1, 
-           CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, stopping, self.acc_standstill, CS.scc12))
+           CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
         else:
           can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, CS.out.brakePressed, 
-           CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, stopping, self.acc_standstill, CS.scc12))
+           CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
         can_sends.append(create_scc14(self.packer, enabled, CS.scc14, CS.out.stockAeb, lead_visible, self.dRel, 
          CS.out.vEgo, self.acc_standstill, self.car_fingerprint))
         self.accel = accel
