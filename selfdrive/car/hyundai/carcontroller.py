@@ -641,7 +641,7 @@ class CarController():
               elif aReqValue < 0 and accel > 0 and accel - aReqValue > 0.3:
                 self.change_accel_fast = True
               elif CS.lead_distance >= 8.0 and aReqValue < 0 and lead_objspd < 0: # adjusting deceleration
-                accel = aReqValue * interp(abs(lead_objspd), [0, 10, 20, 30, 40], [0.9, 1.0, 1.2, 1.6, 1.0])
+                accel = aReqValue * interp(abs(lead_objspd), [0, 10, 20, 30, 40], [0.9, 1.0, 1.3, 1.6, 1.0])
                 self.keep_decel_on = False
                 self.change_accel_fast = False
               else:
