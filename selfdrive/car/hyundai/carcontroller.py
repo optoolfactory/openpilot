@@ -102,7 +102,7 @@ class CarController():
     self.standstill_resume_alt = self.params.get_bool("StandstillResumeAlt")
     self.auto_res_delay = int(self.params.get("AutoRESDelay", encoding="utf8")) * 100
     self.auto_res_delay_timer = 0
-    selt.stopped = False
+    self.stopped = False
 
     self.longcontrol = CP.openpilotLongitudinalControl
     #self.scc_live is true because CP.radarOffCan is False
