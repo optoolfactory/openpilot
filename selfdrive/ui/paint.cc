@@ -1,6 +1,7 @@
 #include "selfdrive/ui/paint.h"
 
 #include <cassert>
+#include <cmath>
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -1152,31 +1153,31 @@ static void draw_compass(UIState *s) {
     ui_draw_text(s, rect.centerX(), rect.centerY()+from_center, "S", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX(), rect.centerY()-from_center, "N", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     if (337.5 < s->scene.bearingUblox || s->scene.bearingUblox <= 22.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "N", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "N", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 67.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "NE", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NE", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 112.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "E", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "E", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 157.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "SE", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SE", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 202.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "S", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "S", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 247.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "SW", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 292.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "W", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "W", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 337.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "NW", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NW", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
     }
-    ui_draw_text(s, rect.centerX(), rect.centerY()+17, degree, 38, COLOR_WHITE_ALPHA(200), "sans-bold");
+    ui_draw_text(s, rect.centerX(), rect.centerY()+16, degree, 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     float niddle_rotation = s->scene.bearingUblox/180*3.141592;
     nvgSave(s->vg);
     nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
     nvgRotate(s->vg, niddle_rotation);
     nvgFontFace(s->vg, "sans-bold");
-    nvgFontSize(s->vg, 72);
+    nvgFontSize(s->vg, 70);
     nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
-    nvgText(s->vg, 50*cos(s->scene.bearingUblox), 50*sin(s->scene.bearingUblox), "^", NULL);
+    nvgText(s->vg, 50*sin(s->scene.bearingUblox), 50*cos(s->scene.bearingUblox), "^", NULL);
     nvgRestore(s->vg);
   }
 }
