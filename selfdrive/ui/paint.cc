@@ -1137,7 +1137,8 @@ static void draw_safetysign(UIState *s) {
 
 static void draw_compass(UIState *s) {
   //draw compass by opkr
-  if (s->scene.gpsAccuracyUblox != 0.00) {
+  //if (s->scene.gpsAccuracyUblox != 0.00) {
+  if (true) {
     const int compass_size = 140;
     const int compass_x = s->fb_w - compass_size - 35;
     const int compass_y = 1080 - compass_size - 35;
@@ -1149,14 +1150,36 @@ static void draw_compass(UIState *s) {
     ui_draw_text(s, rect.centerX()-from_center, rect.centerY(), "W", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX(), rect.centerY()+from_center, "S", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX(), rect.centerY()-from_center, "N", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
-    float niddle_rotation = s->scene.bearingUblox/180*3.141592;
+    if (337.5 < s->scene.bearingUblox || s->scene.bearingUblox <= 22.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "N", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 67.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "NE", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 112.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "E", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 157.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "SE", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 202.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "S", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 247.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "SW", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 292.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "W", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 337.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY(), "NW", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    } else {
+      nvgText(s->vg, 0, 0, "-", NULL);
+    }
+    float tv = 30; // test
+    //float niddle_rotation = s->scene.bearingUblox/180*3.141592;
+    float niddle_rotation = tv/180*3.141592;
     nvgSave( s->vg );
     nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
     nvgRotate(s->vg, niddle_rotation);
     nvgFontFace(s->vg, "sans-bold");
     nvgFontSize(s->vg, 72);
-    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
-    nvgText(s->vg, 0, 0, "^", NULL);
+    nvgFillColor(s->vg, COLOR_GREEN_ALPHA(200));
+    //nvgText(s->vg, 60*cos(s->scene.bearingUblox), 60*sin(s->scene.bearingUblox), "▲", NULL);
+    nvgText(s->vg, 60*cos(tv), 60*sin(tv), "▲", NULL);
     nvgRestore(s->vg);
   }
 }
