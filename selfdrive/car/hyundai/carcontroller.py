@@ -617,15 +617,15 @@ class CarController():
         elif self.radar_helper_option == 2:
           if 0 < CS.lead_distance <= 149:
             if self.stopping_dist_adj_enabled:
-              if CS.clu_Vanz < 9 and 5.0 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel < 0 and not self.adjacent_accel_enabled:
-                self.adjacent_accel = min(-0.3, self.accel*0.6)
+              if CS.clu_Vanz < 9 and 4.5 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel < 0 and not self.adjacent_accel_enabled:
+                self.adjacent_accel = min(-0.3, self.accel*0.5)
                 self.adjacent_accel_enabled = True
-              if CS.clu_Vanz < 9 and 5.0 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel < self.adjacent_accel:
+              if CS.clu_Vanz < 9 and 4.5 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel < self.adjacent_accel:
                 accel = self.accel + (3.0 * DT_CTRL)
-              elif CS.clu_Vanz < 9 and 5.0 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel >= self.adjacent_accel:
+              elif CS.clu_Vanz < 9 and 4.5 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel >= self.adjacent_accel:
                 accel = self.accel
-              elif CS.lead_distance <= 5.0 and aReqValue < 0 and -5 < lead_objspd and self.accel > aReqValue:
-                accel = self.accel - (DT_CTRL * clip(CS.out.vEgo, 1.0, 3.0))
+              elif CS.lead_distance <= 4.5 and aReqValue < 0 and -5 < lead_objspd and self.accel > aReqValue:
+                accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*0.9, 1.0, 3.0))
                 self.adjacent_accel = 0
                 self.adjacent_accel_enabled = False
               elif accel < 0 and self.keep_decel_on:
@@ -646,8 +646,8 @@ class CarController():
                 accel = aReqValue * interp(abs(lead_objspd), [0, 10, 20, 30, 40], [0.85, 1.1, 1.3, 1.6, 1.0]) * interp(CS.clu_Vanz, [30, 60], [1.0, 1.2])
                 self.keep_decel_on = False
                 self.change_accel_fast = False
-              elif CS.lead_distance < 8.0 and aReqValue > 0 and lead_objspd > 0 and aReqValue - accel > 0.8:
-                accel = (aReqValue + accel) / 2
+              elif CS.lead_distance < 17.0 and aReqValue > 0 and lead_objspd > 0 and aReqValue - accel > 0.8:
+                accel = (aReqValue + accel) / 2.5
                 self.keep_decel_on = False
                 self.change_accel_fast = False
               else:
@@ -663,7 +663,7 @@ class CarController():
               self.keep_decel_on = False
               self.change_accel_fast = False
           elif 0.5 < self.dRel < 5.5 and self.vRel < 0:
-            accel = self.accel - (DT_CTRL * clip(CS.out.vEgo, 1.0, 3.5))
+            accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*1.1, 1.0, 3.5))
             self.stopped = False
           elif 0.5 < self.dRel < 5.0:
             accel = min(-0.5, faccel)
@@ -681,7 +681,7 @@ class CarController():
           stock_weight = interp(CS.lead_distance, [2.5, 4.0], [1., 0.])
           accel = accel * (1. - stock_weight) + aReqValue * stock_weight
         elif 0.5 < self.dRel < 5.5 and self.vRel < 0:
-          accel = self.accel - (DT_CTRL * clip(CS.out.vEgo, 1.0, 3.5))
+          accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*1.1, 1.0, 3.5))
           self.stopped = False
         elif 0.5 < self.dRel < 5.0:
           accel = min(-0.5, faccel)
@@ -698,7 +698,7 @@ class CarController():
         accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
         self.aq_value = accel
         can_sends.append(create_scc11(self.packer, frame, set_speed, lead_visible, self.scc_live, self.dRel, self.vRel, self.yRel, 
-         self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.acc_standstill, self.gapsettingdance, CS.scc11))
+         self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.acc_standstill, self.gapsettingdance, self.stopped, radar_recog, CS.scc11))
         if (CS.brake_check or CS.cancel_check) and self.car_fingerprint != CAR.NIRO_EV:
           can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, 1, 
            CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
