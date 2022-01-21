@@ -1154,19 +1154,19 @@ static void draw_compass(UIState *s) {
     if (337.5 < s->scene.bearingUblox || s->scene.bearingUblox <= 22.5) {
       ui_draw_text(s, rect.centerX(), rect.centerY()-17, "N", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 67.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "NE", 40, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "NE", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 112.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "E", 40, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "E", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 157.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "SE", 40, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "SE", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 202.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "S", 40, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "S", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 247.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "SW", 40, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "SW", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 292.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "W", 40, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "W", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 337.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "NW", 40, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-17, "NW", 42, COLOR_GREEN_ALPHA(200), "sans-bold");
     }
     ui_draw_text(s, rect.centerX(), rect.centerY()+17, degree, 38, COLOR_WHITE_ALPHA(200), "sans-bold");
     float niddle_rotation = s->scene.bearingUblox/180*3.141592;
