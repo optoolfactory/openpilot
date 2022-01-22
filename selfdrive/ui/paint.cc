@@ -1143,36 +1143,36 @@ static void draw_compass(UIState *s) {
     const int compass_size = 140;
     const int compass_x = s->fb_w - compass_size - 35;
     const int compass_y = 1080 - compass_size - 35;
-    const int from_center = 55;
+    const int from_center = 58;
     const Rect rect = {compass_x, compass_y, compass_size, compass_size};
     char degree[64];
     snprintf(degree, sizeof(degree), "%.0f", s->scene.bearingUblox);
     ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(0), 0, 0);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-    ui_draw_text(s, rect.centerX()+from_center, rect.centerY(), "E", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
-    ui_draw_text(s, rect.centerX()-from_center, rect.centerY(), "W", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
-    ui_draw_text(s, rect.centerX(), rect.centerY()+from_center, "S", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
-    ui_draw_text(s, rect.centerX(), rect.centerY()-from_center, "N", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    ui_draw_text(s, rect.centerX()+from_center, rect.centerY(), "E", 35, COLOR_WHITE_ALPHA(200), "sans-bold");
+    ui_draw_text(s, rect.centerX()-from_center, rect.centerY(), "W", 35, COLOR_WHITE_ALPHA(200), "sans-bold");
+    ui_draw_text(s, rect.centerX(), rect.centerY()+from_center, "S", 35, COLOR_WHITE_ALPHA(200), "sans-bold");
+    ui_draw_text(s, rect.centerX(), rect.centerY()-from_center, "N", 35, COLOR_WHITE_ALPHA(200), "sans-bold");
     if (337.5 < s->scene.bearingUblox || s->scene.bearingUblox <= 22.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "N", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 67.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NE", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NE", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 112.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "E", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "E", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 157.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SE", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SE", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 202.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "S", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "S", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 247.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 292.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "W", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "W", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 337.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NW", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NW", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     }
-    ui_draw_text(s, rect.centerX(), rect.centerY()+16, degree, 43, COLOR_WHITE_ALPHA(200), "sans-bold");
+    ui_draw_text(s, rect.centerX(), rect.centerY()+18, degree, 50, COLOR_WHITE_ALPHA(200), "sans-bold");
     //float niddle_rotation = s->scene.bearingUblox/180*3.141592;
-    float niddle_rotation = 90.0/180*3.141592;
+    float niddle_rotation = 180.0/180*3.141592;
     nvgSave(s->vg);
     nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
     nvgRotate(s->vg, niddle_rotation);
