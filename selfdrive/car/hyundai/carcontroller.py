@@ -550,12 +550,24 @@ class CarController():
         self.lead_debounce -= 1
       else:
         self.lead_visible = lead_visible
-
-      if (frame % 100) == 0:
-        can_sends.append(create_scc7d0(b'\x02\x10\x85\x00\x00\x00\x00\x00')) # off
+      self.radarDisableOverlapTimer += 1
+      if self.radarDisableOverlapTimer >= 30:
         self.radarDisableActivated = True
+        if 200 > self.radarDisableOverlapTimer > 36:
+          if frame % 41 == 0 or self.radarDisableOverlapTimer == 37:
+            can_sends.append(create_scc7d0(b'\x02\x10\x03\x00\x00\x00\x00\x00'))
+          elif frame % 43 == 0 or self.radarDisableOverlapTimer == 37:
+            can_sends.append(create_scc7d0(b'\x03\x28\x03\x01\x00\x00\x00\x00'))
+          elif frame % 19 == 0 or self.radarDisableOverlapTimer == 37:
+            can_sends.append(create_scc7d0(b'\x02\x10\x85\x00\x00\x00\x00\x00')) # off
       else:
         self.counter_init = False
+        can_sends.append(create_scc7d0(b'\x02\x10\x90\x00\x00\x00\x00\x00')) # on
+        can_sends.append(create_scc7d0(b'\x03\x29\x03\x01\x00\x00\x00\x00'))
+      if (frame % 50 == 0 or self.radarDisableOverlapTimer == 37) and self.radarDisableOverlapTimer >= 30:
+        can_sends.append(create_scc7d0(b'\x02\x3E\x00\x00\x00\x00\x00\x00'))
+      if self.radarDisableOverlapTimer > 200:
+        self.radarDisableOverlapTimer = 200
       if self.lead_visible:
         self.objdiststat = 1 if self.dRel < 25 else 2 if self.dRel < 40 else 3 if self.dRel < 60 else 4 if self.dRel < 80 else 5
       else:
