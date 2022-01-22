@@ -1172,14 +1172,14 @@ static void draw_compass(UIState *s) {
     }
     ui_draw_text(s, rect.centerX(), rect.centerY()+16, degree, 43, COLOR_WHITE_ALPHA(200), "sans-bold");
     //float niddle_rotation = s->scene.bearingUblox/180*3.141592;
-    float niddle_rotation = 270/180*3.141592;
+    float niddle_rotation = 0.0/180*3.141592;
     nvgSave(s->vg);
     nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
     nvgRotate(s->vg, niddle_rotation);
     nvgFontFace(s->vg, "sans-bold");
     nvgFontSize(s->vg, 70);
     nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
-    nvgText(s->vg, -50, -50, "^", NULL);
+    nvgText(s->vg, 0, 50, "^", NULL);
     nvgRestore(s->vg);
   }
 }
