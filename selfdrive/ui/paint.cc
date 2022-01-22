@@ -1138,8 +1138,7 @@ static void draw_safetysign(UIState *s) {
 
 static void draw_compass(UIState *s) {
   //draw compass by opkr
-  //if (s->scene.gpsAccuracyUblox != 0.00) {
-  if (true) {
+  if (s->scene.gpsAccuracyUblox != 0.00) {
     const int compass_size = 140;
     const int compass_x = s->fb_w - compass_size - 35;
     const int compass_y = 1080 - compass_size - 35;
@@ -1154,7 +1153,7 @@ static void draw_compass(UIState *s) {
     ui_draw_text(s, rect.centerX(), rect.centerY()+from_center, "S", 35, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX(), rect.centerY()-from_center, "N", 35, COLOR_WHITE_ALPHA(200), "sans-bold");
     if (337.5 < s->scene.bearingUblox || s->scene.bearingUblox <= 22.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "N", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 67.5) {
       ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NE", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 112.5) {
@@ -1171,15 +1170,14 @@ static void draw_compass(UIState *s) {
       ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NW", 55, COLOR_GREEN_ALPHA(200), "sans-bold");
     }
     ui_draw_text(s, rect.centerX(), rect.centerY()+18, degree, 50, COLOR_WHITE_ALPHA(200), "sans-bold");
-    //float niddle_rotation = s->scene.bearingUblox/180*3.141592;
-    float niddle_rotation = 0.0/180*3.141592;
+    float niddle_rotation = s->scene.bearingUblox/180*3.141592;
     nvgSave(s->vg);
     nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
     nvgRotate(s->vg, niddle_rotation);
     nvgFontFace(s->vg, "sans-bold");
     nvgFontSize(s->vg, 80);
     nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
-    nvgText(s->vg, 0, -40, "^", NULL);
+    nvgText(s->vg, 0, -43, "^", NULL);
     nvgRestore(s->vg);
   }
 }
