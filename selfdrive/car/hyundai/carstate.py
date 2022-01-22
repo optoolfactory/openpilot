@@ -491,6 +491,7 @@ class CarState(CarStateBase):
       signals += [
         ("MainMode_ACC", "SCC11", 0),
         ("VSetDis", "SCC11", 0),
+        ("TauGapSet", "SCC11", 4),
         ("SCCInfoDisplay", "SCC11", 0),
         ("ACC_ObjStatus", "SCC11", 0),
         ("ACC_ObjDist", "SCC11", 0),
