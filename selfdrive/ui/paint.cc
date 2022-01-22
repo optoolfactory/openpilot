@@ -1,6 +1,7 @@
 #include "selfdrive/ui/paint.h"
 
 #include <cassert>
+#include <cmath>
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -180,8 +181,13 @@ static void ui_draw_vision_lane_lines(UIState *s) {
       track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
         COLOR_BLACK_ALPHA(80), COLOR_BLACK_ALPHA(20));
     } else {
-      track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
-        nvgRGBA(red_lvl, green_lvl, 0, 150), nvgRGBA((int)(0.7*red_lvl), (int)(0.7*green_lvl), 0, 20));
+      if (!scene.lateralPlan.lanelessModeStatus) {
+        track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
+          nvgRGBA(red_lvl, green_lvl, 0, 160), nvgRGBA((int)(0.7*red_lvl), (int)(0.7*green_lvl), 0, 30));
+      } else {
+        track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
+          nvgRGBA(red_lvl, 150, green_lvl, 160), nvgRGBA((int)(0.7*red_lvl), 150, (int)(0.7*green_lvl), 30));
+      }
     }
   } else {
     // Draw white vision track
@@ -1085,17 +1091,18 @@ static void draw_safetysign(UIState *s) {
   }
 
   if (safety_speed > 19 && !s->scene.comma_stock_ui) {
+    nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
     if (s->scene.speedlimit_signtype) {
       ui_fill_rect(s->vg, rect_si, COLOR_WHITE_ALPHA(200/sl_opacity), 16.);
       ui_draw_rect(s->vg, rect_s, COLOR_BLACK_ALPHA(200/sl_opacity), 9, 17.);
       ui_draw_rect(s->vg, rect_so, COLOR_WHITE_ALPHA(200/sl_opacity), 6, 20.);
-      ui_draw_text(s, rect_s.centerX(), rect_s.centerY()-45, "SPEED", 55, COLOR_BLACK_ALPHA(200/sl_opacity), "sans-bold");
-      ui_draw_text(s, rect_s.centerX(), rect_s.centerY()-10, "LIMIT", 55, COLOR_BLACK_ALPHA(200/sl_opacity), "sans-bold");
+      ui_draw_text(s, rect_s.centerX(), rect_s.centerY()-55, "SPEED", 55, COLOR_BLACK_ALPHA(200/sl_opacity), "sans-bold");
+      ui_draw_text(s, rect_s.centerX(), rect_s.centerY()-20, "LIMIT", 55, COLOR_BLACK_ALPHA(200/sl_opacity), "sans-bold");
     } else {
       ui_fill_rect(s->vg, rect_si, COLOR_WHITE_ALPHA(200/sl_opacity), diameter2/2);
       ui_draw_rect(s->vg, rect_s, COLOR_RED_ALPHA(200/sl_opacity), 20, diameter/2);
     }
-    nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+
     if (safety_speed < 100) {
       if (s->scene.speedlimit_signtype) {
         ui_draw_text(s, rect_s.centerX(), rect_s.centerY()+35, safetySpeed, 140, COLOR_BLACK_ALPHA(200/sl_opacity), "sans-bold");
@@ -1135,23 +1142,43 @@ static void draw_compass(UIState *s) {
     const int compass_size = 140;
     const int compass_x = s->fb_w - compass_size - 35;
     const int compass_y = 1080 - compass_size - 35;
-    const int from_center = 55;    
+    const int from_center = 55;
     const Rect rect = {compass_x, compass_y, compass_size, compass_size};
+    char degree[64];
+    snprintf(degree, sizeof(degree), "%.0f", s->scene.bearingUblox);
     ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(0), 0, 0);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
     ui_draw_text(s, rect.centerX()+from_center, rect.centerY(), "E", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX()-from_center, rect.centerY(), "W", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX(), rect.centerY()+from_center, "S", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX(), rect.centerY()-from_center, "N", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
-    float niddle_rotation = s->scene.bearingUblox/180*3.141592;
-    nvgSave( s->vg );
-    nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
-    nvgRotate(s->vg, niddle_rotation);
-    nvgFontFace(s->vg, "sans-bold");
-    nvgFontSize(s->vg, 72);
-    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
-    nvgText(s->vg, 0, 0, "^", NULL);
-    nvgRestore(s->vg);
+    if (337.5 < s->scene.bearingUblox || s->scene.bearingUblox <= 22.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "N", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 67.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NE", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 112.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "E", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 157.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SE", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 202.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "S", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 247.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 292.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "W", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    } else if (s->scene.bearingUblox <= 337.5) {
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NW", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+    }
+    ui_draw_text(s, rect.centerX(), rect.centerY()+16, degree, 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    //float niddle_rotation = s->scene.bearingUblox/180*3.141592;
+    //nvgSave(s->vg);
+    //nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
+    //nvgRotate(s->vg, niddle_rotation);
+    //nvgFontFace(s->vg, "sans-bold");
+    //nvgFontSize(s->vg, 70);
+    //nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
+    //nvgText(s->vg, 50*sin(s->scene.bearingUblox), 50*cos(s->scene.bearingUblox), "^", NULL);
+    //nvgRestore(s->vg);
   }
 }
 
@@ -1199,23 +1226,65 @@ static void draw_laneless_button(UIState *s) {
   nvgStrokeWidth(s->vg, 6);
   nvgStroke(s->vg);
   nvgFontSize(s->vg, 55);
-  if (s->scene.lateralPlan.lanelessModeStatus) {
-    NVGcolor fillColor = nvgRGBA(0,255,0,80);
-    nvgFillColor(s->vg, fillColor);
+  if (!s->scene.lateralPlan.lanelessModeStatus) {
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, btn_xc1-21, btn_yc-57);
+    nvgLineTo(s->vg, btn_xc1-31, btn_yc-57);
+    nvgLineTo(s->vg, btn_xc1-36, btn_yc-9);
+    nvgLineTo(s->vg, btn_xc1-26, btn_yc-9);
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
+    nvgFill(s->vg);
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, btn_xc1-28, btn_yc+5);
+    nvgLineTo(s->vg, btn_xc1-38, btn_yc+5);
+    nvgLineTo(s->vg, btn_xc1-43, btn_yc+50);
+    nvgLineTo(s->vg, btn_xc1-33, btn_yc+50);
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
+    nvgFill(s->vg);
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, btn_xc1+21, btn_yc-57);
+    nvgLineTo(s->vg, btn_xc1+31, btn_yc-57);
+    nvgLineTo(s->vg, btn_xc1+36, btn_yc-9);
+    nvgLineTo(s->vg, btn_xc1+26, btn_yc-9);
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
+    nvgFill(s->vg);
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, btn_xc1+28, btn_yc+5);
+    nvgLineTo(s->vg, btn_xc1+38, btn_yc+5);
+    nvgLineTo(s->vg, btn_xc1+43, btn_yc+50);
+    nvgLineTo(s->vg, btn_xc1+33, btn_yc+50);
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
     nvgFill(s->vg);
   }
   nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
   if (s->scene.laneless_mode == 0) {
-    nvgFontSize(s->vg, 50);
-    nvgText(s->vg,btn_xc1,btn_yc-17,"LANE",NULL);
-    nvgText(s->vg,btn_xc1,btn_yc+17,"LINE",NULL);
+    nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
+    nvgFontSize(s->vg, 46);
+    nvgText(s->vg,btn_xc1,btn_yc-42,"L",NULL);
+    nvgText(s->vg,btn_xc1,btn_yc-14,"A",NULL);
+    nvgText(s->vg,btn_xc1,btn_yc+13,"N",NULL);
+    nvgText(s->vg,btn_xc1,btn_yc+41,"E",NULL);
   } else if (s->scene.laneless_mode == 1) {
     nvgFontSize(s->vg, 50);
     nvgText(s->vg,btn_xc1,btn_yc-17,"LANE",NULL);
     nvgText(s->vg,btn_xc1,btn_yc+17,"LESS",NULL);
   } else if (s->scene.laneless_mode == 2) {
-    nvgText(s->vg,btn_xc1,btn_yc,"AUTO",NULL);
+    if (!s->scene.lateralPlan.lanelessModeStatus) {
+      nvgFillColor(s->vg, nvgRGBA(0,255,0,150));
+    } else {
+      nvgFillColor(s->vg, nvgRGBA(0,150,255,150));
+    }
+    nvgFontSize(s->vg, 46);
+    nvgText(s->vg,btn_xc1,btn_yc-42,"A",NULL);
+    nvgText(s->vg,btn_xc1,btn_yc-14,"U",NULL);
+    nvgText(s->vg,btn_xc1,btn_yc+13,"T",NULL);
+    nvgText(s->vg,btn_xc1,btn_yc+41,"O",NULL);
   }
+  nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
 }
 
 static void ui_draw_vision_header(UIState *s) {

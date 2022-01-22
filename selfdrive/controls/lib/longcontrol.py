@@ -33,8 +33,7 @@ def long_control_state_trans(CP, active, long_control_state, v_ego, v_target_fut
 
   else:
     if long_control_state == LongCtrlState.off:
-      if active:
-        long_control_state = LongCtrlState.pid
+      long_control_state = LongCtrlState.pid
 
     elif long_control_state == LongCtrlState.pid:
       if stopping_condition:
@@ -120,14 +119,14 @@ class LongControl():
       if 1 < CS.radarDistance <= 149:
         stop = True if (dRel <= 3.5 and radarState.leadOne.status) else False
       else:
-        stop = True if (dRel < 5.5 and radarState.leadOne.status) else False
+        stop = True if (dRel < 5.0 and radarState.leadOne.status) else False
     else:
       stop = False
     self.long_control_state = long_control_state_trans(CP, active, self.long_control_state, CS.vEgo,
                                                        v_target_future, CS.brakePressed,
                                                        CS.cruiseState.standstill, stop, CS.gasPressed)
 
-    if (self.long_control_state == LongCtrlState.off or (CS.brakePressed or CS.gasPressed)) and self.candidate not in [CAR.NIRO_EV]:
+    if (self.long_control_state == LongCtrlState.off or (CS.brakePressed or CS.gasPressed)) and self.candidate != CAR.NIRO_EV:
       self.pid.reset()
       output_accel = 0.
     elif self.long_control_state == LongCtrlState.off or CS.gasPressed:
@@ -166,8 +165,8 @@ class LongControl():
       # Keep applying brakes until the car is stopped
       if not CS.standstill or output_accel > CP.stopAccel:
         output_accel -= CP.stoppingDecelRate * DT_CTRL
-      # elif CS.cruiseState.standstill and output_accel < -0.5: # loosen brake at standstill, to mitigate load of brake
-      #   output_accel += CP.stoppingDecelRate * DT_CTRL
+      elif CS.standstill and output_accel < -0.5: # loosen brake at standstill, to mitigate load of brake
+        output_accel += CP.stoppingDecelRate * DT_CTRL
       output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
       self.reset(CS.vEgo)
 
@@ -200,4 +199,4 @@ class LongControl():
       str_log3 = 'LS={:s}  LP={:s}  AQ/FA={:+04.2f}/{:+04.2f}  GS={}  ED/RD={:04.1f}/{:04.1f}  TG={:04.2f}/{:04.2f}/{:+04.2f}'.format(self.long_stat, self.long_plan_source, CP.aqValue, final_accel, int(CS.gasPressed), dRel, CS.radarDistance, v_target, v_target_future, a_target)
       trace1.printf2('{}'.format(str_log3))
 
-    return final_accel
+    return final_accel, a_target

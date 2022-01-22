@@ -500,11 +500,26 @@ if Params().get_bool("FingerprintTwoSet"):
       (Ecu.transmission, 0x7e1, None): [b'\xf1\x816U2V8051\x00\x00\xf1\x006U2V0_C2\x00\x006U2V8051\x00\x00DJF0T16NL0\t\xd2GW',],
     },
     CAR.K5_HEV: {
-      (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00DEhe SCC H-CUP      1.01 1.02 96400-G5100         ',],
-      (Ecu.engine, 0x7e0, None): [b'\xf1\x816H6F4051\x00\x00\x00\x00\x00\x00\x00\x00',],
-      (Ecu.eps, 0x7d4, None): [b'\xf1\x00DE  MDPS C 1.00 1.09 56310G5301\x00 4DEHC109',],
-      (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00DEP MFC  AT USA LHD 1.00 1.01 95740-G5010 170424',],
-      (Ecu.transmission, 0x7e1, None): [b"\xf1\x816U3J2051\x00\x00\xf1\x006U3H0_C2\x00\x006U3J2051\x00\x00PDE0G16NS2\xf4'\\\x91",],
+      (Ecu.fwdRadar, 0x7d0, None): [
+        b'\xf1\x00DEhe SCC H-CUP      1.01 1.02 96400-G5100         ',
+        b'\xf1\x00JFhe SCC F-CUP      1.00 1.00 96400-A8000         ',
+      ],
+      (Ecu.engine, 0x7e0, None): [
+        b'\xf1\x816H6F4051\x00\x00\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x816H673051\x00\x00\x00\x00\x00\x00\x00\x00',
+      ],
+      (Ecu.eps, 0x7d4, None): [
+        b'\xf1\x00DE  MDPS C 1.00 1.09 56310G5301\x00 4DEHC109',
+        b'\xf1\x00JF  MDPS C 1.00 1.02 56310-XX000\x00 4JFHC102',
+      ],
+      (Ecu.fwdCamera, 0x7c4, None): [
+        b'\xf1\x00DEP MFC  AT USA LHD 1.00 1.01 95740-G5010 170424',
+        b'\xf1\x00JFP MFC  AT EUR LHD 1.00 1.03 95895-A8100 180608',
+      ],
+      (Ecu.transmission, 0x7e1, None): [
+        b"\xf1\x816U3J2051\x00\x00\xf1\x006U3H0_C2\x00\x006U3J2051\x00\x00PDE0G16NS2\xf4'\\\x91",
+        b"\xf1\x816T7B0051\x00\x00\xf1\x006T7B0_C2\x00\x006T7B0051\x00\x00TJF2H20KA0\xf4'\\\x91",
+      ],
     },
     CAR.STINGER: {
       (Ecu.fwdRadar, 0x7d0, None): [ b'\xf1\x00CK__ SCC F_CUP      1.00 1.01 96400-J5100         \xf1\xa01.01',],

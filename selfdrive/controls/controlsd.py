@@ -274,7 +274,7 @@ class Controls:
     #  self.events.add(EventName.highCpuUsage)
 
     # Alert if fan isn't spinning for 5 seconds
-    if self.sm['pandaState'].pandaType in [PandaType.uno, PandaType.dos]:
+    if self.sm['pandaState'].pandaType in (PandaType.uno, PandaType.dos):
       if self.sm['pandaState'].fanSpeedRpm == 0 and self.sm['deviceState'].fanSpeedPercentDesired > 50:
         if (self.sm.frame - self.last_functional_fan_frame) * DT_CTRL > 5.0:
           self.events.add(EventName.fanMalfunction)
@@ -306,8 +306,8 @@ class Controls:
             self.events.add(EventName.preLaneChangeRight)
           else:
             self.events.add(EventName.laneChange)
-    elif self.sm['lateralPlan'].laneChangeState in [LaneChangeState.laneChangeStarting,
-                                                 LaneChangeState.laneChangeFinishing]:
+    elif self.sm['lateralPlan'].laneChangeState in (LaneChangeState.laneChangeStarting,
+                                                 LaneChangeState.laneChangeFinishing):
       self.events.add(EventName.laneChange)
 
     if self.can_rcv_error or not CS.canValid and self.ignore_can_error_on_isg and CS.vEgo > 1:
@@ -387,7 +387,7 @@ class Controls:
         except UnicodeDecodeError:
           pass
 
-      for err in ["ERROR_CRC", "ERROR_ECC", "ERROR_STREAM_UNDERFLOW", "APPLY FAILED"]:
+      for err in ("ERROR_CRC", "ERROR_ECC", "ERROR_STREAM_UNDERFLOW", "APPLY FAILED"):
         for m in messages:
           if err not in m:
             continue
@@ -440,12 +440,13 @@ class Controls:
 
     self.sm.update(0)
 
-    all_valid = CS.canValid and self.sm.all_alive_and_valid()
-    if not self.initialized and (all_valid or self.sm.frame * DT_CTRL > 3.5 or SIMULATION):
-      if not self.read_only:
-        self.CI.init(self.CP, self.can_sock, self.pm.sock['sendcan'])
-      self.initialized = True
-      Params().put_bool("ControlsReady", True)
+    if not self.initialized:
+      all_valid = CS.canValid and self.sm.all_alive_and_valid()
+      if all_valid or self.sm.frame * DT_CTRL > 3.5 or SIMULATION:
+        if not self.read_only:
+          self.CI.init(self.CP, self.can_sock, self.pm.sock['sendcan'])
+        self.initialized = True
+        Params().put_bool("ControlsReady", True)
 
     # Check for CAN timeout
     if not can_strs:
@@ -640,7 +641,7 @@ class Controls:
     if not self.joystick_mode:
       # accel PID loop
       pid_accel_limits = self.CI.get_pid_accel_limits(self.CP, CS.vEgo, self.v_cruise_kph * CV.KPH_TO_MS)
-      actuators.accel = self.LoC.update(self.active and CS.cruiseState.speed > 1., CS, self.CP, long_plan, pid_accel_limits, self.sm['radarState'])
+      actuators.accel, actuators.oaccel = self.LoC.update(self.active and CS.cruiseState.speed > 1., CS, self.CP, long_plan, pid_accel_limits, self.sm['radarState'])
 
       # Steering PID loop and lateral MPC
       lat_active = self.active and not CS.steerWarning and not CS.steerError and CS.vEgo > self.CP.minSteerSpeed
@@ -677,11 +678,12 @@ class Controls:
     if (lac_log.saturated and not CS.steeringPressed) or \
        (self.saturated_count > STEER_ANGLE_SATURATION_TIMEOUT):
 
-      if len(lat_plan.dPathPoints):
+      dpath_points = lat_plan.dPathPoints
+      if len(dpath_points):
         # Check if we deviated from the path
         # TODO use desired vs actual curvature
-        left_deviation = actuators.steer > 0 and lat_plan.dPathPoints[0] < -0.20
-        right_deviation = actuators.steer < 0 and lat_plan.dPathPoints[0] > 0.20
+        left_deviation = actuators.steer > 0 and dpath_points[0] < -0.20
+        right_deviation = actuators.steer < 0 and dpath_points[0] > 0.20
 
         if left_deviation or right_deviation:
           self.events.add(EventName.steerSaturated)

@@ -54,7 +54,7 @@ T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 MIN_ACCEL = -3.5
 T_FOLLOW = 1.45
 COMFORT_BRAKE = 2.5
-STOP_DISTANCE = 6.0
+STOP_DISTANCE = 5.0
 
 def get_stopped_equivalence_factor(v_lead):
   return (v_lead**2) / (2 * COMFORT_BRAKE)
@@ -340,9 +340,11 @@ class LongitudinalMpc:
 
     # opkr
     self.lo_timer += 1
-    if self.lo_timer > 100:
+    if self.lo_timer > 200:
       self.lo_timer = 0
       self.e2e = Params().get_bool("E2ELong")
+      self.dynamic_TR_mode = int(Params().get("DynamicTR", encoding="utf8"))
+      self.radar_helper = int(Params().get("RadarLongHelper", encoding="utf8"))
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
@@ -351,7 +353,7 @@ class LongitudinalMpc:
 
     if self.radar_helper != 2:
       cruise_gap = int(clip(carstate.cruiseGapSet, 1., 4.))
-      self.dynamic_TR = interp(self.v_ego*3.6, [0, 20, 40, 60, 110], [0.9, 1.2, 1.4, 1.5, 1.6] )
+      self.dynamic_TR = interp(self.v_ego*3.6, [0, 20, 40, 60, 110], [1.1, 1.25, 1.4, 1.5, 1.6] )
       self.TR = interp(float(cruise_gap), [1., 2., 3., 4.], [self.cruise_gap1, self.cruise_gap2, self.cruise_gap3, self.cruise_gap4])
       if self.dynamic_TR_mode == 1:
         self.TR = interp(float(cruise_gap), [1., 2., 3., 4.], [self.dynamic_TR, self.cruise_gap2, self.cruise_gap3, self.cruise_gap4])
@@ -361,6 +363,10 @@ class LongitudinalMpc:
         self.TR = interp(float(cruise_gap), [1., 2., 3., 4.], [self.cruise_gap1, self.cruise_gap2, self.dynamic_TR, self.cruise_gap4])
       elif self.dynamic_TR_mode == 4:
         self.TR = interp(float(cruise_gap), [1., 2., 3., 4.], [self.cruise_gap1, self.cruise_gap2, self.cruise_gap3, self.dynamic_TR])
+      else:
+        self.TR = 1.45
+    else:
+      self.TR = 1.45
 
     self.set_desired_TR(self.TR)
 
