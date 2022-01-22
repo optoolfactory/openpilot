@@ -1138,7 +1138,8 @@ static void draw_safetysign(UIState *s) {
 
 static void draw_compass(UIState *s) {
   //draw compass by opkr
-  if (s->scene.gpsAccuracyUblox != 0.00) {
+  //if (s->scene.gpsAccuracyUblox != 0.00) {
+  if (true) {
     const int compass_size = 140;
     const int compass_x = s->fb_w - compass_size - 35;
     const int compass_y = 1080 - compass_size - 35;
@@ -1153,32 +1154,33 @@ static void draw_compass(UIState *s) {
     ui_draw_text(s, rect.centerX(), rect.centerY()+from_center, "S", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     ui_draw_text(s, rect.centerX(), rect.centerY()-from_center, "N", 40, COLOR_WHITE_ALPHA(200), "sans-bold");
     if (337.5 < s->scene.bearingUblox || s->scene.bearingUblox <= 22.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "N", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "N", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 67.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NE", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NE", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 112.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "E", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "E", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 157.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SE", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SE", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 202.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "S", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "S", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 247.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "SW", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 292.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "W", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "W", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     } else if (s->scene.bearingUblox <= 337.5) {
-      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NW", 45, COLOR_GREEN_ALPHA(200), "sans-bold");
+      ui_draw_text(s, rect.centerX(), rect.centerY()-16, "NW", 50, COLOR_GREEN_ALPHA(200), "sans-bold");
     }
-    ui_draw_text(s, rect.centerX(), rect.centerY()+16, degree, 40, COLOR_WHITE_ALPHA(200), "sans-bold");
+    ui_draw_text(s, rect.centerX(), rect.centerY()+16, degree, 43, COLOR_WHITE_ALPHA(200), "sans-bold");
     //float niddle_rotation = s->scene.bearingUblox/180*3.141592;
-    //nvgSave(s->vg);
-    //nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
-    //nvgRotate(s->vg, niddle_rotation);
-    //nvgFontFace(s->vg, "sans-bold");
-    //nvgFontSize(s->vg, 70);
-    //nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
-    //nvgText(s->vg, 50*sin(s->scene.bearingUblox), 50*cos(s->scene.bearingUblox), "^", NULL);
-    //nvgRestore(s->vg);
+    float niddle_rotation = 90/180*3.141592;
+    nvgSave(s->vg);
+    nvgTranslate(s->vg, compass_x+compass_size/2, compass_y+compass_size/2);
+    nvgRotate(s->vg, niddle_rotation);
+    nvgFontFace(s->vg, "sans-bold");
+    nvgFontSize(s->vg, 70);
+    nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
+    nvgText(s->vg, 48*sin(niddle_rotation), 48*cos(niddle_rotation), "^", NULL);
+    nvgRestore(s->vg);
   }
 }
 
