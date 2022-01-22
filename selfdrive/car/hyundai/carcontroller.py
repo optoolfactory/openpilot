@@ -554,8 +554,10 @@ class CarController():
       if (frame % 100) == 0:
         can_sends.append(create_scc7d0(b'\x02\x10\x85\x00\x00\x00\x00\x00')) # off
         self.radarDisableActivated = True
+        self.counter_init = True
       else:
         self.counter_init = False
+        self.radarDisableActivated = False
       if self.lead_visible:
         self.objdiststat = 1 if self.dRel < 25 else 2 if self.dRel < 40 else 3 if self.dRel < 60 else 4 if self.dRel < 80 else 5
       else:
