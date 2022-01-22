@@ -111,7 +111,7 @@ def manager_init() -> None:
     ("OpkrSSHLegacy", "1"),
     ("CruiseOverMaxSpeed", "0"),
     ("JustDoGearD", "0"),
-    ("LanelessMode", "0"),
+    ("LanelessMode", "2"),
     ("ComIssueGone", "1"),
     ("MaxSteer", "408"),
     ("MaxRTDelta", "112"),
@@ -186,6 +186,7 @@ def manager_init() -> None:
     ("MapboxEnabled", "0"),
     ("AutoRESDelay", "0"),
     ("UseRadarTrack", "0"),
+    ("RadarDisable", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

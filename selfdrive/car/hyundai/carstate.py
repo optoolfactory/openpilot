@@ -11,6 +11,7 @@ from common.params import Params
 
 GearShifter = car.CarState.GearShifter
 
+FCA_OPT = Params().get_bool('RadarDisable')
 
 class CarState(CarStateBase):
   def __init__(self, CP):
@@ -34,13 +35,19 @@ class CarState(CarStateBase):
     self.lfahda = None
 
     self.driverAcc_time = 0
+
+    self.prev_cruise_buttons = 0
+    self.prev_gap_button = 0
     
     self.steer_anglecorrection = float(int(Params().get("OpkrSteerAngleCorrection", encoding="utf8")) * 0.1)
     self.gear_correction = Params().get_bool("JustDoGearD")
     self.steer_wind_down = Params().get_bool("SteerWindDown")
     self.fca11_message = Params().get_bool("FCA11Message")
+    self.rd_conf = Params().get_bool("RadarDisable")
     self.brake_check = False
     self.cancel_check = False
+    
+    self.cruise_gap = 4
     self.safety_sign_check = 0
     self.safety_sign = 0
     self.safety_sign_prev = 0
@@ -233,6 +240,13 @@ class CarState(CarStateBase):
     self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
     ret.cruiseButtons = self.cruise_buttons
 
+    if self.prev_gap_button != self.cruise_buttons:
+      if self.cruise_buttons == 3:
+        self.cruise_gap -= 1
+      if self.cruise_gap < 1:
+        self.cruise_gap = 4
+      self.prev_gap_button = self.cruise_buttons
+
     # TODO: Find brake pressure
     ret.brake = 0
     ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0
@@ -285,31 +299,31 @@ class CarState(CarStateBase):
       self.safety_dist = 0
     self.safety_block_remain_dist = cp.vl["NAVI"]["OPKR_SBR_Dist"]
     self.is_highway = cp_scc.vl["SCC11"]["Navi_SCC_Camera_Act"] != 0.
-    if self.safety_sign_check in [24., 25., 26.] and 19 < round(vCruiseMax) <= (69 if not self.is_set_speed_in_mph else 59):
+    if self.safety_sign_check in (24., 25., 26.) and 19 < round(vCruiseMax) <= (69 if not self.is_set_speed_in_mph else 59):
       self.safety_sign = 30. if not self.is_set_speed_in_mph else 40.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [0., 1., 2.] and 19 < round(vCruiseMax) <= (79 if not self.is_set_speed_in_mph else 64):
+    elif self.safety_sign_check in (0., 1., 2.) and 19 < round(vCruiseMax) <= (79 if not self.is_set_speed_in_mph else 64):
       self.safety_sign = 40. if not self.is_set_speed_in_mph else 45.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [8., 9., 10.] and 19 < round(vCruiseMax) <= (89 if not self.is_set_speed_in_mph else 69):
+    elif self.safety_sign_check in (8., 9., 10.) and 19 < round(vCruiseMax) <= (89 if not self.is_set_speed_in_mph else 69):
       self.safety_sign = 50. if not self.is_set_speed_in_mph else 50.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [16., 17., 18.] and 19 < round(vCruiseMax) <= (99 if not self.is_set_speed_in_mph else 74):
+    elif self.safety_sign_check in (16., 17., 18.) and 19 < round(vCruiseMax) <= (99 if not self.is_set_speed_in_mph else 74):
       self.safety_sign = 60. if not self.is_set_speed_in_mph else 55.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [24., 25., 26.] and 19 < round(vCruiseMax) <= (109 if not self.is_set_speed_in_mph else 79):
+    elif self.safety_sign_check in (24., 25., 26.) and 19 < round(vCruiseMax) <= (109 if not self.is_set_speed_in_mph else 79):
       self.safety_sign = 70. if not self.is_set_speed_in_mph else 60.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [0., 1., 2.] and 19 < round(vCruiseMax):
+    elif self.safety_sign_check in (0., 1., 2.) and 19 < round(vCruiseMax):
       self.safety_sign = 80. if not self.is_set_speed_in_mph else 65.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [8., 9., 10.] and 19 < round(vCruiseMax):
+    elif self.safety_sign_check in (8., 9., 10.) and 19 < round(vCruiseMax):
       self.safety_sign = 90. if not self.is_set_speed_in_mph else 70.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [16., 17., 18.] and 19 < round(vCruiseMax):
+    elif self.safety_sign_check in (16., 17., 18.) and 19 < round(vCruiseMax):
       self.safety_sign = 100. if not self.is_set_speed_in_mph else 75.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [24., 25., 26.] and 19 < round(vCruiseMax):
+    elif self.safety_sign_check in (24., 25., 26.) and 19 < round(vCruiseMax):
       self.safety_sign = 110. if not self.is_set_speed_in_mph else 80.
       self.safety_sign_last = self.safety_sign
     elif round(self.safety_block_remain_dist) < 255. and self.safety_sign_prev:
@@ -364,10 +378,14 @@ class CarState(CarStateBase):
     self.scc12 = copy.copy(cp_scc.vl["SCC12"])
     self.scc13 = copy.copy(cp_scc.vl["SCC13"])
     self.scc14 = copy.copy(cp_scc.vl["SCC14"])
+    if self.rd_conf:
+      self.fca11 = copy.copy(cp_fca.vl["FCA11"])
     self.mdps12 = copy.copy(cp_mdps.vl["MDPS12"])
 
     self.scc11init = copy.copy(cp.vl["SCC11"])
     self.scc12init = copy.copy(cp.vl["SCC12"])
+    if self.rd_conf:
+      self.fca11init = copy.copy(cp.vl["FCA11"])
 
     if self.CP.carFingerprint in FEATURES["send_hda_mfa"]:
       self.lfahda = copy.copy(cp_cam.vl["LFAHDA_MFC"])
@@ -489,6 +507,9 @@ class CarState(CarStateBase):
       ("ComfortBandUpper", "SCC14", 0),
       ("ComfortBandLower", "SCC14", 0),
 
+      ("CR_FCA_Alive", "FCA11", 0),
+      ("Supplemental_Counter", "FCA11", 0),
+
       ("UNIT", "TPMS11", 0),
       ("PRESSURE_FL", "TPMS11", 0),
       ("PRESSURE_FR", "TPMS11", 0),
@@ -520,6 +541,8 @@ class CarState(CarStateBase):
       signals += [
         ("FCA_CmdAct", "FCA11", 0),
         ("CF_VSM_Warn", "FCA11", 0),
+        ("CR_FCA_Alive", "FCA11", 0),
+        ("Supplemental_Counter", "FCA11", 0),
       ]
       checks += [("FCA11", 50)]
 
@@ -666,7 +689,7 @@ class CarState(CarStateBase):
     checks = [
       ("LKAS11", 100)
     ]
-    if CP.sccBus == 2:
+    if CP.sccBus == 2 or CP.radarOffCan:
       signals += [
         ("MainMode_ACC", "SCC11", 1),
         ("SCCInfoDisplay", "SCC11", 0),
