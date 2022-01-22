@@ -1179,7 +1179,7 @@ static void draw_compass(UIState *s) {
     nvgFontFace(s->vg, "sans-bold");
     nvgFontSize(s->vg, 70);
     nvgFillColor(s->vg, COLOR_RED_ALPHA(200));
-    nvgText(s->vg, 0, 50, "^", NULL);
+    nvgText(s->vg, 0, -50, "^", NULL);
     nvgRestore(s->vg);
   }
 }
