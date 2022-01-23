@@ -646,8 +646,8 @@ class CarController():
                 accel = aReqValue * interp(abs(lead_objspd), [0, 10, 20, 30, 40], [0.85, 1.1, 1.3, 1.6, 1.0]) * interp(CS.clu_Vanz, [30, 60], [1.0, 1.2])
                 self.keep_decel_on = False
                 self.change_accel_fast = False
-              elif CS.lead_distance < 17.0 and aReqValue > 0 and lead_objspd > 0 and aReqValue - accel > 0.8:
-                accel = (aReqValue + accel) / 2.5
+              elif CS.lead_distance < 20.0 and aReqValue > 0.8 and lead_objspd > 0 and aReqValue - accel > 0.8:
+                accel = (aReqValue + accel) / 3
                 self.keep_decel_on = False
                 self.change_accel_fast = False
               else:
@@ -662,10 +662,10 @@ class CarController():
               self.adjacent_accel_enabled = False
               self.keep_decel_on = False
               self.change_accel_fast = False
-          elif 0.5 < self.dRel < 5.5 and self.vRel < 0:
-            accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*1.1, 1.0, 3.5))
+          elif 0.5 < self.dRel < 6.0 and self.vRel < 0:
+            accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*1.5, 1.0, 4.0))
             self.stopped = False
-          elif 0.5 < self.dRel < 5.0:
+          elif 0.5 < self.dRel < 5.5:
             accel = min(-0.5, faccel)
             if stopping:
               self.stopped = True
