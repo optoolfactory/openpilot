@@ -8,7 +8,7 @@ import traceback
 from typing import List, Tuple, Union
 
 import cereal.messaging as messaging
-import selfdrive.crash as crash
+import selfdrive.sentry as sentry
 from common.basedir import BASEDIR
 from common.params import Params, ParamKeyType
 from common.text_window import TextWindow
@@ -21,7 +21,7 @@ from selfdrive.manager.process_config import managed_processes
 from selfdrive.athena.registration import register, UNREGISTERED_DONGLE_ID
 from selfdrive.swaglog import cloudlog, add_file_handler
 from selfdrive.version import is_dirty, get_commit, get_version, get_origin, get_short_branch, \
-                              terms_version, training_version, is_comma_remote
+                              terms_version, training_version
 
 
 sys.path.append(os.path.join(BASEDIR, "pyextra"))
@@ -42,7 +42,6 @@ def manager_init() -> None:
     ("HasAcceptedTerms", "0"),
     ("OpenpilotEnabledToggle", "1"),
     ("IsMetric", "1"),
-    ("CommunityFeaturesToggle", "1"),
     ("EndToEndToggle", "1"),
     ("IsOpenpilotViewEnabled", "0"),
     ("OpkrAutoShutdown", "2"),
@@ -241,6 +240,8 @@ def manager_init() -> None:
   if not is_dirty():
     os.environ['CLEAN'] = '1'
 
+  # init logging
+  sentry.init(sentry.SentryProject.SELFDRIVE)
   cloudlog.bind_global(dongle_id=dongle_id, version=get_version(), dirty=is_dirty(),
                        device=HARDWARE.get_device_type())
 
@@ -251,8 +252,6 @@ def manager_init() -> None:
     os.remove('/data/log/can_missing.txt')
   if os.path.isfile('/data/log/can_timeout.txt'):
     os.remove('/data/log/can_timeout.txt')
-  if is_comma_remote() and not (os.getenv("NOLOG") or os.getenv("NOCRASH") or PC):
-    crash.init()
 
   # ensure shared libraries are readable by apks
   if EON:
@@ -260,10 +259,6 @@ def manager_init() -> None:
     os.chmod("/dev/shm", 0o777)
     os.chmod(os.path.join(BASEDIR, "cereal"), 0o755)
     os.chmod(os.path.join(BASEDIR, "cereal", "libmessaging_shared.so"), 0o755)
-
-  crash.bind_user(id=dongle_id)
-  crash.bind_extra(dirty=is_dirty(), origin=get_origin(), branch=get_short_branch(), commit=get_commit(),
-                   device=HARDWARE.get_device_type())
 
   os.system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh")
 
@@ -294,8 +289,8 @@ def manager_thread() -> None:
 
   params = Params()
 
-  ignore = []
-  if params.get("DongleId", encoding='utf8') == UNREGISTERED_DONGLE_ID:
+  ignore: List[str] = []
+  if params.get("DongleId", encoding='utf8') in (None, UNREGISTERED_DONGLE_ID):
     ignore += ["manage_athenad", "uploader"]
   if os.getenv("NOBOARD") is not None:
     ignore.append("pandad")
@@ -313,9 +308,6 @@ def manager_thread() -> None:
   while True:
     sm.update()
     not_run = ignore[:]
-
-    if sm['deviceState'].freeSpacePercent < 5:
-      not_run.append("loggerd")
 
     started = sm['deviceState'].started
     driverview = params.get_bool("IsDriverViewEnabled")
@@ -342,8 +334,9 @@ def manager_thread() -> None:
     shutdown = False
     for param in ("DoUninstall", "DoShutdown", "DoReboot"):
       if params.get_bool(param):
-        cloudlog.warning(f"Shutting down manager - {param} set")
         shutdown = True
+        params.put("LastManagerExitReason", param)
+        cloudlog.warning(f"Shutting down manager - {param} set")
 
     if shutdown:
       break
@@ -370,7 +363,7 @@ def main() -> None:
     manager_thread()
   except Exception:
     traceback.print_exc()
-    crash.capture_exception()
+    sentry.capture_exception()
   finally:
     manager_cleanup()
 

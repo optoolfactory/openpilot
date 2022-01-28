@@ -586,6 +586,7 @@ int main() {
 
   while (!do_exit) {
     std::vector<std::thread> threads;
+    //Params().put("LastPeripheralPandaType", std::to_string((int) panda->hw_type));
     threads.push_back(std::thread(panda_state_thread));
 
     // connect to the board

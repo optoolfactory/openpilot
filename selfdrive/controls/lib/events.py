@@ -94,7 +94,7 @@ class Events:
     for event_name in self.events:
       event = car.CarEvent.new_message()
       event.name = event_name
-      for event_type in EVENTS.get(event_name, {}).keys():
+      for event_type in EVENTS.get(event_name, {}):
         setattr(event, event_type, True)
       ret.append(event)
     return ret
@@ -342,14 +342,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.cruiseMismatch: {
     #ET.PERMANENT: ImmediateDisableAlert("openpilot failed to cancel cruise"),
-  },
-
-  # Some features or cars are marked as community features. If openpilot
-  # detects the use of a community feature it switches to dashcam mode
-  # until these features are allowed using a toggle in settings.
-  EventName.communityFeatureDisallowed: {
-    ET.PERMANENT: NormalPermanentAlert("openpilot Unavailable",
-                                       "Enable Community Features in Settings"),
   },
 
   # openpilot doesn't recognize the car. This switches openpilot into a
