@@ -3,11 +3,6 @@
 #include <cassert>
 #include <cmath>
 
-#include <QtConcurrent>
-
-#include "common/transformations/orientation.hpp"
-#include "selfdrive/common/params.h"
-#include "selfdrive/common/swaglog.h"
 #include "selfdrive/common/util.h"
 #include "selfdrive/common/watchdog.h"
 #include "selfdrive/hardware/hw.h"
@@ -16,9 +11,10 @@
 #define BACKLIGHT_TS 10.00
 #define BACKLIGHT_OFFROAD 50
 
+
 // Projects a point in car to space to the corresponding point in full frame
 // image space.
-static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, float in_z, QPointF *out) {
+static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, float in_z, vertex_data *out) {
   const float margin = 500.0f;
   const QRectF clip_region{-margin, -margin, s->fb_w + 2 * margin, s->fb_h + 2 * margin};
 
@@ -29,7 +25,8 @@ static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, 
   // Project.
   QPointF point = s->car_space_transform.map(QPointF{KEp.v[0] / KEp.v[2], KEp.v[1] / KEp.v[2]});
   if (clip_region.contains(point)) {
-    *out = point;
+    out->x = point.x();
+    out->y = point.y();
     return true;
   }
   return false;
@@ -48,7 +45,7 @@ static void update_leads(UIState *s, const cereal::RadarState::Reader &radar_sta
   for (int i = 0; i < 2; ++i) {
     auto lead_data = (i == 0) ? radar_state.getLeadOne() : radar_state.getLeadTwo();
     if (lead_data.getStatus()) {
-      float z = line.getZ()[get_path_length_idx(line, lead_data.getDRel())];
+      float z = line ? (*line).getZ()[get_path_length_idx(*line, lead_data.getDRel())] : 0.0;
       calib_frame_to_full_frame(s, lead_data.getDRel(), -lead_data.getYRel(), z + 1.22, &s->scene.lead_vertices[i]);
     }
   }
@@ -191,6 +188,7 @@ static void update_state(UIState *s) {
     update_leads(s, sm["radarState"].getRadarState(), line);
   }
   if (sm.updated("liveCalibration")) {
+    scene.world_objects_visible = true;
     auto rpy_list = sm["liveCalibration"].getLiveCalibration().getRpyCalib();
     Eigen::Vector3d rpy;
     rpy << rpy_list[0], rpy_list[1], rpy_list[2];

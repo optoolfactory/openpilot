@@ -13,9 +13,13 @@
 #include "nanovg.h"
 
 #include "cereal/messaging/messaging.h"
+#include "common/transformations/orientation.hpp"
+#include "selfdrive/camerad/cameras/camera_common.h"
+#include "selfdrive/common/mat.h"
 #include "selfdrive/common/modeldata.h"
 #include "selfdrive/common/params.h"
 #include "selfdrive/common/timing.h"
+#include "selfdrive/common/util.h"
 
 #define COLOR_BLACK nvgRGBA(0, 0, 0, 255)
 #define COLOR_BLACK_ALPHA(x) nvgRGBA(0, 0, 0, x)
@@ -80,7 +84,6 @@ struct Alert {
   QString type;
   cereal::ControlsState::AlertSize size;
   AudibleAlert sound;
-
   bool equal(const Alert &a2) {
     return text1 == a2.text1 && text2 == a2.text2 && type == a2.type && sound == a2.sound;
   }
@@ -133,12 +136,18 @@ const QColor bg_colors [] = {
 };
 
 typedef struct {
-  QPointF v[TRAJECTORY_SIZE * 2];
+  float x, y;
+} vertex_data;
+
+typedef struct {
+  vertex_data v[TRAJECTORY_SIZE * 2];
   int cnt;
 } line_vertices_data;
 
 typedef struct UIScene {
+
   mat3 view_from_calib;
+  bool world_objects_visible;
 
   std::string alertTextMsg1;
   std::string alertTextMsg2;
@@ -266,7 +275,7 @@ typedef struct UIScene {
   bool dm_active, engageable;
 
   // lead
-  QPointF lead_vertices[2];
+  vertex_data lead_vertices[2];
 
   float light_sensor, accel_sensor, gyro_sensor;
   bool started, ignition, is_metric, longitudinal_control, end_to_end;
@@ -320,21 +329,12 @@ typedef struct UIScene {
   } liveMapData;
 } UIScene;
 
-class UIState : public QObject {
-  Q_OBJECT
-
-public:
-  UIState(QObject* parent = 0);
-  void updateStatus();
-  inline bool worldObjectsVisible() const { 
-    return sm->rcv_frame("liveCalibration") > scene.started_frame;
-  };
-
+typedef struct UIState {
+  int fb_w = 0, fb_h = 0;
   NVGcontext *vg;
+
   // images
   std::map<std::string, int> images;
-
-  int fb_w = 0, fb_h = 0;
 
   std::unique_ptr<SubMaster> sm;
 
