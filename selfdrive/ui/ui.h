@@ -133,11 +133,7 @@ const QColor bg_colors [] = {
 };
 
 typedef struct {
-  float x, y;
-} vertex_data;
-
-typedef struct {
-  vertex_data v[TRAJECTORY_SIZE * 2];
+  QPointF v[TRAJECTORY_SIZE * 2];
   int cnt;
 } line_vertices_data;
 
@@ -270,7 +266,7 @@ typedef struct UIScene {
   bool dm_active, engageable;
 
   // lead
-  vertex_data lead_vertices[2];
+  QPointF lead_vertices[2];
 
   float light_sensor, accel_sensor, gyro_sensor;
   bool started, ignition, is_metric, longitudinal_control, end_to_end;
