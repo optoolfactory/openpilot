@@ -23,13 +23,16 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   stacked_layout->setStackingMode(QStackedLayout::StackAll);
   main_layout->addLayout(stacked_layout);
 
+  QStackedLayout *road_view_layout = new QStackedLayout;
+  road_view_layout->setStackingMode(QStackedLayout::StackAll);
   nvg = new NvgWindow(VISION_STREAM_RGB_BACK, this);
+  road_view_layout->addWidget(nvg);
 
   QWidget * split_wrapper = new QWidget;
   split = new QHBoxLayout(split_wrapper);
   split->setContentsMargins(0, 0, 0, 0);
   split->setSpacing(0);
-  split->addWidget(nvg);
+  split->addLayout(road_view_layout);
 
   stacked_layout->addWidget(split_wrapper);
 
@@ -69,6 +72,7 @@ void OnroadWindow::updateState(const UIState &s) {
 	  alerts->updateAlert(alert, bgColor);
     }
   }
+
   if (bg != bgColor) {
     // repaint border
     bg = bgColor;
@@ -194,35 +198,4 @@ void OnroadAlerts::paintEvent(QPaintEvent *event) {
     configFont(p, "Open Sans", 88, "Regular");
     p.drawText(QRect(0, r.height() - (l ? 361 : 420), width(), 300), Qt::AlignHCenter | Qt::TextWordWrap, alert.text2);
   }
-}
-
-void NvgWindow::initializeGL() {
-  CameraViewWidget::initializeGL();
-  qInfo() << "OpenGL version:" << QString((const char*)glGetString(GL_VERSION));
-  qInfo() << "OpenGL vendor:" << QString((const char*)glGetString(GL_VENDOR));
-  qInfo() << "OpenGL renderer:" << QString((const char*)glGetString(GL_RENDERER));
-  qInfo() << "OpenGL language version:" << QString((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-  ui_nvg_init(&QUIState::ui_state);
-  prev_draw_t = millis_since_boot();
-  setBackgroundColor(bg_colors[STATUS_DISENGAGED]);
-}
-
-void NvgWindow::paintGL() {
-  CameraViewWidget::paintGL();
-  ui_draw(&QUIState::ui_state, width(), height());
-
-  double cur_draw_t = millis_since_boot();
-  double dt = cur_draw_t - prev_draw_t;
-  if (dt > 66) {
-    // warn on sub 15fps
-    LOGW("slow frame time: %.2f", dt);
-  }
-  prev_draw_t = cur_draw_t;
-}
-
-void NvgWindow::showEvent(QShowEvent *event) {
-  CameraViewWidget::showEvent(event);
-  ui_update_params(&QUIState::ui_state);
-  prev_draw_t = millis_since_boot();
 }
