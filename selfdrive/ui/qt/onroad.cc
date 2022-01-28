@@ -38,8 +38,8 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   alerts->raise();
 
   setAttribute(Qt::WA_OpaquePaintEvent);
-  QObject::connect(this, &OnroadWindow::updateStateSignal, this, &OnroadWindow::updateState);
-  QObject::connect(this, &OnroadWindow::offroadTransitionSignal, this, &OnroadWindow::offroadTransition);
+  QObject::connect(uiState(), &UIState::uiUpdate, this, &OnroadWindow::updateState);
+  QObject::connect(uiState(), &UIState::offroadTransition, this, &OnroadWindow::offroadTransition);
 }
 
 void OnroadWindow::updateState(const UIState &s) {
@@ -49,7 +49,7 @@ void OnroadWindow::updateState(const UIState &s) {
     if (alert.type == "controlsUnresponsive") {
       bgColor = bg_colors[STATUS_ALERT];
     }
-    if (!QUIState::ui_state.is_OpenpilotViewEnabled) {
+    if (!uiState()->is_OpenpilotViewEnabled) {
       // opkr
       if (QFileInfo::exists("/data/log/error.txt") && s.scene.show_error && !s.scene.tmux_error_check) {
         QFileInfo fileInfo;
@@ -58,7 +58,7 @@ void OnroadWindow::updateState(const UIState &s) {
         QString modified_time = modifiedtime.toString("yyyy-MM-dd hh:mm:ss ");
         const std::string txt = util::read_file("/data/log/error.txt");
         if (RichTextDialog::alert(modified_time + QString::fromStdString(txt), this)) {
-          QUIState::ui_state.scene.tmux_error_check = true;
+          uiState()->scene.tmux_error_check = true;
         }
       }
 	  alerts->updateAlert(alert, bgColor);
@@ -77,15 +77,15 @@ void OnroadWindow::mousePressEvent(QMouseEvent* e) {
 
   if ((map_overlay_btn.ptInRect(e->x(), e->y()) || map_btn.ptInRect(e->x(), e->y()) || map_return_btn.ptInRect(e->x(), e->y()) || 
     rec_btn.ptInRect(e->x(), e->y()) || laneless_btn.ptInRect(e->x(), e->y()) || monitoring_btn.ptInRect(e->x(), e->y()) || speedlimit_btn.ptInRect(e->x(), e->y()) ||
-    stockui_btn.ptInRect(e->x(), e->y()) || tuneui_btn.ptInRect(e->x(), e->y()) || mapbox_btn.ptInRect(e->x(), e->y()) || QUIState::ui_state.scene.map_on_top || 
-    QUIState::ui_state.scene.live_tune_panel_enable)) {return;}
+    stockui_btn.ptInRect(e->x(), e->y()) || tuneui_btn.ptInRect(e->x(), e->y()) || mapbox_btn.ptInRect(e->x(), e->y()) || uiState()->scene.map_on_top || 
+    uiState()->scene.live_tune_panel_enable)) {return;}
   if (map != nullptr) {
     bool sidebarVisible = geometry().x() > 0;
     map->setVisible(!sidebarVisible && !map->isVisible());
     if (map->isVisible()) {
-      QUIState::ui_state.scene.mapbox_running = true;
+      uiState()->scene.mapbox_running = true;
     } else {
-      QUIState::ui_state.scene.mapbox_running = false;
+      uiState()->scene.mapbox_running = false;
     }
   }
 }
@@ -109,7 +109,8 @@ void OnroadWindow::offroadTransition(bool offroad) {
 
       MapWindow * m = new MapWindow(settings);
       m->setFixedWidth(topWidget(this)->width() / 2);
-      QObject::connect(this, &OnroadWindow::offroadTransitionSignal, m, &MapWindow::offroadTransition);
+      m->offroadTransition(offroad);
+      QObject::connect(uiState(), &UIState::offroadTransition, m, &MapWindow::offroadTransition);
       split->addWidget(m, 0, Qt::AlignRight);
       map = m;
     }
@@ -197,14 +198,14 @@ void NvgWindow::initializeGL() {
   qInfo() << "OpenGL renderer:" << QString((const char*)glGetString(GL_RENDERER));
   qInfo() << "OpenGL language version:" << QString((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-  ui_nvg_init(&QUIState::ui_state);
+  ui_nvg_init(&uiState());
   prev_draw_t = millis_since_boot();
   setBackgroundColor(bg_colors[STATUS_DISENGAGED]);
 }
 
 void NvgWindow::paintGL() {
   CameraViewWidget::paintGL();
-  ui_draw(&QUIState::ui_state, width(), height());
+  ui_draw(&uiState(), width(), height());
 
   double cur_draw_t = millis_since_boot();
   double dt = cur_draw_t - prev_draw_t;
@@ -217,6 +218,7 @@ void NvgWindow::paintGL() {
 
 void NvgWindow::showEvent(QShowEvent *event) {
   CameraViewWidget::showEvent(event);
-  ui_update_params(&QUIState::ui_state);
+
+  ui_update_params(uiState());
   prev_draw_t = millis_since_boot();
 }

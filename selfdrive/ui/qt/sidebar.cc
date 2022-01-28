@@ -38,14 +38,16 @@ void Sidebar::drawMetric(QPainter &p, const QString &label, const QString &val, 
 }
 
 Sidebar::Sidebar(QWidget *parent) : QFrame(parent) {
-  home_img = QImage("../assets/images/button_home.png").scaled(180, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-  settings_img = QImage("../assets/images/button_settings.png").scaled(settings_btn.width(), settings_btn.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  home_img = loadPixmap("../assets/images/button_home.png", {180, 180});
+  settings_img = loadPixmap("../assets/images/button_settings.png", settings_btn.size(), Qt::IgnoreAspectRatio);
 
   connect(this, &Sidebar::valueChanged, [=] { update(); });
 
   setAttribute(Qt::WA_OpaquePaintEvent);
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
   setFixedWidth(300);
+
+  QObject::connect(uiState(), &UIState::uiUpdate, this, &Sidebar::updateState);
 }
 
 void Sidebar::mousePressEvent(QMouseEvent *event) {
@@ -56,23 +58,23 @@ void Sidebar::mousePressEvent(QMouseEvent *event) {
   }
   // OPKR map overlay
   trig_settings = false;
-  if (overlay_btn.contains(event->pos()) && QUIState::ui_state.scene.started && !QUIState::ui_state.scene.mapbox_running) {
+  if (overlay_btn.contains(event->pos()) && uiState()->scene.started && !uiState()->scene.mapbox_running) {
     QSoundEffect effect;
     effect.setSource(QUrl::fromLocalFile("/data/openpilot/selfdrive/assets/addon/sound/click.wav"));
     //effect.setLoopCount(1);
     //effect.setLoopCount(QSoundEffect::Infinite);
     //effect.setVolume(0.1);
     float volume = 0.5f;
-    if (QUIState::ui_state.scene.nVolumeBoost < 0) {
+    if (uiState()->scene.nVolumeBoost < 0) {
       volume = 0.0f;
-    } else if (QUIState::ui_state.scene.nVolumeBoost > 1) {
-      volume = QUIState::ui_state.scene.nVolumeBoost * 0.01;
+    } else if (uiState()->scene.nVolumeBoost > 1) {
+      volume = uiState()->scene.nVolumeBoost * 0.01;
     }
     effect.setVolume(volume);
     effect.play();
     QProcess::execute("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
-    QUIState::ui_state.scene.map_on_top = false;
-    QUIState::ui_state.scene.map_on_overlay = !QUIState::ui_state.scene.map_on_overlay;
+    uiState()->scene.map_on_top = false;
+    uiState()->scene.map_on_overlay = !uiState()->scene.map_on_overlay;
   }
 }
 
@@ -148,9 +150,9 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.fillRect(rect(), QColor(0, 0, 0));
   // static imgs
   p.setOpacity(0.65);
-  p.drawImage(settings_btn.x(), settings_btn.y(), settings_img);
+  p.drawPixmap(settings_btn.x(), settings_btn.y(), settings_img);
   p.setOpacity(1.0);
-  p.drawImage(60, 1080 - 180 - 40, home_img);
+  p.drawPixmap(60, 1080 - 180 - 40, home_img);
 
   // network
   int x = 58;
@@ -189,7 +191,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * bat_Percent * 0.01), rect.height() - 11 );
   QBrush bgBrush("#149948");
   p.fillRect(bq, bgBrush);
-  p.drawImage(rect, battery_imgs[bat_Status == "Charging" ? 1 : 0]);
+  p.drawPixmap(rect, battery_imgs[bat_Status == "Charging" ? 1 : 0]);
 
   p.setPen(Qt::white);
   configFont(p, "Open Sans", 25, "Regular");
