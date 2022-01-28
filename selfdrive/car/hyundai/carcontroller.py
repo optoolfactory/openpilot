@@ -10,7 +10,7 @@ from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR, FEAT
 from opendbc.can.packer import CANPacker
 from selfdrive.controls.lib.longcontrol import LongCtrlState
 from selfdrive.car.hyundai.carstate import GearShifter
-from selfdrive.controls.lib.lateral_planner import LANE_CHANGE_SPEED_MIN
+from selfdrive.controls.lib.desire_helper import LANE_CHANGE_SPEED_MIN
 
 from selfdrive.car.hyundai.navicontrol  import NaviControl
 
