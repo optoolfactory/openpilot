@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtDBus>
-#include <QTimer>
+#include <QWidget>
 
 #include "selfdrive/ui/qt/offroad/networkmanager.h"
 
@@ -22,8 +22,8 @@ enum class NetworkType {
   ETHERNET
 };
 
-typedef QMap<QString, QVariantMap> Connection;
-typedef QVector<QVariantMap> IpConfig;
+typedef QMap<QString, QMap<QString, QVariant>> Connection;
+typedef QVector<QMap<QString, QVariant>> IpConfig;
 
 struct Network {
   QByteArray ssid;
@@ -33,58 +33,65 @@ struct Network {
 };
 bool compare_by_strength(const Network &a, const Network &b);
 
-class WifiManager : public QObject {
+class WifiManager : public QWidget {
   Q_OBJECT
 
 public:
+  explicit WifiManager(QWidget* parent);
+
+  void requestScan();
   QMap<QString, Network> seenNetworks;
   QMap<QDBusObjectPath, QString> knownConnections;
+  QDBusObjectPath lteConnectionPath;
   QString ipv4_address;
 
-  explicit WifiManager(QObject* parent);
-  void start();
-  void stop();
-  void requestScan();
+  void refreshNetworks();
   void forgetConnection(const QString &ssid);
   bool isKnownConnection(const QString &ssid);
   void activateWifiConnection(const QString &ssid);
+  void activateModemConnection(const QDBusObjectPath &path);
   NetworkType currentNetworkType();
   void updateGsmSettings(bool roaming, QString apn);
-  void connect(const Network &ssid, const QString &password = {}, const QString &username = {});
+
+  void connect(const Network &ssid);
+  void connect(const Network &ssid, const QString &password);
+  void connect(const Network &ssid, const QString &username, const QString &password);
+  void disconnect();
 
   // Tethering functions
   void setTetheringEnabled(bool enabled);
   bool isTetheringEnabled();
+  void addTetheringConnection();
   void changeTetheringPassword(const QString &newPassword);
   QString getTetheringPassword();
 
 private:
   QString adapter;  // Path to network manager wifi-device
-  QTimer timer;
+  QDBusConnection bus = QDBusConnection::systemBus();
   unsigned int raw_adapter_state;  // Connection status https://developer.gnome.org/NetworkManager/1.26/nm-dbus-types.html#NMDeviceState
   QString connecting_to_network;
   QString tethering_ssid;
   const QString defaultTetheringPassword = "swagswagcomma";
-  QString activeAp;
-  QDBusObjectPath lteConnectionPath;
 
+  bool firstScan = true;
   QString getAdapter(const uint = NM_DEVICE_TYPE_WIFI);
   uint getAdapterType(const QDBusObjectPath &path);
   bool isWirelessAdapter(const QDBusObjectPath &path);
-  QString getIp4Address();
+  QString get_ipv4_address();
   void connect(const QByteArray &ssid, const QString &username, const QString &password, SecurityType security_type);
+  QString activeAp;
+  void initActiveAp();
   void deactivateConnectionBySsid(const QString &ssid);
   void deactivateConnection(const QDBusObjectPath &path);
-  QVector<QDBusObjectPath> getActiveConnections();
+  QVector<QDBusObjectPath> get_active_connections();
+  uint get_wifi_device_state();
   QByteArray get_property(const QString &network_path, const QString &property);
-  SecurityType getSecurityType(const QVariantMap &properties);
+  unsigned int get_ap_strength(const QString &network_path);
+  SecurityType getSecurityType(const QString &path);
   QDBusObjectPath getConnectionPath(const QString &ssid);
   Connection getConnectionSettings(const QDBusObjectPath &path);
   void initConnections();
   void setup();
-  void refreshNetworks();
-  void activateModemConnection(const QDBusObjectPath &path);
-  void addTetheringConnection();
 
 signals:
   void wrongPassword(const QString &ssid);
@@ -96,5 +103,4 @@ private slots:
   void deviceAdded(const QDBusObjectPath &path);
   void connectionRemoved(const QDBusObjectPath &path);
   void newConnection(const QDBusObjectPath &path);
-  void refreshFinished(QDBusPendingCallWatcher *call);
 };

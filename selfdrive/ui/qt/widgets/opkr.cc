@@ -550,7 +550,7 @@ VolumeControl::VolumeControl() : AbstractControl("EON Volume Control(%)", "Adjus
       value = -5;
     }
     QString values = QString::number(value);
-    uiState()->scene.nVolumeBoost = value;
+    QUIState::ui_state.scene.nVolumeBoost = value;
     params.put("OpkrUIVolumeBoost", values.toStdString());
     playsound();
     refresh();
@@ -564,7 +564,7 @@ VolumeControl::VolumeControl() : AbstractControl("EON Volume Control(%)", "Adjus
       value = 100;
     }
     QString values = QString::number(value);
-    uiState()->scene.nVolumeBoost = value;
+    QUIState::ui_state.scene.nVolumeBoost = value;
     params.put("OpkrUIVolumeBoost", values.toStdString());
     playsound();
     refresh();
@@ -586,7 +586,7 @@ void VolumeControl::refresh() {
 }
 
 void VolumeControl::playsound() {
-  float value = uiState()->scene.nVolumeBoost;
+  float value = QUIState::ui_state.scene.nVolumeBoost;
   if (value > 1 ) {
     effect.setVolume(value * 0.01);
     effect.play();
@@ -630,7 +630,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON Brightness Control
     if (value <= 0 ) {
       value = 0;
     }
-    uiState()->scene.brightness = value;
+    QUIState::ui_state.scene.brightness = value;
     QString values = QString::number(value);
     params.put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -643,7 +643,7 @@ BrightnessControl::BrightnessControl() : AbstractControl("EON Brightness Control
     if (value >= 100 ) {
       value = 100;
     }
-    uiState()->scene.brightness = value;
+    QUIState::ui_state.scene.brightness = value;
     QString values = QString::number(value);
     params.put("OpkrUIBrightness", values.toStdString());
     refresh();
@@ -696,7 +696,7 @@ BrightnessOffControl::BrightnessOffControl() : AbstractControl("Brightness at SC
     if (value <= 0 ) {
       value = 0;
     }
-    uiState()->scene.brightness_off = value;
+    QUIState::ui_state.scene.brightness_off = value;
     QString values = QString::number(value);
     params.put("OpkrUIBrightnessOff", values.toStdString());
     refresh();
@@ -709,7 +709,7 @@ BrightnessOffControl::BrightnessOffControl() : AbstractControl("Brightness at SC
     if (value >= 100 ) {
       value = 100;
     }
-    uiState()->scene.brightness_off = value;
+    QUIState::ui_state.scene.brightness_off = value;
     QString values = QString::number(value);
     params.put("OpkrUIBrightnessOff", values.toStdString());
     refresh();
@@ -763,7 +763,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON SCR Off Timer", "Turn off 
     if (value <= -2 ) {
       value = -2;
     }
-    uiState()->scene.autoScreenOff = value;
+    QUIState::ui_state.scene.autoScreenOff = value;
     QString values = QString::number(value);
     params.put("OpkrAutoScreenOff", values.toStdString());
     refresh();
@@ -776,7 +776,7 @@ AutoScreenOff::AutoScreenOff() : AbstractControl("EON SCR Off Timer", "Turn off 
     if (value >= 10 ) {
       value = 10;
     }
-    uiState()->scene.autoScreenOff = value;
+    QUIState::ui_state.scene.autoScreenOff = value;
     QString values = QString::number(value);
     params.put("OpkrAutoScreenOff", values.toStdString());
     refresh();
@@ -1804,7 +1804,7 @@ SpeedLimitOffset::SpeedLimitOffset() : AbstractControl("SpeedLimit Offset", "Dur
       value = -30;
     }
     QString values = QString::number(value);
-    //uiState()->speed_lim_off = value;
+    //QUIState::ui_state.speed_lim_off = value;
     params.put("OpkrSpeedLimitOffset", values.toStdString());
     refresh();
   });
@@ -1817,7 +1817,7 @@ SpeedLimitOffset::SpeedLimitOffset() : AbstractControl("SpeedLimit Offset", "Dur
       value = 30;
     }
     QString values = QString::number(value);
-    //uiState()->speed_lim_off = value;
+    //QUIState::ui_state.speed_lim_off = value;
     params.put("OpkrSpeedLimitOffset", values.toStdString());
     refresh();
   });

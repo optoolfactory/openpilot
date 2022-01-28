@@ -42,7 +42,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
     {
       "IsLdwEnabled",
       "Enable Lane Departure Warnings",
-      "Receive alerts to steer back into the lane when your vehicle drifts over a detected lane line without a turn signal activated while driving over 31 mph (50 km/h).",
+      "Receive alerts to steer back into the lane when your vehicle drifts over a detected lane line without a turn signal activated while driving over 31mph (50kph).",
       "../assets/offroad/icon_warning.png",
     },
     {
@@ -56,6 +56,12 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "Use Metric System",
       "Display speed in km/h instead of mph.",
       "../assets/offroad/icon_metric.png",
+    },
+    {
+      "CommunityFeaturesToggle",
+      "Enable Community Features",
+      "Use features, such as community supported hardware, from the open source community that are not maintained or supported by comma.ai and have not been confirmed to meet the standard safety model. Be extra cautious when using these features",
+      "../assets/offroad/icon_shell.png",
     },
     {
       "UploadRaw",
@@ -176,7 +182,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   });
   addItem(resetCalibBtn);
 
-  QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
+  QObject::connect(parent, &SettingsWindow::offroadTransition, [=](bool offroad) {
     for (auto btn : findChildren<ButtonControl *>()) {
       btn->setEnabled(offroad);
     }
@@ -213,7 +219,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
 void DevicePanel::updateCalibDescription() {
   QString desc =
       "openpilot requires the device to be mounted within 4° left or right and "
-      "within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.";
+      "within 5° up or down. openpilot is continuously calibrating, resetting is rarely required.";
   std::string calib_bytes = Params().get("CalibrationParams");
   if (!calib_bytes.empty()) {
     try {
@@ -235,10 +241,10 @@ void DevicePanel::updateCalibDescription() {
 }
 
 void DevicePanel::reboot() {
-  if (uiState()->status == UIStatus::STATUS_DISENGAGED) {
+  if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
     if (ConfirmationDialog::confirm("Are you sure you want to reboot?", this)) {
       // Check engaged again in case it changed while the dialog was open
-      if (uiState()->status == UIStatus::STATUS_DISENGAGED) {
+      if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
         Params().putBool("DoReboot", true);
       }
     }
@@ -248,10 +254,10 @@ void DevicePanel::reboot() {
 }
 
 void DevicePanel::poweroff() {
-  if (uiState()->status == UIStatus::STATUS_DISENGAGED) {
+  if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
     if (ConfirmationDialog::confirm("Are you sure you want to power off?", this)) {
       // Check engaged again in case it changed while the dialog was open
-      if (uiState()->status == UIStatus::STATUS_DISENGAGED) {
+      if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
         Params().putBool("DoShutdown", true);
       }
     }
@@ -301,7 +307,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
       params.putBool("DoUninstall", true);
     }
   });
-  connect(uiState(), &UIState::offroadTransition, uninstallBtn, &QPushButton::setEnabled);
+  connect(parent, SIGNAL(offroadTransition(bool)), uninstallBtn, SLOT(setEnabled(bool)));
 
   QWidget *widgets[] = {osVersionLbl, versionLbl, gitRemoteLbl, gitBranchLbl, lastUpdateLbl, updateBtn};
   for (QWidget* w : widgets) {
