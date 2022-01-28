@@ -329,6 +329,17 @@ typedef struct UIScene {
   } liveMapData;
 } UIScene;
 
+class UIState : public QObject {
+  Q_OBJECT
+
+public:
+  UIState(QObject* parent = 0);
+  void updateStatus();
+  inline bool worldObjectsVisible() const { 
+    return sm->rcv_frame("liveCalibration") > scene.started_frame;
+  };
+}
+
 typedef struct UIState {
   int fb_w = 0, fb_h = 0;
   NVGcontext *vg;
