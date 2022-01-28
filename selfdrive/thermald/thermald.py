@@ -199,7 +199,6 @@ def thermald_thread() -> NoReturn:
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML)
-  pandaState_prev = None
   should_start_prev = False
   handle_fan = None
   is_uno = False
@@ -274,12 +273,6 @@ def thermald_thread() -> NoReturn:
           cloudlog.info("Setting up EON fan handler")
           setup_eon_fan()
           handle_fan = handle_fan_eon
-
-      # Handle disconnect
-      if pandaState_prev is not None:
-        if pandaState.pandaState.pandaType == log.PandaState.PandaType.unknown and \
-          pandaState_prev.pandaState.pandaType != log.PandaState.PandaType.unknown:
-      pandaState_prev = pandaState
     elif params.get_bool("IsOpenpilotViewEnabled") and not params.get_bool("IsDriverViewEnabled") and is_openpilot_view_enabled == 0:
       is_openpilot_view_enabled = 1
       onroad_conditions["ignition"] = True
