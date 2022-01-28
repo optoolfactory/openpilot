@@ -1,10 +1,7 @@
 #include "selfdrive/ui/ui.h"
 
-#include <unistd.h>
-
 #include <cassert>
 #include <cmath>
-#include <cstdio>
 
 #include "selfdrive/common/util.h"
 #include "selfdrive/common/watchdog.h"
@@ -38,7 +35,7 @@ static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, 
 static int get_path_length_idx(const cereal::ModelDataV2::XYZTData::Reader &line, const float path_height) {
   const auto line_x = line.getX();
   int max_idx = 0;
-  for (int i = 0; i < TRAJECTORY_SIZE && line_x[i] < path_height; ++i) {
+  for (int i = 1; i < TRAJECTORY_SIZE && line_x[i] <= path_height; ++i) {
     max_idx = i;
   }
   return max_idx;
@@ -57,7 +54,7 @@ static void update_leads(UIState *s, const cereal::RadarState::Reader &radar_sta
 static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,
                              float y_off, float z_off, line_vertices_data *pvd, int max_idx) {
   const auto line_x = line.getX(), line_y = line.getY(), line_z = line.getZ();
-  vertex_data *v = &pvd->v[0];
+  QPointF *v = &pvd->v[0];
   for (int i = 0; i <= max_idx; i++) {
     v += calib_frame_to_full_frame(s, line_x[i], line_y[i] - y_off, line_z[i] + z_off, v);
   }
