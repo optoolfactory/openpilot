@@ -181,7 +181,7 @@ class CarController():
 
     self.sm = messaging.SubMaster(['controlsState', 'radarState'])
 
-  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
+  def update(self, c, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, v_future):
 
     param = self.p
@@ -226,9 +226,9 @@ class CarController():
 
     # disable when temp fault is active, or below LKA minimum speed
     if self.opkr_maxanglelimit >= 90 and not self.steer_wind_down_enabled:
-      lkas_active = enabled and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
+      lkas_active = c.active and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
     else:
-      lkas_active = enabled and not CS.out.steerWarning and CS.out.gearShifter == GearShifter.drive
+      lkas_active = c.active and not CS.out.steerWarning and CS.out.gearShifter == GearShifter.drive
 
 
     if (( CS.out.leftBlinker and not CS.out.rightBlinker) or ( CS.out.rightBlinker and not CS.out.leftBlinker)) and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and self.opkr_turnsteeringdisable:
@@ -598,8 +598,8 @@ class CarController():
         self.scc11cnt %= 0x10
         lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
-        faccel = actuators.accel if enabled else 0
-        accel = actuators.oaccel if enabled else 0
+        faccel = actuators.accel if c.active else 0
+        accel = actuators.oaccel if c.active else 0
         stopping = (actuators.longControlState == LongCtrlState.stopping)
         radar_recog = (0 < CS.lead_distance <= 149)
         if 0 < CS.lead_distance <= 149 and self.radar_helper_option == 1:
