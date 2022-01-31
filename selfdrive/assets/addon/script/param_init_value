@@ -106,6 +106,12 @@ OCurvSpeed50:60
 OCurvSpeed60:70
 OCurvSpeed70:80
 OCurvSpeedUD:1
+OSMCustomOffset40:0
+OSMCustomOffset50:15
+OSMCustomOffset60:12
+OSMCustomOffset70:10
+OSMCustomOffset90:5
+OSMCustomOffsetUD:1
 StockNaviSpeedEnabled:0
 E2ELong:0
 OSMSpeedLimitEnable:0

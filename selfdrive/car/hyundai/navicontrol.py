@@ -45,6 +45,8 @@ class NaviControl():
      int(Params().get("VCurvSpeed70", encoding="utf8")), int(Params().get("VCurvSpeed90", encoding="utf8"))]
     self.osm_curv_speed = [int(Params().get("OCurvSpeed30", encoding="utf8")), int(Params().get("OCurvSpeed40", encoding="utf8")),
      int(Params().get("OCurvSpeed50", encoding="utf8")), int(Params().get("OCurvSpeed60", encoding="utf8")), int(Params().get("OCurvSpeed70", encoding="utf8"))]
+    self.osm_spdlimit_offset = [int(Params().get("OSMCustomOffset40", encoding="utf8")), int(Params().get("OSMCustomOffset50", encoding="utf8")),
+     int(Params().get("OSMCustomOffset60", encoding="utf8")), int(Params().get("OSMCustomOffset70", encoding="utf8")), int(Params().get("OSMCustomOffset90", encoding="utf8"))]
     self.osm_wait_timer = 0
     self.stock_navi_info_enabled = Params().get_bool("StockNaviSpeedEnabled")
     self.osm_speedlimit_enabled = Params().get_bool("OSMSpeedLimitEnable")
@@ -155,8 +157,11 @@ class NaviControl():
           spdTarget = self.sm['liveMapData'].speedLimit
         if self.map_spdlimit_offset_option == 0:
           cruise_set_speed_kph = spdTarget + round(spdTarget*0.01*self.map_spdlimit_offset)
-        else:
+        elif self.map_spdlimit_offset_option == 1:
           cruise_set_speed_kph = spdTarget + self.map_spdlimit_offset
+        else:
+          cruise_set_speed_kph = spdTarget + int(self.osm_spdlimit_offset[0] if 0 < spdTarget <= 40 else self.osm_spdlimit_offset[1] if spdTarget <= 50 else \
+           self.osm_spdlimit_offset[2] if spdTarget <= 60 else self.osm_spdlimit_offset[3] if spdTarget <= 70 else self.osm_spdlimit_offset[4] if spdTarget <= 90 else 0)
         if cruise_set_speed_kph+1.5 < v_ego_mph and CS.is_set_speed_in_mph and not CS.out.gasPressed:
           self.onSpeedControl = True
         elif cruise_set_speed_kph+1.5 < v_ego_kph and not CS.is_set_speed_in_mph and not CS.out.gasPressed:
@@ -187,8 +192,11 @@ class NaviControl():
           return cruise_set_speed_kph
         if self.map_spdlimit_offset_option == 0:
           cruise_set_speed_kph = spdTarget + round(spdTarget*0.01*self.map_spdlimit_offset)
-        else:
+        elif self.map_spdlimit_offset_option == 1:
           cruise_set_speed_kph = spdTarget + self.map_spdlimit_offset
+        else:
+          cruise_set_speed_kph = spdTarget + int(self.osm_spdlimit_offset[0] if 0 < spdTarget <= 40 else self.osm_spdlimit_offset[1] if spdTarget <= 50 else \
+           self.osm_spdlimit_offset[2] if spdTarget <= 60 else self.osm_spdlimit_offset[3] if spdTarget <= 70 else self.osm_spdlimit_offset[4] if spdTarget <= 90 else 0)
         if cruise_set_speed_kph+1.5 < v_ego_mph and CS.is_set_speed_in_mph and not CS.out.gasPressed:
           self.onSpeedControl = True
         elif cruise_set_speed_kph+1.5 < v_ego_kph and not CS.is_set_speed_in_mph and not CS.out.gasPressed:

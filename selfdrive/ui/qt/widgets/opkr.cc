@@ -1797,7 +1797,7 @@ SpeedLimitOffset::SpeedLimitOffset() : AbstractControl("SpeedLimit Offset", "Dur
     auto str = QString::fromStdString(params.get("OpkrSpeedLimitOffsetOption"));
     int value = str.toInt();
     value = value + 1;
-    if (value >= 2 ) {
+    if (value >= 3 ) {
       value = 0;
     }
     QString values = QString::number(value);
@@ -1837,8 +1837,10 @@ void SpeedLimitOffset::refresh() {
   auto strs = QString::fromStdString(params.get("OpkrSpeedLimitOffsetOption"));
   if (strs == "0") {
     btn.setText("%");
-  } else {
+  } else if (strs == "1") {
     btn.setText("±");
+  } else {
+    btn.setText("C");
   }
   label.setText(QString::fromStdString(params.get("OpkrSpeedLimitOffset")));
   btnminus.setText("－");
@@ -6108,4 +6110,262 @@ void AutoRESDelay::refresh() {
   }
   btnminus.setText("-");
   btnplus.setText("+");
+}
+
+OSMCustomOffsetUD::OSMCustomOffsetUD() : AbstractControl("OSMCustomOffset(<=OSMSpeed: Offset)", "Set the offset speed according to speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
+
+  btn.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn.setFixedSize(125, 100);
+  hlayout->addWidget(&btn);
+
+  QObject::connect(&btn, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OSMCustomOffsetUD"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 2 ) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("OSMCustomOffsetUD", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void OSMCustomOffsetUD::refresh() {
+  auto strs = QString::fromStdString(params.get("OSMCustomOffsetUD"));
+  if (strs == "1") {
+    btn.setText("↑");
+  } else {
+    btn.setText("↓");
+  }
+}
+
+OSMCustomOffset::OSMCustomOffset() : AbstractControl("", "", "") {
+
+  btn1.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn2.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn3.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn4.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn5.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  label1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label1.setStyleSheet("color: #e0e879");
+  label2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label2.setStyleSheet("color: #e0e879");
+  label3.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label3.setStyleSheet("color: #e0e879");
+  label4.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label4.setStyleSheet("color: #e0e879");
+  label5.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label5.setStyleSheet("color: #e0e879");
+  label1a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label2a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label3a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label4a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label5a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+
+  hlayout->addWidget(&label1a);
+  hlayout->addWidget(&label1);
+  btn1.setFixedSize(50, 100);
+  label1a.setText("40:");
+  hlayout->addWidget(&btn1);
+  hlayout->addWidget(&label2a);
+  hlayout->addWidget(&label2);
+  btn2.setFixedSize(50, 100);
+  label2a.setText("50:");
+  hlayout->addWidget(&btn2);
+  hlayout->addWidget(&label3a);
+  hlayout->addWidget(&label3);
+  btn3.setFixedSize(50, 100);
+  label3a.setText("60:");
+  hlayout->addWidget(&btn3);
+  hlayout->addWidget(&label4a);
+  hlayout->addWidget(&label4);
+  btn4.setFixedSize(50, 100);
+  label4a.setText("70:");
+  hlayout->addWidget(&btn4);
+  hlayout->addWidget(&label5a);
+  hlayout->addWidget(&label5);
+  btn5.setFixedSize(50, 100);
+  label5a.setText("90:");
+  hlayout->addWidget(&btn5);
+
+  QObject::connect(&btn1, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OSMCustomOffset40"));
+    int value = str.toInt();
+    auto str_ud = QString::fromStdString(params.get("OSMCustomOffsetUD"));
+    if (str_ud == "1") {
+      value = value + 1;
+    } else {
+      value = value - 1;
+    }
+    if (value >= 20) {
+      value = 20;
+    } else if (value <= 0) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("OSMCustomOffset40", values.toStdString());
+    refresh1();
+  });
+
+  QObject::connect(&btn2, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OSMCustomOffset50"));
+    int value = str.toInt();
+    auto str_ud = QString::fromStdString(params.get("OSMCustomOffsetUD"));
+    if (str_ud == "1") {
+      value = value + 1;
+    } else {
+      value = value - 1;
+    }
+    if (value >= 20) {
+      value = 20;
+    } else if (value <= 0) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("OSMCustomOffset50", values.toStdString());
+    refresh2();
+  });
+  
+  QObject::connect(&btn3, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OSMCustomOffset60"));
+    int value = str.toInt();
+    auto str_ud = QString::fromStdString(params.get("OSMCustomOffsetUD"));
+    if (str_ud == "1") {
+      value = value + 1;
+    } else {
+      value = value - 1;
+    }
+    if (value >= 20) {
+      value = 20;
+    } else if (value <= 0) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("OSMCustomOffset60", values.toStdString());
+    refresh3();
+  });
+
+  QObject::connect(&btn4, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OSMCustomOffset70"));
+    int value = str.toInt();
+    auto str_ud = QString::fromStdString(params.get("OSMCustomOffsetUD"));
+    if (str_ud == "1") {
+      value = value + 1;
+    } else {
+      value = value - 1;
+    }
+    if (value >= 20) {
+      value = 20;
+    } else if (value <= 0) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("OSMCustomOffset70", values.toStdString());
+    refresh4();
+  });
+
+  QObject::connect(&btn5, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OSMCustomOffset90"));
+    int value = str.toInt();
+    auto str_ud = QString::fromStdString(params.get("OSMCustomOffsetUD"));
+    if (str_ud == "1") {
+      value = value + 1;
+    } else {
+      value = value - 1;
+    }
+    if (value >= 20) {
+      value = 20;
+    } else if (value <= 0) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("OSMCustomOffset90", values.toStdString());
+    refresh5();
+  });
+
+  refresh1();
+  refresh2();
+  refresh3();
+  refresh4();
+  refresh5();
+}
+
+void OSMCustomOffset::refresh1() {
+  auto strs = QString::fromStdString(params.get("OSMCustomOffset40"));
+  int valuei = strs.toInt();
+  QString valuefs = QString::number(valuei);
+  label1.setText(QString::fromStdString(valuefs.toStdString()));
+  btn1.setText("↕");
+}
+void OSMCustomOffset::refresh2() {
+  auto strs = QString::fromStdString(params.get("OSMCustomOffset50"));
+  int valuei = strs.toInt();
+  QString valuefs = QString::number(valuei);
+  label2.setText(QString::fromStdString(valuefs.toStdString()));
+  btn2.setText("↕");
+}
+void OSMCustomOffset::refresh3() {
+  auto strs = QString::fromStdString(params.get("OSMCustomOffset60"));
+  int valuei = strs.toInt();
+  QString valuefs = QString::number(valuei);
+  label3.setText(QString::fromStdString(valuefs.toStdString()));
+  btn3.setText("↕");
+}
+void OSMCustomOffset::refresh4() {
+  auto strs = QString::fromStdString(params.get("OSMCustomOffset70"));
+  int valuei = strs.toInt();
+  QString valuefs = QString::number(valuei);
+  label4.setText(QString::fromStdString(valuefs.toStdString()));
+  btn4.setText("↕");
+}
+void OSMCustomOffset::refresh5() {
+  auto strs = QString::fromStdString(params.get("OSMCustomOffset90"));
+  int valuei = strs.toInt();
+  QString valuefs = QString::number(valuei);
+  label5.setText(QString::fromStdString(valuefs.toStdString()));
+  btn5.setText("↕");
 }
