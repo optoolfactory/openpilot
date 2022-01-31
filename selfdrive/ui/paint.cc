@@ -755,29 +755,29 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       val_color = nvgRGBA(255, 0, 0, 200);
     }
     //snprintf(val_str, sizeof(val_str), "%.0fC", (round(scene.cpuTemp)));
-    snprintf(uom_str, sizeof(uom_str), "%d%%", (scene.cpuPerc));
+    snprintf(uom_str, sizeof(uom_str), "%.0f°C", (scene.ambientTemp));
     bb_h +=bb_ui_draw_measure(s, cpu_temp_val.c_str(), uom_str, "CPU TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
     bb_ry = bb_y + bb_h - (bb_y_offset*2);
   }
-  //DEVICE TEMP
+  //CPU LOAD
   if (scene.batt_less) {
     //char val_str[16];
     char uom_str[6];
-    std::string device_temp_val = std::to_string(int(scene.ambientTemp)) + "°C";
-    NVGcolor val_color = COLOR_WHITE_ALPHA(200);
-    if(scene.ambientTemp > 45) {
+    std::string cpu_usage_val = std::to_string(int(scene.cpuPerc)) + "%";
+    NVGcolor val_color = COLOR_GREEN_ALPHA(200);
+    if(scene.cpuPerc > 60) {
       val_color = nvgRGBA(255, 188, 3, 200);
     }
-    if(scene.ambientTemp > 50) {
+    if(scene.cpuPerc > 80) {
       val_color = nvgRGBA(255, 0, 0, 200);
     }
     // temp is alway in C * 1000
     //snprintf(val_str, sizeof(val_str), "%.0fC", batteryTemp);
     snprintf(uom_str, sizeof(uom_str), "%d", (scene.fanSpeed)/1000);
-    bb_h +=bb_ui_draw_measure(s, device_temp_val.c_str(), uom_str, "SYS TEMP",
+    bb_h +=bb_ui_draw_measure(s, cpu_usage_val.c_str(), uom_str, "CPU LOAD",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
