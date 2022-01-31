@@ -1,5 +1,8 @@
 #include "selfdrive/ui/qt/widgets/opkr.h"
 
+#include <algorithm>
+#include <iterator>
+
 #include <QHBoxLayout>
 #include <QTextStream>
 #include <QFile>
@@ -257,6 +260,12 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("", "", "")
     if (combobox.currentIndex() != 0) {
       if (ConfirmationDialog::confirm("Press OK to set your car as\n" + str, this)) {
         params.put("CarModel", str.toStdString());
+        int indi_cars[] = {1, 2, 3, 4, 10, 29, 30, 37}; //R-MDPS type such as Genesis, Sonata Turbo, Sorento, Mohave
+        int selected_car = combobox.currentText();
+        bool go_indi = std::find(std::begin(indi_cars), std::end(indi_cars), selected_car) != std::end(indi_cars);
+        if (go_indi) {
+          params.put("LateralControlMethod", "1");
+        }
       }
     }
     refresh();
