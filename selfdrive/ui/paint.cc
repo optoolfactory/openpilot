@@ -755,7 +755,11 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       val_color = nvgRGBA(255, 0, 0, 200);
     }
     //snprintf(val_str, sizeof(val_str), "%.0fC", (round(scene.cpuTemp)));
-    snprintf(uom_str, sizeof(uom_str), "%.0f°C", (scene.ambientTemp));
+    if (!scene.batt_less) {
+      snprintf(uom_str, sizeof(uom_str), "%d%%", (scene.cpuPerc));
+    } else {
+      snprintf(uom_str, sizeof(uom_str), "%.0f°C", (scene.ambientTemp));
+    }
     bb_h +=bb_ui_draw_measure(s, cpu_temp_val.c_str(), uom_str, "CPU TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
