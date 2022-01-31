@@ -42,7 +42,6 @@ class LateralPlanner:
     self.v_cruise_kph = 0
     self.stand_still = False
     
-    self.output_scale = 0.0
     self.second = 0.0
     self.model_speed = 255.0
 
@@ -81,15 +80,7 @@ class LateralPlanner:
 
     self.v_cruise_kph = sm['controlsState'].vCruise
     self.stand_still = sm['carState'].standStill
-    try:
-      if CP.lateralTuning.which() == 'pid':
-        self.output_scale = sm['controlsState'].lateralControlState.pidState.output
-      elif CP.lateralTuning.which() == 'indi':
-        self.output_scale = sm['controlsState'].lateralControlState.indiState.output
-      elif CP.lateralTuning.which() == 'lqr':
-        self.output_scale = sm['controlsState'].lateralControlState.lqrState.output
-    except:
-      pass
+
   
     v_ego = sm['carState'].vEgo
     if sm.frame % 5 == 0:
@@ -214,7 +205,7 @@ class LateralPlanner:
 
     lateralPlan.modelSpeed = float(self.model_speed)
     lateralPlan.steerRateCost = float(self.steer_rate_cost)
-    lateralPlan.outputScale = float(self.output_scale)
+    lateralPlan.outputScale = float(self.DH.output_scale)
     lateralPlan.vCruiseSet = float(self.v_cruise_kph)
     lateralPlan.vCurvature = float(sm['controlsState'].curvature)
     lateralPlan.lanelessMode = bool(self.laneless_mode_status)

@@ -52,7 +52,6 @@ class CarInterface(CarInterfaceBase):
     ret.safetyParam = 0
 
     # Most Hyundai car ports are community features for now
-    ret.communityFeature = False
     ret.pcmCruise = not ret.radarOffCan
 
     ret.steerActuatorDelay = 0.25  # Default delay
