@@ -42,7 +42,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
     {
       "IsLdwEnabled",
       "Enable Lane Departure Warnings",
-      "Receive alerts to steer back into the lane when your vehicle drifts over a detected lane line without a turn signal activated while driving over 31mph (50kph).",
+      "Receive alerts to steer back into the lane when your vehicle drifts over a detected lane line without a turn signal activated while driving over 31 mph (50 km/h).",
       "../assets/offroad/icon_warning.png",
     },
     {
@@ -56,12 +56,6 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "Use Metric System",
       "Display speed in km/h instead of mph.",
       "../assets/offroad/icon_metric.png",
-    },
-    {
-      "CommunityFeaturesToggle",
-      "Enable Community Features",
-      "Use features, such as community supported hardware, from the open source community that are not maintained or supported by comma.ai and have not been confirmed to meet the standard safety model. Be extra cautious when using these features",
-      "../assets/offroad/icon_shell.png",
     },
     {
       "UploadRaw",
