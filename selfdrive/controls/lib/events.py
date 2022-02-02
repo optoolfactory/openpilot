@@ -94,7 +94,7 @@ class Events:
     for event_name in self.events:
       event = car.CarEvent.new_message()
       event.name = event_name
-      for event_type in EVENTS.get(event_name, {}).keys():
+      for event_type in EVENTS.get(event_name, {}):
         setattr(event, event_type, True)
       ret.append(event)
     return ret
@@ -287,13 +287,13 @@ def can_error_alert(CP: car.CarParams, sm: messaging.SubMaster, metric: bool, so
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .2, creation_delay=1.)
 
-
 EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # ********** events with no alerts **********
 
   EventName.stockFcw: {},
 
   EventName.lkasDisabled: {},
+
   # ********** events only containing alerts displayed in all states **********
 
   EventName.joystickDebug: {
@@ -343,14 +343,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.cruiseMismatch: {
     #ET.PERMANENT: ImmediateDisableAlert("openpilot failed to cancel cruise"),
-  },
-
-  # Some features or cars are marked as community features. If openpilot
-  # detects the use of a community feature it switches to dashcam mode
-  # until these features are allowed using a toggle in settings.
-  EventName.communityFeatureDisallowed: {
-    ET.PERMANENT: NormalPermanentAlert("커뮤니티 기능 감지됨",
-                                       "토글메뉴에서 커뮤니티 기능을 활성화하세요"),
   },
 
   # openpilot doesn't recognize the car. This switches openpilot into a
