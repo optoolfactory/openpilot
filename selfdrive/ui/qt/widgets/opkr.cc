@@ -5914,7 +5914,7 @@ void SpeedLimitSignType::refresh() {
   btnplus.setText("▶");
 }
 
-RadarLongHelperOption::RadarLongHelperOption() : AbstractControl("Radar Long Assist", "Vision Only, Vision+Radar, Radar Only", "../assets/offroad/icon_shell.png") {
+RadarLongHelperOption::RadarLongHelperOption() : AbstractControl("Radar Long Assist", "Vision Only, Vision+Radar, Radar Only, OPKR Custom", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -5946,7 +5946,7 @@ RadarLongHelperOption::RadarLongHelperOption() : AbstractControl("Radar Long Ass
     int value = str.toInt();
     value = value - 1;
     if (value <= -1 ) {
-      value = 2;
+      value = 3;
     }
     QString values = QString::number(value);
     params.put("RadarLongHelper", values.toStdString());
@@ -5957,7 +5957,7 @@ RadarLongHelperOption::RadarLongHelperOption() : AbstractControl("Radar Long Ass
     auto str = QString::fromStdString(params.get("RadarLongHelper"));
     int value = str.toInt();
     value = value + 1;
-    if (value >= 3 ) {
+    if (value >= 4 ) {
       value = 0;
     }
     QString values = QString::number(value);
@@ -5973,8 +5973,10 @@ void RadarLongHelperOption::refresh() {
     label.setText(QString::fromStdString("Vision Only"));
   } else if (option == "1") {
     label.setText(QString::fromStdString("Vision+Radar"));
-  } else {
+  } else if (option == "2") {
     label.setText(QString::fromStdString("Radar Only"));
+  } else {
+    label.setText(QString::fromStdString("OPKR Custom"));
   }
   btnminus.setText("◀");
   btnplus.setText("▶");

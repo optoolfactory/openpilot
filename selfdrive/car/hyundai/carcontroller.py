@@ -155,8 +155,6 @@ class CarController():
     self.curv_speed_control = False
     self.vFuture = 0
     self.cruise_init = False
-    self.adjacent_accel = 0
-    self.adjacent_accel_enabled = False
     self.keep_decel_on = False
     self.change_accel_fast = False
 
@@ -604,64 +602,52 @@ class CarController():
         radar_recog = (0 < CS.lead_distance <= 149)
         if 0 < CS.lead_distance <= 149 and self.radar_helper_option == 1:
           # neokii's logic, opkr mod
-          stock_weight = 0.
-          if aReqValue > 0.:
-            stock_weight = interp(CS.lead_distance, [3.5, 17.0, 25.0], [0.7, 1.0, 0.0])
-          elif aReqValue < 0. and self.stopping_dist_adj_enabled:
-            stock_weight = interp(CS.lead_distance, [2.5, 4.5, 5.5, 25.0], [1.0, 0.3, 1.0, 0.0])
-          elif aReqValue < 0.:
+          stock_weight = 0.0
+          if aReqValue > 0.0:
+            stock_weight = interp(CS.lead_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
+          elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
+            stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0], [0.0, 1.0, 1.0, 0.0])
+          elif aReqValue < 0.0:
             stock_weight = interp(CS.lead_distance, [3.5, 25.0], [1.0, 0.0])
           else:
-            stock_weight = 0.
-          accel = accel * (1. - stock_weight) + aReqValue * stock_weight
+            stock_weight = 0.0
+          accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
         elif self.radar_helper_option == 2:
+          accel = aReqValue
+        elif self.radar_helper_option == 3:
           if 0 < CS.lead_distance <= 149:
-            if self.stopping_dist_adj_enabled:
-              if CS.clu_Vanz < 9 and 4.5 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel < 0 and not self.adjacent_accel_enabled:
-                self.adjacent_accel = min(-0.3, self.accel*0.5)
-                self.adjacent_accel_enabled = True
-              if CS.clu_Vanz < 9 and 4.5 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel < self.adjacent_accel:
-                accel = self.accel + (3.0 * DT_CTRL)
-              elif CS.clu_Vanz < 9 and 4.5 < CS.lead_distance < 8.0 and aReqValue < 0 and -5 < lead_objspd and self.accel >= self.adjacent_accel:
-                accel = self.accel
-              elif CS.lead_distance <= 4.5 and aReqValue < 0 and -5 < lead_objspd and self.accel > aReqValue:
-                accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*0.9, 1.0, 3.0))
-                self.adjacent_accel = 0
-                self.adjacent_accel_enabled = False
-              elif accel < 0 and self.keep_decel_on:
-                if aReqValue <= accel:
-                  self.keep_decel_on = False
-                else:
-                  accel = (aReqValue + accel) / 2
-              elif accel < 0 and (self.NC.cut_in or abs(accel) - abs(aReqValue) > 0.3):
-                self.keep_decel_on = True
-              elif accel > 0 and self.change_accel_fast:
-                if aReqValue >= accel:
-                  self.change_accel_fast = False
-                else:
-                  accel = (aReqValue + accel) / 2
-              elif aReqValue < 0 and accel > 0 and accel - aReqValue > 0.3:
-                self.change_accel_fast = True
-              elif CS.lead_distance >= 8.0 and aReqValue < 0 and lead_objspd < 0: # adjusting deceleration
-                accel = aReqValue * interp(abs(lead_objspd), [0, 10, 20, 30, 40], [0.85, 1.1, 1.25, 1.4, 1.0]) * interp(CS.clu_Vanz, [30, 60], [1.0, 1.2])
+            stock_weight = 0.0
+            if accel < 0 and self.keep_decel_on:
+              if aReqValue <= accel:
                 self.keep_decel_on = False
-                self.change_accel_fast = False
-              elif CS.lead_distance < 30.0 and aReqValue > 0.8 and lead_objspd > 0 and aReqValue - accel > 0.8:
-                accel = (aReqValue + accel) / 3
-                self.keep_decel_on = False
+              else:
+                accel = (aReqValue + accel) / 2
+            elif accel < 0 and (self.NC.cut_in or abs(accel) - abs(aReqValue) > 0.3):
+              self.keep_decel_on = True
+            elif accel > 0 and self.change_accel_fast:
+              if aReqValue >= accel:
                 self.change_accel_fast = False
               else:
-                accel = aReqValue
-                self.adjacent_accel = 0
-                self.adjacent_accel_enabled = False
-                self.keep_decel_on = False
-                self.change_accel_fast = False
-            else:
-              accel = aReqValue
-              self.adjacent_accel = 0
-              self.adjacent_accel_enabled = False
+                accel = (aReqValue + accel) / 2
+            elif aReqValue < 0 and accel > 0 and accel - aReqValue > 0.3:
+              self.change_accel_fast = True
+            elif CS.lead_distance < 30.0 and aReqValue > 0.8 and lead_objspd > 0 and aReqValue - accel > 0.8:
+              accel = (aReqValue + accel) / 3
               self.keep_decel_on = False
               self.change_accel_fast = False
+            elif aReqValue > 0.0:
+              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 13.0, 25.0, 30.0], [0.5, 1.0, 1.0, 0.0, 1.0])
+              accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
+            elif aReqValue < 0.0 and CS.lead_distance <= 4.5 and -5 < lead_objspd and accel > aReqValue:
+              accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*0.9, 1.0, 3.0))
+            elif aReqValue < 0.0:
+              stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0, 30.0], [0.0, 1.0, 1.0, 0.0, 1.0])
+              accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
+            else:
+              stock_weight = 0.0
+              self.keep_decel_on = False
+              self.change_accel_fast = False
+              accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
           elif 0.5 < self.dRel < 6.0 and self.vRel < 0:
             accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*1.5, 1.0, 4.0))
             self.stopped = False

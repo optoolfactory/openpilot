@@ -53,6 +53,7 @@ class NaviControl():
     self.speedlimit_decel_off = Params().get_bool("SpeedLimitDecelOff")
     self.curv_decel_option = int(Params().get("CurvDecelOption", encoding="utf8"))
     self.cut_in = False
+    self.cut_in_run_timer = 0
 
     self.na_timer = 0
     self.t_interval = 7
@@ -228,8 +229,11 @@ class NaviControl():
           return cruise_set_speed_kph
         if self.map_spdlimit_offset_option == 0:
           cruise_set_speed_kph = spdTarget + round(spdTarget*0.01*self.map_spdlimit_offset)
-        else:
+        elif self.map_spdlimit_offset_option == 1:
           cruise_set_speed_kph = spdTarget + self.map_spdlimit_offset
+        else:
+          cruise_set_speed_kph = spdTarget + int(self.osm_spdlimit_offset[0] if 0 < spdTarget <= 40 else self.osm_spdlimit_offset[1] if spdTarget <= 50 else \
+           self.osm_spdlimit_offset[2] if spdTarget <= 60 else self.osm_spdlimit_offset[3] if spdTarget <= 70 else self.osm_spdlimit_offset[4] if spdTarget <= 90 else 0)
         if cruise_set_speed_kph+1.5 < v_ego_mph and CS.is_set_speed_in_mph and not CS.out.gasPressed:
           self.onSpeedControl = True
         elif cruise_set_speed_kph+1.5 < v_ego_kph and not CS.is_set_speed_in_mph and not CS.out.gasPressed:
@@ -272,21 +276,27 @@ class NaviControl():
     self.cut_in = True if self.lead_1.status and (self.lead_0.dRel - self.lead_1.dRel) > 3.0 else False
 
     if CS.driverAcc_time:
-      self.t_interval = 10 if CS.is_set_speed_in_mph else 7
-      return min(CS.clu_Vanz + (2 if CS.is_set_speed_in_mph else 3), navi_speed)
+      self.t_interval = 7
+      return min(CS.clu_Vanz + (3 if CS.is_set_speed_in_mph else 5), navi_speed)
     # elif self.gasPressed_old:
     #   clu_Vanz = CS.clu_Vanz
     #   ctrl_speed = max(min_control_speed, ctrl_speed, clu_Vanz)
     #   CS.set_cruise_speed(ctrl_speed)
     elif CS.CP.resSpeed > 19:
-      self.t_interval = 10 if CS.is_set_speed_in_mph else 7
+      self.t_interval = 7
       res_speed = max(min_control_speed, CS.CP.resSpeed)
       return min(res_speed, navi_speed)
     elif CS.cruise_set_mode in (1,2,4):
       if self.lead_0.status and CS.CP.vFuture >= (min_control_speed-(4 if CS.is_set_speed_in_mph else 7)):
         dRel = int(self.lead_0.dRel)
         vRel = int(self.lead_0.vRel * (CV.MS_TO_MPH if CS.is_set_speed_in_mph else CV.MS_TO_KPH))
-        if vRel >= (-2 if CS.is_set_speed_in_mph else -4):
+        if self.cut_in_run_timer > 0:
+          self.cut_in_run_timer -= 1
+        elif self.cut_in:
+          self.cut_in_run_timer = 800
+        if self.cut_in_run_timer and dRel < self.lead_0.vRel * CV.MS_TO_KPH * 0.45: # keep decel when cut_in, max running time 10sec
+          var_speed = min(CS.CP.vFuture, navi_speed)
+        elif vRel >= (-2 if CS.is_set_speed_in_mph else -4):
           var_speed = min(CS.CP.vFuture + max(0, int(dRel*(0.1 if CS.is_set_speed_in_mph else 0.15)+vRel)), navi_speed)
           ttime = 100 if CS.is_set_speed_in_mph else 70
           self.t_interval = int(interp(dRel, [15, 50], [7, ttime])) if not (self.onSpeedControl or self.curvSpeedControl or self.cut_in) else 7
