@@ -52,7 +52,6 @@ class CarInterface(CarInterfaceBase):
     ret.safetyParam = 0
 
     # Most Hyundai car ports are community features for now
-    ret.communityFeature = False
     ret.pcmCruise = not ret.radarOffCan
 
     ret.steerActuatorDelay = 0.25  # Default delay
@@ -421,7 +420,7 @@ class CarInterface(CarInterfaceBase):
 
   def apply(self, c):
     hud_control = c.hudControl
-    ret = self.CC.update(c.enabled, self.CS, self.frame, c.actuators,
+    ret = self.CC.update(c, c.enabled, self.CS, self.frame, c.actuators,
                          c.cruiseControl.cancel, hud_control.visualAlert, hud_control.leftLaneVisible,
                          hud_control.rightLaneVisible, hud_control.leftLaneDepart, hud_control.rightLaneDepart,
                          hud_control.setSpeed, hud_control.leadVisible, hud_control.vFuture)

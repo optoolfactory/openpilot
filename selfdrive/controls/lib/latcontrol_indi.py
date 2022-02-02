@@ -5,15 +5,15 @@ from cereal import log
 from common.filter_simple import FirstOrderFilter
 from common.numpy_fast import clip, interp
 from common.realtime import DT_CTRL
-from selfdrive.car import apply_toyota_steer_torque_limits
-from selfdrive.car.toyota.values import CarControllerParams
 from selfdrive.controls.lib.drive_helpers import get_steer_max
+from selfdrive.controls.lib.latcontrol import LatControl, MIN_STEER_SPEED
 from common.params import Params
 from decimal import Decimal
 
 
-class LatControlINDI():
-  def __init__(self, CP):
+class LatControlINDI(LatControl):
+  def __init__(self, CP, CI):
+    super().__init__(CP, CI)
     self.angle_steers_des = 0.
 
     A = np.array([[1.0, DT_CTRL, 0.0],
@@ -37,8 +37,6 @@ class LatControlINDI():
     self.A_K = A - np.dot(K, C)
     self.x = np.array([[0.], [0.], [0.]])
 
-    self.enforce_rate_limit = CP.carName == "toyota"
-
     self.mpc_frame = 0
     self.params = Params()
 
@@ -52,8 +50,6 @@ class LatControlINDI():
     self.outer_loop_gain = 0
     self.inner_loop_gain = 0
 
-    self.sat_count_rate = 1.0 * DT_CTRL
-    self.sat_limit = CP.steerLimitTimer
     self.steer_filter = FirstOrderFilter(0., self.RC, DT_CTRL)
 
     self.live_tune_enabled = False
@@ -63,9 +59,8 @@ class LatControlINDI():
     self.li_timer = 0
 
   def reset(self):
+    super().reset()
     self.steer_filter.x = 0.
-    self.output_steer = 0.
-    self.sat_count = 0.
     self.speed = 0.
 
   def live_tune(self, CP):
@@ -82,19 +77,7 @@ class LatControlINDI():
         
       self.mpc_frame = 0
 
-  def _check_saturation(self, control, check_saturation, limit):
-    saturated = abs(control) == limit
-
-    if saturated and check_saturation:
-      self.sat_count += self.sat_count_rate
-    else:
-      self.sat_count -= self.sat_count_rate
-
-    self.sat_count = clip(self.sat_count, 0.0, 1.0)
-
-    return self.sat_count > self.sat_limit
-
-  def update(self, active, CS, CP, VM, params, last_actuators, curvature, curvature_rate):
+  def update(self, active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate):
     self.speed = CS.vEgo
 
     self.RC = interp(self.speed, self._RC[0], self._RC[1])
@@ -118,21 +101,21 @@ class LatControlINDI():
     indi_log.steeringRateDeg = math.degrees(self.x[1])
     indi_log.steeringAccelDeg = math.degrees(self.x[2])
 
-    steers_des = VM.get_steer_from_curvature(-curvature, CS.vEgo, params.roll)
+    steers_des = VM.get_steer_from_curvature(-desired_curvature, CS.vEgo, params.roll)
     steers_des += math.radians(params.angleOffsetDeg)
     indi_log.steeringAngleDesiredDeg = math.degrees(steers_des)
 
-    rate_des = VM.get_steer_from_curvature(-curvature_rate, CS.vEgo, 0)
+    rate_des = VM.get_steer_from_curvature(-desired_curvature_rate, CS.vEgo, 0)
     indi_log.steeringRateDesiredDeg = math.degrees(rate_des)
 
-    if CS.vEgo < 0.3 or not active:
+    if CS.vEgo < MIN_STEER_SPEED or not active:
       indi_log.active = False
-      self.output_steer = 0.0
       self.steer_filter.x = 0.0
+      output_steer = 0
     else:
       # Expected actuator value
       self.steer_filter.update_alpha(self.RC)
-      self.steer_filter.update(self.output_steer)
+      self.steer_filter.update(last_actuators.steer)
 
       # Compute acceleration error
       rate_sp = self.outer_loop_gain * (steers_des - self.x[0]) + rate_des
@@ -144,21 +127,13 @@ class LatControlINDI():
       delta_u = g_inv * accel_error
 
       # If steering pressed, only allow wind down
-      if CS.steeringPressed and (delta_u * self.output_steer > 0):
+      if CS.steeringPressed and (delta_u * last_actuators.steer > 0):
         delta_u = 0
 
-      # Enforce rate limit
-      if self.enforce_rate_limit:
-        steer_max = float(CarControllerParams.STEER_MAX)
-        new_output_steer_cmd = steer_max * (self.steer_filter.x + delta_u)
-        prev_output_steer_cmd = steer_max * self.output_steer
-        new_output_steer_cmd = apply_toyota_steer_torque_limits(new_output_steer_cmd, prev_output_steer_cmd, prev_output_steer_cmd, CarControllerParams)
-        self.output_steer = new_output_steer_cmd / steer_max
-      else:
-        self.output_steer = self.steer_filter.x + delta_u
+      output_steer = self.steer_filter.x + delta_u
 
       steers_max = get_steer_max(CP, CS.vEgo)
-      self.output_steer = clip(self.output_steer, -steers_max, steers_max)
+      output_steer = clip(output_steer, -steers_max, steers_max)
 
       indi_log.active = True
       indi_log.rateSetPoint = float(rate_sp)
@@ -166,9 +141,7 @@ class LatControlINDI():
       indi_log.accelError = float(accel_error)
       indi_log.delayedOutput = float(self.steer_filter.x)
       indi_log.delta = float(delta_u)
-      indi_log.output = float(self.output_steer)
+      indi_log.output = float(output_steer)
+      indi_log.saturated = self._check_saturation(steers_max - abs(output_steer) < 1e-3, CS)
 
-      check_saturation = (CS.vEgo > 10.) and not CS.steeringRateLimited and not CS.steeringPressed
-      indi_log.saturated = self._check_saturation(self.output_steer, check_saturation, steers_max)
-
-    return float(self.output_steer), float(steers_des), indi_log
+    return float(output_steer), float(steers_des), indi_log

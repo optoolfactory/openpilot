@@ -78,6 +78,7 @@ class CarInterfaceBase(ABC):
   def get_std_params(candidate, fingerprint):
     ret = car.CarParams.new_message()
     ret.carFingerprint = candidate
+    ret.unsafeMode = 0  # see safety_declarations.h for allowed values
 
     # standard ALC params
     ret.steerControlType = car.CarParams.SteerControlType.torque
@@ -117,7 +118,7 @@ class CarInterfaceBase(ABC):
   def apply(self, c: car.CarControl) -> Tuple[car.CarControl.Actuators, List[bytes]]:
     pass
 
-  def create_common_events(self, cs_out, extra_gears=None, gas_resume_speed=-1, pcm_enable=True):
+  def create_common_events(self, cs_out, extra_gears=None, pcm_enable=True):
     events = Events()
 
     if cs_out.doorOpen:

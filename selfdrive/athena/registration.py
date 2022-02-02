@@ -1,4 +1,4 @@
-#/!/usr/bin/env python3
+#!/usr/bin/env python3
 import time
 import json
 import jwt
@@ -15,6 +15,11 @@ from selfdrive.swaglog import cloudlog
 
 
 UNREGISTERED_DONGLE_ID = "maintenance"
+
+
+def is_registered_device() -> bool:
+  dongle = Params().get("DongleId", encoding='utf-8')
+  return dongle not in (None, UNREGISTERED_DONGLE_ID)
 
 
 def register(show_spinner=False) -> str:
@@ -64,7 +69,7 @@ def register(show_spinner=False) -> str:
       try:
         register_token = jwt.encode({'register': True, 'exp': datetime.utcnow() + timedelta(hours=1)}, private_key, algorithm='RS256')
         cloudlog.info("getting pilotauth")
-        resp = api_get("v2/pilotauth/", method='POST', timeout=10,
+        resp = api_get("v2/pilotauth/", method='POST', timeout=15,
                        imei=imei1, imei2=imei2, serial=serial, public_key=public_key, register_token=register_token)
 
         if resp.status_code in (402, 403, 404):

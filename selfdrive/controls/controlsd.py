@@ -104,7 +104,6 @@ class Controls:
     # read params
     self.is_metric = params.get_bool("IsMetric")
     self.is_ldw_enabled = params.get_bool("IsLdwEnabled")
-    community_feature_toggle = params.get_bool("CommunityFeaturesToggle")
     openpilot_enabled_toggle = params.get_bool("OpenpilotEnabledToggle")
     passive = params.get_bool("Passive") or not openpilot_enabled_toggle
     self.commIssue_ignored = params.get_bool("ComIssueGone")
@@ -120,11 +119,7 @@ class Controls:
     car_recognized = self.CP.carName != 'mock'
 
     controller_available = self.CI.CC is not None and not passive and not self.CP.dashcamOnly
-    community_feature = self.CP.communityFeature or \
-                        self.CP.fingerprintSource == car.CarParams.FingerprintSource.can
-    community_feature_disallowed = community_feature and (not community_feature_toggle)
-    self.read_only = not car_recognized or not controller_available or \
-                       self.CP.dashcamOnly or community_feature_disallowed
+    self.read_only = not car_recognized or not controller_available or self.CP.dashcamOnly
     if self.read_only:
       self.CP.safetyModel = car.CarParams.SafetyModel.noOutput
 
@@ -142,16 +137,16 @@ class Controls:
 
     self.lateral_control_method = 0
     if self.CP.steerControlType == car.CarParams.SteerControlType.angle:
-      self.LaC = LatControlAngle(self.CP)
+      self.LaC = LatControlAngle(self.CP, self.CI)
       self.lateral_control_method = 3
     elif self.CP.lateralTuning.which() == 'pid':
       self.LaC = LatControlPID(self.CP, self.CI)
       self.lateral_control_method = 0
     elif self.CP.lateralTuning.which() == 'indi':
-      self.LaC = LatControlINDI(self.CP)
+      self.LaC = LatControlINDI(self.CP, self.CI)
       self.lateral_control_method = 1
     elif self.CP.lateralTuning.which() == 'lqr':
-      self.LaC = LatControlLQR(self.CP)
+      self.LaC = LatControlLQR(self.CP, self.CI)
       self.lateral_control_method = 2
 
     self.controlsAllowed = False
@@ -168,7 +163,6 @@ class Controls:
     self.cruise_mismatch_counter = 0
     self.can_rcv_error_counter = 0
     self.last_blinker_frame = 0
-    self.saturated_count = 0
     self.distance_traveled = 0
     self.last_functional_fan_frame = 0
     self.events_prev = []
@@ -184,8 +178,6 @@ class Controls:
 
     if not sounds_available:
       self.events.add(EventName.soundsUnavailable, static=True)
-    if community_feature_disallowed and car_recognized and not self.CP.dashcamOnly:
-      self.events.add(EventName.communityFeatureDisallowed, static=True)
     if not car_recognized:
       self.events.add(EventName.carUnrecognized, static=True)
       #if len(self.CP.carFw) > 0:
@@ -553,7 +545,7 @@ class Controls:
             # no more soft disabling condition, so go back to ENABLED
             self.state = State.enabled
 
-          elif self.events.any(ET.SOFT_DISABLE) and self.soft_disable_timer > 0:
+          elif self.soft_disable_timer > 0:
             self.current_alert_types.append(ET.SOFT_DISABLE)
 
           elif self.soft_disable_timer <= 0:
@@ -665,19 +657,8 @@ class Controls:
         lac_log.output = steer
         lac_log.saturated = abs(steer) >= 0.9
 
-    # Check for difference between desired angle and angle for angle based control
-    angle_control_saturated = self.CP.steerControlType == car.CarParams.SteerControlType.angle and \
-      abs(actuators.steeringAngleDeg - CS.steeringAngleDeg) > STEER_ANGLE_SATURATION_THRESHOLD
-
-    if angle_control_saturated and not CS.steeringPressed and self.active:
-      self.saturated_count += 1
-    else:
-      self.saturated_count = 0
-
     # Send a "steering required alert" if saturation count has reached the limit
-    if (lac_log.saturated and not CS.steeringPressed) or \
-       (self.saturated_count > STEER_ANGLE_SATURATION_TIMEOUT):
-
+    if lac_log.active and lac_log.saturated and not CS.steeringPressed:
       dpath_points = lat_plan.dPathPoints
       if len(dpath_points):
         # Check if we deviated from the path
@@ -702,7 +683,7 @@ class Controls:
 
   def update_button_timers(self, buttonEvents):
     # increment timer for buttons still pressed
-    for k in self.button_timers.keys():
+    for k in self.button_timers:
       if self.button_timers[k] > 0:
         self.button_timers[k] += 1
 
@@ -752,7 +733,7 @@ class Controls:
     ldw_allowed = self.is_ldw_enabled and CS.vEgo > LDW_MIN_SPEED and not recent_blinker \
                     and not self.active and self.sm['liveCalibration'].calStatus == Calibration.CALIBRATED
 
-    model_v2 = self.sm['modelV2'] 
+    model_v2 = self.sm['modelV2']
     desire_prediction = model_v2.meta.desirePrediction
     if len(desire_prediction) and ldw_allowed:
       right_lane_visible = self.sm['lateralPlan'].rProb > 0.5
@@ -774,10 +755,15 @@ class Controls:
     if hudControl.rightLaneDepart or hudControl.leftLaneDepart:
       self.events.add(EventName.ldw)
 
-    clear_event = ET.WARNING if ET.WARNING not in self.current_alert_types else None
+    clear_event_types = set()
+    if ET.WARNING not in self.current_alert_types:
+      clear_event_types.add(ET.WARNING)
+    if self.enabled:
+      clear_event_types.add(ET.NO_ENTRY)
+
     alerts = self.events.create_alerts(self.current_alert_types, [self.CP, self.sm, self.is_metric, self.soft_disable_timer])
     self.AM.add_many(self.sm.frame, alerts)
-    current_alert = self.AM.process_alerts(self.sm.frame, clear_event)
+    current_alert = self.AM.process_alerts(self.sm.frame, clear_event_types)
     if current_alert:
       hudControl.visualAlert = current_alert.visual_alert
 

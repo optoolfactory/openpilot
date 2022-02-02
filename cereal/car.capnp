@@ -69,7 +69,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     preLaneChangeLeft @57;
     preLaneChangeRight @58;
     laneChange @59;
-    communityFeatureDisallowed @62;
     lowMemory @63;
     stockAeb @64;
     ldw @65;
@@ -107,9 +106,10 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     cruiseMismatch @106;
     lkasDisabled @107;
 
-    driverMonitorLowAccDEPRECATED @68;
     radarCanErrorDEPRECATED @15;
+    communityFeatureDisallowedDEPRECATED @62;
     radarCommIssueDEPRECATED @67;
+    driverMonitorLowAccDEPRECATED @68;
     gasUnavailableDEPRECATED @3;
     dataNeededDEPRECATED @16;
     modelCommIssueDEPRECATED @27;
@@ -451,6 +451,7 @@ struct CarParams {
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
   maxSteeringAngleDeg @54 :Float32;
+  unsafeMode @64 :Int16;
   safetyModel @9 :SafetyModel;
   safetyModelPassive @42 :SafetyModel = silent;
   safetyParam @10 :Int16;
@@ -505,26 +506,25 @@ struct CarParams {
   carFw @44 :List(CarFw);
 
   radarTimeStep @45: Float32 = 0.05;  # time delta between radar updates, 20Hz is very standard
-  communityFeature @46: Bool;  # true if a community maintained feature is detected
   fingerprintSource @49: FingerprintSource;
   networkLocation @50 :NetworkLocation;  # Where Panda/C2 is integrated into the car's CAN network
 
   wheelSpeedFactor @62 :Float32; # Multiplier on wheels speeds to computer actual speeds
 
-  mdpsBus @64: Int8;
-  sasBus @65: Int8;
-  sccBus @66: Int8;
-  fcaBus @67: Int8;
-  bsmAvailable @68: Bool;
-  lfaAvailable @69: Bool;
-  lvrAvailable @70: Bool;
-  evgearAvailable @71: Bool;
-  emsAvailable @72: Bool;
-  standStill @73: Bool;
-  vCruisekph @74: Float32;
-  resSpeed @75: Float32;
-  vFuture @76: Float32;
-  aqValue @77: Float32;
+  mdpsBus @65: Int8;
+  sasBus @66: Int8;
+  sccBus @67: Int8;
+  fcaBus @68: Int8;
+  bsmAvailable @69: Bool;
+  lfaAvailable @70: Bool;
+  lvrAvailable @71: Bool;
+  evgearAvailable @72: Bool;
+  emsAvailable @73: Bool;
+  standStill @74: Bool;
+  vCruisekph @75: Float32;
+  resSpeed @76: Float32;
+  vFuture @77: Float32;
+  aqValue @78: Float32;
 
   struct LateralParams {
     torqueBP @0 :List(Int32);
@@ -673,5 +673,6 @@ struct CarParams {
   hasStockCameraDEPRECATED @57 :Bool;
   minSpeedCanDEPRECATED @51 :Float32;
   startAccelDEPRECATED @32 :Float32;
+  communityFeatureDEPRECATED @46: Bool;
   startingAccelRateDEPRECATED @53 :Float32;
 }

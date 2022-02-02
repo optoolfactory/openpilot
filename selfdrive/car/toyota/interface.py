@@ -2,7 +2,7 @@
 from cereal import car
 from selfdrive.config import Conversions as CV
 from selfdrive.car.toyota.tunes import LatTunes, LongTunes, set_long_tune, set_lat_tune
-from selfdrive.car.toyota.values import Ecu, CAR, TSS2_CAR, NO_DSU_CAR, MIN_ACC_SPEED, CarControllerParams
+from selfdrive.car.toyota.values import Ecu, CAR, ToyotaFlags, TSS2_CAR, NO_DSU_CAR, MIN_ACC_SPEED, CarControllerParams
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
 
@@ -98,7 +98,7 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 4607. * CV.LB_TO_KG + STD_CARGO_KG  # mean between normal and hybrid limited
       set_lat_tune(ret.lateralTuning, LatTunes.PID_G)
 
-    elif candidate in (CAR.AVALON, CAR.AVALON_2019, CAR.AVALONH_2019):
+    elif candidate in (CAR.AVALON, CAR.AVALON_2019, CAR.AVALONH_2019, CAR.AVALON_TSS2):
       stop_and_go = False
       ret.wheelbase = 2.82
       ret.steerRatio = 14.8  # Found at https://pressroom.toyota.com/releases/2016+avalon+product+specs.download
@@ -234,13 +234,12 @@ class CarInterface(CarInterfaceBase):
     # if the smartDSU is detected, openpilot can send ACC_CMD (and the smartDSU will block it from the DSU) or not (the DSU is "connected")
     ret.openpilotLongitudinalControl = smartDsu or ret.enableDsu or candidate in TSS2_CAR
 
+    if 0x245 in fingerprint[0]:
+      ret.flags |= ToyotaFlags.HYBRID.value
+
     # min speed to enable ACC. if car can do stop and go, then set enabling speed
     # to a negative value, so it won't matter.
     ret.minEnableSpeed = -1. if (stop_and_go or ret.enableGasInterceptor) else MIN_ACC_SPEED
-
-    # removing the DSU disables AEB and it's considered a community maintained feature
-    # intercepting the DSU is a community feature since it requires unofficial hardware
-    ret.communityFeature = ret.enableGasInterceptor or ret.enableDsu or smartDsu
 
     if ret.enableGasInterceptor:
       set_long_tune(ret.longitudinalTuning, LongTunes.PEDAL)

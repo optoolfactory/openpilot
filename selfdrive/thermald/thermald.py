@@ -199,11 +199,9 @@ def thermald_thread() -> NoReturn:
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML)
-  pandaState_prev = None
   should_start_prev = False
   handle_fan = None
   is_uno = False
-  ui_running_prev = False
 
   params = Params()
   power_monitor = PowerMonitoring()
@@ -214,10 +212,6 @@ def thermald_thread() -> NoReturn:
 
   # TODO: use PI controller for UNO
   controller = PIController(k_p=0, k_i=2e-3, neg_limit=-80, pos_limit=0, rate=(1 / DT_TRML))
-
-  # Leave flag for loggerd to indicate device was left onroad
-  if params.get_bool("IsOnroad"):
-    params.put_bool("BootedOnroad", True)
 
   # sound trigger
   sound_trigger = 1
@@ -279,13 +273,6 @@ def thermald_thread() -> NoReturn:
           cloudlog.info("Setting up EON fan handler")
           setup_eon_fan()
           handle_fan = handle_fan_eon
-
-      # Handle disconnect
-      if pandaState_prev is not None:
-        if pandaState.pandaState.pandaType == log.PandaState.PandaType.unknown and \
-          pandaState_prev.pandaState.pandaType != log.PandaState.PandaType.unknown:
-          params.clear_all(ParamKeyType.CLEAR_ON_PANDA_DISCONNECT)
-      pandaState_prev = pandaState
     elif params.get_bool("IsOpenpilotViewEnabled") and not params.get_bool("IsDriverViewEnabled") and is_openpilot_view_enabled == 0:
       is_openpilot_view_enabled = 1
       onroad_conditions["ignition"] = True
@@ -522,12 +509,6 @@ def thermald_thread() -> NoReturn:
 #      # TODO: add function for blocking cloudlog instead of sleep
 #      time.sleep(10)
 #      HARDWARE.shutdown()
-
-    # If UI has crashed, set the brightness to reasonable non-zero value
-    ui_running = "ui" in (p.name for p in sm["managerState"].processes if p.running)
-    if ui_running_prev and not ui_running:
-      HARDWARE.set_screen_brightness(20)
-    ui_running_prev = ui_running
 
     msg.deviceState.chargingError = current_filter.x > 0. and msg.deviceState.batteryPercent < 90  # if current is positive, then battery is being discharged
     msg.deviceState.started = started_ts is not None

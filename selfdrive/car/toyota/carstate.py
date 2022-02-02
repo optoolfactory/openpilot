@@ -6,7 +6,7 @@ from opendbc.can.can_define import CANDefine
 from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
-from selfdrive.car.toyota.values import CAR, DBC, STEER_THRESHOLD, NO_STOP_TIMER_CAR, TSS2_CAR
+from selfdrive.car.toyota.values import ToyotaFlags, CAR, DBC, STEER_THRESHOLD, NO_STOP_TIMER_CAR, TSS2_CAR
 
 
 class CarState(CarStateBase):
@@ -28,9 +28,9 @@ class CarState(CarStateBase):
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
 
-    ret.doorOpen = any([cp.vl["SEATS_DOORS"]["DOOR_OPEN_FL"], cp.vl["SEATS_DOORS"]["DOOR_OPEN_FR"],
-                        cp.vl["SEATS_DOORS"]["DOOR_OPEN_RL"], cp.vl["SEATS_DOORS"]["DOOR_OPEN_RR"]])
-    ret.seatbeltUnlatched = cp.vl["SEATS_DOORS"]["SEATBELT_DRIVER_UNLATCHED"] != 0
+    ret.doorOpen = any([cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_FL"], cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_FR"],
+                        cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_RL"], cp.vl["BODY_CONTROL_STATE"]["DOOR_OPEN_RR"]])
+    ret.seatbeltUnlatched = cp.vl["BODY_CONTROL_STATE"]["SEATBELT_DRIVER_UNLATCHED"] != 0
 
     ret.brakePressed = cp.vl["BRAKE_MODULE"]["BRAKE_PRESSED"] != 0
     ret.brakeHoldActive = cp.vl["ESP_CONTROL"]["BRAKE_HOLD_ACTIVE"] == 1
@@ -38,7 +38,9 @@ class CarState(CarStateBase):
       ret.gas = (cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS"] + cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS2"]) / 2.
       ret.gasPressed = ret.gas > 15
     else:
-      ret.gas = cp.vl["GAS_PEDAL"]["GAS_PEDAL"]
+      # TODO: find a new, common signal
+      msg = "GAS_PEDAL_HYBRID" if (self.CP.flags & ToyotaFlags.HYBRID) else "GAS_PEDAL"
+      ret.gas = cp.vl[msg]["GAS_PEDAL"]
       ret.gasPressed = cp.vl["PCM_CRUISE"]["GAS_RELEASED"] == 0
 
     ret.wheelSpeeds = self.get_wheel_speeds(
@@ -72,8 +74,8 @@ class CarState(CarStateBase):
 
     can_gear = int(cp.vl["GEAR_PACKET"]["GEAR"])
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(can_gear, None))
-    ret.leftBlinker = cp.vl["STEERING_LEVERS"]["TURN_SIGNALS"] == 1
-    ret.rightBlinker = cp.vl["STEERING_LEVERS"]["TURN_SIGNALS"] == 2
+    ret.leftBlinker = cp.vl["BLINKERS_STATE"]["TURN_SIGNALS"] == 1
+    ret.rightBlinker = cp.vl["BLINKERS_STATE"]["TURN_SIGNALS"] == 2
 
     ret.steeringTorque = cp.vl["STEER_TORQUE_SENSOR"]["STEER_TORQUE_DRIVER"]
     ret.steeringTorqueEps = cp.vl["STEER_TORQUE_SENSOR"]["STEER_TORQUE_EPS"]
@@ -130,16 +132,15 @@ class CarState(CarStateBase):
       ("STEER_ANGLE", "STEER_ANGLE_SENSOR", 0),
       ("GEAR", "GEAR_PACKET", 0),
       ("BRAKE_PRESSED", "BRAKE_MODULE", 0),
-      ("GAS_PEDAL", "GAS_PEDAL", 0),
       ("WHEEL_SPEED_FL", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_FR", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_RL", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_RR", "WHEEL_SPEEDS", 0),
-      ("DOOR_OPEN_FL", "SEATS_DOORS", 1),
-      ("DOOR_OPEN_FR", "SEATS_DOORS", 1),
-      ("DOOR_OPEN_RL", "SEATS_DOORS", 1),
-      ("DOOR_OPEN_RR", "SEATS_DOORS", 1),
-      ("SEATBELT_DRIVER_UNLATCHED", "SEATS_DOORS", 1),
+      ("DOOR_OPEN_FL", "BODY_CONTROL_STATE", 1),
+      ("DOOR_OPEN_FR", "BODY_CONTROL_STATE", 1),
+      ("DOOR_OPEN_RL", "BODY_CONTROL_STATE", 1),
+      ("DOOR_OPEN_RR", "BODY_CONTROL_STATE", 1),
+      ("SEATBELT_DRIVER_UNLATCHED", "BODY_CONTROL_STATE", 1),
       ("TC_DISABLED", "ESP_CONTROL", 1),
       ("BRAKE_HOLD_ACTIVE", "ESP_CONTROL", 1),
       ("STEER_FRACTION", "STEER_ANGLE_SENSOR", 0),
@@ -150,7 +151,7 @@ class CarState(CarStateBase):
       ("STEER_TORQUE_DRIVER", "STEER_TORQUE_SENSOR", 0),
       ("STEER_TORQUE_EPS", "STEER_TORQUE_SENSOR", 0),
       ("STEER_ANGLE", "STEER_TORQUE_SENSOR", 0),
-      ("TURN_SIGNALS", "STEERING_LEVERS", 3),   # 3 is no blinkers
+      ("TURN_SIGNALS", "BLINKERS_STATE", 3),   # 3 is no blinkers
       ("LKA_STATE", "EPS_STATUS", 0),
       ("AUTO_HIGH_BEAM", "LIGHT_STALK", 0),
     ]
@@ -158,17 +159,23 @@ class CarState(CarStateBase):
     checks = [
       ("GEAR_PACKET", 1),
       ("LIGHT_STALK", 1),
-      ("STEERING_LEVERS", 0.15),
-      ("SEATS_DOORS", 3),
+      ("BLINKERS_STATE", 0.15),
+      ("BODY_CONTROL_STATE", 3),
       ("ESP_CONTROL", 3),
       ("EPS_STATUS", 25),
       ("BRAKE_MODULE", 40),
-      ("GAS_PEDAL", 33),
       ("WHEEL_SPEEDS", 80),
       ("STEER_ANGLE_SENSOR", 80),
       ("PCM_CRUISE", 33),
       ("STEER_TORQUE_SENSOR", 50),
     ]
+
+    if CP.flags & ToyotaFlags.HYBRID:
+      signals.append(("GAS_PEDAL", "GAS_PEDAL_HYBRID", 0))
+      checks.append(("GAS_PEDAL_HYBRID", 33))
+    else:
+      signals.append(("GAS_PEDAL", "GAS_PEDAL", 0))
+      checks.append(("GAS_PEDAL", 33))
 
     if CP.carFingerprint in (CAR.LEXUS_IS, CAR.LEXUS_RC):
       signals.append(("MAIN_ON", "DSU_CRUISE", 0))
