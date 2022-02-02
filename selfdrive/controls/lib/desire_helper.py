@@ -1,6 +1,7 @@
 from cereal import log
 from common.realtime import DT_MDL
 from selfdrive.config import Conversions as CV
+from common.numpy_fast import interp
 from common.params import Params
 from decimal import Decimal
 
