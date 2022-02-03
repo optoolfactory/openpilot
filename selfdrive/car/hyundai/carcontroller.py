@@ -641,7 +641,7 @@ class CarController():
             elif aReqValue < 0.0 and CS.lead_distance <= 4.3 and -5 < lead_objspd and accel > aReqValue:
               accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*0.9, 1.0, 3.0))
             elif aReqValue < 0.0 and lead_objspd < -15:
-              pass
+              accel = (aReqValue + accel) / 2
             elif aReqValue < 0.0:
               stock_weight = interp(CS.lead_distance, [5.0, 9.0, 20.0, 25.0, 30.0], [0.0, 1.0, 1.0, 0.0, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
