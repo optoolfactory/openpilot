@@ -993,7 +993,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
   }
 
   //cruise gap
-  if (scene.longitudinal_control && scene.radar_long_helper != 2) {
+  if (scene.longitudinal_control && scene.radar_long_helper < 2) {
     char val_str[16];
     char uom_str[6];
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
@@ -1018,7 +1018,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
 
   //finally draw the frame
   if (scene.longitudinal_control) {bb_h += -(bb_y_offset*4);} else {bb_h += -(bb_y_offset*3);}
-  if (scene.longitudinal_control && scene.radar_long_helper == 2) {bb_h += bb_y_offset;}
+  if (scene.longitudinal_control && scene.radar_long_helper > 1) {bb_h += bb_y_offset;}
   nvgBeginPath(s->vg);
   nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
