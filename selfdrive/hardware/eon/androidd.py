@@ -10,7 +10,7 @@ from selfdrive.swaglog import cloudlog
 
 MAX_MODEM_CRASHES = 3
 MODEM_PATH = "/sys/devices/soc/2080000.qcom,mss/subsys5"
-WATCHED_PROCS = ["zygote", "zygote64", "system_server", "/system/bin/servicemanager", "/system/bin/surfaceflinger"]
+WATCHED_PROCS = ["zygote", "zygote64", "/system/bin/servicemanager", "/system/bin/surfaceflinger"]
 
 
 def get_modem_crash_count() -> Optional[int]:
@@ -49,7 +49,7 @@ def main():
       if len(procs):
         for p in WATCHED_PROCS:
           if cur[p] != procs[p]:
-            cloudlog.event("android service pid changed", proc=p, cur=cur[p], prev=procs[p], error=True)
+            cloudlog.event("android service pid changed", proc=p, cur=cur[p], prev=procs[p])
       procs.update(cur)
 
     # check modem state
@@ -67,7 +67,7 @@ def main():
 
     # handle excessive modem crashes
     if crash_count > MAX_MODEM_CRASHES and not modem_killed:
-      cloudlog.event("killing modem", error=True)
+      cloudlog.event("killing modem")
       with open("/sys/kernel/debug/msm_subsys/modem", "w") as f:
         f.write("put")
       modem_killed = True
