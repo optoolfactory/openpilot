@@ -23,22 +23,22 @@ def get_radar_can_parser(CP):
     for addr in range(RADAR_START_ADDR, RADAR_START_ADDR + RADAR_MSG_COUNT):
       msg = f"RADAR_TRACK_{addr:x}"
       signals += [
-        ("STATE", msg, 0),
-        ("AZIMUTH", msg, 0),
-        ("LONG_DIST", msg, 0),
-        ("REL_ACCEL", msg, 0),
-        ("REL_SPEED", msg, 0),
+        ("STATE", msg),
+        ("AZIMUTH", msg),
+        ("LONG_DIST", msg),
+        ("REL_ACCEL", msg),
+        ("REL_SPEED", msg),
       ]
       checks += [(msg, 50)]
     return CANParser(DBC[CP.carFingerprint]['radar'], signals, checks, CP.sccBus)
   else:
     signals = [
       # sig_name, sig_address, default
-      ("ObjValid", "SCC11", 0),
-      ("ACC_ObjStatus", "SCC11", 0),
-      ("ACC_ObjLatPos", "SCC11", 0),
-      ("ACC_ObjDist", "SCC11", 0),
-      ("ACC_ObjRelSpd", "SCC11", 0),
+      ("ObjValid", "SCC11"),
+      ("ACC_ObjStatus", "SCC11"),
+      ("ACC_ObjLatPos", "SCC11"),
+      ("ACC_ObjDist", "SCC11"),
+      ("ACC_ObjRelSpd", "SCC11"),
     ]
     checks = [
       # address, frequency
