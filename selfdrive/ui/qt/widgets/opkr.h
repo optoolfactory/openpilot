@@ -953,13 +953,13 @@ private:
   QPushButton btndigit;
   QPushButton btnminus;
   QPushButton btnplus;
-  QPushButton btndirect;
   QLabel label;
   Params params;
   float digit = 0.01;
   
   void refresh();
 };
+
 class SRMaxControl : public AbstractControl {
   Q_OBJECT
 
@@ -1993,6 +1993,23 @@ public:
 private:
   QPushButton btn;
   Params params;
+  
+  void refresh();
+};
+
+class DesiredCurvatureLimit : public AbstractControl {
+  Q_OBJECT
+
+public:
+  DesiredCurvatureLimit();
+
+private:
+  QPushButton btndigit;
+  QPushButton btnminus;
+  QPushButton btnplus;
+  QLabel label;
+  Params params;
+  float digit = 0.01;
   
   void refresh();
 };

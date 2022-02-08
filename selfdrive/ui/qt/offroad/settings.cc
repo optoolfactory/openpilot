@@ -684,6 +684,7 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SteerDeltaDownMax());
   layout->addWidget(new VariableSteerDeltaToggle());
   layout->addWidget(new SteerThreshold());
+  layout->addWidget(new DesiredCurvatureLimit());
 
   layout->addWidget(horizontal_line());
 
