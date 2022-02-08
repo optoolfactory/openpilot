@@ -8,7 +8,11 @@ from common.params import Params
 from decimal import Decimal
 
 # from chanhojung's idea, parameterized by opkr
-DESIRED_CURVATURE_LIMIT = float(Decimal(Params().get("DesiredCurvatureLimit", encoding="utf8")) * Decimal('0.01'))
+try:
+  DESIRED_CURVATURE_LIMIT = float(Decimal(Params().get("DesiredCurvatureLimit", encoding="utf8")) * Decimal('0.01'))
+except:
+  DESIRED_CURVATURE_LIMIT = int(Params().get("DesiredCurvatureLimit", encoding="utf8")) * 0.01
+  pass
 
 # kph
 V_CRUISE_MAX = 160
