@@ -622,6 +622,18 @@ public:
   }
 };
 
+class C2WithCommaPowerToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  C2WithCommaPowerToggle() : ToggleControl("C2 with CommaPower", "This is for C2 users with Comma Power.", "../assets/offroad/icon_shell.png", Params().getBool("C2WithCommaPower")) {
+    QObject::connect(this, &C2WithCommaPowerToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("C2WithCommaPower", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT

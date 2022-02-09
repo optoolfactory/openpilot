@@ -234,6 +234,8 @@ def thermald_thread() -> NoReturn:
   battery_charging_min = int(params.get("OpkrBatteryChargingMin", encoding="utf8"))
   battery_charging_max = int(params.get("OpkrBatteryChargingMax", encoding="utf8"))
 
+  c2withCommaPower = params.get_bool("C2WithCommaPower")
+
   is_openpilot_dir = True
 
   while 1:
@@ -506,11 +508,13 @@ def thermald_thread() -> NoReturn:
 #    msg.deviceState.chargingDisabled = power_monitor.should_disable_charging(pandaState, off_ts)
 #
 #    # Check if we need to shut down
-#    if power_monitor.should_shutdown(pandaState, off_ts, started_seen):
-#      cloudlog.info(f"shutting device down, offroad since {off_ts}")
-#      # TODO: add function for blocking cloudlog instead of sleep
-#      time.sleep(10)
-#      HARDWARE.shutdown()
+
+    if c2withCommaPower:
+      if power_monitor.should_shutdown(pandaState, off_ts, started_seen):
+        cloudlog.info(f"shutting device down, offroad since {off_ts}")
+        # TODO: add function for blocking cloudlog instead of sleep
+        time.sleep(10)
+        HARDWARE.shutdown()
 
     msg.deviceState.chargingError = current_filter.x > 0. and msg.deviceState.batteryPercent < 90  # if current is positive, then battery is being discharged
     msg.deviceState.started = started_ts is not None

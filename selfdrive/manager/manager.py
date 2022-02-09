@@ -193,6 +193,7 @@ def manager_init() -> None:
     ("UseRadarTrack", "0"),
     ("RadarDisable", "0"),
     ("DesiredCurvatureLimit", "5"),
+    ("C2WithCommaPower", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

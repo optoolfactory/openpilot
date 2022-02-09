@@ -9,6 +9,7 @@ from common.params import Params
 from selfdrive.swaglog import cloudlog
 
 PANDA_FW_FN = os.path.join(PANDA_BASEDIR, "board", "obj", "panda.bin.signed")
+C2withCommaPowerP = Params().get_bool("C2WithCommaPower")
 
 
 def get_expected_signature() -> bytes:
@@ -90,8 +91,9 @@ def main() -> None:
     Params().put_bool("PandaHeartbeatLost", True)
     cloudlog.event("heartbeat lost", deviceState=health)
 
-  #cloudlog.info("Resetting panda")
-  #panda.reset()
+  if C2withCommaPowerP:
+    cloudlog.info("Resetting panda")
+    panda.reset()
 
   os.chdir(os.path.join(BASEDIR, "selfdrive/boardd"))
   os.execvp("./boardd", ["./boardd"])
