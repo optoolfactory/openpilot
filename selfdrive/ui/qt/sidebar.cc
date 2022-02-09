@@ -122,22 +122,30 @@ void Sidebar::updateState(const UIState &s) {
   setProperty("pandaStatus", QVariant::fromValue(pandaStatus));
 
   // opkr
-  QString iPAddress = "N/A";
-  QString sSID = "---";
-  if (network_type[deviceState.getNetworkType()] != "--") {
+  QString iPAddress = "--";
+  QString connectName = "---";
+  QString rSRP = "--";
+  if (network_type[deviceState.getNetworkType()] == "WiFi") {
     std::string m_strip = s.scene.deviceState.getWifiIpAddress();
-    std::string m_strssid = s.scene.deviceState.getWifiSSID();
+    std::string m_connectname = s.scene.deviceState.getConnectName();
     iPAddress = QString::fromUtf8(m_strip.c_str());
-    sSID = QString::fromUtf8(m_strssid.c_str());
+    connectName = QString::fromUtf8(m_connectname.c_str());
+  } else {
+    std::string m_rsrp = s.scene.deviceState.getRSRP();
+    std::string m_connectname = s.scene.deviceState.getConnectName();
+    rSRP = QString::fromUtf8(m_rsrp.c_str()) + " dBm";
+    connectName = QString::fromUtf8(m_connectname.c_str());
   }
   QString bATStatus = "DisCharging";
   std::string m_battery_stat = s.scene.deviceState.getBatteryStatus();
   bATStatus = QString::fromUtf8(m_battery_stat.c_str());
 
   setProperty("iPAddress", iPAddress);
-  setProperty("sSID", sSID);
+  setProperty("connectName", connectName);
   setProperty("bATStatus", bATStatus);
   setProperty("bATPercent", (int)deviceState.getBatteryPercent());
+  setProperty("bATLess", (bool)s.scene.batt_less);
+  setProperty("rSRP", rSRP);
 }
 
 void Sidebar::paintEvent(QPaintEvent *event) {
@@ -163,8 +171,13 @@ void Sidebar::paintEvent(QPaintEvent *event) {
 
   configFont(p, "Open Sans", 35, "Regular");
   p.setPen(QColor(0xff, 0xff, 0xff));
-  const QRect r = QRect(50, 239, 100, 50);
-  p.drawText(r, Qt::AlignHCenter, net_type);
+  if (!bat_Less) {
+    QRect r = QRect(50, 239, 100, 50);
+    p.drawText(r, Qt::AlignHCenter, net_type);
+  } else {
+    QRect r = QRect(50, 239, 200, 50);
+    p.drawText(r, Qt::AlignCenter, net_type);
+  }
 
   // metrics
   drawMetric(p, "SYS TEMP", temp_status.first, temp_status.second, 378);
@@ -172,29 +185,35 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   drawMetric(p, connect_status.first, "", connect_status.second, 716);
 
   // atom - ip
-  if( bat_Percent <= 1) return;
   const QRect r2 = QRect(35, 295, 230, 50);
   configFont(p, "Open Sans", 28, "Bold");
   p.setPen(Qt::yellow);
-  p.drawText(r2, Qt::AlignHCenter, wifi_IPAddress);
+  if (wifi_IPAddress != "--") {
+    p.drawText(r2, Qt::AlignHCenter, wifi_IPAddress);
+  } else if (rsrp != "--") {
+    p.drawText(r2, Qt::AlignHCenter, rsrp);
+  }
 
-  // opkr - ssid
+  // opkr - ssid or carrier name
   const QRect r3 = QRect(35, 335, 230, 45);
   configFont(p, "Open Sans", 25, "Bold");
   p.setPen(Qt::white);
-  p.drawText(r3, Qt::AlignHCenter, wifi_SSID);
+  p.drawText(r3, Qt::AlignHCenter, connect_Name);
+
 
   // atom - battery
-  QRect  rect(160, 247, 76, 36);
-  QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * bat_Percent * 0.01), rect.height() - 11 );
-  QBrush bgBrush("#149948");
-  p.fillRect(bq, bgBrush);
-  p.drawImage(rect, battery_imgs[bat_Status == "Charging" ? 1 : 0]);
+  if (!bat_Less) {
+    QRect rect(160, 247, 76, 36);
+    QRect bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * bat_Percent * 0.01), rect.height() - 11 );
+    QBrush bgBrush("#149948");
+    p.fillRect(bq, bgBrush);
+    p.drawImage(rect, battery_imgs[bat_Status == "Charging" ? 1 : 0]);
 
-  p.setPen(Qt::white);
-  configFont(p, "Open Sans", 25, "Regular");
+    p.setPen(Qt::white);
+    configFont(p, "Open Sans", 25, "Regular");
 
-  char temp_value_str1[32];
-  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d%%", bat_Percent );
-  p.drawText(rect, Qt::AlignCenter, temp_value_str1);
+    char temp_value_str1[32];
+    snprintf(temp_value_str1, sizeof(temp_value_str1), "%d%%", bat_Percent );
+    p.drawText(rect, Qt::AlignCenter, temp_value_str1);
+  }
 }

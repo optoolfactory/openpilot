@@ -195,7 +195,8 @@ def thermald_thread() -> NoReturn:
   nvme_temps = None
   modem_temps = None
   wifiIpAddress = "N/A"
-  wifi_ssid = "---"
+  connect_name = "---"
+  rsrp = "--"
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML)
@@ -286,7 +287,7 @@ def thermald_thread() -> NoReturn:
     if (count % int(10. / DT_TRML)) == 0:
       try:
         network_type = HARDWARE.get_network_type()
-        network_strength, wifi_ssid = HARDWARE.get_network_strength(network_type)
+        network_strength, connect_name, rsrp = HARDWARE.get_network_strength(network_type)
         network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
         if TICI:
           nvme_temps = HARDWARE.get_nvme_temperatures()
@@ -323,7 +324,8 @@ def thermald_thread() -> NoReturn:
     msg.deviceState.gpuUsagePercent = int(round(HARDWARE.get_gpu_usage_percent()))
     msg.deviceState.networkType = network_type
     msg.deviceState.networkStrength = network_strength
-    msg.deviceState.wifiSSID = wifi_ssid
+    msg.deviceState.connectName = connect_name
+    msg.deviceState.rSRP = rsrp
     if network_info is not None:
       msg.deviceState.networkInfo = network_info
     msg.deviceState.wifiIpAddress = wifiIpAddress

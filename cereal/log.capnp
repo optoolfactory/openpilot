@@ -378,7 +378,8 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   # atom
   wifiIpAddress @41 :Text;
   # opkr
-  wifiSSID @42 :Text;
+  connectName @42 :Text;
+  rSRP @43 :Text;
 }
 
 struct PandaState @0xa7649e2575e4591e {
