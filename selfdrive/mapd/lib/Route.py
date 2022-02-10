@@ -1,6 +1,6 @@
-from .NodesData import NodesData, NodeDataIdx
+from selfdrive.mapd.lib.NodesData import NodesData, NodeDataIdx
 from selfdrive.mapd.config import QUERY_RADIUS
-from .geo import ref_vectors, R, distance_to_points
+from selfdrive.mapd.lib.geo import ref_vectors, R, distance_to_points
 from itertools import compress
 import numpy as np
 
@@ -18,7 +18,7 @@ class Route():
 
     Args:
         current (WayRelation): The Way Relation that is currently located. It must be active.
-        wr_index (Dict(NodeId, [WayRelation])): The index of WayRelations by node id of an edge node.
+        wr_index (WayRelationIndex): The indexes of WayRelations by node id.
         way_collection_id (UUID): The id of the Way Collection that created this Route.
         query_center (Numpy Array): lat, lon] numpy array in radians indicating the center of the data query.
     """
@@ -35,6 +35,7 @@ class Route():
     # current (last_wr) way. Use the index to find the continuation posibilities on each iteration.
     last_wr = current
     ordered_way_ids = []
+    split_wrs = []
     while True:
       # - Append current element to the route list of ordered way relations.
       self._ordered_way_relations.append(last_wr)
@@ -42,16 +43,43 @@ class Route():
 
       # - Get the id of the node at the end of the way and then fetch the way relations that share the end node id.
       last_node_id = last_wr.last_node.id
-      way_relations = wr_index[last_node_id]
+      way_relations = wr_index.way_relations_with_edge_node_id(last_node_id)
 
-      # - If no more way_relations than last_wr, we got to the end.
+      # - Add split way relations when necessary and remove parent way relations.
+      split_wrs_to_add = [wr for wr in split_wrs if last_node_id in wr.edge_nodes_ids]
+      way_relations.extend(split_wrs_to_add)
+      parent_ids = [wr.parent_wr_id for wr in split_wrs_to_add]
+      way_relations = [wr for wr in way_relations if wr.id not in parent_ids]
+
+      # - If no more way_relations than last_wr, we have to check if we join another wr on an internal node, and
+      # if we do, we replace such way relation with the split of it and continue.
       if len(way_relations) == 1:
-        break
+        way_relations = wr_index.way_relations_with_node_id(last_node_id)
+        # If no more way_relations than last_wr or its parent, we got to the end.
+        if len(way_relations) == 1:
+          break
+
+        # If last_wr is a split, replace its parent with last_wr
+        way_relations = [last_wr if wr is last_wr.parent else wr for wr in way_relations]
+
+        # If we join a wr on an internal node, then we artificially split the wr in two and pass both wrs as
+        # candidates to the wr selection code below.
+        wr_to_split = [wr for wr in way_relations if wr is not last_wr][0]
+        next_split_way_id = -len(split_wrs) - 1  # Keep split wrs ids unique on Route
+        new_wrs = wr_to_split.split(last_node_id, [next_split_way_id, next_split_way_id - 1])
+        # If it could not be splited, we are done.
+        if len(new_wrs) != 2:
+          break
+
+        # Replace the original way relation for the splitted version on way_relations and track splited wrs.
+        split_wrs.extend(new_wrs)
+        way_relations.remove(wr_to_split)
+        way_relations.extend(new_wrs)
 
       # - Get the coordinates for the edge node and build the array of coordinates for the nodes before the edge node
       # on each of the common way relations, then get the vectors in cartesian plane for the end sections of each way.
       ref_point = last_wr.last_node_coordinates
-      points = np.array(list(map(lambda wr: wr.node_before_edge_coordinates(last_node_id), way_relations)))
+      points = np.array([wr.node_before_edge_coordinates(last_node_id) for wr in way_relations])
       v = ref_vectors(ref_point, points) * R
 
       # - Calculate the bearing (from true north clockwise) for every end section of each way.
@@ -140,7 +168,7 @@ class Route():
       last_wr = way_relations[best_idx]
 
     # Build the node data from the ordered list of way relations
-    self._nodes_data = NodesData(self._ordered_way_relations)
+    self._nodes_data = NodesData(self._ordered_way_relations, wr_index)
 
     # Locate where we are in the route node list.
     self._locate()
@@ -162,7 +190,7 @@ class Route():
 
   def _locate(self):
     """Will resolve the index in the nodes_data list for the node ahead of the current location.
-    It updates as well the distance from the current location to the node ahead.
+       It updates as well the distance from the current location to the node ahead.
     """
     current = self.current_wr
     if current is None:
@@ -183,7 +211,7 @@ class Route():
   def current_wr(self):
     return self._ordered_way_relations[0] if len(self._ordered_way_relations) else None
 
-  def update(self, location_rad, bearing_rad, accuracy):
+  def update(self, location_rad, bearing_rad, location_stdev):
     """Will update the route structure based on the given `location_rad` and `bearing_rad` assuming progress on the
     route on the original direction. If direction has changed or active point on the route can not be found, the route
     will become invalid.
@@ -199,20 +227,29 @@ class Route():
     # with the way relations remaining ahead.
     for idx, wr in enumerate(self._ordered_way_relations):
       active_direction = wr.direction
-      wr.update(location_rad, bearing_rad, accuracy)
+      wr.update(location_rad, bearing_rad, location_stdev)
 
       if not wr.active:
         continue
 
-      if wr.direction == active_direction:
-        # We have now the current wr. Repopulate from here till the end and locate
-        self._ordered_way_relations = self._ordered_way_relations[idx:]
-        self._reset()
-        self._locate()
-        return
+      if wr.direction != active_direction:
+        # Driving direction on the route has changed. stop.
+        break
 
-      # Driving direction on the route has changed. stop.
-      break
+      # We have now the current wr. Repopulate from here till the end and locate
+      self._ordered_way_relations = self._ordered_way_relations[idx:]
+      self._reset()
+      self._locate()
+
+      # If the active way is diverting, check whether there are posibilities to divert from the route in the
+      # vecinity of the current location. If there are possibilities, then stop here to loose the route as we are
+      # most likely driving away. If there are no possibilites, then stick to the route as the diversion is probably
+      # just a matter of GPS accuracy. (It can happen after driving under a bridge)
+      if wr.diverting and len(self._nodes_data.possible_divertions(self._ahead_idx, self._distance_to_node_ahead)) > 0:
+        break
+
+      # The current location in route is valid, return.
+      return
 
     # if we got here, there is no new active way relation or driving direction has changed. Reset.
     self._reset()
@@ -242,7 +279,7 @@ class Route():
       return []
 
     self._cuvature_limits_ahead = self._nodes_data. \
-        curvatures_speed_limit_sections_ahead(self._ahead_idx, self._distance_to_node_ahead)
+      curvatures_speed_limit_sections_ahead(self._ahead_idx, self._distance_to_node_ahead)
 
     return self._cuvature_limits_ahead
 
@@ -297,3 +334,7 @@ class Route():
       return None
 
     return self._nodes_data.distance_to_end(self._ahead_idx, self._distance_to_node_ahead)
+
+  @property
+  def current_road_name(self):
+    return self.current_wr.road_name if self.located else None

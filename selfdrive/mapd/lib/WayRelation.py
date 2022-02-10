@@ -1,48 +1,46 @@
-from .geo import DIRECTION, R, vectors, bearing_to_points, distance_to_points
+from selfdrive.mapd.lib.geo import DIRECTION, R, vectors, bearing_to_points, distance_to_points
+from selfdrive.mapd.lib.osm import create_way
 from selfdrive.config import Conversions as CV
-from datetime import datetime
+from selfdrive.mapd.config import LANE_WIDTH
+from common.basedir import BASEDIR
+from datetime import datetime as dt
 import numpy as np
 import re
+import json
 
 
 _WAY_BBOX_PADING = 80. / R  # 80 mts of pading to bounding box. (expressed in radians)
-_LANE_WIDTH = 3.7  # Lane width estimate. Used for detecting departures from way.
 
-_COUNTRY_LIMITS_KPH = {
-    'DE': {
-        'urban': 50.,
-        'rural': 100.,
-        'motorway': 0.,
-        'living_street': 7.,
-        'bicycle_road': 30.
-    }
-}
+
+with open(BASEDIR + "/selfdrive/mapd/lib/default_speeds.json", "rb") as f:
+  _COUNTRY_LIMITS = json.loads(f.read())
+
 
 _WD = {
-    'Mo': 0,
-    'Tu': 1,
-    'We': 2,
-    'Th': 3,
-    'Fr': 4,
-    'Sa': 5,
-    'Su': 6
+  'Mo': 0,
+  'Tu': 1,
+  'We': 2,
+  'Th': 3,
+  'Fr': 4,
+  'Sa': 5,
+  'Su': 6
 }
 
 _HIGHWAY_RANK = {
-    'motorway': 0,
-    'motorway_link': 1,
-    'trunk': 10,
-    'trunk_link': 11,
-    'primary': 20,
-    'primary_link': 21,
-    'secondary': 30,
-    'secondary_link': 31,
-    'tertiary': 40,
-    'tertiary_link': 41,
-    'unclassified': 50,
-    'residential': 60,
-    'living_street': 61,
-    None: 100,
+  'motorway': 0,
+  'motorway_link': 1,
+  'trunk': 10,
+  'trunk_link': 11,
+  'primary': 20,
+  'primary_link': 21,
+  'secondary': 30,
+  'secondary_link': 31,
+  'tertiary': 40,
+  'tertiary_link': 41,
+  'unclassified': 50,
+  'residential': 60,
+  'living_street': 61,
+  None: 100,
 }
 
 
@@ -52,7 +50,7 @@ def is_osm_time_condition_active(condition_string):
   @ https://wiki.openstreetmap.org/wiki/Conditional_restrictions
   is active for the current date and time of day.
   """
-  now = datetime.now().astimezone()
+  now = dt.now().astimezone()
   today = now.date()
   week_days = []
 
@@ -78,12 +76,21 @@ def is_osm_time_condition_active(condition_string):
 
   # Search among time ranges matched, one where now time belongs too. If found range is active.
   for times_tup in tr:
-    times = list(map(lambda tt: datetime.
-                 combine(today, datetime.strptime(tt, '%H:%M').time().replace(tzinfo=now.tzinfo)), times_tup))
+    times = list(map(lambda tt: dt.
+                 combine(today, dt.strptime(tt, '%H:%M').time().replace(tzinfo=now.tzinfo)), times_tup))
     if now >= times[0] and now <= times[1]:
       return True
 
   return False
+
+
+def speed_limit_value_for_limit_string(limit_string):
+  # Look for matches of speed by default in kph, or in mph when explicitly noted.
+  v = re.match(r'^\s*([0-9]{1,3})\s*?(mph)?\s*$', limit_string)
+  if v is None:
+    return None
+  conv = CV.MPH_TO_MS if v[2] is not None and v[2] == "mph" else CV.KPH_TO_MS
+  return conv * float(v[1])
 
 
 def speed_limit_for_osm_tag_limit_string(limit_string):
@@ -92,25 +99,23 @@ def speed_limit_for_osm_tag_limit_string(limit_string):
     # When limit is set to 0. is considered not existing.
     return 0.
 
-  limit = 0.
-  # Look for matches of speed by default in kph, or in mph when explicitly noted.
-  v = re.match(r'^\s*([0-9]{1,3})\s*?(mph)?\s*$', limit_string)
-  if v is not None:
-    conv = CV.MPH_TO_MS if v[2] is not None and v[2] == "mph" else CV.KPH_TO_MS
-    limit = conv * float(v[1])
+  # Attempt to parse limit as simple numeric value considering units.
+  limit = speed_limit_value_for_limit_string(limit_string)
+  if limit is not None:
+    return limit
 
-  else:
-    # Look for matches of speed with country implicit values.
-    v = re.match(r'^\s*([A-Z]{2}):([a-z_]+):?([0-9]{1,3})?(\s+)?(mph)?\s*', limit_string)
+  # Look for matches of speed with country implicit values.
+  v = re.match(r'^\s*([A-Z]{2}):([a-z_]+):?([0-9]{1,3})?(\s+)?(mph)?\s*', limit_string)
+  if v is None:
+    return 0.
 
-    if v is not None:
-      if v[2] == "zone" and v[3] is not None:
-        conv = CV.MPH_TO_MS if v[5] is not None and v[5] == "mph" else CV.KPH_TO_MS
-        limit = conv * float(v[3])
-      elif v[1] in _COUNTRY_LIMITS_KPH and v[2] in _COUNTRY_LIMITS_KPH[v[1]]:
-        limit = _COUNTRY_LIMITS_KPH[v[1]][v[2]] * CV.KPH_TO_MS
+  if v[2] == "zone" and v[3] is not None:
+    conv = CV.MPH_TO_MS if v[5] is not None and v[5] == "mph" else CV.KPH_TO_MS
+    limit = conv * float(v[3])
+  elif f'{v[1]}:{v[2]}' in _COUNTRY_LIMITS:
+    limit = speed_limit_value_for_limit_string(_COUNTRY_LIMITS[f'{v[1]}:{v[2]}'])
 
-  return limit
+  return limit if limit is not None else 0.
 
 
 def conditional_speed_limit_for_osm_tag_limit_string(limit_string):
@@ -140,11 +145,12 @@ def conditional_speed_limit_for_osm_tag_limit_string(limit_string):
 class WayRelation():
   """A class that represent the relationship of an OSM way and a given `location` and `bearing` of a driving vehicle.
   """
-  def __init__(self, way, location_rad=None, bearing=None):
+  def __init__(self, way, parent=None):
     self.way = way
+    self.parent = parent
+    self.parent_wr_id = parent.id if parent is not None else None  # For WRs created as splits of other WRs
     self.reset_location_variables()
     self.direction = DIRECTION.NONE
-    self.distance_to_node_ahead = 0.
     self._speed_limit = None
     self._one_way = way.tags.get("oneway")
     self.name = way.tags.get('name')
@@ -156,8 +162,9 @@ class WayRelation():
     except Exception:
       self.lanes = 2
 
-    # Create a numpy array with nodes data to support calculations.
+    # Create numpy arrays with nodes data to support calculations.
     self._nodes_np = np.radians(np.array([[nd.lat, nd.lon] for nd in way.nodes], dtype=float))
+    self._nodes_ids = np.array([nd.id for nd in way .nodes], dtype=int)
 
     # Get the vectors representation of the segments betwheen consecutive nodes. (N-1, 2)
     v = vectors(self._nodes_np) * R
@@ -176,9 +183,6 @@ class WayRelation():
     # Get the edge nodes ids.
     self.edge_nodes_ids = [way.nodes[0].id, way.nodes[-1].id]
 
-    if location_rad is not None and bearing is not None:
-      self.update(location_rad, bearing)
-
   def __repr__(self):
     return f'(id: {self.id}, between {self.behind_idx} and {self.ahead_idx}, {self.direction}, active: {self.active})'
 
@@ -188,9 +192,11 @@ class WayRelation():
     return False
 
   def reset_location_variables(self):
+    self.distance_to_node_ahead = 0.
     self.location_rad = None
     self.bearing_rad = None
     self.active = False
+    self.diverting = False
     self.ahead_idx = None
     self.behind_idx = None
     self._active_bearing_delta = None
@@ -200,7 +206,13 @@ class WayRelation():
   def id(self):
     return self.way.id
 
-  def update(self, location_rad, bearing_rad, location_accuracy):
+  @property
+  def road_name(self):
+    if self.name is not None:
+      return self.name
+    return self.ref
+
+  def update(self, location_rad, bearing_rad, location_stdev):
     """Will update and validate the associated way with a given `location_rad` and `bearing_rad`.
        Specifically it will find the nodes behind and ahead of the current location and bearing.
        If no proper fit to the way geometry, the way relation is marked as invalid.
@@ -254,10 +266,15 @@ class WayRelation():
     min_h_possible_idx = np.argmin(h_possible)
     min_delta_idx = possible_idxs[min_h_possible_idx]
 
-    # - If the distance to the road is greater than the accuracy + half the maximum road width estimate then we
-    # are most likely not on this way anymore.
-    if h_possible[min_h_possible_idx] > location_accuracy + self.lanes * _LANE_WIDTH / 2.:
+    # - If the distance to the way is over 4 standard deviations of the gps accuracy + half the maximum road width
+    # estimate, then we are way too far to stick to this way (i.e. we are not on this way anymore)
+    half_road_width_estimate = self.lanes * LANE_WIDTH / 2.
+    if h_possible[min_h_possible_idx] > 4. * location_stdev + half_road_width_estimate:
       return
+
+    # - If the distance to the road is greater than 2 standard deviations of the gps accuracy + half the maximum road
+    # width estimate then we are most likely diverting from this route.
+    diverting = h_possible[min_h_possible_idx] > 2. * location_stdev + half_road_width_estimate
 
     # Populate location variables with result
     if is_ahead[min_delta_idx]:
@@ -271,8 +288,12 @@ class WayRelation():
 
     self._distance_to_way = h[min_delta_idx]
     self._active_bearing_delta = abs_sin_bw_delta_possible[min_h_possible_idx]
+    # TODO: The distance to node ahead currently represent the distance from the GPS fix location.
+    # It would be perhaps more accurate to use the distance on the projection over the direct line between
+    # the two nodes.
     self.distance_to_node_ahead = distances[self.ahead_idx]
     self.active = True
+    self.diverting = diverting
     self.location_rad = location_rad
     self.bearing_rad = bearing_rad
     self._speed_limit = None
@@ -337,6 +358,9 @@ class WayRelation():
 
   @property
   def is_prohibited(self):
+    # Direction must be defined to asses this property. Default to `True` if not.
+    if self.direction == DIRECTION.NONE:
+      return True
     return self.is_one_way and self.direction == DIRECTION.BACKWARD
 
   @property
@@ -379,3 +403,21 @@ class WayRelation():
       return self._nodes_np[-2]
 
     return np.array([0., 0.])
+
+  def split(self, node_id, way_ids=None):
+    """ Returns and array with the way relations resulting from spliting the current way relation at node_id
+    """
+    idxs = np.nonzero(self._nodes_ids == node_id)[0]
+    if len(idxs) == 0:
+      return []
+
+    idx = idxs[0]
+    if idx == 0 or idx == len(self._nodes_ids) - 1:
+      return [self]
+
+    if not isinstance(way_ids, list):
+      way_ids = [-1, -2]  # Default id values.
+
+    ways = [create_way(way_ids[0], node_ids=self._nodes_ids[:idx + 1], from_way=self.way),
+            create_way(way_ids[1], node_ids=self._nodes_ids[idx:], from_way=self.way)]
+    return [WayRelation(way, parent=self) for way in ways]
