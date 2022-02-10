@@ -1794,7 +1794,7 @@ SpeedLimitOffset::SpeedLimitOffset() : AbstractControl("MAP기반 제한속도 �
     auto str = QString::fromStdString(params.get("OpkrSpeedLimitOffsetOption"));
     int value = str.toInt();
     value = value + 1;
-    if (value >= 2 ) {
+    if (value >= 3 ) {
       value = 0;
     }
     QString values = QString::number(value);
@@ -1834,8 +1834,10 @@ void SpeedLimitOffset::refresh() {
   auto strs = QString::fromStdString(params.get("OpkrSpeedLimitOffsetOption"));
   if (strs == "0") {
     btn.setText("%");
-  } else {
+  } else if (strs == "1") {
     btn.setText("±");
+  } else {
+    btn.setText("C");
   }
   label.setText(QString::fromStdString(params.get("OpkrSpeedLimitOffset")));
   btnminus.setText("－");
@@ -6365,4 +6367,102 @@ void OSMCustomOffset::refresh5() {
   QString valuefs = QString::number(valuei);
   label5.setText(QString::fromStdString(valuefs.toStdString()));
   btn5.setText("↕");
+}
+
+DesiredCurvatureLimit::DesiredCurvatureLimit() : AbstractControl("DesiredCurvatureLimit", "Adjust DisiredCurvatureLimit, Default is 0.05(DT_MDL), For HKG, maybe 0.2 is preferred from user's experience. If the steering digs into inside on intersection, upper the value. And then it will limit your scope of steering angle. In case of opposite situation, lower the value. this is multiplier of desired curvature rate not real limit value.", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btndigit.setStyleSheet(R"(
+    QPushButton {
+      padding: 0;
+      border-radius: 50px;
+      font-size: 35px;
+      font-weight: 500;
+      color: #E4E4E4;
+      background-color: #393939;
+    }
+    QPushButton:pressed {
+      background-color: #ababab;
+    }
+  )");
+  btnminus.setStyleSheet(R"(
+    QPushButton {
+      padding: 0;
+      border-radius: 50px;
+      font-size: 35px;
+      font-weight: 500;
+      color: #E4E4E4;
+      background-color: #393939;
+    }
+    QPushButton:pressed {
+      background-color: #ababab;
+    }
+  )");
+  btnplus.setStyleSheet(R"(
+    QPushButton {
+      padding: 0;
+      border-radius: 50px;
+      font-size: 35px;
+      font-weight: 500;
+      color: #E4E4E4;
+      background-color: #393939;
+    }
+    QPushButton:pressed {
+      background-color: #ababab;
+    }
+  )");
+  btndigit.setFixedSize(100, 100);
+  btnminus.setFixedSize(100, 100);
+  btnplus.setFixedSize(100, 100);
+  hlayout->addWidget(&btndigit);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+  btndigit.setText("0.01");
+  btnminus.setText("-");
+  btnplus.setText("+");
+
+  QObject::connect(&btndigit, &QPushButton::clicked, [=]() {
+    digit = digit * 10;
+    if (digit >= 2 ) {
+      digit = 0.01;
+    }
+    QString level = QString::number(digit);
+    btndigit.setText(level);
+  });
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("DesiredCurvatureLimit"));
+    int value = str.toInt();
+    value = value - (digit*100);
+    if (value <= 5) {
+      value = 5;
+    }
+    QString values = QString::number(value);
+    params.put("DesiredCurvatureLimit", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("DesiredCurvatureLimit"));
+    int value = str.toInt();
+    value = value + (digit*100);
+    if (value >= 1000) {
+      value = 1000;
+    }
+    QString values = QString::number(value);
+    params.put("DesiredCurvatureLimit", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void DesiredCurvatureLimit::refresh() {
+  auto strs = QString::fromStdString(params.get("DesiredCurvatureLimit"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.01;
+  QString valuefs = QString::number(valuef);
+  label.setText("＊ " + QString::fromStdString(valuefs.toStdString()));
 }
