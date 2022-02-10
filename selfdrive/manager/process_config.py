@@ -10,6 +10,7 @@ EnableLogger = Params().get_bool('OpkrEnableLogger')
 EnableUploader = Params().get_bool('OpkrEnableUploader')
 EnableOSM = Params().get_bool('OSMSpeedLimitEnable') or Params().get("CurvDecelOption", encoding="utf8") == "1" or Params().get("CurvDecelOption", encoding="utf8") == "3"
 EnableMapbox = Params().get_bool('MapboxEnabled')
+EnableShutdownD = Params().get_bool('C2WithCommaPower')
 
 procs = [
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
@@ -71,6 +72,10 @@ if EnableMapbox:
   procs += [
     PythonProcess("gpxd", "selfdrive.dragonpilot.gpxd"),
     PythonProcess("otisserv", "selfdrive.dragonpilot.otisserv", persistent=True),
+  ]
+if EnableShutdownD:
+  procs += [
+    PythonProcess("shutdownd", "selfdrive.hardware.eon.shutdownd", enabled=EON),
   ]
 
 managed_processes = {p.name: p for p in procs}

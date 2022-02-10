@@ -4,6 +4,14 @@ from common.numpy_fast import clip, interp
 from common.realtime import DT_MDL
 from selfdrive.config import Conversions as CV
 from selfdrive.modeld.constants import T_IDXS
+from common.params import Params
+from decimal import Decimal
+
+# from chanhojung's idea, parameterized by opkr
+if Params().get("DesiredCurvatureLimit", encoding="utf8") is not None:
+  DESIRED_CURVATURE_LIMIT = float(Decimal(Params().get("DesiredCurvatureLimit", encoding="utf8")) * Decimal('0.01'))
+else:
+  DESIRED_CURVATURE_LIMIT = DT_MDL
 
 # kph
 V_CRUISE_MAX = 160
@@ -118,6 +126,6 @@ def get_lag_adjusted_curvature(CP, v_ego, psis, curvatures, curvature_rates):
                                           -max_curvature_rate,
                                           max_curvature_rate)
   safe_desired_curvature = clip(desired_curvature,
-                                     current_curvature - max_curvature_rate * DT_MDL,
-                                     current_curvature + max_curvature_rate * DT_MDL)
+                                     current_curvature - max_curvature_rate * DESIRED_CURVATURE_LIMIT,
+                                     current_curvature + max_curvature_rate * DESIRED_CURVATURE_LIMIT)
   return safe_desired_curvature, safe_desired_curvature_rate

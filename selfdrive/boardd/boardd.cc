@@ -46,6 +46,7 @@ bool fake_send = false;
 bool connected_once = false;
 
 bool white_panda_support = Params().getBool("WhitePandaSupport");
+bool c2withCommaPowert = Params().getBool("C2WithCommaPower");
 
 void safety_setter_thread() {
   LOGD("Starting safety setter thread");
@@ -547,11 +548,11 @@ void pigeon_thread() {
       for (const auto& [msg_cls, dt] : cls_max_dt) {
         last_recv_time[msg_cls] = t;
       }
-    // } else if (!ignition && ignition_last) {
-    //   // power off on falling edge of ignition
-    //   LOGD("powering off pigeon\n");
-    //   pigeon->stop();
-    //   pigeon->set_power(false);
+    } else if (!ignition && ignition_last && c2withCommaPowert) {
+      // power off on falling edge of ignition
+      LOGD("powering off pigeon\n");
+      pigeon->stop();
+      pigeon->set_power(false);
     }
 
     ignition_last = ignition;

@@ -192,6 +192,8 @@ def manager_init() -> None:
     ("AutoRESDelay", "0"),
     ("UseRadarTrack", "0"),
     ("RadarDisable", "0"),
+    ("DesiredCurvatureLimit", "5"),
+    ("C2WithCommaPower", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -393,6 +395,11 @@ if __name__ == "__main__":
   except Exception:
     add_file_handler(cloudlog)
     cloudlog.exception("Manager failed to start")
+
+    try:
+      managed_processes['ui'].stop()
+    except Exception:
+      pass
 
     # Show last 3 lines of traceback
     error = traceback.format_exc(-3)

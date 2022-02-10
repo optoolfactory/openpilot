@@ -195,7 +195,8 @@ def thermald_thread() -> NoReturn:
   nvme_temps = None
   modem_temps = None
   wifiIpAddress = "N/A"
-  wifi_ssid = "---"
+  connect_name = "---"
+  rsrp = "--"
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML)
@@ -232,6 +233,8 @@ def thermald_thread() -> NoReturn:
   battery_charging_control = params.get_bool("OpkrBatteryChargingControl")
   battery_charging_min = int(params.get("OpkrBatteryChargingMin", encoding="utf8"))
   battery_charging_max = int(params.get("OpkrBatteryChargingMax", encoding="utf8"))
+
+  c2withCommaPower = params.get_bool("C2WithCommaPower")
 
   is_openpilot_dir = True
 
@@ -286,7 +289,7 @@ def thermald_thread() -> NoReturn:
     if (count % int(10. / DT_TRML)) == 0:
       try:
         network_type = HARDWARE.get_network_type()
-        network_strength, wifi_ssid = HARDWARE.get_network_strength(network_type)
+        network_strength, connect_name, rsrp = HARDWARE.get_network_strength(network_type)
         network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
         if TICI:
           nvme_temps = HARDWARE.get_nvme_temperatures()
@@ -323,7 +326,8 @@ def thermald_thread() -> NoReturn:
     msg.deviceState.gpuUsagePercent = int(round(HARDWARE.get_gpu_usage_percent()))
     msg.deviceState.networkType = network_type
     msg.deviceState.networkStrength = network_strength
-    msg.deviceState.wifiSSID = wifi_ssid
+    msg.deviceState.connectName = connect_name
+    msg.deviceState.rSRP = rsrp
     if network_info is not None:
       msg.deviceState.networkInfo = network_info
     msg.deviceState.wifiIpAddress = wifiIpAddress
@@ -504,11 +508,13 @@ def thermald_thread() -> NoReturn:
 #    msg.deviceState.chargingDisabled = power_monitor.should_disable_charging(pandaState, off_ts)
 #
 #    # Check if we need to shut down
-#    if power_monitor.should_shutdown(pandaState, off_ts, started_seen):
-#      cloudlog.info(f"shutting device down, offroad since {off_ts}")
-#      # TODO: add function for blocking cloudlog instead of sleep
-#      time.sleep(10)
-#      HARDWARE.shutdown()
+
+    if c2withCommaPower:
+      if power_monitor.should_shutdown(pandaState, off_ts, started_seen):
+        cloudlog.info(f"shutting device down, offroad since {off_ts}")
+        # TODO: add function for blocking cloudlog instead of sleep
+        time.sleep(10)
+        HARDWARE.shutdown()
 
     msg.deviceState.chargingError = current_filter.x > 0. and msg.deviceState.batteryPercent < 90  # if current is positive, then battery is being discharged
     msg.deviceState.started = started_ts is not None
