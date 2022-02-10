@@ -190,7 +190,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.setPen(Qt::yellow);
   if (wifi_IPAddress != "--") {
     p.drawText(r2, Qt::AlignHCenter, wifi_IPAddress);
-  } else if (rsrp != "--") {
+  } else if (rsrp != "-- dBm") {
     p.drawText(r2, Qt::AlignHCenter, rsrp);
   }
 
