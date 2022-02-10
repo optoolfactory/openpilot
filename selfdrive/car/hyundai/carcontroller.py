@@ -486,7 +486,7 @@ class CarController():
           self.resume_cnt = 0
           self.auto_res_timer = randint(10, 15)
 
-    if CS.out.brakeLights and CS.out.vEgo == 0 and not CS.cruise_active:
+    if CS.out.brakeLights and CS.out.vEgo == 0 and not CS.out.cruiseState.standstill:
       self.standstill_status_timer += 1
       if self.standstill_status_timer > 200:
         self.standstill_status = 1
