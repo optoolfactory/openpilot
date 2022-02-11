@@ -1,12 +1,20 @@
 import overpy
 import numpy as np
-from .geo import R
+from selfdrive.mapd.lib.geo import R
+
+
+def create_way(way_id, node_ids, from_way):
+  """
+  Creates and OSM Way with the given `way_id` and list of `node_ids`, copying attributes and tags from `from_way`
+  """
+  return overpy.Way(way_id, node_ids=node_ids, attributes={}, result=from_way._result,
+                    tags=from_way.tags)
 
 
 class OSM():
   def __init__(self):
     self.api = overpy.Overpass()
-    # self.api = overpy.Overpass(url='http://3.65.170.21/api/interpreter')
+    # self.api = overpy.Overpass(url='https://z.overpass-api.de/api/interpreter')
 
   def fetch_road_ways_around_location(self, lat, lon, radius):
     # Calculate the bounding box coordinates for the bbox containing the circle around location.
