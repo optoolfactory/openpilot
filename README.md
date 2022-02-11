@@ -71,7 +71,8 @@
    - Reset MaxSpeed Over CurrentSpeed: Sync scc speed with car current speed, the OP MaxSpeed synchronize to your car speed.
    - Enable OSM SpeedLimit: Use OSM SpeedLimit, active internet required. (reboot required).
    - Use Stock SafetyCAM Speed: Some cars have the signal in CAN message. not for all HKG cars.
-   - SpeedLimit Offset (% or +-): Use to set scc speed above or below the OSM or Stock can reported speed. This can be % or Speed amount + or -. This work with OSM and Stock Can Auto Speeedlimit function.
+   - SpeedLimit Offset (%, +- or C): Use to set scc speed above or below the OSM or Stock can reported speed. This can be % Speed amount + / - or OSMCustomOffset. This work with OSM and Stock Can Auto Speeedlimit function.
+   - OSMCustomOffset: (Set SpeedLimit Offset to C) set variable OSM speed offset + /- for speeds 40, 50, 60, 70 & 90 mph.
    - SafetyCam SignType: You can select 2 options to show on the screen, circular (EU) type and retangular (US) type of speedlimit sign.
    - SafetyCamDist Adj(%): Change the target distance if you are in the decel situation of safetycam.
    - Change Cruise Gap at Stop: Cruise Gap changed to 1 step for departure faster, it gets back to orignal Gap after few second.
@@ -79,11 +80,13 @@
    - OSM CurvDecel(%): If OSM has the value of curv speed, up/down this value if you want to add/subtract.
    - Use Auto Engagement: When OP is in disengagement status, Auto engagement is enabled when your car is moving. Cruise Standby status is needed at least.
    - Auto Engage Speed(km/h): Auto Engagement is enabled at this speed.
-   - Use Auto RES while Driving: SCC speed automatically set again when releasing SCC.(reboot required)
+   - Use Auto RES while Driving: SCC speed automatically resume when brake is release or gas is applied.(reboot required)
    - AutoRES Option: CruiseSet/MaxSpeedSet, MaxSpeedSet: Your OP MAX Speed set with RES Set speed. CruiseSet:only set to current set speed, not changed OP MAX Speed.
    - AutoRES Condition: RelBrake/OnGas, RelBrake: SCC speed set again when you release from brake pedal. OnGas: SCC speed set again when you step gas pedal.
-   - AutoRES Allow(sec): time to allow for AutoRES
+   - AutoRES Allow(sec): If AutoRES does not occur before set time, then auto resume is cancelled.
    - RES Count at Standstill: Adjust RES CAN message count to start from StandStill. upper, if the departure is failed. lower, if your car generate cluster error or can error.(no reboot required)
+   - StandStill Alternative: If auto resume from standsill does not work with normal setting.
+   - AutoRESDelay (sec) : AutoRes will not reume until set time elapse, to prevent premature resume.
    - Steer Wind Down: to mitiate torque at error status of your lkas
    - MainSwitch Openpilot ON/OFF: You can turn on/off OP using Cruise Button on steering wheel.
    - DEBUG UI 1: Show debug UI on screen. 2 lines bottom of screen.(no reboot required)
