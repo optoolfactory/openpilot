@@ -58,6 +58,7 @@ class CarController():
     self.steer_rate_limited = False
     self.counter_init = False
     self.aq_value = 0
+    self.aq_value_raw = 0
 
     self.resume_cnt = 0
     self.last_lead_distance = 0
@@ -636,7 +637,7 @@ class CarController():
               self.keep_decel_on = False
               self.change_accel_fast = False
             elif aReqValue > 0.0:
-              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0, 25.0, 30.0], [0.1, 1.0, 1.0, 0.0, 1.0])
+              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0, 25.0, 30.0], [0.1, 0.8, 1.0, 0.2, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
             elif aReqValue < 0.0 and CS.lead_distance <= 4.3 and -5 < lead_objspd and accel > aReqValue:
               accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*0.9, 1.0, 3.0))
@@ -685,6 +686,7 @@ class CarController():
           stock_weight = 0.
         accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
         self.aq_value = accel
+        self.aq_value_raw = aReqValue
         can_sends.append(create_scc11(self.packer, frame, set_speed, lead_visible, self.scc_live, self.dRel, self.vRel, self.yRel, 
          self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.acc_standstill, self.gapsettingdance, self.stopped, radar_recog, CS.scc11))
         if (CS.brake_check or CS.cancel_check) and self.car_fingerprint != CAR.NIRO_EV:
