@@ -151,11 +151,23 @@ class NaviControl():
     #  return  cruise_set_speed_kph
 
     if not self.speedlimit_decel_off:
-      if int(self.sm['liveMapData'].speedLimit) > 19 and self.osm_speedlimit_enabled and not self.sm['controlsState'].osmOffSpdLimit:  # osm speedlimit
+      if (self.sm['liveMapData'].speedLimit > 19 or self.sm['liveMapData'].speedLimitAhead > 19) and self.osm_speedlimit_enabled and not self.sm['controlsState'].osmOffSpdLimit:  # osm speedlimit
         if self.stock_navi_info_enabled and CS.safety_sign > 19:
           spdTarget = min(self.sm['liveMapData'].speedLimit, CS.safety_sign)
-        else:
+        elif self.sm['liveMapData'].speedLimit > 19:
           spdTarget = self.sm['liveMapData'].speedLimit
+        self.map_speed = self.sm['liveMapData'].speedLimitAhead
+        self.map_speed_dist = max(0, self.sm['liveMapData'].speedLimitAheadDistance)
+        cam_distance_calc = 0
+        cam_distance_calc = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 60, 110], [2.6, 3.1, 3.9])
+        consider_speed = interp((v_ego_kph - self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1), [0, 50], [1, 2])
+        min_control_dist = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 110], [40, 250])
+        final_cam_decel_start_dist = cam_distance_calc*consider_speed*v_ego_kph * (1 + self.safetycam_decel_dist_gain*0.01)
+        if self.map_speed > 19 and self.map_speed_dist != 0:
+          if self.map_speed_dist < final_cam_decel_start_dist:
+            spdTarget = self.map_speed
+          elif self.map_speed_dist < min_control_dist:
+            spdTarget = self.map_speed
         if self.map_spdlimit_offset_option == 0:
           cruise_set_speed_kph = spdTarget + round(spdTarget*0.01*self.map_spdlimit_offset)
         elif self.map_spdlimit_offset_option == 1:
