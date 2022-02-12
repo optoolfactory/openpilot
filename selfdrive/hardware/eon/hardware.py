@@ -169,9 +169,11 @@ class Android(HardwareBase):
 
   def get_network_type(self):
     wifi_check = parse_service_call_string(service_call(["connectivity", "2"]))
-    lte_check = subprocess.check_output(["getprop", "gsm.network.type"], encoding='utf8')
-    if 'LTE' in lte_check and 'WIFI' not in wifi_check:
+    tel_check = subprocess.check_output(["getprop", "gsm.network.type"], encoding='utf8')
+    if 'LTE' in tel_check and 'WIFI' not in wifi_check:
       return NetworkType.cell4G
+    elif '3G' in tel_check and 'WIFI' not in wifi_check:
+      return NetworkType.cell3G
     elif wifi_check is None:
       return NetworkType.none
     elif 'WIFI' in wifi_check:

@@ -359,9 +359,9 @@ class CarController():
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
             else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
           self.resume_cnt += 1
-          if self.resume_cnt > 5:
+          if self.resume_cnt >= randint(6, 8):
             self.resume_cnt = 0
-            self.switch_timer = randint(10, 15)
+            self.switch_timer = randint(30, 36)
           self.cruise_gap_adjusting = True
         elif self.opkr_autoresume:
           self.cruise_gap_adjusting = False
@@ -384,9 +384,9 @@ class CarController():
             else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
           self.cruise_gap_adjusting = True
           self.resume_cnt += 1
-          if self.resume_cnt > 5:
+          if self.resume_cnt >= randint(6, 8):
             self.resume_cnt = 0
-            self.switch_timer = randint(10, 15)
+            self.switch_timer = randint(30, 36)
         elif self.cruise_gap_prev == CS.cruiseGapSet and CS.cruiseGapSet != 1.0 and self.opkr_autoresume:
           self.cruise_gap_set_init = 0
           self.cruise_gap_prev = 0
@@ -459,9 +459,9 @@ class CarController():
         self.res_speed = int(CS.clu_Vanz*1.1)
         self.res_speed_timer = 300
         self.resume_cnt += 1
-        if self.resume_cnt > 5:
+        if self.resume_cnt >= randint(6, 8):
           self.resume_cnt = 0
-          self.auto_res_timer = randint(10, 15)
+          self.auto_res_timer = randint(30, 36)
       elif self.opkr_cruise_auto_res_option == 1:
         can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL)) if not self.longcontrol \
          else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL, clu11_speed, CS.CP.sccBus)) # auto res but set_decel to set current speed
@@ -469,9 +469,9 @@ class CarController():
         self.v_cruise_kph_auto_res = int(CS.clu_Vanz)
         self.res_speed_timer = 50
         self.resume_cnt += 1
-        if self.resume_cnt > 5:
+        if self.resume_cnt >= randint(6, 8):
           self.resume_cnt = 0
-          self.auto_res_timer = randint(10, 15)
+          self.auto_res_timer = randint(30, 36)
       elif self.opkr_cruise_auto_res_option == 2:
         if not self.longcontrol:
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)) if 1 < CS.lead_distance < 149 \
@@ -483,9 +483,9 @@ class CarController():
         self.v_cruise_kph_auto_res = int(CS.clu_Vanz)
         self.res_speed_timer = 50
         self.resume_cnt += 1
-        if self.resume_cnt > 5:
+        if self.resume_cnt >= randint(6, 8):
           self.resume_cnt = 0
-          self.auto_res_timer = randint(10, 15)
+          self.auto_res_timer = randint(30, 36)
 
     if CS.out.brakeLights and CS.out.vEgo == 0 and not CS.out.cruiseState.standstill:
       self.standstill_status_timer += 1
@@ -637,9 +637,9 @@ class CarController():
               self.keep_decel_on = False
               self.change_accel_fast = False
             elif aReqValue > 0.0:
-              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0, 25.0, 30.0], [0.1, 0.8, 1.0, 0.2, 1.0])
+              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0, 25.0, 30.0], [0.1, 0.8, 1.0, 0.3, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
-            elif aReqValue < 0.0 and CS.lead_distance <= 4.3 and -5 < lead_objspd and accel > aReqValue:
+            elif aReqValue < 0.0 and CS.lead_distance <= 4.3 and accel > aReqValue:
               accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*0.9, 1.0, 3.0))
             elif aReqValue < 0.0 and lead_objspd < -15:
               accel = (aReqValue + accel) / 2
@@ -652,7 +652,7 @@ class CarController():
               self.change_accel_fast = False
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
           elif 0.5 < self.dRel < 5.5 and self.vRel < 0:
-            accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*1.4, 1.0, 4.0))
+            accel = self.accel - (DT_CTRL * clip(CS.out.vEgo*1.35, 1.0, 4.0))
             self.stopped = False
           elif 0.5 < self.dRel < 5.5:
             accel = min(-0.5, faccel*0.3)
