@@ -275,7 +275,7 @@ class NaviControl():
     self.lead_1 = self.sm['radarState'].leadTwo
     self.cut_in = True if self.lead_1.status and (self.lead_0.dRel - self.lead_1.dRel) > 3.0 else False
 
-    if CS.driverAcc_time:
+    if CS.driverAcc_time and CS.cruise_set_mode in (1,2,4):
       self.t_interval = 7
       return min(CS.clu_Vanz + (3 if CS.is_set_speed_in_mph else 5), navi_speed)
     # elif self.gasPressed_old:
@@ -294,7 +294,7 @@ class NaviControl():
           self.cut_in_run_timer -= 1
         elif self.cut_in:
           self.cut_in_run_timer = 800
-        if self.cut_in_run_timer and dRel < self.lead_0.vRel * CV.MS_TO_KPH * 0.45: # keep decel when cut_in, max running time 10sec
+        if self.cut_in_run_timer and dRel < self.lead_0.vRel * CV.MS_TO_KPH * 0.45: # keep decel when cut_in, max running time 8sec
           var_speed = min(CS.CP.vFuture, navi_speed)
         elif vRel >= (-2 if CS.is_set_speed_in_mph else -4):
           var_speed = min(CS.CP.vFuture + max(0, int(dRel*(0.1 if CS.is_set_speed_in_mph else 0.15)+vRel)), navi_speed)
