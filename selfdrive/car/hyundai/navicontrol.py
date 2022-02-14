@@ -155,7 +155,7 @@ class NaviControl():
       if (self.sm['liveMapData'].speedLimit > 19 or self.sm['liveMapData'].speedLimitAhead > 19) and self.osm_speedlimit_enabled and not self.sm['controlsState'].osmOffSpdLimit:  # osm speedlimit
         if self.stock_navi_info_enabled and CS.safety_sign > 19:
           spdTarget = min(self.sm['liveMapData'].speedLimit, CS.safety_sign)
-        elif self.sm['liveMapData'].speedLimit > 19:
+        else:
           spdTarget = self.sm['liveMapData'].speedLimit
         self.map_speed = self.sm['liveMapData'].speedLimitAhead
         self.map_speed_dist = max(0, self.sm['liveMapData'].speedLimitAheadDistance)
