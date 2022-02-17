@@ -92,6 +92,7 @@ class LanePlanner:
         self.camera_offset = -(float(Decimal(Params().get("CameraOffsetAdj", encoding="utf8")) * Decimal('0.001')))
 
     lane_lines = md.laneLines
+    print('lane_lines={}   lane_lines[0].t={}   TRAJECTORY_SIZE={}   roadEdgeStds0={}   roadEdgeStds1={}'.format(len(lane_lines), len(lane_lines[0].t), TRAJECTORY_SIZE, md.roadEdgeStds[0], md.roadEdgeStds[1]))
     if len(lane_lines) == 4 and len(lane_lines[0].t) == TRAJECTORY_SIZE:
       self.ll_t = (np.array(lane_lines[1].t) + np.array(lane_lines[2].t))/2
       # left and right ll x is the same
