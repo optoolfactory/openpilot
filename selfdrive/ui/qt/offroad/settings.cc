@@ -612,6 +612,7 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   // OPKR
   layout->addWidget(new DebugUiOneToggle());
   layout->addWidget(new DebugUiTwoToggle());
+  layout->addWidget(new DebugUiThreeToggle());
   layout->addWidget(new ShowErrorToggle());
   layout->addWidget(new LongLogToggle());
   layout->addWidget(new PrebuiltToggle());

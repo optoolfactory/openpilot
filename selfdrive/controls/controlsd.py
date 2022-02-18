@@ -696,6 +696,7 @@ class Controls:
 
     self.log_alertTextMsg1 = trace1.global_alertTextMsg1
     self.log_alertTextMsg2 = trace1.global_alertTextMsg2
+    self.log_alertTextMsg3 = trace1.global_alertTextMsg3
 
     CC = car.CarControl.new_message()
     CC.enabled = self.enabled
@@ -836,6 +837,7 @@ class Controls:
     controlsState.canErrorCounter = self.can_rcv_error_counter
     controlsState.alertTextMsg1 = self.log_alertTextMsg1
     controlsState.alertTextMsg2 = self.log_alertTextMsg2
+    controlsState.alertTextMsg3 = self.log_alertTextMsg3
     controlsState.osmOffSpdLimit = self.osm_off_spdlimit
     if int(self.sm['liveMapData'].speedLimit) and self.osm_speedlimit_enabled:
       if self.stock_navi_info_enabled and int(CS.safetySign):
