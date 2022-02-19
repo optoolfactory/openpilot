@@ -998,4 +998,9 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
   },
 
+  EventName.lkasDisabled: {
+    ET.PERMANENT: NormalPermanentAlert("LKAS 꺼져있습니다 : 오픈파일럿 사용을 위해 LKAS를 켜세요"),
+    ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
+  },
+
 }
