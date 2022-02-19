@@ -724,10 +724,6 @@ class CarController():
        CS.out.steerWarning, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, CS.cruiseGapSet, self.timer1.sampleTime())
     trace1.printf2( '{}'.format( str_log2 ) )
 
-    str_log3 = 'MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}'.format(
-      CS.out.cruiseState.modeSel, CS.CP.mdpsBus, CS.CP.sccBus, self.model_speed, abs(new_steer), self.p.STEER_MAX, self.p.STEER_DELTA_UP, self.p.STEER_DELTA_DOWN)
-    trace1.printf3('{}'.format(str_log3))
-
     self.cc_timer += 1
     if self.cc_timer > 100:
       self.cc_timer = 0
