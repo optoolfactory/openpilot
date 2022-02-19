@@ -52,7 +52,6 @@ class LanePlanner:
 
     self.lp_timer = 0
     self.lp_timer2 = 0
-    self.str_log = ''
 
   def parse_model(self, md, sm, v_ego):
     curvature = sm['controlsState'].curvature
