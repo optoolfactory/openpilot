@@ -155,8 +155,7 @@ class LanePlanner:
     else:
       cloudlog.warning("Lateral mpc - NaNs in laneline times, ignoring")
 
-    str_log = 'L/R/W={:.1f}/{:.1f}/{:.1f}  C/E/S={:.1f}/{:.1f}/{:.1f}  SI={}'.format(self.lll_y[0], self.rll_y[0], current_lane_width, \
-     self.lane_width_certainty.x, self.lane_width_estimate.x, speed_lane_width, safe_idxs[0])
+    str_log = 'L/R/W={:.1f}/{:.1f}/{:.1f}'.format(self.lll_y[0], self.rll_y[0], current_lane_width)
     trace1.printf3('{}'.format(str_log))
       
     return path_xyz
