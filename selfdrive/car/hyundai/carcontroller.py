@@ -724,7 +724,7 @@ class CarController():
        CS.out.steerWarning, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, CS.cruiseGapSet, self.timer1.sampleTime())
     trace1.printf2( '{}'.format( str_log2 ) )
 
-    str_log3 = 'ST1/ST2={}/{} CI/D={}/{:.1f} TM/D/V={:03.0f}/{:03.0f}/{:03.0f}'.format(int(self.sm['radarState'].leadOne.status), int(self.sm['radarState'].leadOne.status), \
+    str_log3 = 'ST1/ST2={}/{} CI/D={}/{:.1f} TM/D/V={:03.0f}/{:03.0f}/{:03.0f}'.format(int(self.sm['radarState'].leadOne.status), int(self.sm['radarState'].leadTwo.status), \
      int(self.NC.cut_in), (self.sm['radarState'].leadOne.dRel - self.sm['radarState'].leadTwo.dRel), self.NC.cut_in_run_timer, self.sm['radarState'].leadOne.dRel, (self.sm['radarState'].leadOne.vRel * CV.MS_TO_KPH * 0.45))
     trace1.printf3('{}'.format(str_log3))
 
