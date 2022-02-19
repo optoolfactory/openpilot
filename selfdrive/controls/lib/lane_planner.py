@@ -7,7 +7,6 @@ from selfdrive.hardware import EON, TICI
 from selfdrive.swaglog import cloudlog
 from common.params import Params
 from decimal import Decimal
-import common.log as trace1
 
 TRAJECTORY_SIZE = 33
 # camera offset is meters from center car to camera
@@ -53,6 +52,14 @@ class LanePlanner:
 
     self.lp_timer = 0
     self.lp_timer2 = 0
+
+    self.lp_log1 = 0
+    self.lp_log2 = 0
+    self.lp_log3 = 0
+    self.lp_log4 = 0
+    self.lp_log5 = 0
+    self.lp_log6 = 0
+    self.lp_log7 = 0
 
   def parse_model(self, md, sm, v_ego):
     curvature = sm['controlsState'].curvature
@@ -155,8 +162,12 @@ class LanePlanner:
     else:
       cloudlog.warning("Lateral mpc - NaNs in laneline times, ignoring")
 
-    str_log = 'L/R/W={:.1f}/{:.1f}/{:.1f}  C/E/S={:.1f}/{:.1f}/{:.1f}  SI={}'.format(self.lll_y[0], self.rll_y[0], current_lane_width, \
-     self.lane_width_certainty.x, self.lane_width_estimate.x, speed_lane_width, safe_idxs[0])
-    trace1.printf3('{}'.format(str_log))
+    self.lp_log1 = self.lll_y[0]
+    self.lp_log2 = self.rll_y[0]
+    self.lp_log3 = current_lane_width
+    self.lp_log4 = self.lane_width_certainty.x
+    self.lp_log5 = self.lane_width_estimate.x
+    self.lp_log6 = speed_lane_width
+    self.lp_log7 = safe_idxs[0]
       
     return path_xyz
