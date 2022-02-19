@@ -9,6 +9,7 @@ from selfdrive.config import Conversions as CV
 from common.params import Params
 
 import common.log as trace1
+import common.CTime1000 as tm
 LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
 
 LongCtrlState = car.CarControl.Actuators.LongControlState

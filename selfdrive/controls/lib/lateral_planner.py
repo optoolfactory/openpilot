@@ -12,7 +12,6 @@ import cereal.messaging as messaging
 from cereal import log
 from common.params import Params
 from decimal import Decimal
-import common.log as trace1
 
 LaneChangeState = log.LateralPlan.LaneChangeState
 
@@ -180,10 +179,6 @@ class LateralPlanner:
       self.solution_invalid_cnt += 1
     else:
       self.solution_invalid_cnt = 0
-
-    str_log5 = 'L/R/W={:.1f}/{:.1f}/{:.1f}  C/E/S={:.1f}/{:.1f}/{:.1f}  SI={}'.format(self.LP.lp_log1, self.LP.lp_log2, self.LP.lp_log3, \
-     self.LP.lp_log4, self.LP.lp_log5, self.LP.lp_log6, self.LP.lp_log7)
-    trace1.printf3('{}'.format(str_log5))
 
   def publish(self, sm, pm):
     plan_solution_valid = self.solution_invalid_cnt < 2
