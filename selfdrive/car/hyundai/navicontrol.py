@@ -317,7 +317,7 @@ class NaviControl():
           self.cut_in_run_timer -= 1
         elif self.cut_in:
           self.cut_in_run_timer = 800
-        if self.cut_in_run_timer and dRel < CS.clu_Vanz * 0.45: # keep decel when cut_in, max running time 8sec
+        if self.cut_in_run_timer and dRel < CS.clu_Vanz * 0.4: # keep decel when cut_in, max running time 8sec
           var_speed = min(CS.CP.vFuture, navi_speed)
         elif vRel >= (-3 if CS.is_set_speed_in_mph else -5):
           var_speed = min(CS.CP.vFuture + max(0, int(dRel*(0.1 if CS.is_set_speed_in_mph else 0.15)+vRel)), navi_speed)
