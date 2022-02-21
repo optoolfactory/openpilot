@@ -9,7 +9,6 @@ from selfdrive.config import Conversions as CV
 from common.params import Params
 
 import common.log as trace1
-import common.CTime1000 as tm
 LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
 
 LongCtrlState = car.CarControl.Actuators.LongControlState
@@ -75,24 +74,25 @@ class LongControl():
     self.pid.reset()
     self.v_pid = v_pid
 
-  def update(self, active, CS, CP, long_plan, accel_limits, radarState):
+  def update(self, active, CS, CP, long_plan, accel_limits, t_since_plan, radarState):
     self.loc_timer += 1
     if self.loc_timer > 100:
       self.loc_timer = 0
       self.long_log = Params().get_bool("LongLogDisplay")
     """Update longitudinal control. This updates the state machine and runs a PID loop"""
     # Interp control trajectory
-    # TODO estimate car specific lag, use .15s for now
     speeds = long_plan.speeds
     if len(speeds) == CONTROL_N:
-      v_target_lower = interp(CP.longitudinalActuatorDelayLowerBound, T_IDXS[:CONTROL_N], speeds)
-      a_target_lower = 2 * (v_target_lower - speeds[0])/CP.longitudinalActuatorDelayLowerBound - long_plan.accels[0]
+      v_target = interp(t_since_plan, T_IDXS[:CONTROL_N], speeds)
+      a_target = interp(t_since_plan, T_IDXS[:CONTROL_N], long_plan.accels)
 
-      v_target_upper = interp(CP.longitudinalActuatorDelayUpperBound, T_IDXS[:CONTROL_N], speeds)
-      a_target_upper = 2 * (v_target_upper - speeds[0])/CP.longitudinalActuatorDelayUpperBound - long_plan.accels[0]
+      v_target_lower = interp(CP.longitudinalActuatorDelayLowerBound + t_since_plan, T_IDXS[:CONTROL_N], speeds)
+      a_target_lower = 2 * (v_target_lower - v_target) / CP.longitudinalActuatorDelayLowerBound - a_target
+
+      v_target_upper = interp(CP.longitudinalActuatorDelayUpperBound + t_since_plan, T_IDXS[:CONTROL_N], speeds)
+      a_target_upper = 2 * (v_target_upper - v_target) / CP.longitudinalActuatorDelayUpperBound - a_target
       a_target = min(a_target_lower, a_target_upper)
 
-      v_target = speeds[0]
       v_target_future = speeds[-1]
     else:
       v_target = 0.0

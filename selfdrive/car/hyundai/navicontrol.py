@@ -152,26 +152,26 @@ class NaviControl():
     #  return  cruise_set_speed_kph
 
     if not self.speedlimit_decel_off:
-      if (self.sm['liveMapData'].speedLimit > 19 or self.sm['liveMapData'].speedLimitAhead > 19) and self.osm_speedlimit_enabled and not self.sm['controlsState'].osmOffSpdLimit:  # osm speedlimit
-        spdTarget = cruiseState_speed
+      if self.sm['liveMapData'].speedLimit > 19 and self.osm_speedlimit_enabled and not self.sm['controlsState'].osmOffSpdLimit:  # osm speedlimit
+        # spdTarget = cruiseState_speed
         if self.stock_navi_info_enabled and CS.safety_sign > 19:
           spdTarget = min(self.sm['liveMapData'].speedLimit, CS.safety_sign)
-        elif self.sm['liveMapData'].speedLimit > 19:
+        else:
           spdTarget = self.sm['liveMapData'].speedLimit
-        self.map_speed = self.sm['liveMapData'].speedLimitAhead
-        self.map_speed_dist = max(0, self.sm['liveMapData'].speedLimitAheadDistance)
-        cam_distance_calc = 0
-        cam_distance_calc = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 60, 110], [2.6, 3.1, 3.9])
-        consider_speed = interp((v_ego_kph - self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1), [0, 50], [1, 2])
-        min_control_dist = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 110], [40, 250])
-        final_cam_decel_start_dist = cam_distance_calc*consider_speed*v_ego_kph * (1 + self.safetycam_decel_dist_gain*0.01)
-        if self.map_speed > 19 and self.map_speed_dist != 0:
-          if self.map_speed_dist < final_cam_decel_start_dist:
-            spdTarget = self.map_speed
-          elif self.map_speed_dist < min_control_dist:
-            spdTarget = self.map_speed
-        elif spdTarget == cruiseState_speed and self.sm['liveMapData'].speedLimit <= 19:
-          return cruise_set_speed_kph
+        # self.map_speed = self.sm['liveMapData'].speedLimitAhead
+        # self.map_speed_dist = max(0, self.sm['liveMapData'].speedLimitAheadDistance)
+        # cam_distance_calc = 0
+        # cam_distance_calc = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 60, 110], [2.6, 3.1, 3.9])
+        # consider_speed = interp((v_ego_kph - self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1), [0, 50], [1, 2])
+        # min_control_dist = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 110], [40, 250])
+        # final_cam_decel_start_dist = cam_distance_calc*consider_speed*v_ego_kph * (1 + self.safetycam_decel_dist_gain*0.01)
+        # if self.map_speed > 19 and self.map_speed_dist != 0:
+        #   if self.map_speed_dist < final_cam_decel_start_dist:
+        #     spdTarget = self.map_speed
+        #   elif self.map_speed_dist < min_control_dist:
+        #     spdTarget = self.map_speed
+        # elif spdTarget == cruiseState_speed and self.sm['liveMapData'].speedLimit <= 19:
+        #   return cruise_set_speed_kph
         if self.map_spdlimit_offset_option == 0:
           cruise_set_speed_kph = spdTarget + round(spdTarget*0.01*self.map_spdlimit_offset)
         elif self.map_spdlimit_offset_option == 1:
@@ -317,7 +317,7 @@ class NaviControl():
           self.cut_in_run_timer -= 1
         elif self.cut_in:
           self.cut_in_run_timer = 800
-        if self.cut_in_run_timer and dRel < self.lead_0.vRel * CV.MS_TO_KPH * 0.45: # keep decel when cut_in, max running time 8sec
+        if self.cut_in_run_timer and dRel < CS.clu_Vanz * 0.4: # keep decel when cut_in, max running time 8sec
           var_speed = min(CS.CP.vFuture, navi_speed)
         elif vRel >= (-3 if CS.is_set_speed_in_mph else -5):
           var_speed = min(CS.CP.vFuture + max(0, int(dRel*(0.1 if CS.is_set_speed_in_mph else 0.15)+vRel)), navi_speed)
@@ -337,11 +337,7 @@ class NaviControl():
         self.t_interval = ttime if not (self.onSpeedControl or self.curvSpeedControl or self.cut_in) else 7
     else:
       var_speed = navi_speed
-      ttime = 70 if CS.is_set_speed_in_mph else 50
-      if not self.osm_speedlimit_enabled:
-        self.t_interval = 7
-      else:
-        self.t_interval = ttime if not ((self.onSpeedControl or self.curvSpeedControl or self.cut_in) and self.sm['controlsState'].osmOffSpdLimit) else 7
+      self.t_interval = 10 if CS.is_set_speed_in_mph else 7
 
     if CS.cruise_set_mode in (1,3,4) and self.curv_decel_option in (1,2):
       if CS.out.vEgo * CV.MS_TO_KPH > 40 and modelSpeed < 90 and path_plan.laneChangeState == LaneChangeState.off and \
