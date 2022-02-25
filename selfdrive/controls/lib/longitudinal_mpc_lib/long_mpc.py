@@ -239,36 +239,27 @@ class LongitudinalMpc:
     self.x0 = np.zeros(X_DIM)
     self.set_weights()
 
-  def set_weights(self):
+  def set_weights(self, prev_accel_constraint=True):
     if self.e2e:
       self.set_weights_for_xva_policy()
       self.params[:,0] = -10.
       self.params[:,1] = 10.
       self.params[:,2] = 1e5
     else:
-      self.set_weights_for_lead_policy()
+      self.set_weights_for_lead_policy(prev_accel_constraint)
 
-  def set_weights_for_lead_policy(self):
-    # WARNING: deceleration tests with these costs:
-    # 1.0 TR fails at 3 m/s/s test
-    # 1.1 TR fails at 3+ m/s/s test
-    # 1.2-1.8 TR succeeds at all tests with no FCW
-
-    # TRs = [1.2, 1.8, 2.7]
-    x_ego_obstacle_cost_multiplier = 1 #interp(self.desired_TR, TRs, [3., 1.0, 0.1])
-    j_ego_cost_multiplier = 1 #interp(self.desired_TR, TRs, [0.5, 1.0, 1.0])
-    d_zone_cost_multiplier = 1 #interp(self.desired_TR, TRs, [4., 1.0, 1.0])
-
-    W = np.asfortranarray(np.diag([X_EGO_OBSTACLE_COST * x_ego_obstacle_cost_multiplier, X_EGO_COST, V_EGO_COST, A_EGO_COST, A_CHANGE_COST, J_EGO_COST * j_ego_cost_multiplier]))
+  def set_weights_for_lead_policy(self, prev_accel_constraint=True):
+    a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
+    W = np.asfortranarray(np.diag([X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, a_change_cost, J_EGO_COST]))
     for i in range(N):
-      W[4,4] = A_CHANGE_COST * np.interp(T_IDXS[i], [0.0, 1.0, 2.0], [1.0, 1.0, 0.0])
+      W[4,4] = a_change_cost * np.interp(T_IDXS[i], [0.0, 1.0, 2.0], [1.0, 1.0, 0.0])
       self.solver.cost_set(i, 'W', W)
     # Setting the slice without the copy make the array not contiguous,
     # causing issues with the C interface.
     self.solver.cost_set(N, 'W', np.copy(W[:COST_E_DIM, :COST_E_DIM]))
 
     # Set L2 slack cost on lower bound constraints
-    Zl = np.array([LIMIT_COST, LIMIT_COST, LIMIT_COST, DANGER_ZONE_COST * d_zone_cost_multiplier])
+    Zl = np.array([LIMIT_COST, LIMIT_COST, LIMIT_COST, DANGER_ZONE_COST])
     for i in range(N):
       self.solver.cost_set(i, 'Zl', Zl)
 
@@ -334,10 +325,9 @@ class LongitudinalMpc:
     self.desired_TR = desired_TR
     self.set_weights()
 
-  def update(self, carstate, radarstate, v_cruise, prev_accel_constraint=False):
+  def update(self, carstate, radarstate, v_cruise):
     self.v_ego = carstate.vEgo
     v_ego = self.x0[1]
-    a_ego = self.x0[2]
 
     # opkr
     self.lo_timer += 1
@@ -393,10 +383,7 @@ class LongitudinalMpc:
     x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
     self.source = SOURCES[np.argmin(x_obstacles[0])]
     self.params[:,2] = np.min(x_obstacles, axis=1)
-    if prev_accel_constraint:
-      self.params[:,3] = np.copy(self.prev_a)
-    else:
-      self.params[:,3] = a_ego
+    self.params[:,3] = np.copy(self.prev_a)
     self.params[:,4] = self.desired_TR  # shane
 
     self.run()
