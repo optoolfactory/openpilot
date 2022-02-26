@@ -505,7 +505,7 @@ void pigeon_thread() {
   pigeon->init();
 
   while (!do_exit && panda->connected) {
-    bool need_reset = false;
+    // bool need_reset = false;
     bool ignition_local = ignition;
     std::string recv = pigeon->receive();
 
@@ -530,11 +530,11 @@ void pigeon_thread() {
       }
     }
 
-    // Check based on null bytes
-    if (ignition_local && recv.length() > 0 && recv[0] == (char)0x00) {
-      need_reset = true;
-      LOGW("received invalid ublox message while onroad, resetting panda GPS");
-    }
+    // // Check based on null bytes
+    // if (ignition_local && recv.length() > 0 && recv[0] == (char)0x00) {
+    //   need_reset = true;
+    //   LOGW("received invalid ublox message while onroad, resetting panda GPS");
+    // }
 
     if (recv.length() > 0) {
       pigeon_publish_raw(pm, recv);
@@ -542,9 +542,10 @@ void pigeon_thread() {
 
     // init pigeon on rising ignition edge
     // since it was turned off in low power mode
-    if((ignition_local && !ignition_last) || need_reset) {
+    if (ignition_local && !ignition_last) {
       pigeon_active = true;
       pigeon->init();
+      printf("pigeon init\n");
 
       // Set receive times to current time
       uint64_t t = nanos_since_boot() + 10000000000ULL; // Give ublox 10 seconds to start
@@ -557,8 +558,10 @@ void pigeon_thread() {
       pigeon->stop();
       pigeon->set_power(false);
       pigeon_active = false;
+      printf("pigeon stop\n");
     }
 
+    printf("ign_loc=%d  ign_last=%d\n", ignition_local, ignition_last);
     ignition_last = ignition_local;
 
     // 10ms - 100 Hz
