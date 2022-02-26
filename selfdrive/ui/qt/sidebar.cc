@@ -114,7 +114,7 @@ void Sidebar::updateState(const UIState &s) {
   ItemStatus pandaStatus = {"VEHICLE\nONLINE", good_color};
   if (s.scene.pandaType == cereal::PandaState::PandaType::UNKNOWN) {
     pandaStatus = {"NO\nPANDA", danger_color};
-  } else if (!s.scene.started) {
+  } else if (!scene.ignition) {
     pandaStatus = {"VEHICLE\nOFFROAD", warning_color};
   } else if (s.scene.started && !sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK() && s.scene.gpsAccuracyUblox != 0.00) {
     pandaStatus = {"ONLINE\nGPS Search", warning_color};
