@@ -506,7 +506,8 @@ void pigeon_thread() {
 
   while (!do_exit && panda->connected) {
     // bool need_reset = false;
-    bool ignition_local = ignition;
+    // bool ignition_local = ignition;
+    bool ignition_local = ((pandaState.ignition_line != 0) || (pandaState.ignition_can != 0));
     std::string recv = pigeon->receive();
 
     // Parse message header
