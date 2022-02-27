@@ -299,7 +299,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
     border: 0px solid #1e1e1e;
     border-radius: 0;
     width: 100px;
-    height: 110px;
+    height: 120px;
   )");
 
   combobox.addItem("Select Branch you want to change");
