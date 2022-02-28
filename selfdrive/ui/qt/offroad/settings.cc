@@ -395,6 +395,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
 
   addItem(pandaflashingtbtn);
   addItem(new SwitchOpenpilot()); // opkr
+  addItem(new BranchSelectCombo()); // opkr
 
   const char* open_settings = "am start -a android.intent.action.MAIN -n com.android.settings/.Settings";
   auto open_settings_btn = new ButtonControl("안드로이드 설정", "실행");

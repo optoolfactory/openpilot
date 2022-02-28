@@ -680,6 +680,18 @@ private:
   void refresh();
 };
 
+class BranchSelectCombo : public AbstractControl 
+{
+  Q_OBJECT
+
+public:
+  BranchSelectCombo();
+
+private:
+  QComboBox combobox;
+  Params params;
+};
+
 class TimeZoneSelectCombo : public AbstractControl 
 {
   Q_OBJECT

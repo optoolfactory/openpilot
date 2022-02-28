@@ -463,17 +463,17 @@ def thermald_thread() -> NoReturn:
       # more than a minute but we were running
       if shutdown_trigger == 1 and msg.deviceState.batteryStatus == "Discharging" and \
          started_seen and opkrAutoShutdown and (sec_since_boot() - off_ts) > opkrAutoShutdown and not os.path.isfile(pandaflash_ongoing):
-        os.system('LD_LIBRARY_PATH="" svc power shutdown')
+        HARDWARE.shutdown()
 
       if (count % int(1. / DT_TRML)) == 0:
         if int(params.get("OpkrForceShutdown", encoding="utf8")) != 0 and not started_seen and msg.deviceState.batteryStatus == "Discharging":
           opkrForceShutdown = interp(int(params.get("OpkrForceShutdown", encoding="utf8")), [0,1,2,3,4,5], [0,60,180,300,600,1800])
           if (sec_since_boot() - off_ts) > opkrForceShutdown and opkrForceShutdown and params.get_bool("OpkrForceShutdownTrigger"):
-            os.system('LD_LIBRARY_PATH="" svc power shutdown')
+            HARDWARE.shutdown()
           elif not params.get_bool("OpkrForceShutdownTrigger"):
             off_ts = sec_since_boot()
         elif msg.deviceState.batteryPercent < 10 and not started_seen and msg.deviceState.batteryStatus == "Discharging":
-          os.system('LD_LIBRARY_PATH="" svc power shutdown')
+          HARDWARE.shutdown()
 
 
     # opkr

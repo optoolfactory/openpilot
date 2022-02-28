@@ -866,6 +866,25 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         value_fontSize, label_fontSize, uom_fontSize );
     if (!scene.batt_less) {bb_ry = bb_y + bb_h - (bb_y_offset*6);} else {bb_ry = bb_y + bb_h - (bb_y_offset*5);}
   }
+  //engine rpm
+  if (scene.batt_less && scene.engine_rpm > 1) {
+    //char val_str[16];
+    char uom_str[6];
+    std::string engine_rpm_val = std::to_string(int(scene.engine_rpm));
+    NVGcolor val_color = COLOR_WHITE_ALPHA(200);
+    if(scene.engine_rpm > 3000) {
+      val_color = nvgRGBA(255, 188, 3, 200);
+    }
+    if(scene.engine_rpm > 5000) {
+      val_color = nvgRGBA(255, 0, 0, 200);
+    }
+    snprintf(uom_str, sizeof(uom_str), "rpm");
+    bb_h +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, "ENG RPM",
+        bb_rx, bb_ry, bb_uom_dx,
+        val_color, lab_color, uom_color,
+        value_fontSize, label_fontSize, uom_fontSize );
+    bb_ry = bb_y + bb_h - (bb_y_offset*6);
+  }
 
   //finally draw the frame
   if (!scene.batt_less) {bb_h += -(bb_y_offset*1);} else {bb_h += -(bb_y_offset*2);}
