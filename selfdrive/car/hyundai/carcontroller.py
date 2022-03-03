@@ -456,7 +456,7 @@ class CarController():
         can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)) if not self.longcontrol \
          else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, CS.CP.sccBus))  # auto res
         self.auto_res_starting = True
-        self.res_speed = int(CS.clu_Vanz*1.1)
+        self.res_speed = max(int(CS.clu_Vanz*1.1), int(CS.VSetDis))
         self.res_speed_timer = 300
         self.resume_cnt += 1
         if self.resume_cnt >= randint(6, 8):

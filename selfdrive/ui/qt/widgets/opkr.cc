@@ -4952,6 +4952,12 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
     }
     if (list_count1 != list_count2) {
       ConfirmationDialog::alert("Index count does not match. Check your input again.", this);
+    } else {
+      foreach (const QString &str, list1) {
+        if (str.isEmpty())
+          ConfirmationDialog::alert("Empty value is included. Check your input again.", this);
+          break;
+      }
     }
   });
   refresh();
