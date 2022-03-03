@@ -4918,15 +4918,15 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   hlayout->addWidget(&edit2);
 
   QObject::connect(&edit1, &QLineEdit::cursorPositionChanged, [=]() {
-    QString textbox_click = InputDialog::getText("Set values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
-    if (textbox_click.length() > 0) {
+    QString targetvalue = InputDialog::getText("Set values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
+    if (targetvalue.length() > 0) {
       params.put("VCurvSpeedC", targetvalue.toStdString());
       refresh();
     }
   });
   QObject::connect(&edit2, &QLineEdit::cursorPositionChanged, [=]() {
-    QString textbox_click = InputDialog::getText("Set values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
-    if (textbox_click.length() > 0) {
+    QString targetvalue = InputDialog::getText("Set values with comma", this, "ex) 45,55,65,75,85", false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
+    if (targetvalue.length() > 0) {
       params.put("VCurvSpeedT", targetvalue.toStdString());
       refresh();
     }
@@ -4941,7 +4941,7 @@ void VCurvSpeed::refresh() {
   edit2.setText(QString::fromStdString(strs2.toStdString()));
 }
 
-VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CVs],[TargetSpeeds])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {
+VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CVs] [TargetSpeeds])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {
 }
 
 OCurvSpeed::OCurvSpeed() : AbstractControl("", "", "") {
