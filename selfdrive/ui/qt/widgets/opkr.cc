@@ -4900,15 +4900,15 @@ void LiveSRPercent::refresh() {
 
 VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   edit1.setStyleSheet(R"(
-    font-size: 30px;
+    background-color: grey;
+    font-size: 50px;
     font-weight: 500;
-    width: 100px;
     height: 120px;
   )");
   edit2.setStyleSheet(R"(
-    font-size: 30px;
+    background-color: grey;
+    font-size: 50px;
     font-weight: 500;
-    width: 100px;
     height: 120px;
   )");
   edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
@@ -4917,20 +4917,16 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   hlayout->addWidget(&edit1);
   hlayout->addWidget(&edit2);
 
-  QObject::connect(&edit1, &QLineEdit::textChanged, [=]() {
-    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedC"));
-    QString targetvalue = edit1.text();
-    QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
-    if (ConfirmationDialog::confirm(cmd0, this)) {
+  QObject::connect(&edit1, &QLineEdit::cursorPositionChanged, [=]() {
+    QString textbox_click = InputDialog::getText("Set values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
+    if (textbox_click.length() > 0) {
       params.put("VCurvSpeedC", targetvalue.toStdString());
       refresh();
     }
   });
-  QObject::connect(&edit2, &QLineEdit::textChanged, [=]() {
-    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedT"));
-    QString targetvalue = edit2.text();
-    QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
-    if (ConfirmationDialog::confirm(cmd0, this)) {
+  QObject::connect(&edit2, &QLineEdit::cursorPositionChanged, [=]() {
+    QString textbox_click = InputDialog::getText("Set values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
+    if (textbox_click.length() > 0) {
       params.put("VCurvSpeedT", targetvalue.toStdString());
       refresh();
     }
