@@ -4918,7 +4918,7 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   hlayout->addWidget(&edit2);
 
   QObject::connect(&edit1, &QLineEdit::textChanged, [=]() {
-    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedC"))
+    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedC"));
     QString targetvalue = edit1.getText();
     QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
     if (ConfirmationDialog::confirm(cmd0, this)) {
@@ -4927,7 +4927,7 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
     }
   });
   QObject::connect(&edit2, &QLineEdit::textChanged, [=]() {
-    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedT"))
+    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedT"));
     QString targetvalue = edit2.getText();
     QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
     if (ConfirmationDialog::confirm(cmd0, this)) {
