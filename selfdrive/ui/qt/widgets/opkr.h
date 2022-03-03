@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPushButton>
+#include <QLineEdit>
 #include <QSoundEffect>
 
 #include "selfdrive/hardware/hw.h"
@@ -1780,12 +1781,6 @@ class VCurvSpeedUD : public AbstractControl {
 
 public:
   VCurvSpeedUD();
-
-private:
-  QPushButton btn;
-  Params params;
-  
-  void refresh();
 };
 
 class OCurvSpeed : public AbstractControl {

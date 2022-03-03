@@ -4921,7 +4921,7 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
     QString currentvalue = QString::fromStdString(params.get("VCurvSpeedC"));
     QString targetvalue = edit1.getText();
     QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
-    if (ConfirmationDialog::confirm(cmd0)) {
+    if (ConfirmationDialog::confirm(cmd0, this)) {
       params.put("VCurvSpeedC", targetvalue.toStdString());
       refresh();
     }
@@ -4930,7 +4930,7 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
     QString currentvalue = QString::fromStdString(params.get("VCurvSpeedT"));
     QString targetvalue = edit2.getText();
     QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
-    if (ConfirmationDialog::confirm(cmd0)) {
+    if (ConfirmationDialog::confirm(cmd0, this)) {
       params.put("VCurvSpeedT", targetvalue.toStdString());
       refresh();
     }
@@ -4946,39 +4946,6 @@ void VCurvSpeed::refresh() {
 }
 
 VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CVs],[TargetSpeeds])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {
-
-  btn.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btn.setFixedSize(125, 100);
-  // hlayout->addWidget(&btn);
-
-  QObject::connect(&btn, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("VCurvSpeedUD"));
-    int value = str.toInt();
-    value = value + 1;
-    if (value >= 2 ) {
-      value = 0;
-    }
-    QString values = QString::number(value);
-    params.put("VCurvSpeedUD", values.toStdString());
-    refresh();
-  });
-  refresh();
-}
-
-void VCurvSpeedUD::refresh() {
-  auto strs = QString::fromStdString(params.get("VCurvSpeedUD"));
-  if (strs == "1") {
-    btn.setText("↑");
-  } else {
-    btn.setText("↓");
-  }
 }
 
 OCurvSpeed::OCurvSpeed() : AbstractControl("", "", "") {
