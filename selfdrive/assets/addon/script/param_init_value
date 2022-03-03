@@ -96,11 +96,8 @@ LiveSteerRatioPercent:-5
 StoppingDistAdj:0
 ShowError:1
 AutoResLimitTime:0
-VCurvSpeed30:43
-VCurvSpeed50:55
-VCurvSpeed70:68
-VCurvSpeed90:85
-VCurvSpeedUD:1
+VCurvSpeedC:30,50,70,90
+VCurvSpeedT:43,55,68,85
 OCurvSpeed30:35
 OCurvSpeed40:45
 OCurvSpeed50:60

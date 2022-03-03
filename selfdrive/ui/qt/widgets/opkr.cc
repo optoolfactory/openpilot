@@ -4899,197 +4899,53 @@ void LiveSRPercent::refresh() {
 }
 
 VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
-
-  btn1.setStyleSheet(R"(
-    padding: -10;
-    border-radius: 35px;
+  edit1.setStyleSheet(R"(
     font-size: 30px;
     font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
+    width: 100px;
+    height: 120px;
   )");
-  btn2.setStyleSheet(R"(
-    padding: -10;
-    border-radius: 35px;
+  edit2.setStyleSheet(R"(
     font-size: 30px;
     font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
+    width: 100px;
+    height: 120px;
   )");
-  btn3.setStyleSheet(R"(
-    padding: -10;
-    border-radius: 35px;
-    font-size: 30px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btn4.setStyleSheet(R"(
-    padding: -10;
-    border-radius: 35px;
-    font-size: 30px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  label1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  label1.setStyleSheet("color: #e0e879");
-  label2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  label2.setStyleSheet("color: #e0e879");
-  label3.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  label3.setStyleSheet("color: #e0e879");
-  label4.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  label4.setStyleSheet("color: #e0e879");
-  label1a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  label2a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  label3a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  label4a.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  edit2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
 
-  hlayout->addWidget(&label1a);
-  hlayout->addWidget(&label1);
-  btn1.setFixedSize(50, 100);
-  label1a.setText("30:");
-  hlayout->addWidget(&btn1);
-  hlayout->addWidget(&label2a);
-  hlayout->addWidget(&label2);
-  btn2.setFixedSize(50, 100);
-  label2a.setText("50:");
-  hlayout->addWidget(&btn2);
-  hlayout->addWidget(&label3a);
-  hlayout->addWidget(&label3);
-  btn3.setFixedSize(50, 100);
-  label3a.setText("70:");
-  hlayout->addWidget(&btn3);
-  hlayout->addWidget(&label4a);
-  hlayout->addWidget(&label4);
-  btn4.setFixedSize(50, 100);
-  label4a.setText("90:");
-  hlayout->addWidget(&btn4);
+  hlayout->addWidget(&edit1);
+  hlayout->addWidget(&edit2);
 
-  QObject::connect(&btn1, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("VCurvSpeed30"));
-    int value = str.toInt();
-    auto str2 = QString::fromStdString(params.get("VCurvSpeed50"));
-    int value2 = str2.toInt();
-    auto str_ud = QString::fromStdString(params.get("VCurvSpeedUD"));
-    if (str_ud == "1") {
-      value = value + 1;
-    } else {
-      value = value - 1;
+  QObject::connect(&edit1, &QLineEdit::textChanged, [=]() {
+    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedC"))
+    QString targetvalue = edit1.getText();
+    QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
+    if (ConfirmationDialog::confirm(cmd0, this)) {
+      params.put("VCurvSpeedC", targetvalue.toStdString());
+      refresh();
     }
-    if (value >= value2 ) {
-      value = value2;
-    } else if (value <= 20 ) {
-      value = 20;
-    }
-    QString values = QString::number(value);
-    params.put("VCurvSpeed30", values.toStdString());
-    refresh1();
   });
-
-  QObject::connect(&btn2, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("VCurvSpeed50"));
-    int value = str.toInt();
-    auto str0 = QString::fromStdString(params.get("VCurvSpeed30"));
-    int value0 = str0.toInt();
-    auto str2 = QString::fromStdString(params.get("VCurvSpeed70"));
-    int value2 = str2.toInt();
-    auto str_ud = QString::fromStdString(params.get("VCurvSpeedUD"));
-    if (str_ud == "1") {
-      value = value + 1;
-    } else {
-      value = value - 1;
+  QObject::connect(&edit2, &QLineEdit::textChanged, [=]() {
+    QString currentvalue = QString::fromStdString(params.get("VCurvSpeedT"))
+    QString targetvalue = edit2.getText();
+    QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
+    if (ConfirmationDialog::confirm(cmd0, this)) {
+      params.put("VCurvSpeedT", targetvalue.toStdString());
+      refresh();
     }
-    if (value >= value2 ) {
-      value = value2;
-    } else if (value <= value0 ) {
-      value = value0;
-    }
-    QString values = QString::number(value);
-    params.put("VCurvSpeed50", values.toStdString());
-    refresh2();
   });
-  
-  QObject::connect(&btn3, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("VCurvSpeed70"));
-    int value = str.toInt();
-    auto str0 = QString::fromStdString(params.get("VCurvSpeed50"));
-    int value0 = str0.toInt();
-    auto str2 = QString::fromStdString(params.get("VCurvSpeed90"));
-    int value2 = str2.toInt();
-    auto str_ud = QString::fromStdString(params.get("VCurvSpeedUD"));
-    if (str_ud == "1") {
-      value = value + 1;
-    } else {
-      value = value - 1;
-    }
-    if (value >= value2 ) {
-      value = value2;
-    } else if (value <= value0 ) {
-      value = value0;
-    }
-    QString values = QString::number(value);
-    params.put("VCurvSpeed70", values.toStdString());
-    refresh3();
-  });
-
-  QObject::connect(&btn4, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("VCurvSpeed90"));
-    int value = str.toInt();
-    auto str0 = QString::fromStdString(params.get("VCurvSpeed70"));
-    int value0 = str0.toInt();
-    auto str_ud = QString::fromStdString(params.get("VCurvSpeedUD"));
-    if (str_ud == "1") {
-      value = value + 1;
-    } else {
-      value = value - 1;
-    }
-    if (value <= value0 ) {
-      value = value0;
-    } else if (value >= 90 ) {
-      value = 90;
-    }
-    QString values = QString::number(value);
-    params.put("VCurvSpeed90", values.toStdString());
-    refresh4();
-  });
-
-  refresh1();
-  refresh2();
-  refresh3();
-  refresh4();
+  refresh();
 }
 
-void VCurvSpeed::refresh1() {
-  auto strs = QString::fromStdString(params.get("VCurvSpeed30"));
-  int valuei = strs.toInt();
-  QString valuefs = QString::number(valuei);
-  label1.setText(QString::fromStdString(valuefs.toStdString()));
-  btn1.setText("↕");
-}
-void VCurvSpeed::refresh2() {
-  auto strs = QString::fromStdString(params.get("VCurvSpeed50"));
-  int valuei = strs.toInt();
-  QString valuefs = QString::number(valuei);
-  label2.setText(QString::fromStdString(valuefs.toStdString()));
-  btn2.setText("↕");
-}
-void VCurvSpeed::refresh3() {
-  auto strs = QString::fromStdString(params.get("VCurvSpeed70"));
-  int valuei = strs.toInt();
-  QString valuefs = QString::number(valuei);
-  label3.setText(QString::fromStdString(valuefs.toStdString()));
-  btn3.setText("↕");
-}
-void VCurvSpeed::refresh4() {
-  auto strs = QString::fromStdString(params.get("VCurvSpeed90"));
-  int valuei = strs.toInt();
-  QString valuefs = QString::number(valuei);
-  label4.setText(QString::fromStdString(valuefs.toStdString()));
-  btn4.setText("↕");
+void VCurvSpeed::refresh() {
+  auto strs1 = QString::fromStdString(params.get("VCurvSpeedC"));
+  auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
+  edit1.setText(QString::fromStdString(strs1.toStdString()));
+  edit2.setText(QString::fromStdString(strs2.toStdString()));
 }
 
-VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel(CV: TargetSpeed)", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation value)", "../assets/offroad/icon_shell.png") {
+VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CVs],[TargetSpeeds])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {
 
   btn.setStyleSheet(R"(
     padding: 0;
@@ -5100,7 +4956,7 @@ VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel(CV: TargetSpeed)
     background-color: #393939;
   )");
   btn.setFixedSize(125, 100);
-  hlayout->addWidget(&btn);
+  // hlayout->addWidget(&btn);
 
   QObject::connect(&btn, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("VCurvSpeedUD"));
