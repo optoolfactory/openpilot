@@ -4902,7 +4902,7 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   btn.setStyleSheet(R"(
     padding: -10;
     border-radius: 35px;
-    font-size: 30px;
+    font-size: 35px;
     font-weight: 500;
     color: #E4E4E4;
     background-color: #393939;
@@ -4930,13 +4930,26 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   QObject::connect(&btn, &QPushButton::clicked, [=]() {
     QString targetvalue1 = InputDialog::getText("Set CV values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
     if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedC"))) {
+      QStringList list1 = targetvalue1.split(",");
+      QStringList list_count1 = list1.size();
       params.put("VCurvSpeedC", targetvalue1.toStdString());
       refresh();
+    } else {
+      QStringList list1 = QString::fromStdString(params.get("VCurvSpeedC")).split(",");
+      QStringList list_count1 = list1.size();
     }
     QString targetvalue2 = InputDialog::getText("Set TS values with comma", this, "ex) 45,55,65,75,85", false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
     if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedT"))) {
+      QStringList list2 = targetvalue2.split(",");
+      QStringList list_count2 = list2.size();
       params.put("VCurvSpeedT", targetvalue2.toStdString());
       refresh();
+    } else {
+      QStringList list2 = QString::fromStdString(params.get("VCurvSpeedT")).split(",");
+      QStringList list_count2 = list2.size();
+    }
+    if (list_count1 != list_count2) {
+      ConfirmationDialog::alert("Index count does not match. Check your input again.", this);
     }
   });
   refresh();
