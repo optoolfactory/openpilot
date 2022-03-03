@@ -4899,35 +4899,43 @@ void LiveSRPercent::refresh() {
 }
 
 VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
+  btn.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
   edit1.setStyleSheet(R"(
     background-color: grey;
-    font-size: 50px;
+    font-size: 55px;
     font-weight: 500;
     height: 120px;
   )");
   edit2.setStyleSheet(R"(
     background-color: grey;
-    font-size: 50px;
+    font-size: 55px;
     font-weight: 500;
     height: 120px;
   )");
+  btn.setFixedSize(150, 100);
   edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   edit2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
 
   hlayout->addWidget(&edit1);
   hlayout->addWidget(&edit2);
+  hlayout->addWidget(&btn);
 
-  QObject::connect(&edit1, &QLineEdit::cursorPositionChanged, [=]() {
-    QString targetvalue = InputDialog::getText("Set values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
-    if (targetvalue.length() > 0) {
-      params.put("VCurvSpeedC", targetvalue.toStdString());
+  QObject::connect(&btn, &QPushButton::clicked, [=]() {
+    QString targetvalue1 = InputDialog::getText("Set CV values with comma", this, "ex) 30,50,70,90,110", false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
+    if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedC"))) {
+      params.put("VCurvSpeedC", targetvalue1.toStdString());
       refresh();
     }
-  });
-  QObject::connect(&edit2, &QLineEdit::cursorPositionChanged, [=]() {
-    QString targetvalue = InputDialog::getText("Set values with comma", this, "ex) 45,55,65,75,85", false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
-    if (targetvalue.length() > 0) {
-      params.put("VCurvSpeedT", targetvalue.toStdString());
+    QString targetvalue2 = InputDialog::getText("Set TS values with comma", this, "ex) 45,55,65,75,85", false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
+    if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedT"))) {
+      params.put("VCurvSpeedT", targetvalue2.toStdString());
       refresh();
     }
   });
@@ -4939,6 +4947,7 @@ void VCurvSpeed::refresh() {
   auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
   edit1.setText(QString::fromStdString(strs1.toStdString()));
   edit2.setText(QString::fromStdString(strs2.toStdString()));
+  btn.setText("EDIT");
 }
 
 VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CVs] [TargetSpeeds])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {

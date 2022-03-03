@@ -1769,6 +1769,7 @@ public:
   VCurvSpeed();
 
 private:
+  QPushButton btn;
   QLineEdit edit1;
   QLineEdit edit2;
   Params params;
