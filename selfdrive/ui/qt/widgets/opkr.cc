@@ -4921,7 +4921,7 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
     QString currentvalue = QString::fromStdString(params.get("VCurvSpeedC"));
     QString targetvalue = edit1.getText();
     QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
-    if (ConfirmationDialog::confirm(cmd0, this)) {
+    if (ConfirmationDialog::confirm(cmd0)) {
       params.put("VCurvSpeedC", targetvalue.toStdString());
       refresh();
     }
@@ -4930,7 +4930,7 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
     QString currentvalue = QString::fromStdString(params.get("VCurvSpeedT"));
     QString targetvalue = edit2.getText();
     QString cmd0 = QString::fromStdString("From: ") + currentvalue + QString::fromStdString("\n") + QString::fromStdString("To: ") + targetvalue + QString::fromStdString("\nDo you want to change?");
-    if (ConfirmationDialog::confirm(cmd0, this)) {
+    if (ConfirmationDialog::confirm(cmd0)) {
       params.put("VCurvSpeedT", targetvalue.toStdString());
       refresh();
     }
