@@ -55,11 +55,10 @@ class Planner:
     self.v_desired_trajectory = np.zeros(CONTROL_N)
     self.a_desired_trajectory = np.zeros(CONTROL_N)
     self.j_desired_trajectory = np.zeros(CONTROL_N)
+    self.solverExecutionTime = 0.0
 
   def update(self, sm, CP):
     v_ego = sm['carState'].vEgo
-    a_ego = sm['carState'].aEgo
-    self.vego = v_ego
 
     if CP.sccBus != 0:
       v_cruise_kph = sm['carState'].vSetDis

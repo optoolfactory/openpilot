@@ -228,7 +228,7 @@ class CarController():
     if self.opkr_maxanglelimit >= 90 and not self.steer_wind_down_enabled:
       lkas_active = c.active and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
     else:
-      lkas_active = c.active and not CS.out.steerWarning and CS.out.gearShifter == GearShifter.drive
+      lkas_active = c.active and not CS.out.steerFaultTemporary and CS.out.gearShifter == GearShifter.drive
 
 
     if (( CS.out.leftBlinker and not CS.out.rightBlinker) or ( CS.out.rightBlinker and not CS.out.leftBlinker)) and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and self.opkr_turnsteeringdisable:
@@ -725,7 +725,7 @@ class CarController():
        self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, self.NC.ctrl_speed , setSpeed, CS.VSetDis, CS.lead_distance, self.last_lead_distance, CS.cruiseGapSet, self.timer1.sampleTime())
     else:
       str_log2 = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
-       CS.out.steerWarning, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, CS.cruiseGapSet, self.timer1.sampleTime())
+       CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, CS.cruiseGapSet, self.timer1.sampleTime())
     trace1.printf2( '{}'.format( str_log2 ) )
 
     # str_log3 = 'ST1/ST2={}/{} CI/D={}/{:.1f} TM/D/V={:03.0f}/{:03.0f}/{:03.0f}'.format(int(self.sm['radarState'].leadOne.status), int(self.sm['radarState'].leadTwo.status), \

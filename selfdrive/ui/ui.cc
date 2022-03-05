@@ -169,7 +169,7 @@ static void update_state(UIState *s) {
     scene.angleSteers = cs_data.getSteeringAngleDeg();
     scene.cruise_gap = cs_data.getCruiseGapSet();
     scene.brakeHold = cs_data.getBrakeHold();
-    scene.steer_warning = cs_data.getSteerWarning();
+    scene.steer_warning = cs_data.getSteerFaultTemporary();
     scene.stand_still = cs_data.getStandstill();
     scene.a_req_value = cs_data.getAReqValue();
     scene.engine_rpm = cs_data.getEngineRpm();
