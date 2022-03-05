@@ -37,11 +37,9 @@ def build(spinner: Spinner, dirty: bool = False) -> None:
 
   start = time.time()
   # Read progress from stderr and update spinner
-  i = 0
   while scons.poll() is None:
     try:
       line = scons.stderr.readline()
-      print('{}'.format(line))
       if line is None:
         continue
       line = line.rstrip()
@@ -49,16 +47,15 @@ def build(spinner: Spinner, dirty: bool = False) -> None:
       prefix = b'progress: '
       if line.startswith(prefix):
         i = int(line[len(prefix):])
+        elapsed = time.time() - start
+        elapsed_time = str(datetime.timedelta(seconds=elapsed))
+        elapsed_out = elapsed_time[2:7]
+        scons_node = str(i) + " / " + str(TOTAL_SCONS_NODES)
+        str_out = "Elapsed: " + str(elapsed_out) + "          Nodes: " + str(scons_node)
+        spinner.update(str_out)
       elif len(line):
         compile_output.append(line)
         print(line.decode('utf8', 'replace'))
-
-      elapsed = time.time() - start
-      elapsed_time = str(datetime.timedelta(seconds=elapsed))
-      elapsed_out = elapsed_time[2:7]
-      scons_node = str(i) + " / " + str(TOTAL_SCONS_NODES)
-      str_out = "Elapsed: " + str(elapsed_out) + "       Nodes: " + str(scons_node) + str(line)
-      spinner.update(str_out)
     except Exception:
       pass
 
