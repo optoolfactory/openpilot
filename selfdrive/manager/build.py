@@ -52,10 +52,10 @@ def build(spinner: Spinner, dirty: bool = False) -> None:
         elapsed_out = elapsed_time[2:7]
         scons_node = str(i) + " / " + str(TOTAL_SCONS_NODES)
         str_out = "Elapsed: " + str(elapsed_out) + "       Nodes: " + str(scons_node) + str(line)
-        spinner.update(str_out)
       elif len(line):
         compile_output.append(line)
         print(line.decode('utf8', 'replace'))
+      spinner.update(str(line))
     except Exception:
       pass
 
