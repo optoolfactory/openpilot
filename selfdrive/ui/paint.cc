@@ -883,7 +883,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*6);
+    bb_ry = bb_y + bb_h - (bb_y_offset*7);
   }
 
   //finally draw the frame

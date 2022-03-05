@@ -150,6 +150,7 @@ class CarController():
 
     self.variable_steer_max = self.params.get_bool("OpkrVariableSteerMax")
     self.variable_steer_delta = self.params.get_bool("OpkrVariableSteerDelta")
+    self.osm_spdlimit_enabled = self.params.get_bool("OSMSpeedLimitEnable")
 
     self.cc_timer = 0
     self.on_speed_control = False
@@ -456,7 +457,7 @@ class CarController():
         can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)) if not self.longcontrol \
          else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, CS.CP.sccBus))  # auto res
         self.auto_res_starting = True
-        self.res_speed = int(CS.clu_Vanz*1.1)
+        self.res_speed = int(CS.VSetDis) if CS.is_set_speed_in_mph or self.osm_spdlimit_enabled else int(CS.clu_Vanz*1.1)
         self.res_speed_timer = 300
         self.resume_cnt += 1
         if self.resume_cnt >= randint(6, 8):
@@ -598,7 +599,7 @@ class CarController():
         lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
         faccel = actuators.accel if c.active else 0
-        accel = actuators.oaccel if c.active else 0
+        accel = actuators.oaccel if c.active and not CS.out.gasPressed else 0
         stopping = (actuators.longControlState == LongCtrlState.stopping)
         radar_recog = (0 < CS.lead_distance <= 149)
         if 0 < CS.lead_distance <= 149 and self.radar_helper_option == 1:
@@ -714,8 +715,8 @@ class CarController():
       self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
     setSpeed = set_speed * CV.MS_TO_KPH
-    str_log1 = 'MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  FR={:03.0f}'.format(
-      CS.out.cruiseState.modeSel, CS.CP.mdpsBus, CS.CP.sccBus, self.model_speed, abs(new_steer), self.p.STEER_MAX, self.p.STEER_DELTA_UP, self.p.STEER_DELTA_DOWN, self.timer1.sampleTime())
+    str_log1 = 'MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  FR={:03.0f}'.format(
+      CS.out.cruiseState.modeSel, CS.CP.mdpsBus, CS.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), self.p.STEER_MAX, self.p.STEER_DELTA_UP, self.p.STEER_DELTA_DOWN, self.timer1.sampleTime())
     if CS.out.cruiseState.accActive:
       str_log2 = 'AQ={:+04.2f}  VF={:03.0f}  TS={:03.0f}  SS/VS={:03.0f}/{:03.0f}  RD/LD={:04.1f}/{:03.1f}  CG={:1.0f}  FR={:03.0f}'.format(
        self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, self.NC.ctrl_speed , setSpeed, CS.VSetDis, CS.lead_distance, self.last_lead_distance, CS.cruiseGapSet, self.timer1.sampleTime())
