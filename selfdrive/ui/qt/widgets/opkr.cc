@@ -1,5 +1,8 @@
 #include "selfdrive/ui/qt/widgets/opkr.h"
 
+#include <algorithm>
+#include <iterator>
+
 #include <QHBoxLayout>
 #include <QTextStream>
 #include <QFile>
