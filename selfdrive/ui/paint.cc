@@ -382,6 +382,7 @@ static void ui_draw_debug(UIState *s) {
     ui_print(s, ui_viz_rx, ui_viz_ry+440, "OS:%.2f", abs(scene.output_scale));
     ui_print(s, ui_viz_rx, ui_viz_ry+480, "%.2f|%.2f", scene.lateralPlan.lProb, scene.lateralPlan.rProb);
     ui_print(s, ui_viz_rx, ui_viz_ry+520, "%.1f/%.1fm", scene.lateralPlan.dProb, scene.lateralPlan.laneWidth); // High dProb is more related to LaneLine, Low is Laneless
+    ui_print(s, ui_viz_rx, ui_viz_ry+560, "%.5f", scene.orientation_sensor);
     // const std::string stateStrings[] = {"disabled", "preEnabled", "enabled", "softDisabling"};
     // ui_print(s, ui_viz_rx, ui_viz_ry+520, "%s", stateStrings[(int)(*s->sm)["controlsState"].getControlsState().getState()].c_str());
     //ui_print(s, ui_viz_rx, ui_viz_ry+800, "A:%.5f", scene.accel_sensor2);
@@ -1577,6 +1578,38 @@ static void ui_draw_auto_hold(UIState *s) {
   ui_draw_text(s, rect.centerX(), rect.centerY(), "AUTO HOLD", 100, COLOR_GREEN_ALPHA(150), "sans-bold");
 }
 
+static void ui_draw_grid(UIState *s) {
+  NVGcolor color = COLOR_WHITE_ALPHA(230);
+  for (int i = 0; i < 8; i++) {
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, s->fb_w/2 + (i*120), 0);
+    nvgLineTo(s->vg, s->fb_w/2 + (i*120) , s->fb_h);
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, color);
+    nvgFill(s->vg);
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, s->fb_w/2 - (i*120), 0);
+    nvgLineTo(s->vg, s->fb_w/2 - (i*120) , s->fb_h);
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, color);
+    nvgFill(s->vg);
+  }
+  for (int i = 0; i < 5; i++) {
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, 0, s->fb_h/2 + (i*108));
+    nvgLineTo(s->vg, s->fb_w, s->fb_h/2 + (i*108));
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, color);
+    nvgFill(s->vg);
+    nvgBeginPath(s->vg);
+    nvgMoveTo(s->vg, 0, s->fb_h/2 - (i*108));
+    nvgLineTo(s->vg, s->fb_w, s->fb_h/2 - (i*108));
+    nvgClosePath(s->vg);
+    nvgFillColor(s->vg, color);
+    nvgFill(s->vg);
+  }
+}
+
 static void ui_draw_vision(UIState *s) {
   const UIScene *scene = &s->scene;
   // Draw augmented elements
@@ -1599,6 +1632,9 @@ static void ui_draw_vision(UIState *s) {
   }
   if (scene->brakeHold && !scene->comma_stock_ui) {
     ui_draw_auto_hold(s);
+  }
+  if (scene->cal_view) {
+    ui_draw_grid(s);
   }
 }
 

@@ -661,6 +661,7 @@ public:
 
 private:
   QPushButton btn;
+  QPushButton btnc;
   Params params;
   
   void refresh();

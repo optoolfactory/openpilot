@@ -245,6 +245,7 @@ typedef struct UIScene {
   bool osm_enabled;
   int radar_long_helper;
   float engine_rpm;
+  bool cal_view = false;
 
   cereal::DeviceState::Reader deviceState;
   cereal::CarState::Reader car_state;
@@ -270,7 +271,7 @@ typedef struct UIScene {
   // lead
   vertex_data lead_vertices[2];
 
-  float light_sensor, accel_sensor, gyro_sensor;
+  float light_sensor, accel_sensor, gyro_sensor, orientation_sensor;
   bool started, ignition, is_metric, longitudinal_control, end_to_end;
   uint64_t started_frame;
 
