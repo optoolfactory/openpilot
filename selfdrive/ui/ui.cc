@@ -284,8 +284,8 @@ static void update_state(UIState *s) {
         auto accel = sensor.getAcceleration().getV();
         if (accel.totalSize().wordCount) { // TODO: sometimes empty lists are received. Figure out why
           scene.accel_sensor = accel[2];
-          scene.accel_prob[0] = atan2(accel[2]/accel[0]) * (180 / M_PI); // back and forth
-          scene.accel_prob[1] = atan2(accel[1]/accel[0]) * (180 / M_PI); // right and left
+          scene.accel_prob[0] = atan(accel[2]/accel[0]) * (180 / M_PI); // back and forth
+          scene.accel_prob[1] = atan(accel[1]/accel[0]) * (180 / M_PI); // right and left
         }
       } else if (sensor.which() == cereal::SensorEventData::GYRO_UNCALIBRATED) {
         auto gyro = sensor.getGyroUncalibrated().getV();
