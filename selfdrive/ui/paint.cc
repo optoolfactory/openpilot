@@ -1580,34 +1580,24 @@ static void ui_draw_auto_hold(UIState *s) {
 
 static void ui_draw_grid(UIState *s) {
   NVGcolor color = COLOR_WHITE_ALPHA(230);
+  nvgBeginPath(s->vg);
+  nvgStrokeWidth(s->vg, 3);
+  nvgStrokeColor(s->vg, color);
   for (int i = 0; i < 8; i++) {
-    nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, s->fb_w/2 + (i*120), 0);
     nvgLineTo(s->vg, s->fb_w/2 + (i*120) , s->fb_h);
-    nvgClosePath(s->vg);
-    nvgFillColor(s->vg, color);
-    nvgFill(s->vg);
-    nvgBeginPath(s->vg);
+    nvgStroke(s->vg);
     nvgMoveTo(s->vg, s->fb_w/2 - (i*120), 0);
     nvgLineTo(s->vg, s->fb_w/2 - (i*120) , s->fb_h);
-    nvgClosePath(s->vg);
-    nvgFillColor(s->vg, color);
-    nvgFill(s->vg);
+    nvgStroke(s->vg);
   }
   for (int i = 0; i < 5; i++) {
-    nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, 0, s->fb_h/2 + (i*108));
     nvgLineTo(s->vg, s->fb_w, s->fb_h/2 + (i*108));
-    nvgClosePath(s->vg);
-    nvgFillColor(s->vg, color);
-    nvgFill(s->vg);
-    nvgBeginPath(s->vg);
+    nvgStroke(s->vg);
     nvgMoveTo(s->vg, 0, s->fb_h/2 - (i*108));
     nvgLineTo(s->vg, s->fb_w, s->fb_h/2 - (i*108));
-    nvgClosePath(s->vg);
-    nvgFillColor(s->vg, color);
-    nvgFill(s->vg);
-  }
+    nvgStroke(s->vg);  }
 }
 
 static void ui_draw_vision(UIState *s) {

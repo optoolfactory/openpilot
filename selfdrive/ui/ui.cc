@@ -293,7 +293,7 @@ static void update_state(UIState *s) {
       } else if (sensor.which() == cereal::SensorEventData::ORIENTATION) {
         auto orientation = sensor.getOrientation().getV();
         if (orientation.totalSize().wordCount) {
-          scene.orientation_sensor = orientation[1];
+          scene.orientation_sensor = orientation[0];
         }
       }
     }
