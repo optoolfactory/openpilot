@@ -290,11 +290,6 @@ static void update_state(UIState *s) {
         if (gyro.totalSize().wordCount) {
           scene.gyro_sensor = gyro[1];
         }
-      } else if (sensor.which() == cereal::SensorEventData::ORIENTATION) {
-        auto orientation = sensor.getOrientation().getV();
-        if (orientation.totalSize().wordCount) {
-          scene.orientation_sensor = orientation[0];
-        }
       }
     }
   }
