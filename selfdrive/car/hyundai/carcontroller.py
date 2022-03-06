@@ -637,6 +637,10 @@ class CarController():
               accel = (aReqValue + accel) / 3
               self.keep_decel_on = False
               self.change_accel_fast = False
+            elif self.dRel <= 10.0 and CS.lead_distance - self.dRel >= 5.0 and aReqValue >= 0:
+              self.keep_decel_on = False
+              self.change_accel_fast = False
+              pass
             elif aReqValue > 0.0:
               stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0], [0.2, 0.8, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
