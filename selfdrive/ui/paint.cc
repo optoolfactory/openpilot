@@ -456,7 +456,7 @@ static void ui_draw_gear( UIState *s ) {
 static void ui_draw_vision_maxspeed_org(UIState *s) {
   const int SET_SPEED_NA = 255;
   float maxspeed = round(s->scene.controls_state.getVCruise());
-  float cruise_speed = s->scene.vSetDis;
+  float cruise_speed = round(s->scene.vSetDis);
   const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
   if (s->scene.limitSCOffsetOption) {
     s->scene.is_speed_over_limit = s->scene.limitSpeedCamera > 19 && ((s->scene.limitSpeedCamera+s->scene.speed_lim_off)+1.5 < s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363));
@@ -516,11 +516,11 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 
 static void ui_draw_vision_cruise_speed(UIState *s) {
   const int SET_SPEED_NA = 255;
-  float maxspeed = s->scene.controls_state.getVCruise();
+  float maxspeed = round(s->scene.controls_state.getVCruise());
   const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
   int limitspeedcamera = s->scene.limitSpeedCamera;
   //if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
-  float cruise_speed = s->scene.vSetDis;
+  float cruise_speed = round(s->scene.vSetDis);
 
   if (s->scene.limitSCOffsetOption) {
     s->scene.is_speed_over_limit = s->scene.limitSpeedCamera > 19 && ((s->scene.limitSpeedCamera+s->scene.speed_lim_off)+1.5 < s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363));
