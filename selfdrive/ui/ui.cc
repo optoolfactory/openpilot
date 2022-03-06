@@ -284,18 +284,14 @@ static void update_state(UIState *s) {
         auto accel = sensor.getAcceleration().getV();
         if (accel.totalSize().wordCount) { // TODO: sometimes empty lists are received. Figure out why
           scene.accel_sensor = accel[2];
+          scene.gyro_prob[0] = accel[0];
+          scene.gyro_prob[1] = accel[1];
+          scene.gyro_prob[2] = accel[2];
         }
       } else if (sensor.which() == cereal::SensorEventData::GYRO_UNCALIBRATED) {
         auto gyro = sensor.getGyroUncalibrated().getV();
         if (gyro.totalSize().wordCount) {
           scene.gyro_sensor = gyro[1];
-        }
-      } else if (sensor.which() == cereal::SensorEventData::ORIENTATION) {
-        auto orientation = sensor.getOrientation().getV();
-        if (orientation.totalSize().wordCount) {
-          scene.gyro_prob[0] = orientation[0];
-          scene.gyro_prob[1] = orientation[1];
-          scene.gyro_prob[2] = orientation[2];
         }
       }
     }
