@@ -278,7 +278,7 @@ static void update_state(UIState *s) {
     scene.liveMapData.oturnSpeedLimitEndDistance = lmap_data.getTurnSpeedLimitEndDistance();
     scene.liveMapData.oturnSpeedLimitSign = lmap_data.getTurnSpeedLimitSign();
   }
-  if (!scene.started && sm.updated("sensorEvents")) {
+  if ((!scene.started || s->is_OpenpilotViewEnabled) && sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
       if (sensor.which() == cereal::SensorEventData::ACCELERATION) {
         auto accel = sensor.getAcceleration().getV();
@@ -289,6 +289,9 @@ static void update_state(UIState *s) {
         auto gyro = sensor.getGyroUncalibrated().getV();
         if (gyro.totalSize().wordCount) {
           scene.gyro_sensor = gyro[1];
+          scene.gyro_prob[0] = gyro[0];
+          scene.gyro_prob[1] = gyro[1];
+          scene.gyro_prob[2] = gyro[2];
         }
       }
     }
