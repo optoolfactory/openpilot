@@ -275,7 +275,7 @@ typedef struct UIScene {
   bool started, ignition, is_metric, longitudinal_control, end_to_end;
   uint64_t started_frame;
 
-  float gyro_prob[2];
+  float gyro_prob[3];
 
   // atom
   struct _LiveParams

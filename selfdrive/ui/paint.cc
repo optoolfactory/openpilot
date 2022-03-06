@@ -396,7 +396,7 @@ static void ui_draw_debug(UIState *s) {
       ui_print(s, ui_viz_rx, ui_viz_ry+600, "DS:%.0f", (*s->sm)["carState"].getCarState().getSafetyDist());
     }
     if (scene.cal_view) {
-      ui_print(s, ui_viz_rx, ui_viz_ry+760, "Yaw:%.2f  Pitch:%.2f", scene.gyro_prob[0], scene.gyro_prob[1]);
+      ui_print(s, ui_viz_rx, ui_viz_ry+760, "%.1f   %.1f   %.1f", scene.gyro_prob[0], scene.gyro_prob[1], scene.gyro_prob[2]);
     }
     if (scene.osm_enabled) {
       ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+240, "SL:%.0f", scene.liveMapData.ospeedLimit);
