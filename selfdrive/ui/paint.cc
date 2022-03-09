@@ -255,14 +255,15 @@ static void ui_draw_tpms(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   const int pos_x = viz_tpms_x + (viz_tpms_w / 2);
   const int pos_y = viz_tpms_y + 40;
-  ui_draw_text(s, pos_x, pos_y, "TPMS", 45, COLOR_WHITE_ALPHA(180), "sans-regular");
-  if (scene.tpmsUnit != 0) {
+  if (scene.tpmsUnit == 0 || scene.tpmsUnit == 2) {
+    ui_draw_text(s, pos_x, pos_y, (scene.tpmsUnit == 2) ? "TPMS(psi)" : "TPMS(bar)", 45, COLOR_WHITE_ALPHA(180), "sans-regular");
     snprintf(tpmsFl, sizeof(tpmsFl), "%.1f", scene.tpmsPressureFl);
     snprintf(tpmsFr, sizeof(tpmsFr), "%.1f", scene.tpmsPressureFr);
     snprintf(tpmsRl, sizeof(tpmsRl), "%.1f", scene.tpmsPressureRl);
     snprintf(tpmsRr, sizeof(tpmsRr), "%.1f", scene.tpmsPressureRr);
     font_size = 55;
   } else {
+    ui_draw_text(s, pos_x, pos_y, "TPMS(psi)", 45, COLOR_WHITE_ALPHA(180), "sans-regular");
     snprintf(tpmsFl, sizeof(tpmsFl), "%.0f", scene.tpmsPressureFl);
     snprintf(tpmsFr, sizeof(tpmsFr), "%.0f", scene.tpmsPressureFr);
     snprintf(tpmsRl, sizeof(tpmsRl), "%.0f", scene.tpmsPressureRl);
