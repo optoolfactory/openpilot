@@ -248,7 +248,7 @@ static void ui_draw_tpms(UIState *s) {
   // Draw Border
   ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 7, 20.);
   // Draw Background
-  if ((maxv - minv) > 3) {
+  if (((maxv - minv) > 3 && scene.tpmsUnit != 2) || ((maxv - minv) > 0.2 && scene.tpmsUnit == 2)) {
     ui_fill_rect(s->vg, rect, COLOR_RED_ALPHA(80), 20);
   }
 
@@ -270,43 +270,43 @@ static void ui_draw_tpms(UIState *s) {
     snprintf(tpmsRr, sizeof(tpmsRr), "%.0f", scene.tpmsPressureRr);
     font_size = 65;
   }
-  if (scene.tpmsPressureFl < 32) {
+  if ((scene.tpmsPressureFl < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureFl < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+45, tpmsFl, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureFl > 50) {
     ui_draw_text(s, pos_x-45, pos_y+45, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureFl > 45) {
+  } else if ((scene.tpmsPressureFl > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureFl > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+45, tpmsFl, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x-45, pos_y+45, tpmsFl, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureFr < 32) {
+  if (scene.tpmsPressureFr < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureFr < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+45, tpmsFr, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureFr > 50) {
     ui_draw_text(s, pos_x+45, pos_y+45, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureFr > 45) {
+  } else if (scene.tpmsPressureFr > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureFr > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+45, tpmsFr, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x+45, pos_y+45, tpmsFr, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureRl < 32) {
+  if (scene.tpmsPressureRl < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureRl < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+90, tpmsRl, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureRl > 50) {
     ui_draw_text(s, pos_x-45, pos_y+90, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureRl > 45) {
+  } else if (scene.tpmsPressureRl > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureRl > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+90, tpmsFr, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x-45, pos_y+90, tpmsRl, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureRr < 32) {
+  if (scene.tpmsPressureRr < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureRr < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+90, tpmsRr, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureRr > 50) {
     ui_draw_text(s, pos_x+45, pos_y+90, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureRr > 45) {
+  } else if (scene.tpmsPressureRr > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureRr > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+90, tpmsFr, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x+45, pos_y+90, tpmsRr, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureFl < 32 || scene.tpmsPressureFr < 32 || scene.tpmsPressureRl < 32 || scene.tpmsPressureRr < 32) {
+  if (((scene.tpmsPressureFl < 32 || scene.tpmsPressureFr < 32 || scene.tpmsPressureRl < 32 || scene.tpmsPressureRr < 32) && scene.tpmsUnit != 2) || ((scene.tpmsPressureFl < 2.2 || scene.tpmsPressureFr < 2.2 || scene.tpmsPressureRl < 2.2 || scene.tpmsPressureRr < 2.2) && scene.tpmsUnit == 2)){
     scene.tpms_blinkingrate -= 5;
     if(scene.tpms_blinkingrate < 0) scene.tpms_blinkingrate = 120;
   }
