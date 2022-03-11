@@ -94,7 +94,7 @@ class CarInterfaceBase(ABC):
     ret.stopAccel = -2.0
     ret.stoppingDecelRate = 0.8 # brake_travel/s while trying to stop
     ret.vEgoStopping = 0.5
-    ret.vEgoStarting = 0.5  # needs to be >= vEgoStopping to avoid state transition oscillation
+    ret.vEgoStarting = 0.5
     ret.stoppingControl = True
     ret.longitudinalTuning.deadzoneBP = [0.]
     ret.longitudinalTuning.deadzoneV = [0.]
@@ -151,7 +151,7 @@ class CarInterfaceBase(ABC):
 
     # Handle permanent and temporary steering faults
     self.steering_unpressed = 0 if cs_out.steeringPressed else self.steering_unpressed + 1
-    if cs_out.steerWarning and not self.steer_warning_fix_enabled:
+    if cs_out.steerFaultTemporary and not self.steer_warning_fix_enabled:
       # if the user overrode recently, show a less harsh alert
       if (cs_out.vEgo < 0.1 or cs_out.standstill) and not self.steer_wind_down_enabled and cs_out.steeringAngleDeg < 90:
         events.add(EventName.isgActive)
@@ -162,7 +162,7 @@ class CarInterfaceBase(ABC):
         events.add(EventName.steerTempUnavailable)
     elif cs_out.vEgo > 1:
       self.silent_steer_warning = False
-    if cs_out.steerError and cs_out.vEgo > 1:
+    if cs_out.steerFaultPermanent and cs_out.vEgo > 1:
       events.add(EventName.steerUnavailable)
 
     # Disable on rising edge of gas or brake. Also disable on brake when speed > 0.

@@ -119,7 +119,7 @@ static void draw_lead(UIState *s, const cereal::RadarState::LeadData::Reader &le
     ui_draw_text(s, x, y + sz/1.5f, "R", 60, COLOR_WHITE, "sans-bold"); //neokii
   } else {
     draw_chevron(s, x, y, sz, nvgRGBA(165, 255, 135, fillAlpha), COLOR_GREEN);
-    ui_draw_text(s, x, y + sz/1.5f, "C", 60, COLOR_BLACK, "sans-bold"); //hoya
+    ui_draw_text(s, x, y + sz/1.5f, "V", 60, COLOR_BLACK, "sans-bold"); //hoya, vision
   }
 }
 
@@ -248,64 +248,65 @@ static void ui_draw_tpms(UIState *s) {
   // Draw Border
   ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 7, 20.);
   // Draw Background
-  if ((maxv - minv) > 3) {
+  if (((maxv - minv) > 3 && scene.tpmsUnit != 2) || ((maxv - minv) > 0.2 && scene.tpmsUnit == 2)) {
     ui_fill_rect(s->vg, rect, COLOR_RED_ALPHA(80), 20);
   }
 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   const int pos_x = viz_tpms_x + (viz_tpms_w / 2);
   const int pos_y = viz_tpms_y + 40;
-  ui_draw_text(s, pos_x, pos_y, "TPMS", 45, COLOR_WHITE_ALPHA(180), "sans-regular");
   if (scene.tpmsUnit != 0) {
+    ui_draw_text(s, pos_x, pos_y, (scene.tpmsUnit == 2) ? "TPMS(bar)" : "TPMS(psi)", 45, COLOR_WHITE_ALPHA(180), "sans-regular");
     snprintf(tpmsFl, sizeof(tpmsFl), "%.1f", scene.tpmsPressureFl);
     snprintf(tpmsFr, sizeof(tpmsFr), "%.1f", scene.tpmsPressureFr);
     snprintf(tpmsRl, sizeof(tpmsRl), "%.1f", scene.tpmsPressureRl);
     snprintf(tpmsRr, sizeof(tpmsRr), "%.1f", scene.tpmsPressureRr);
     font_size = 55;
   } else {
+    ui_draw_text(s, pos_x, pos_y, "TPMS(psi)", 45, COLOR_WHITE_ALPHA(180), "sans-regular");
     snprintf(tpmsFl, sizeof(tpmsFl), "%.0f", scene.tpmsPressureFl);
     snprintf(tpmsFr, sizeof(tpmsFr), "%.0f", scene.tpmsPressureFr);
     snprintf(tpmsRl, sizeof(tpmsRl), "%.0f", scene.tpmsPressureRl);
     snprintf(tpmsRr, sizeof(tpmsRr), "%.0f", scene.tpmsPressureRr);
     font_size = 65;
   }
-  if (scene.tpmsPressureFl < 32) {
+  if ((scene.tpmsPressureFl < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureFl < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+45, tpmsFl, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureFl > 50) {
     ui_draw_text(s, pos_x-45, pos_y+45, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureFl > 45) {
+  } else if ((scene.tpmsPressureFl > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureFl > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+45, tpmsFl, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x-45, pos_y+45, tpmsFl, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureFr < 32) {
+  if ((scene.tpmsPressureFr < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureFr < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+45, tpmsFr, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureFr > 50) {
     ui_draw_text(s, pos_x+45, pos_y+45, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureFr > 45) {
+  } else if ((scene.tpmsPressureFr > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureFr > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+45, tpmsFr, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x+45, pos_y+45, tpmsFr, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureRl < 32) {
+  if ((scene.tpmsPressureRl < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureRl < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+90, tpmsRl, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureRl > 50) {
     ui_draw_text(s, pos_x-45, pos_y+90, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureRl > 45) {
+  } else if ((scene.tpmsPressureRl > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureRl > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x-45, pos_y+90, tpmsFr, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x-45, pos_y+90, tpmsRl, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureRr < 32) {
+  if ((scene.tpmsPressureRr < 32 && scene.tpmsUnit != 2) || (scene.tpmsPressureRr < 2.2 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+90, tpmsRr, font_size, COLOR_YELLOW_ALPHA(scene.tpms_blinkingrate>=60?200:0), "sans-bold");
   } else if (scene.tpmsPressureRr > 50) {
     ui_draw_text(s, pos_x+45, pos_y+90, "N/A", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-  } else if (scene.tpmsPressureRr > 45) {
+  } else if ((scene.tpmsPressureRr > 45 && scene.tpmsUnit != 2) || (scene.tpmsPressureRr > 2.8 && scene.tpmsUnit == 2)) {
     ui_draw_text(s, pos_x+45, pos_y+90, tpmsFr, font_size, COLOR_RED, "sans-semibold");
   } else {
     ui_draw_text(s, pos_x+45, pos_y+90, tpmsRr, font_size, COLOR_GREEN_ALPHA(200), "sans-semibold");
   }
-  if (scene.tpmsPressureFl < 32 || scene.tpmsPressureFr < 32 || scene.tpmsPressureRl < 32 || scene.tpmsPressureRr < 32) {
+  if (((scene.tpmsPressureFl < 32 || scene.tpmsPressureFr < 32 || scene.tpmsPressureRl < 32 || scene.tpmsPressureRr < 32) && scene.tpmsUnit != 2) || ((scene.tpmsPressureFl < 2.2 || scene.tpmsPressureFr < 2.2 || scene.tpmsPressureRl < 2.2 || scene.tpmsPressureRr < 2.2) && scene.tpmsUnit == 2)){
     scene.tpms_blinkingrate -= 5;
     if(scene.tpms_blinkingrate < 0) scene.tpms_blinkingrate = 120;
   }
@@ -395,7 +396,6 @@ static void ui_draw_debug(UIState *s) {
       ui_print(s, ui_viz_rx, ui_viz_ry+560, "SL:%.0f", (*s->sm)["carState"].getCarState().getSafetySign());
       ui_print(s, ui_viz_rx, ui_viz_ry+600, "DS:%.0f", (*s->sm)["carState"].getCarState().getSafetyDist());
     }
-    
     if (scene.osm_enabled) {
       ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+240, "SL:%.0f", scene.liveMapData.ospeedLimit);
       ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+280, "SLA:%.0f", scene.liveMapData.ospeedLimitAhead);
@@ -413,6 +413,9 @@ static void ui_draw_debug(UIState *s) {
     } else if (scene.lateralControlMethod == 2) {
       ui_print(s, ui_viz_rx_center, bdr_s+295, "LQR");
     }
+  }
+  if (scene.cal_view) {
+    ui_print(s, ui_viz_rx, ui_viz_ry+760, "BF:%.1f   RL:%.1f°", scene.accel_prob[0], scene.accel_prob[1]);
   }
 }
 
@@ -456,7 +459,7 @@ static void ui_draw_gear( UIState *s ) {
 static void ui_draw_vision_maxspeed_org(UIState *s) {
   const int SET_SPEED_NA = 255;
   float maxspeed = round(s->scene.controls_state.getVCruise());
-  float cruise_speed = s->scene.vSetDis;
+  float cruise_speed = round(s->scene.vSetDis);
   const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
   if (s->scene.limitSCOffsetOption) {
     s->scene.is_speed_over_limit = s->scene.limitSpeedCamera > 19 && ((s->scene.limitSpeedCamera+s->scene.speed_lim_off)+1.5 < s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363));
@@ -516,11 +519,11 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 
 static void ui_draw_vision_cruise_speed(UIState *s) {
   const int SET_SPEED_NA = 255;
-  float maxspeed = s->scene.controls_state.getVCruise();
+  float maxspeed = round(s->scene.controls_state.getVCruise());
   const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
   int limitspeedcamera = s->scene.limitSpeedCamera;
   //if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
-  float cruise_speed = s->scene.vSetDis;
+  float cruise_speed = round(s->scene.vSetDis);
 
   if (s->scene.limitSCOffsetOption) {
     s->scene.is_speed_over_limit = s->scene.limitSpeedCamera > 19 && ((s->scene.limitSpeedCamera+s->scene.speed_lim_off)+1.5 < s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363));
@@ -1577,6 +1580,26 @@ static void ui_draw_auto_hold(UIState *s) {
   ui_draw_text(s, rect.centerX(), rect.centerY(), "AUTO HOLD", 100, COLOR_GREEN_ALPHA(150), "sans-bold");
 }
 
+static void ui_draw_grid(UIState *s) {
+  NVGcolor color = COLOR_WHITE_ALPHA(230);
+  nvgBeginPath(s->vg);
+  nvgStrokeWidth(s->vg, 3);
+  nvgStrokeColor(s->vg, color);
+  for (int i = 0; i < 8; i++) {
+    nvgMoveTo(s->vg, s->fb_w/2 + (i*120), 0);
+    nvgLineTo(s->vg, s->fb_w/2 + (i*120) , s->fb_h);
+    nvgMoveTo(s->vg, s->fb_w/2 - (i*120), 0);
+    nvgLineTo(s->vg, s->fb_w/2 - (i*120) , s->fb_h);
+  }
+  for (int i = 0; i < 5; i++) {
+    nvgMoveTo(s->vg, 0, s->fb_h/2 + (i*108));
+    nvgLineTo(s->vg, s->fb_w, s->fb_h/2 + (i*108));
+    nvgMoveTo(s->vg, 0, s->fb_h/2 - (i*108));
+    nvgLineTo(s->vg, s->fb_w, s->fb_h/2 - (i*108));
+  }
+  nvgStroke(s->vg);
+}
+
 static void ui_draw_vision(UIState *s) {
   const UIScene *scene = &s->scene;
   // Draw augmented elements
@@ -1599,6 +1622,9 @@ static void ui_draw_vision(UIState *s) {
   }
   if (scene->brakeHold && !scene->comma_stock_ui) {
     ui_draw_auto_hold(s);
+  }
+  if (scene->cal_view) {
+    ui_draw_grid(s);
   }
 }
 
