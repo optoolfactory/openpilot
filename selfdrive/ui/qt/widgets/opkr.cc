@@ -169,15 +169,39 @@ OpenpilotView::OpenpilotView() : AbstractControl("오픈파일럿 주행화면 �
     background-color: #393939;
   )");
 
+  btnc.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+
   btn.setFixedSize(250, 100);
+  btnc.setFixedSize(250, 100);
+  hlayout->addWidget(&btnc);
   hlayout->addWidget(&btn);
 
   QObject::connect(&btn, &QPushButton::clicked, [=]() {
     bool stat = params.getBool("IsOpenpilotViewEnabled");
     if (stat) {
       params.putBool("IsOpenpilotViewEnabled", false);
+      QUIState::ui_state.scene.cal_view = false;
     } else {
       params.putBool("IsOpenpilotViewEnabled", true);
+      QUIState::ui_state.scene.cal_view = false;
+    }
+    refresh();
+  });
+  QObject::connect(&btnc, &QPushButton::clicked, [=]() {
+    bool stat = params.getBool("IsOpenpilotViewEnabled");
+    if (stat) {
+      params.putBool("IsOpenpilotViewEnabled", false);
+      QUIState::ui_state.scene.cal_view = false;
+    } else {
+      params.putBool("IsOpenpilotViewEnabled", true);
+      QUIState::ui_state.scene.cal_view = true;
     }
     refresh();
   });
@@ -189,13 +213,17 @@ void OpenpilotView::refresh() {
   QString car_param = QString::fromStdString(params.get("CarParams"));
   if (param) {
     btn.setText("미리보기해제");
+    btnc.setText("미리보기해제");
   } else {
     btn.setText("미리보기");
+    btnc.setText("CALVIEW");
   }
   if (car_param.length()) {
     btn.setEnabled(false);
+    btnc.setEnabled(false);
   } else {
     btn.setEnabled(true);
+    btnc.setEnabled(true);
   }
 }
 
