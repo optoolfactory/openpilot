@@ -290,6 +290,7 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   networkType @22 :NetworkType;
   networkInfo @31 :NetworkInfo;
   networkStrength @24 :NetworkStrength;
+  networkMetered @41 :Bool;
   lastAthenaPingTime @32 :UInt64;
 
   started @11 :Bool;
@@ -377,10 +378,10 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   batteryVoltage @16 :Int32;
   batteryTempC @29 :Float32;
   # atom
-  wifiIpAddress @41 :Text;
+  wifiIpAddress @42 :Text;
   # opkr
-  connectName @42 :Text;
-  rSRP @43 :Text;
+  connectName @43 :Text;
+  rSRP @44 :Text;
 }
 
 struct PandaState @0xa7649e2575e4591e {
@@ -433,6 +434,7 @@ struct PandaState @0xa7649e2575e4591e {
     interruptRateKlineInit @19;
     interruptRateClockSource @20;
     interruptRateTick @21;
+    interruptRateExti @22;
     # Update max fault type in boardd when adding faults
   }
 
@@ -700,6 +702,7 @@ struct ControlsState @0x97ff69c53601abf1 {
 
 struct ModelDataV2 {
   frameId @0 :UInt32;
+  frameIdExtra @20 :UInt32;
   frameAge @1 :UInt32;
   frameDropPerc @2 :Float32;
   timestampEof @3 :UInt64;
