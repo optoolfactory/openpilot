@@ -396,9 +396,6 @@ static void ui_draw_debug(UIState *s) {
       ui_print(s, ui_viz_rx, ui_viz_ry+560, "SL:%.0f", (*s->sm)["carState"].getCarState().getSafetySign());
       ui_print(s, ui_viz_rx, ui_viz_ry+600, "DS:%.0f", (*s->sm)["carState"].getCarState().getSafetyDist());
     }
-    if (scene.cal_view) {
-      ui_print(s, ui_viz_rx, ui_viz_ry+760, "BF:%.1f   RL:%.1f°", scene.accel_prob[0], scene.accel_prob[1]);
-    }
     if (scene.osm_enabled) {
       ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+240, "SL:%.0f", scene.liveMapData.ospeedLimit);
       ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+280, "SLA:%.0f", scene.liveMapData.ospeedLimitAhead);
@@ -416,6 +413,9 @@ static void ui_draw_debug(UIState *s) {
     } else if (scene.lateralControlMethod == 2) {
       ui_print(s, ui_viz_rx_center, bdr_s+295, "LQR");
     }
+  }
+  if (scene.cal_view) {
+    ui_print(s, ui_viz_rx, ui_viz_ry+760, "BF:%.1f   RL:%.1f°", scene.accel_prob[0], scene.accel_prob[1]);
   }
 }
 
