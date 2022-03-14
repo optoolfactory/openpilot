@@ -56,7 +56,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
 
-  main_layout->addWidget(new TrackWidget(this), 0, 0, Qt::AlignHCenter | Qt::AlignVCenter);
+  main_layout->addWidget(new TrackWidget(this), 1, 0, 1, 2, Qt::AlignHCenter | Qt::AlignVCenter);
 
   text = new QLabel();
   text->setWordWrap(true);
@@ -69,7 +69,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   progress_bar->setTextVisible(false);
   progress_bar->setVisible(false);
   progress_bar->setFixedHeight(20);
-  main_layout->addWidget(progress_bar, 1, 0, Qt::AlignHCenter);
+  main_layout->addWidget(progress_bar, 1, 0, 1, 2, Qt::AlignHCenter);
 
   ip_label = new QLabel();
   const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
@@ -78,7 +78,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
       device_ip = address.toString();
   }
   ip_label->setText(device_ip);
-  main_layout->addWidget(ip_label, 0, 0, Qt::AlignRight | Qt::AlignTop);
+  main_layout->addWidget(ip_label, 0, 1, Qt::AlignRight | Qt::AlignTop);
 
   //bt_label = new QLabel();
   //bt_label->setText("00:00:00");
