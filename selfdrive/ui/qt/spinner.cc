@@ -57,20 +57,20 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
 
-  main_layout->addWidget(new TrackWidget(this), 1, 0, 1, 2, Qt::AlignHCenter | Qt::AlignVCenter);
+  main_layout->addWidget(new TrackWidget(this), 0, 0, Qt::AlignHCenter | Qt::AlignVCenter);
 
   text = new QLabel();
   text->setWordWrap(true);
   text->setVisible(false);
   text->setAlignment(Qt::AlignCenter);
-  main_layout->addWidget(text, 2, 0, 1, 2, Qt::AlignHCenter);
+  main_layout->addWidget(text, 1, 0, Qt::AlignHCenter);
 
   progress_bar = new QProgressBar();
   progress_bar->setRange(5, 100);
   progress_bar->setTextVisible(false);
   progress_bar->setVisible(false);
   progress_bar->setFixedHeight(20);
-  main_layout->addWidget(progress_bar, 3, 0, 1, 2, Qt::AlignHCenter);
+  main_layout->addWidget(progress_bar, 1, 0, Qt::AlignHCenter);
 
   ip_label = new QLabel();
   const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
@@ -80,12 +80,12 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   }
   ip_label->setText(device_ip);
   ip_label->setVisible(false);
-  main_layout->addWidget(ip_label, 0, 1, Qt::AlignHCenter | Qt::AlignTop);
+  main_layout->addWidget(ip_label, 0, 0, Qt::AlignRight | Qt::AlignTop);
 
   bt_label = new QLabel();
-  bt_label->setText("00:00:00");
+  bt_label->setText("00:00");
   bt_label->setVisible(false);
-  main_layout->addWidget(bt_label, 0, 0, Qt::AlignHCenter | Qt::AlignTop);
+  main_layout->addWidget(bt_label, 0, 0, Qt::AlignLeft | Qt::AlignTop);
 
   setStyleSheet(R"(
     Spinner {
@@ -110,9 +110,9 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
 
   notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
-  bt_label = new QLabel();
+
   rptTimer = new QTimer(this);
-  QObject::connect(rptTimer, SIGNAL(timeout()), this, SLOT(update(1)));
+  QObject::connect(rptTimer, SIGNAL(timeout()), this, SLOT(update(0)));
   rptTimer->start(1000);
 };
 
