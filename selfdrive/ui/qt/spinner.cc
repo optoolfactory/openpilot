@@ -10,6 +10,7 @@
 #include <QString>
 #include <QTransform>
 #include <QTime>
+#include <QTimer>
 
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/qt/qt_window.h"
@@ -42,7 +43,6 @@ TrackWidget::TrackWidget(QWidget *parent) : QWidget(parent) {
   m_anim.setLoopCount(-1);
   m_anim.start();
   connect(&m_anim, SIGNAL(valueChanged(QVariant)), SLOT(update()));
-  connect(&m_anim, SIGNAL(valueChanged(QVariant)), SIGNAL(update_track()));
 }
 
 void TrackWidget::paintEvent(QPaintEvent *event) {
@@ -111,12 +111,12 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
 
   // notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
   // QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
-  bttimer = new QTimer(this);
-  connect(bttimer, &QTimer::timeout, this, &Spinner::update);
-  bttimer->start(1000);
+  QTimer* timer = new QTimer(this);
+  QObject::connect(timer, &QTimer::timeout, this, [=]() {update();}
+  timer->start(1000);
 };
 
-void Spinner::update(int n) {
+void Spinner::update(int n = 0) {
   std::string line;
   std::getline(std::cin, line);
 
