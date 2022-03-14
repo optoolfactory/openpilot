@@ -9,7 +9,6 @@
 #include <QPainter>
 #include <QString>
 #include <QTransform>
-#include <QElapsedTimer>
 
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/qt/qt_window.h"
