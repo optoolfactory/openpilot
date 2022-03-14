@@ -41,5 +41,5 @@ private:
   QElapsedTimer btElapsed;
 
 public slots:
-  void update(int n = 0);
+  void update(int n);
 };
