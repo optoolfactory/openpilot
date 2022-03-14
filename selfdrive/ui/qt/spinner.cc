@@ -109,9 +109,11 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
     }
   )");
 
-  notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
-  QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
-  QObject::connect(this, &TrackWidget::update_track, this, &Spinner::update);
+  // notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
+  // QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
+  bttimer = new QTimer(this);
+  QObject::connect(bttimer, &QTimer::timeout, this, &Spinner::update);
+  bttimer->start(1000);
 };
 
 void Spinner::update(int n) {
