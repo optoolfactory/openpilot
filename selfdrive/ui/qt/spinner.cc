@@ -57,7 +57,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
 
-  main_layout->addWidget(new TrackWidget(this), 1, 0, 1, 2, Qt::AlignHCenter | Qt::AlignVCenter);
+  main_layout->addWidget(new TrackWidget(this), 1, 0, 1, 2, Qt::AlignHCenter | Qt::AlignTop);
 
   text = new QLabel();
   text->setWordWrap(true);
