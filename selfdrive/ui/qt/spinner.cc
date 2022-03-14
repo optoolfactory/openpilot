@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QString>
 #include <QTransform>
+#include <QTime>
 
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/qt/qt_window.h"
@@ -123,8 +124,10 @@ void Spinner::update(int n) {
     if (number) {
       progress_bar->setValue(std::stoi(line));
     }
+    bt_label->setVisible(true);
+    QString btoutTime = QTime::fromMSecsSinceStartOfDay(btElapsed.elapsed()).toString("mm:ss");
+    bt_label->setText(btoutTime);
   }
-  //bt_label->setText(QString::number(btElapsed.elapsed()));
 }
 
 int main(int argc, char *argv[]) {
