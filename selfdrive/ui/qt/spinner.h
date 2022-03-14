@@ -9,7 +9,9 @@
 #include <QHostAddress>
 #include <QNetworkInterface>
 #include <QAbstractSocket>
-#include <QTimer>
+#include <QElapsedTimer>
+
+QElapsedTimer btElapsed;
 
 constexpr int spinner_fps = 30;
 constexpr QSize spinner_size = QSize(360, 360);
@@ -38,7 +40,6 @@ private:
   QLabel *ip_label;
   QString device_ip = "";
   QLabel *bt_label;
-  QElapsedTimer btElapsed;
 
 public slots:
   void update(int n);
