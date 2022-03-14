@@ -112,7 +112,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
 
   rptTimer = new QTimer(this);
-  QObject::connect(rptTimer, SIGNAL(timeout()), this, SLOT(update(0)));
+  QObject::connect(rptTimer, SIGNAL(timeout()), this, &Spinner::update);
   rptTimer->start(1000);
 };
 
