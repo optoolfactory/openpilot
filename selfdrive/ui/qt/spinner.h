@@ -31,6 +31,10 @@ private:
   QLabel *text;
   QProgressBar *progress_bar;
   QSocketNotifier *notifier;
+  QLabel *ip_label;
+  QString device_ip = "";
+  QLabel *bt_label;
+  QElapsedTimer *bootTime;
 
 public slots:
   void update(int n);

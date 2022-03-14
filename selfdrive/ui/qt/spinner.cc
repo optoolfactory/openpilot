@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QString>
 #include <QTransform>
+#include <QElapsedTimer>
 
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/qt/qt_window.h"
@@ -51,6 +52,7 @@ void TrackWidget::paintEvent(QPaintEvent *event) {
 // Spinner
 
 Spinner::Spinner(QWidget *parent) : QWidget(parent) {
+  bootTime.start();
   QGridLayout *main_layout = new QGridLayout(this);
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
@@ -69,6 +71,19 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   progress_bar->setVisible(false);
   progress_bar->setFixedHeight(20);
   main_layout->addWidget(progress_bar, 1, 0, Qt::AlignHCenter);
+
+  ip_label = new QLabel();
+  const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+  for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
+    if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
+      device_ip = address.toString();
+  }
+  ip_label->setText(device_ip);
+  main_layout->addWidget(ip_label, 1, 0, Qt::AlignRight | Qt::AlignTop);
+
+  bt_label = new QLabel();
+  bt_label->setText("00:00:00");
+  main_layout->addWidget(bt_label, 1, 0, Qt::AlignLeft | Qt::AlignTop);
 
   setStyleSheet(R"(
     Spinner {
@@ -108,6 +123,7 @@ void Spinner::update(int n) {
       progress_bar->setValue(std::stoi(line));
     }
   }
+  bt_label->setText(bootTime.elapsed().toString());
 }
 
 int main(int argc, char *argv[]) {
