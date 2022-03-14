@@ -84,6 +84,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
 
   bt_label = new QLabel();
   bt_label->setText("00:00:00");
+  bt_label->setVisible(false);
   main_layout->addWidget(bt_label, 0, 0, Qt::AlignLeft | Qt::AlignTop);
 
   setStyleSheet(R"(
