@@ -40,7 +40,7 @@ private:
   QString device_ip = "";
   QLabel *bt_label;
   QElapsedTimer btElapsed;
-  QTimer *rptTimer;
+  QTimer* rptTimer;
 
 public slots:
   void update(int n);

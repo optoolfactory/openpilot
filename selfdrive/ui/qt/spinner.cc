@@ -111,8 +111,8 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
   bt_label = new QLabel();
-  rptTimer = new QTimer();
-  QObject::connect(rptTimer, &QTimer::timeout, this, &Spinner::update);
+  rptTimer = new QTimer(this);
+  QObject::connect(rptTimer, SIGNAL(timeout()), this, SLOT(update(0)));
   rptTimer->start(1000);
 };
 
