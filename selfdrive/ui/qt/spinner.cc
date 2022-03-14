@@ -80,6 +80,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   ip_label->setVisible(false);
   main_layout->addWidget(ip_label, 0, 1, Qt::AlignRight | Qt::AlignTop);
 
+  btElapsed.start();
   bt_label = new QLabel();
   bt_label->setText("00:00:00");
   main_layout->addWidget(bt_label, 0, 0, Qt::AlignLeft | Qt::AlignTop);
@@ -123,7 +124,7 @@ void Spinner::update(int n) {
       progress_bar->setValue(std::stoi(line));
     }
   }
-  //bt_label->setText(QString::number(bootTime->elapsed()));
+  bt_label->setText(QString::number(btElapsed.elapsed()));
 }
 
 int main(int argc, char *argv[]) {
