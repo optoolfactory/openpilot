@@ -110,9 +110,10 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
 
   notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
-  QTimer *timer = new QTimer(this);
-  connect(timer, &QTimer::timeout, this, &Spinner::update);
-  timer->start(1000);
+  bt_label = new QLabel();
+  rptTimer = new QTimer();
+  connect(rptTimer, &QTimer::timeout, this, &Spinner::update);
+  rptTimer->start(1000);
 };
 
 void Spinner::update(int n) {
