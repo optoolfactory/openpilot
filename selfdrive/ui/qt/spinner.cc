@@ -42,6 +42,7 @@ TrackWidget::TrackWidget(QWidget *parent) : QWidget(parent) {
   m_anim.setLoopCount(-1);
   m_anim.start();
   connect(&m_anim, SIGNAL(valueChanged(QVariant)), SLOT(update()));
+  connect(&m_anim, SIGNAL(valueChanged(QVariant)), SIGNAL(update_track()));
 }
 
 void TrackWidget::paintEvent(QPaintEvent *event) {
@@ -110,7 +111,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
 
   notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
-  QObject::connect(this, &TrackWidget::update, this, &Spinner::update);
+  QObject::connect(this, &TrackWidget::update_track, this, &Spinner::update);
 };
 
 void Spinner::update(int n) {

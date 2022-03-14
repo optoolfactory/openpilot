@@ -20,6 +20,9 @@ class TrackWidget : public QWidget  {
 public:
   TrackWidget(QWidget *parent = nullptr);
 
+signals:
+  void update_track();
+
 private:
   void paintEvent(QPaintEvent *event) override;
   std::array<QPixmap, spinner_fps> track_imgs;
