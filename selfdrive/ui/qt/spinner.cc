@@ -14,8 +14,6 @@
 #include "selfdrive/ui/qt/qt_window.h"
 #include "selfdrive/ui/qt/util.h"
 
-btElapsed.start();
-
 TrackWidget::TrackWidget(QWidget *parent) : QWidget(parent) {
   setAttribute(Qt::WA_OpaquePaintEvent);
   setFixedSize(spinner_size);
@@ -53,6 +51,7 @@ void TrackWidget::paintEvent(QPaintEvent *event) {
 // Spinner
 
 Spinner::Spinner(QWidget *parent) : QWidget(parent) {
+  btElapsed.start();
   QGridLayout *main_layout = new QGridLayout(this);
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
