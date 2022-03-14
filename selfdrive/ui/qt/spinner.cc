@@ -51,7 +51,7 @@ void TrackWidget::paintEvent(QPaintEvent *event) {
 // Spinner
 
 Spinner::Spinner(QWidget *parent) : QWidget(parent) {
-  bootTime->start();
+  //bootTime->start();
   QGridLayout *main_layout = new QGridLayout(this);
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
@@ -80,9 +80,9 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   ip_label->setText(device_ip);
   main_layout->addWidget(ip_label, 1, 0, Qt::AlignRight | Qt::AlignTop);
 
-  bt_label = new QLabel();
-  bt_label->setText("00:00:00");
-  main_layout->addWidget(bt_label, 1, 0, Qt::AlignLeft | Qt::AlignTop);
+  //bt_label = new QLabel();
+  //bt_label->setText("00:00:00");
+  //main_layout->addWidget(bt_label, 1, 0, Qt::AlignLeft | Qt::AlignTop);
 
   setStyleSheet(R"(
     Spinner {
@@ -122,7 +122,7 @@ void Spinner::update(int n) {
       progress_bar->setValue(std::stoi(line));
     }
   }
-  bt_label->setText(QString::number(bootTime->elapsed()));
+  //bt_label->setText(QString::number(bootTime->elapsed()));
 }
 
 int main(int argc, char *argv[]) {
