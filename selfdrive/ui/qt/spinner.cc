@@ -128,6 +128,9 @@ void Spinner::update(int n) {
     bt_label->setVisible(true);
     QString btoutTime = QTime::fromMSecsSinceStartOfDay(btElapsed.elapsed()).toString("mm:ss");
     bt_label->setText(btoutTime);
+  } else {
+    QString btoutTime = QTime::fromMSecsSinceStartOfDay(btElapsed.elapsed()).toString("mm:ss");
+    bt_label->setText(btoutTime);
   }
 }
 
