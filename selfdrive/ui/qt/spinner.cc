@@ -112,7 +112,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
   bt_label = new QLabel();
   rptTimer = new QTimer();
-  connect(rptTimer, &QTimer::timeout, this, &Spinner::update);
+  QObject::connect(rptTimer, &QTimer::timeout, this, &Spinner::update);
   rptTimer->start(1000);
 };
 
