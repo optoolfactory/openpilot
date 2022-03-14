@@ -112,7 +112,10 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
   notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
   QTimer* timer = new QTimer(this);
-  QObject::connect(timer, &QTimer::timeout, this, [=]() {update();});
+  QObject::connect(timer, &QTimer::timeout, this, [=]() {
+    update(i_count);
+    i_count++;
+  });
   timer->start(1000);
 };
 
