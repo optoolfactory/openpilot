@@ -51,7 +51,7 @@ void TrackWidget::paintEvent(QPaintEvent *event) {
 // Spinner
 
 Spinner::Spinner(QWidget *parent) : QWidget(parent) {
-  bootTime.start();
+  bootTime->start();
   QGridLayout *main_layout = new QGridLayout(this);
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
@@ -122,7 +122,7 @@ void Spinner::update(int n) {
       progress_bar->setValue(std::stoi(line));
     }
   }
-  bt_label->setText(bootTime.elapsed().toString());
+  bt_label->setText(QString::number(bootTime->elapsed()));
 }
 
 int main(int argc, char *argv[]) {
