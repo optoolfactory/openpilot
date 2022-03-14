@@ -78,7 +78,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
       device_ip = address.toString();
   }
   ip_label->setText(device_ip);
-  main_layout->addWidget(ip_label, 1, 0, Qt::AlignRight | Qt::AlignTop);
+  main_layout->addWidget(ip_label, 0, 0, Qt::AlignRight | Qt::AlignTop);
 
   //bt_label = new QLabel();
   //bt_label->setText("00:00:00");
