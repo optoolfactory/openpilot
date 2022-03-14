@@ -10,7 +10,6 @@
 #include <QString>
 #include <QTransform>
 #include <QTime>
-#include <QTimer>
 
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/qt/qt_window.h"
@@ -111,12 +110,6 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
 
   notifier = new QSocketNotifier(fileno(stdin), QSocketNotifier::Read);
   QObject::connect(notifier, &QSocketNotifier::activated, this, &Spinner::update);
-  QTimer* timer = new QTimer(this);
-  QObject::connect(timer, &QTimer::timeout, this, [=]() {
-    update(i_count);
-    i_count++;
-  });
-  timer->start(1000);
 };
 
 void Spinner::update(int n) {
@@ -133,9 +126,6 @@ void Spinner::update(int n) {
       progress_bar->setValue(std::stoi(line));
     }
     bt_label->setVisible(true);
-    QString btoutTime = QTime::fromMSecsSinceStartOfDay(btElapsed.elapsed()).toString("mm:ss");
-    bt_label->setText(btoutTime);
-  } else {
     QString btoutTime = QTime::fromMSecsSinceStartOfDay(btElapsed.elapsed()).toString("mm:ss");
     bt_label->setText(btoutTime);
   }

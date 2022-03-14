@@ -39,7 +39,6 @@ private:
   QString device_ip = "";
   QLabel *bt_label;
   QElapsedTimer btElapsed;
-  int i_count = 0;
 
 public slots:
   void update(int n);
