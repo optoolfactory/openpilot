@@ -51,7 +51,6 @@ void TrackWidget::paintEvent(QPaintEvent *event) {
 // Spinner
 
 Spinner::Spinner(QWidget *parent) : QWidget(parent) {
-  bootTime->start();
   QGridLayout *main_layout = new QGridLayout(this);
   main_layout->setSpacing(0);
   main_layout->setMargin(200);
@@ -78,6 +77,7 @@ Spinner::Spinner(QWidget *parent) : QWidget(parent) {
       device_ip = address.toString();
   }
   ip_label->setText(device_ip);
+  ip_label->setVisible(false);
   main_layout->addWidget(ip_label, 0, 1, Qt::AlignRight | Qt::AlignTop);
 
   bt_label = new QLabel();
@@ -117,6 +117,7 @@ void Spinner::update(int n) {
     bool number = std::all_of(line.begin(), line.end(), ::isdigit);
     text->setVisible(!number);
     progress_bar->setVisible(number);
+    ip_label->setVisible(true);
     text->setText(QString::fromStdString(line));
     if (number) {
       progress_bar->setValue(std::stoi(line));
