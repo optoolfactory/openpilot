@@ -36,6 +36,7 @@ class CAR:
   SONATA_LF_TURBO = "HYUNDAI SONATA LF TURBO"
   SONATA_LF_HEV = "HYUNDAI SONATA LF HYBRID"
   KONA = "HYUNDAI KONA 2019"
+  KONA_N = "HYUNDAI KONA N 2021"
   KONA_EV = "HYUNDAI KONA EV 2019"
   KONA_HEV = "HYUNDAI KONA HEV 2019"
   IONIQ_EV = "HYUNDAI IONIQ ELECTRIC LIMITED 2019"
@@ -635,7 +636,7 @@ CHECKSUM = {
 
 FEATURES = {
   # Use Cluster for Gear Selection, rather than Transmission
-  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.GRANDEUR_IG_FL},
+  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.GRANDEUR_IG_FL, CAR.KONA_N},
   # Use TCU Message for Gear Selection
   "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER},
   # Use E_GEAR Message for Gear Selection
@@ -644,7 +645,7 @@ FEATURES = {
 
   # send LFA MFA message for new HKG models
   # Insert your car in this if you want turn LFA icon on.
-  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER},
+  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER, CAR.KONA_N},
 
   "send_hda_mfa": {CAR.GRANDEUR_IG_HEV},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
@@ -714,6 +715,7 @@ else:
     CAR.SONATA_LF_TURBO: dbc_dict('hyundai_kia_generic', None),
     CAR.SONATA_LF_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA: dbc_dict('hyundai_kia_generic', None),
+    CAR.KONA_N: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_EV: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.IONIQ_EV: dbc_dict('hyundai_kia_generic', None),
