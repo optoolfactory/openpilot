@@ -385,7 +385,7 @@ static void ui_draw_debug(UIState *s) {
     ui_print(s, ui_viz_rx, ui_viz_ry+520, "%.1f/%.1fm", scene.lateralPlan.dProb, scene.lateralPlan.laneWidth); // High dProb is more related to LaneLine, Low is Laneless
     const std::string hangeul = "아름다운한글테스트";
     ui_print(s, ui_viz_rx, ui_viz_ry+560, "%s", hangeul.c_str());
-    ui_draw_text(s, ui_viz_rx, ui_viz_ry+600, "아름다운한글테스트", 50, COLOR_WHITE, "sans-bold");
+    ui_draw_text(s, ui_viz_rx, ui_viz_ry+600, "아름다운한글테스트", 50, COLOR_WHITE, "KaiGenGothicKR-Normal");
     // const std::string stateStrings[] = {"disabled", "preEnabled", "enabled", "softDisabling"};
     // ui_print(s, ui_viz_rx, ui_viz_ry+520, "%s", stateStrings[(int)(*s->sm)["controlsState"].getControlsState().getState()].c_str());
     //ui_print(s, ui_viz_rx, ui_viz_ry+800, "A:%.5f", scene.accel_sensor2);
@@ -1686,6 +1686,9 @@ void ui_nvg_init(UIState *s) {
       {"sans-regular", "../assets/fonts/opensans_regular.ttf"},
       {"sans-semibold", "../assets/fonts/opensans_semibold.ttf"},
       {"sans-bold", "../assets/fonts/opensans_bold.ttf"},
+      {"KaiGenGothicKR-Normal", "../assets/addon/font/oKaiGenGothicKR-Normal.ttf"},
+      {"KaiGenGothicKR-Medium", "../assets/addon/font/KaiGenGothicKR-Medium.ttf"},
+      {"KaiGenGothicKR-Bold", "../assets/addon/font/KaiGenGothicKR-Bold.ttf"},
   };
   for (auto [name, file] : fonts) {
     int font_id = nvgCreateFont(s->vg, name, file);
