@@ -1686,7 +1686,7 @@ void ui_nvg_init(UIState *s) {
       {"sans-regular", "../assets/fonts/opensans_regular.ttf"},
       {"sans-semibold", "../assets/fonts/opensans_semibold.ttf"},
       {"sans-bold", "../assets/fonts/opensans_bold.ttf"},
-      {"KaiGenGothicKR-Normal", "../assets/addon/font/oKaiGenGothicKR-Normal.ttf"},
+      {"KaiGenGothicKR-Normal", "../assets/addon/font/KaiGenGothicKR-Normal.ttf"},
       {"KaiGenGothicKR-Medium", "../assets/addon/font/KaiGenGothicKR-Medium.ttf"},
       {"KaiGenGothicKR-Bold", "../assets/addon/font/KaiGenGothicKR-Bold.ttf"},
   };
