@@ -383,8 +383,12 @@ static void ui_draw_debug(UIState *s) {
     ui_print(s, ui_viz_rx, ui_viz_ry+440, "OS:%.2f", abs(scene.output_scale));
     ui_print(s, ui_viz_rx, ui_viz_ry+480, "%.2f|%.2f", scene.lateralPlan.lProb, scene.lateralPlan.rProb);
     ui_print(s, ui_viz_rx, ui_viz_ry+520, "%.1f/%.1fm", scene.lateralPlan.dProb, scene.lateralPlan.laneWidth); // High dProb is more related to LaneLine, Low is Laneless
-    const std::string hangeul = "아름다운한글ABCD1234";
-    ui_draw_text(s, ui_viz_rx, ui_viz_ry+560, hangeul.c_str(), 33, COLOR_WHITE_ALPHA(125), "KaiGenGothicKR-Normal");
+    const std::string hangeul1 = "아름다운한글ABCD1234";
+    const std::string hangeul2 = "아름다운한글ABCD1234";
+    const std::string hangeul3 = "아름다운한글ABCD1234";
+    ui_draw_text(s, ui_viz_rx, ui_viz_ry+560, hangeul1.c_str(), 30, COLOR_WHITE_ALPHA(125), "KaiGenGothicKR-Normal");
+    ui_draw_text(s, ui_viz_rx, ui_viz_ry+600, hangeul2.c_str(), 30, COLOR_WHITE_ALPHA(125), "KaiGenGothicKR-Medium");
+    ui_draw_text(s, ui_viz_rx, ui_viz_ry+640, hangeul3.c_str(), 30, COLOR_WHITE_ALPHA(125), "KaiGenGothicKR-Bold");
     // const std::string stateStrings[] = {"disabled", "preEnabled", "enabled", "softDisabling"};
     // ui_print(s, ui_viz_rx, ui_viz_ry+520, "%s", stateStrings[(int)(*s->sm)["controlsState"].getControlsState().getState()].c_str());
     //ui_print(s, ui_viz_rx, ui_viz_ry+800, "A:%.5f", scene.accel_sensor2);
