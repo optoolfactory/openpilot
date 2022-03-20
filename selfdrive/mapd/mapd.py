@@ -49,6 +49,7 @@ class MapD():
     self._query_thread = None
     self._lock = threading.RLock()
     self.ms_to_spd = 3.6 if Params().get_bool("IsMetric") else 2.236936
+    self.roadname_and_offset = Params().get("RoadList", encoding="utf8").strip().split(',')
 
   def udpate_state(self, sm):
     sock = 'controlsState'
@@ -231,7 +232,15 @@ class MapD():
     map_data_msg.liveMapData.turnSpeedLimitsAheadDistances = [float(s.start) for s in next_turn_speed_limit_sections]
     map_data_msg.liveMapData.turnSpeedLimitsAheadSigns = [float(s.curv_sign) for s in next_turn_speed_limit_sections]
 
-    map_data_msg.liveMapData.currentRoadName = str(current_road_name if current_road_name is not None else "")
+    if current_road_name is not None:
+      map_data_msg.liveMapData.currentRoadName = str(current_road_name)
+      if current_road_name in self.roadname_and_offset:
+        r_index = self.roadname_and_offset.index(current_road_name)
+        map_data_msg.liveMapData.roadCameraOffset = float(self.roadname_and_offset[r_index+1])
+      else:
+        map_data_msg.liveMapData.roadCameraOffset = 0.0        
+    else:
+      map_data_msg.liveMapData.currentRoadName = ""
 
     pm.send('liveMapData', map_data_msg)
     _debug(f'Mapd *****: Publish: \n{map_data_msg}\n********')

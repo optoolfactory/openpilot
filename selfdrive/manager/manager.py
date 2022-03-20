@@ -187,6 +187,7 @@ def manager_init() -> None:
     ("DesiredCurvatureLimit", "5"),
     ("C2WithCommaPower", "0"),
     ("CustomTREnabled", "0"),
+    ("RoadList", "RoadName1,+0.0,RoadName2,-0.0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

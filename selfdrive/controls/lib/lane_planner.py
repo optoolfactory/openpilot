@@ -57,8 +57,8 @@ class LanePlanner:
   def parse_model(self, md, sm, v_ego):
     curvature = sm['controlsState'].curvature
     mode_select = sm['carState'].cruiseState.modeSel
-    if self.drive_routine_on:
-      current_road_name = sm['liveMapData'].currentRoadName
+    current_road_offset = sm['liveMapData'].roadCameraOffset if self.drive_routine_on else 0.0
+
     Curv = round(curvature, 4)
     # right lane is minus
     lane_differ = round(abs(self.lll_y[0] + self.rll_y[0]), 2)
@@ -100,8 +100,8 @@ class LanePlanner:
       self.ll_t = (np.array(lane_lines[1].t) + np.array(lane_lines[2].t))/2
       # left and right ll x is the same
       self.ll_x = lane_lines[1].x
-      self.lll_y = np.array(lane_lines[1].y) + self.camera_offset + lean_offset
-      self.rll_y = np.array(lane_lines[2].y) + self.camera_offset + lean_offset
+      self.lll_y = np.array(lane_lines[1].y) + self.camera_offset + lean_offset + current_road_offset
+      self.rll_y = np.array(lane_lines[2].y) + self.camera_offset + lean_offset + current_road_offset
       self.lll_prob = md.laneLineProbs[1]
       self.rll_prob = md.laneLineProbs[2]
       self.lll_std = md.laneLineStds[1]
