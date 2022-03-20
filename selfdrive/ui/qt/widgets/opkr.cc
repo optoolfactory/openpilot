@@ -6004,3 +6004,70 @@ void DesiredCurvatureLimit::refresh() {
   QString valuefs = QString::number(valuef);
   label.setText("＊ " + QString::fromStdString(valuefs.toStdString()));
 }
+
+DynamicTRBySpeed::DynamicTRBySpeed() : AbstractControl("", "", "") {
+  btn.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  edit1.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  edit2.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  btn.setFixedSize(150, 100);
+  edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  edit2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+
+  hlayout->addWidget(&edit1);
+  hlayout->addWidget(&edit2);
+  hlayout->addWidget(&btn);
+
+  QObject::connect(&btn, &QPushButton::clicked, [=]() {
+    int list_count1 = 0;
+    int list_count2 = 0;
+    QString targetvalue1 = InputDialog::getText("Set Speed values with comma", this, "ex) 0,20,40,60,110", false, 1, QString::fromStdString(params.get("DynamicTRSpd")));
+    if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("DynamicTRSpd"))) {
+      QStringList list1 = targetvalue1.split(",");
+      list_count1 = list1.size();
+      params.put("DynamicTRSpd", targetvalue1.toStdString());
+      refresh();
+    } else {
+      QStringList list1 = QString::fromStdString(params.get("DynamicTRSpd")).split(",");
+      list_count1 = list1.size();
+    }
+    QString targetvalue2 = InputDialog::getText("Set TR values with comma", this, "ex) 1.2,1.3,1.4,1.5,1.6", false, 1, QString::fromStdString(params.get("DynamicTRSet")));
+    if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("DynamicTRSet"))) {
+      QStringList list2 = targetvalue2.split(",");
+      list_count2 = list2.size();
+      params.put("DynamicTRSet", targetvalue2.toStdString());
+      refresh();
+    } else {
+      QStringList list2 = QString::fromStdString(params.get("DynamicTRSet")).split(",");
+      list_count2 = list2.size();
+    }
+    if (list_count1 != list_count2) {
+      ConfirmationDialog::alert("Index count does not match. Check your input again.", this);
+    }
+  });
+  refresh();
+}
+
+void DynamicTRBySpeed::refresh() {
+  auto strs1 = QString::fromStdString(params.get("DynamicTRSpd"));
+  auto strs2 = QString::fromStdString(params.get("DynamicTRSet"));
+  edit1.setText(QString::fromStdString(strs1.toStdString()));
+  edit2.setText(QString::fromStdString(strs2.toStdString()));
+  btn.setText("EDIT");
+}
