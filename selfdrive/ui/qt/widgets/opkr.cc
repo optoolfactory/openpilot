@@ -4515,7 +4515,7 @@ void CruiseGapTR::refresh4() {
   btn4.setText("▲");
 }
 
-DynamicTR::DynamicTR() : AbstractControl("다이나믹TR 사용(갭할당)", "DynamicTR을 사용 및 해당갭에 할당합니다.", "../assets/offroad/icon_shell.png") {
+DynamicTRGap::DynamicTRGap() : AbstractControl("다이나믹TR 사용(갭할당)", "DynamicTR을 사용 및 해당갭에 할당합니다.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -4543,33 +4543,33 @@ DynamicTR::DynamicTR() : AbstractControl("다이나믹TR 사용(갭할당)", "Dy
   hlayout->addWidget(&btnplus);
 
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("DynamicTR"));
+    auto str = QString::fromStdString(params.get("DynamicTRGap"));
     int value = str.toInt();
     value = value - 1;
     if (value <= -1 ) {
       value = 4;
     }
     QString values = QString::number(value);
-    params.put("DynamicTR", values.toStdString());
+    params.put("DynamicTRGap", values.toStdString());
     refresh();
   });
   
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("DynamicTR"));
+    auto str = QString::fromStdString(params.get("DynamicTRGap"));
     int value = str.toInt();
     value = value + 1;
     if (value >= 5 ) {
       value = 0;
     }
     QString values = QString::number(value);
-    params.put("DynamicTR", values.toStdString());
+    params.put("DynamicTRGap", values.toStdString());
     refresh();
   });
   refresh();
 }
 
-void DynamicTR::refresh() {
-  QString option = QString::fromStdString(params.get("DynamicTR"));
+void DynamicTRGap::refresh() {
+  QString option = QString::fromStdString(params.get("DynamicTRGap"));
   if (option == "0") {
     label.setText(QString::fromStdString("사용안함"));
   } else if (option == "1") {
