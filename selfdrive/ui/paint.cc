@@ -405,6 +405,7 @@ static void ui_draw_debug(UIState *s) {
     } else if (scene.lateralControlMethod == 2) {
       ui_print(s, ui_viz_rx_center, bdr_s+295, "LQR");
     }
+    nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
     if (scene.osm_enabled) {
       ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+240, "SL:%.0f", scene.liveMapData.ospeedLimit);
       ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+280, "SLA:%.0f", scene.liveMapData.ospeedLimitAhead);
