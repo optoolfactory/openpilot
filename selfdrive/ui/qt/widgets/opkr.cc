@@ -4298,7 +4298,7 @@ void DcGain::refresh() {
 }
 
 CruiseGapTR::CruiseGapTR() : AbstractControl("크루즈갭", "크루즈갭에 따른 차간거리(TR)를 조절 합니다. TR은 앞차와 추돌시간(초)을 말하며 커질수록 앞차와 더 먼 간격을 유지합니다.", "") {
-  QString dtr = QString::fromStdString(params.get("DynamicTR"));
+  QString dtr = QString::fromStdString(params.get("DynamicTRGap"));
   if (dtr == "0") {
     btn1.setStyleSheet(R"(
       padding: -10;
