@@ -1482,10 +1482,10 @@ void draw_top_text(UIState *s) {
   nvgRoundedRect(s->vg, rect_x, rect_y, rect_w, rect_h, 15);
   nvgStrokeWidth(s->vg, 0);
   nvgStroke(s->vg);
-  nvgFillColor(s->vg, COLOR_BLACK_ALPHA(100));
+  nvgFillColor(s->vg, COLOR_BLACK_ALPHA(60));
   nvgFill(s->vg);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
-  ui_draw_text(s, s->fb_w/2, rect_y, text_out.c_str(), s->scene.mapbox_running?37:62, COLOR_WHITE_ALPHA(200), "KaiGenGothicKR-Medium");
+  ui_draw_text(s, s->fb_w/2, rect_y, text_out.c_str(), s->scene.mapbox_running?37:62, COLOR_WHITE_ALPHA(190), "KaiGenGothicKR-Medium");
 }
 
 // live camera offset adjust by OPKR
