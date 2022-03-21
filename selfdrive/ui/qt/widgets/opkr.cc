@@ -6265,20 +6265,28 @@ void OPKRTopTextView::refresh() {
   QString option = QString::fromStdString(params.get("TopTextView"));
   if (option == "0") {
     label.setText(QString::fromStdString("None"));
+    QUIState::ui_state.scene.top_text_view = 0;
   } else if (option == "1") {
     label.setText(QString::fromStdString("Date+Time"));
+    QUIState::ui_state.scene.top_text_view = 1;
   } else if (option == "2") {
     label.setText(QString::fromStdString("Date"));
+    QUIState::ui_state.scene.top_text_view = 2;
   } else if (option == "3") {
     label.setText(QString::fromStdString("Time"));
+    QUIState::ui_state.scene.top_text_view = 3;
   } else if (option == "4") {
     label.setText(QString::fromStdString("Date+Time+OSM"));
+    QUIState::ui_state.scene.top_text_view = 4;
   } else if (option == "5") {
     label.setText(QString::fromStdString("Date+OSM"));
+    QUIState::ui_state.scene.top_text_view = 5;
   } else if (option == "6") {
     label.setText(QString::fromStdString("Time+OSM"));
+    QUIState::ui_state.scene.top_text_view = 6;
   } else {
     label.setText(QString::fromStdString("OSM"));
+    QUIState::ui_state.scene.top_text_view = 7;
   }
   btnminus.setText("◀");
   btnplus.setText("▶");

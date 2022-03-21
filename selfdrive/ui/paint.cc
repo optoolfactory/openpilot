@@ -1436,7 +1436,7 @@ void draw_top_text(UIState *s) {
     strcpy(dayofweek, "SAT");
   }
 
-  const std::string test = "한국대로123번길"
+  const std::string test = "한국대로123번길";
   if (s->scene.top_text_view == 1) {
     snprintf(text_out,sizeof(text_out),"%02d-%02d %s %02d:%02d:%02d", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
     rect_w = 600;
@@ -1470,7 +1470,7 @@ void draw_top_text(UIState *s) {
     rect_x = s->fb_w/2 - rect_w/2;
   }
 
-  Rect rect = {rect_x, rect_y, rect_w, rect_h};
+  const Rect rect = {rect_x, rect_y, rect_w, rect_h};
   ui_fill_rect(s, rect, COLOR_BLACK_ALPHA(100), 30.);
   ui_draw_rect(s, rect, COLOR_BLACK_ALPHA(100), 0, 30.);
   nvgTextAlign(s, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
