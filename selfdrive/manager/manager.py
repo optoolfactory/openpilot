@@ -191,6 +191,7 @@ def manager_init() -> None:
     ("LaneWidth", "37"),
     ("SpdLaneWidthSpd", "0,31"),
     ("SpdLaneWidthSet", "2.8,3.5"),
+    ("TopTextView", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

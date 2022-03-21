@@ -6207,3 +6207,79 @@ void SpeedLaneWidth::refresh() {
   edit2.setText(QString::fromStdString(strs2.toStdString()));
   btn.setText("EDIT");
 }
+
+OPKRTopTextView::OPKRTopTextView() : AbstractControl("Top Text View", "Date/Time/OSM Street Name", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TopTextView"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= -1 ) {
+      value = 7;
+    }
+    QString values = QString::number(value);
+    params.put("TopTextView", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TopTextView"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 8 ) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("TopTextView", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void OPKRTopTextView::refresh() {
+  QString option = QString::fromStdString(params.get("TopTextView"));
+  if (option == "0") {
+    label.setText(QString::fromStdString("None"));
+  } else if (option == "1") {
+    label.setText(QString::fromStdString("Date+Time"));
+  } else if (option == "2") {
+    label.setText(QString::fromStdString("Date"));
+  } else if (option == "3") {
+    label.setText(QString::fromStdString("Time"));
+  } else if (option == "4") {
+    label.setText(QString::fromStdString("Date+Time+OSM"));
+  } else if (option == "5") {
+    label.setText(QString::fromStdString("Date+OSM"));
+  } else if (option == "6") {
+    label.setText(QString::fromStdString("Time+OSM"));
+  } else {
+    label.setText(QString::fromStdString("OSM"));
+  }
+  btnminus.setText("◀");
+  btnplus.setText("▶");
+}

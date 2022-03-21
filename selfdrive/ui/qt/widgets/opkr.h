@@ -433,40 +433,6 @@ public:
   }
 };
 
-class KRDateToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  KRDateToggle() : ToggleControl("Display Date on Screen", "Display the current date on the driving screen.", "../assets/offroad/icon_shell.png", Params().getBool("KRDateShow")) {
-    QObject::connect(this, &KRDateToggle::toggleFlipped, [=](int state) {
-      bool status = state ? true : false;
-      Params().putBool("KRDateShow", status);
-      if (state) {
-        QUIState::ui_state.scene.kr_date_show = true;
-      } else {
-        QUIState::ui_state.scene.kr_date_show = false;
-      }
-    });
-  }
-};
-
-class KRTimeToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  KRTimeToggle() : ToggleControl("Display Time on Screen", "Display the current time on the driving screen.", "../assets/offroad/icon_shell.png", Params().getBool("KRTimeShow")) {
-    QObject::connect(this, &KRTimeToggle::toggleFlipped, [=](int state) {
-      bool status = state ? true : false;
-      Params().putBool("KRTimeShow", status);
-      if (state) {
-        QUIState::ui_state.scene.kr_time_show = true;
-      } else {
-        QUIState::ui_state.scene.kr_time_show = false;
-      }
-    });
-  }
-};
-
 class GitPullOnBootToggle : public ToggleControl {
   Q_OBJECT
 
@@ -2087,5 +2053,20 @@ private:
   QLineEdit edit2;
   Params params;
 
+  void refresh();
+};
+
+class OPKRTopTextView : public AbstractControl {
+  Q_OBJECT
+
+public:
+  OPKRTopTextView();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
   void refresh();
 };

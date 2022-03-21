@@ -550,13 +550,12 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new BlinkThreshold());
   layout->addWidget(new OPKRNaviSelect());
   layout->addWidget(new RunNaviOnBootToggle());
-  layout->addWidget(new KRDateToggle());
-  layout->addWidget(new KRTimeToggle());
   layout->addWidget(new OPKRServerSelect());
   layout->addWidget(new OPKRServerAPI());
   layout->addWidget(new MapboxEnabledToggle());
   layout->addWidget(new OPKRMapboxStyle());
   layout->addWidget(new GoogleMapEnabledToggle());
+  layout->addWidget(new OPKRTopTextView());
 }
 
 DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {

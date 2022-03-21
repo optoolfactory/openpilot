@@ -1407,18 +1407,19 @@ static void ui_draw_blindspot_mon(UIState *s) {
   }
 }
 
-// draw date/time
-void draw_kr_date_time(UIState *s) {
+// draw date/time/streetname
+void draw_top_text(UIState *s) {
   int rect_w = 600;
-  const int rect_h = 50;
   int rect_x = s->fb_w/2 - rect_w/2;
-  const int rect_y = 0;
+  const int rect_y = -10;
+  const int rect_h = 50;
   char dayofweek[50];
 
   // Get local time to display
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
   char now[50];
+  char text_out[128];
   if (tm.tm_wday == 0) {
     strcpy(dayofweek, "SUN");
   } else if (tm.tm_wday == 1) {
@@ -1435,30 +1436,45 @@ void draw_kr_date_time(UIState *s) {
     strcpy(dayofweek, "SAT");
   }
 
-  if (s->scene.kr_date_show && s->scene.kr_time_show) {
-    snprintf(now,sizeof(now),"%04d-%02d-%02d %s %02d:%02d:%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
-  } else if (s->scene.kr_date_show) {
-    snprintf(now,sizeof(now),"%04d-%02d-%02d %s", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, dayofweek);
-  } else if (s->scene.kr_time_show) {
-    snprintf(now,sizeof(now),"%02d:%02d:%02d", tm.tm_hour, tm.tm_min, tm.tm_sec);
+  const std::string test = "한국대로123번길"
+  if (s->scene.top_text_view == 1) {
+    snprintf(text_out,sizeof(text_out),"%02d-%02d %s %02d:%02d:%02d", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    rect_w = 600;
+    rect_x = s->fb_w/2 - rect_w/2;
+  } else if (s->scene.top_text_view == 2) {
+    snprintf(text_out,sizeof(text_out),"%02d-%02d %s", tm.tm_mon + 1, tm.tm_mday, dayofweek);
+    rect_w = 400;
+    rect_x = s->fb_w/2 - rect_w/2;
+  } else if (s->scene.top_text_view == 3) {
+    snprintf(text_out,sizeof(text_out),"%02d:%02d:%02d", tm.tm_hour, tm.tm_min, tm.tm_sec);
+    rect_w = 400;
+    rect_x = s->fb_w/2 - rect_w/2;
+  } else if (s->scene.top_text_view == 4 && s->scene.osm_enabled) {
+    snprintf(now,sizeof(now),"%02d-%02d %s %02d:%02d:%02d ", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    strncat(text_out, now, test.c_str());
+    rect_w = 800;
+    rect_x = s->fb_w/2 - rect_w/2;
+  } else if (s->scene.top_text_view == 5 && s->scene.osm_enabled) {
+    snprintf(now,sizeof(now),"%02d-%02d %s ", tm.tm_mon + 1, tm.tm_mday, dayofweek);
+    strncat(text_out, now, test.c_str());
+    rect_w = 650;
+    rect_x = s->fb_w/2 - rect_w/2;
+  } else if (s->scene.top_text_view == 6 && s->scene.osm_enabled) {
+    snprintf(now,sizeof(now),"%02d:%02d:%02d ", tm.tm_hour, tm.tm_min, tm.tm_sec);
+    strncat(text_out, now, test.c_str());
+    rect_w = 650;
+    rect_x = s->fb_w/2 - rect_w/2;
+  } else if (s->scene.top_text_view == 7 && s->scene.osm_enabled) {
+    text_out = test.c_str();
+    rect_w = 500;
+    rect_x = s->fb_w/2 - rect_w/2;
   }
 
-  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
-  nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, rect_x, rect_y, rect_w, rect_h, 0);
-  nvgFillColor(s->vg, nvgRGBA(0, 0, 0, 0));
-  nvgFill(s->vg);
-  nvgStrokeColor(s->vg, nvgRGBA(255,255,255,0));
-  nvgStrokeWidth(s->vg, 0);
-  nvgStroke(s->vg);
-
-  if (s->scene.mapbox_running) {
-    nvgFontSize(s->vg, 55);
-  } else {
-    nvgFontSize(s->vg, 80);
-  }
-  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
-  nvgText(s->vg, s->fb_w/2, rect_y, now, NULL);
+  Rect rect = {rect_x, rect_y, rect_w, rect_h};
+  ui_fill_rect(s, rect, COLOR_BLACK_ALPHA(100), 30.);
+  ui_draw_rect(s, rect, COLOR_BLACK_ALPHA(100), 0, 30.);
+  nvgTextAlign(s, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+  ui_draw_text(s, s->fb_w/2, rect_y, text_out, s->scene.mapbox_running?50:75, COLOR_WHITE_ALPHA(200), "KaiGenGothicKR-Medium");
 }
 
 // live camera offset adjust by OPKR
@@ -1619,8 +1635,8 @@ static void ui_draw_vision(UIState *s) {
   if (scene->live_tune_panel_enable) {
     ui_draw_live_tune_panel(s);
   }
-  if ((scene->kr_date_show || scene->kr_time_show) && !scene->comma_stock_ui) {
-    draw_kr_date_time(s);
+  if (scene->top_text_view > 0 && !scene->comma_stock_ui) {
+    draw_top_text(s);
   }
   if (scene->brakeHold && !scene->comma_stock_ui) {
     ui_draw_auto_hold(s);
