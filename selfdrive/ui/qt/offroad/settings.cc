@@ -8,6 +8,7 @@
 #include <QProcess> // opkr
 #include <QDateTime> // opkr
 #include <QTimer> // opkr
+#include <QAbstractItemView> // opkr
 
 #ifndef QCOM
 #include "selfdrive/ui/qt/offroad/networking.h"
@@ -604,7 +605,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new AutoResLimitTime());
   layout->addWidget(new AutoRESDelay());
   layout->addWidget(new LaneWidth());
-  layout->addWidget(new LabelControl("Speed LaneWidth: [Spd(m/s)] [LaneWidth]", ""));
+  layout->addWidget(new AbstractControl("Speed LaneWidth: [Spd(m/s)] [LaneWidth]", "Set LaneWidths by speed. Speed is m/s values not kph or mph. (Mid range is interpolation values)", "../assets/offroad/icon_shell.png"));
   layout->addWidget(new SpeedLaneWidth());
 }
 
