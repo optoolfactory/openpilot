@@ -587,14 +587,14 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new OSMSpeedLimitEnabledToggle());
   layout->addWidget(new StockNaviSpeedToggle());
   layout->addWidget(new SpeedLimitOffset());
-  layout->addWidget(new LabelControl("OSMCustomSpeedLimit([SL] [TargetSpeed])", ""));
+  layout->addWidget(new AbstractControl("OSMCustomSpeedLimit([SL] [TargetSpeed])", "Set the offset speed according to speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png"));
   layout->addWidget(new OSMCustomSpeedLimit());
   layout->addWidget(new SpeedLimitSignType());
   layout->addWidget(new CamDecelDistAdd());
   layout->addWidget(new CurvDecelSelect());
-  layout->addWidget(new LabelControl("VisionCurvDecel([CV] [TargetSpeed])", ""));
+  layout->addWidget(new AbstractControl("VisionCurvDecel([CV] [TargetSpeed])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png"));
   layout->addWidget(new VCurvSpeed());
-  layout->addWidget(new LabelControl("OSMCurvDecel([TSL] [TargetSpeed])", ""));
+  layout->addWidget(new AbstractControl("OSMCurvDecel([TSL] [TargetSpeed])", "Adjust the curve deceleration speed according to turn speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png"));
   layout->addWidget(new OCurvSpeed());
   layout->addWidget(new AutoEnabledToggle());
   layout->addWidget(new AutoEnableSpeed());
