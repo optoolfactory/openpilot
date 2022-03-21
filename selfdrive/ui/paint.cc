@@ -1412,7 +1412,7 @@ void draw_top_text(UIState *s) {
   int rect_w = 600;
   int rect_x = s->fb_w/2 - rect_w/2;
   const int rect_y = 0;
-  const int rect_h = 60;
+  const int rect_h = 65;
   char dayofweek[50];
 
   // Get local time to display
@@ -1435,7 +1435,7 @@ void draw_top_text(UIState *s) {
     strcpy(dayofweek, "SAT");
   }
 
-  const std::string test = "한국대로123번길";
+  const std::string road_name = s->scene.liveMapData.ocurrentRoadName;
   std::string text_out = "";
   if (s->scene.top_text_view == 1) {
     snprintf(now,sizeof(now),"%02d-%02d %s %02d:%02d:%02d", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
@@ -1453,28 +1453,28 @@ void draw_top_text(UIState *s) {
     snprintf(now,sizeof(now),"%02d:%02d:%02d", tm.tm_hour, tm.tm_min, tm.tm_sec);
     std::string str(now);
     text_out = str;
-    rect_w = 350;
+    rect_w = 300;
     rect_x = s->fb_w/2 - rect_w/2;
   } else if (s->scene.top_text_view == 4 && s->scene.osm_enabled) {
     snprintf(now,sizeof(now),"%02d-%02d %s %02d:%02d:%02d ", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
     std::string str(now);
-    text_out = str + test;
-    rect_w = 1200;
+    text_out = str + road_name;
+    rect_w = 1100;
     rect_x = s->fb_w/2 - rect_w/2;
   } else if (s->scene.top_text_view == 5 && s->scene.osm_enabled) {
     snprintf(now,sizeof(now),"%02d-%02d %s ", tm.tm_mon + 1, tm.tm_mday, dayofweek);
     std::string str(now);
-    text_out = str + test;
+    text_out = str + road_name;
     rect_w = 850;
     rect_x = s->fb_w/2 - rect_w/2;
   } else if (s->scene.top_text_view == 6 && s->scene.osm_enabled) {
     snprintf(now,sizeof(now),"%02d:%02d:%02d ", tm.tm_hour, tm.tm_min, tm.tm_sec);
     std::string str(now);
-    text_out = str + test;
+    text_out = str + road_name;
     rect_w = 750;
     rect_x = s->fb_w/2 - rect_w/2;
   } else if (s->scene.top_text_view == 7 && s->scene.osm_enabled) {
-    text_out = test;
+    text_out = road_name;
     rect_w = 500;
     rect_x = s->fb_w/2 - rect_w/2;
   }
@@ -1485,7 +1485,7 @@ void draw_top_text(UIState *s) {
   nvgFillColor(s->vg, COLOR_BLACK_ALPHA(100));
   nvgFill(s->vg);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
-  ui_draw_text(s, s->fb_w/2, rect_y, text_out.c_str(), s->scene.mapbox_running?38:63, COLOR_WHITE_ALPHA(200), "KaiGenGothicKR-Medium");
+  ui_draw_text(s, s->fb_w/2, rect_y, text_out.c_str(), s->scene.mapbox_running?37:62, COLOR_WHITE_ALPHA(200), "KaiGenGothicKR-Medium");
 }
 
 // live camera offset adjust by OPKR
