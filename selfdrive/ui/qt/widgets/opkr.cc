@@ -4926,6 +4926,9 @@ void LiveSRPercent::refresh() {
   btnplus.setText("+");
 }
 
+VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CV] [TargetSpeed])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {
+}
+
 VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   btn.setStyleSheet(R"(
     padding: -10;
@@ -4991,6 +4994,9 @@ void VCurvSpeed::refresh() {
   edit1.setText(QString::fromStdString(strs1.toStdString()));
   edit2.setText(QString::fromStdString(strs2.toStdString()));
   btn.setText("EDIT");
+}
+
+OCurvSpeedUD::OCurvSpeedUD() : AbstractControl("OSMCurvDecel([TSL] [TargetSpeed])", "Adjust the curve deceleration speed according to turn speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
 }
 
 OCurvSpeed::OCurvSpeed() : AbstractControl("", "", "") {
@@ -5831,6 +5837,9 @@ void AutoRESDelay::refresh() {
   btnplus.setText("+");
 }
 
+OSMCustomSpeedLimitUD::OSMCustomSpeedLimitUD() : AbstractControl("OSMCustomSpeedLimit([SL] [TargetSpeed])", "Set the offset speed according to speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
+}
+
 OSMCustomSpeedLimit::OSMCustomSpeedLimit() : AbstractControl("", "", "") {
   btn.setStyleSheet(R"(
     padding: -10;
@@ -5996,6 +6005,9 @@ void DesiredCurvatureLimit::refresh() {
   label.setText("＊ " + QString::fromStdString(valuefs.toStdString()));
 }
 
+DynamicTRUD::DynamicTRUD() : AbstractControl("DynamicTR: [Speed] [TRs]", "Set LaneWidths by speed. Speed is m/s values not kph or mph. (Mid range is interpolation values)", "../assets/offroad/icon_shell.png") {
+}
+
 DynamicTRBySpeed::DynamicTRBySpeed() : AbstractControl("", "", "") {
   btn.setStyleSheet(R"(
     padding: -10;
@@ -6124,6 +6136,9 @@ void LaneWidth::refresh() {
   label.setText(QString::fromStdString(valuefs.toStdString()));
   btnminus.setText("－");
   btnplus.setText("＋");
+}
+
+SpeedLaneWidthUD::SpeedLaneWidthUD() : AbstractControl("Speed LaneWidth: [Spd(m/s)] [LaneWidth]", "Set LaneWidths by speed. Speed is m/s values not kph or mph. (Mid range is interpolation values)", "../assets/offroad/icon_shell.png") {
 }
 
 SpeedLaneWidth::SpeedLaneWidth() : AbstractControl("", "", "") {

@@ -1670,6 +1670,13 @@ private:
   void refresh();
 };
 
+class DynamicTRUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  DynamicTRUD();
+};
+
 class LCTimingFactor : public AbstractControl {
   Q_OBJECT
 
@@ -1787,6 +1794,13 @@ private:
   void refresh();
 };
 
+class VCurvSpeedUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  VCurvSpeedUD();
+};
+
 class VCurvSpeed : public AbstractControl {
   Q_OBJECT
 
@@ -1800,6 +1814,13 @@ private:
   Params params;
 
   void refresh();
+};
+
+class OCurvSpeedUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  OCurvSpeedUD();
 };
 
 class OCurvSpeed : public AbstractControl {
@@ -1966,6 +1987,13 @@ private:
   void refresh();
 };
 
+class OSMCustomSpeedLimitUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  OSMCustomSpeedLimitUD();
+};
+
 class OSMCustomSpeedLimit : public AbstractControl {
   Q_OBJECT
 
@@ -2026,6 +2054,13 @@ private:
   Params params;
   
   void refresh();
+};
+
+class SpeedLaneWidthUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  SpeedLaneWidthUD();
 };
 
 class SpeedLaneWidth : public AbstractControl {
