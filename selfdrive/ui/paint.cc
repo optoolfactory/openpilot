@@ -1343,8 +1343,8 @@ static void ui_draw_vision_header(UIState *s) {
     ui_draw_tpms(s);
     if (s->scene.controls_state.getEnabled()) {
       ui_draw_standstill(s);
-      draw_safetysign(s);
     }
+    draw_safetysign(s);
     draw_compass(s);
     if (s->scene.navi_select == 0 || s->scene.navi_select == 1 || s->scene.mapbox_running) {
       draw_navi_button(s);
