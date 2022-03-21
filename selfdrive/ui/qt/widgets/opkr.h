@@ -676,6 +676,18 @@ public:
   }
 };
 
+class RoutineDriveOnToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  RoutineDriveOnToggle() : ToggleControl("Routine Drive by RoadName", "This will adjust the camera offset(for now) by roadname. If you want to use, edit the file, /data/params/d/RoadList. modify like this RoadName1,offset1(ex:+0.05),RoadName2,offset2(ex:-0.05),...", "../assets/offroad/icon_shell.png", Params().getBool("RoutineDriveOn")) {
+    QObject::connect(this, &RoutineDriveOnToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("RoutineDriveOn", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT

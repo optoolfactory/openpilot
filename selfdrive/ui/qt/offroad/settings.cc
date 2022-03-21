@@ -606,6 +606,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new LaneWidth());
   layout->addWidget(new SpeedLaneWidthUD());
   layout->addWidget(new SpeedLaneWidth());
+  layout->addWidget(new RoutineDriveOnToggle());
 }
 
 DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
