@@ -550,13 +550,12 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new BlinkThreshold());
   layout->addWidget(new OPKRNaviSelect());
   layout->addWidget(new RunNaviOnBootToggle());
-  layout->addWidget(new KRDateToggle());
-  layout->addWidget(new KRTimeToggle());
   layout->addWidget(new OPKRServerSelect());
   layout->addWidget(new OPKRServerAPI());
   layout->addWidget(new MapboxEnabledToggle());
   layout->addWidget(new OPKRMapboxStyle());
   layout->addWidget(new GoogleMapEnabledToggle());
+  layout->addWidget(new OPKRTopTextView());
 }
 
 DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
@@ -583,6 +582,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SteerAngleCorrection());
   layout->addWidget(new TurnSteeringDisableToggle());
   layout->addWidget(new CruiseOverMaxSpeedToggle());
+  layout->addWidget(new OSMEnabledToggle());
   layout->addWidget(new OSMSpeedLimitEnabledToggle());
   layout->addWidget(new StockNaviSpeedToggle());
   layout->addWidget(new SpeedLimitOffset());
@@ -602,6 +602,10 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new AutoResCondition());
   layout->addWidget(new AutoResLimitTime());
   layout->addWidget(new AutoRESDelay());
+  layout->addWidget(new LaneWidth());
+  layout->addWidget(new SpeedLaneWidthUD());
+  layout->addWidget(new SpeedLaneWidth());
+  layout->addWidget(new RoutineDriveOnToggle());
 }
 
 DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
@@ -714,8 +718,11 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(horizontal_line());
 
   layout->addWidget(new LabelControl("〓〓〓〓〓〓〓【 LONGCONTROL 】〓〓〓〓〓〓〓", ""));
-  layout->addWidget(new DynamicTR());
+  layout->addWidget(new CustomTRToggle());
   layout->addWidget(new CruiseGapTR());
+  layout->addWidget(new DynamicTRGap());
+  layout->addWidget(new DynamicTRUD());
+  layout->addWidget(new DynamicTRBySpeed());
   layout->addWidget(new RadarLongHelperOption());
   layout->addWidget(new StoppingDistAdjToggle());
   layout->addWidget(new E2ELongToggle());
