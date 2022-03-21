@@ -266,7 +266,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   gitCommitLbl = new LabelControl("Git Commit");
   osVersionLbl = new LabelControl("OS Version");
   versionLbl = new LabelControl("Fork");
-  lastUpdateLbl = new LabelControl("Last Updates Date", "", "");
+  lastUpdateLbl = new LabelControl("Last Updates Check Date", "", "");
   updateBtn = new ButtonControl("Check for Updates", "");
   connect(updateBtn, &ButtonControl::clicked, [=]() {
     if (params.getBool("IsOffroad")) {
@@ -587,14 +587,14 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new OSMSpeedLimitEnabledToggle());
   layout->addWidget(new StockNaviSpeedToggle());
   layout->addWidget(new SpeedLimitOffset());
-  layout->addWidget(new OSMCustomSpeedLimitUD());
+  layout->addWidget(new LabelControl("OSMCustomSpeedLimit([SL] [TargetSpeed])", ""));
   layout->addWidget(new OSMCustomSpeedLimit());
   layout->addWidget(new SpeedLimitSignType());
   layout->addWidget(new CamDecelDistAdd());
   layout->addWidget(new CurvDecelSelect());
-  layout->addWidget(new VCurvSpeedUD());
+  layout->addWidget(new LabelControl("VisionCurvDecel([CV] [TargetSpeed])", ""));
   layout->addWidget(new VCurvSpeed());
-  layout->addWidget(new OCurvSpeedUD());
+  layout->addWidget(new LabelControl("OSMCurvDecel([TSL] [TargetSpeed])", ""));
   layout->addWidget(new OCurvSpeed());
   layout->addWidget(new AutoEnabledToggle());
   layout->addWidget(new AutoEnableSpeed());
@@ -603,6 +603,9 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new AutoResCondition());
   layout->addWidget(new AutoResLimitTime());
   layout->addWidget(new AutoRESDelay());
+  layout->addWidget(new LaneWidth());
+  layout->addWidget(new LabelControl("Speed LaneWidth: [Spd(m/s)] [LaneWidth]", ""));
+  layout->addWidget(new SpeedLaneWidth());
 }
 
 DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
@@ -718,6 +721,7 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new CustomTRToggle());
   layout->addWidget(new CruiseGapTR());
   layout->addWidget(new DynamicTRGap());
+  layout->addWidget(new LabelControl("DynamicTR: [Speed] [TRs]", ""));
   layout->addWidget(new DynamicTRBySpeed());
   layout->addWidget(new RadarLongHelperOption());
   layout->addWidget(new StoppingDistAdjToggle());

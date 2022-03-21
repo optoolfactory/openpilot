@@ -188,6 +188,9 @@ def manager_init() -> None:
     ("C2WithCommaPower", "0"),
     ("CustomTREnabled", "0"),
     ("RoadList", "RoadName1,+0.0,RoadName2,-0.0"),
+    ("LaneWidth", "3.7"),
+    ("SpdLaneWidthSpd", "0,31"),
+    ("SpdLaneWidthSet", "2.8,3.5"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

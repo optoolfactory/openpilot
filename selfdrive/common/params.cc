@@ -340,6 +340,9 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"C2WithCommaPower", PERSISTENT},
     {"RoutineDriveOn", PERSISTENT},
     {"RoadList", PERSISTENT},
+    {"LaneWidth", PERSISTENT},
+    {"SpdLaneWidthSpd", PERSISTENT},
+    {"SpdLaneWidthSet", PERSISTENT},
 };
 
 } // namespace
