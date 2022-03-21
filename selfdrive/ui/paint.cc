@@ -1411,7 +1411,7 @@ static void ui_draw_blindspot_mon(UIState *s) {
 void draw_top_text(UIState *s) {
   int rect_w = 600;
   int rect_x = s->fb_w/2 - rect_w/2;
-  const int rect_y = -10;
+  const int rect_y = 0;
   const int rect_h = 50;
   char dayofweek[50];
 
@@ -1483,9 +1483,10 @@ void draw_top_text(UIState *s) {
   nvgRoundedRect(s->vg, rect_x, rect_y, rect_w, rect_h, 50);
   nvgStrokeWidth(s->vg, 0);
   nvgStroke(s->vg);
-  nvgFillColor(s->vg, COLOR_BLACK_ALPHA(100));
+  nvgFillColor(s->vg, COLOR_BLACK_ALPHA(150));
+  nvgFill(s->vg);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
-  ui_draw_text(s, s->fb_w/2, rect_y, text_out.c_str(), s->scene.mapbox_running?50:75, COLOR_WHITE_ALPHA(200), "KaiGenGothicKR-Medium");
+  ui_draw_text(s, s->fb_w/2, rect_y, text_out.c_str(), s->scene.mapbox_running?40:65, COLOR_WHITE_ALPHA(200), "KaiGenGothicKR-Medium");
 }
 
 // live camera offset adjust by OPKR
