@@ -1,5 +1,5 @@
 import numpy as np
-from cereal import log
+from cereal import log, messaging
 from common.filter_simple import FirstOrderFilter
 from common.numpy_fast import interp
 from common.realtime import DT_MDL
@@ -55,11 +55,17 @@ class LanePlanner:
 
     self.lp_timer = 0
     self.lp_timer2 = 0
+    
+    self.sm = messaging.SubMaster(['liveMapData'])
 
   def parse_model(self, md, sm, v_ego):
     curvature = sm['controlsState'].curvature
     mode_select = sm['carState'].cruiseState.modeSel
-    current_road_offset = sm['liveMapData'].roadCameraOffset if self.drive_routine_on else 0.0
+    if self.drive_routine_on:
+      self.sm.update(0)
+      current_road_offset = self.sm['liveMapData'].roadCameraOffset
+    else:
+      current_road_offset = 0.0
 
     Curv = round(curvature, 4)
     # right lane is minus
