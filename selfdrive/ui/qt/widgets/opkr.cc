@@ -6005,7 +6005,7 @@ void DesiredCurvatureLimit::refresh() {
   label.setText("＊ " + QString::fromStdString(valuefs.toStdString()));
 }
 
-DynamicTRUD::DynamicTRUD() : AbstractControl("DynamicTR: [Speed] [TRs]", "Set LaneWidths by speed. Speed is m/s values not kph or mph. (Mid range is interpolation values)", "../assets/offroad/icon_shell.png") {
+DynamicTRUD::DynamicTRUD() : AbstractControl("DynamicTR: [Speed] [TRs]", "Set TR of each speeds. (Mid range is interpolation values)", "../assets/offroad/icon_shell.png") {
 }
 
 DynamicTRBySpeed::DynamicTRBySpeed() : AbstractControl("", "", "") {
