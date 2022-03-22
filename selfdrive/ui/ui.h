@@ -297,6 +297,7 @@ typedef struct UIScene {
 
     float angleOffset;
     bool lanelessModeStatus;
+    float totalCameraOffset;
   } lateralPlan;
 
   struct _LiveNaviData
