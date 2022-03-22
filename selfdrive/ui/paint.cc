@@ -770,8 +770,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     } else {
       snprintf(uom_str, sizeof(uom_str), "%.0f°C", (scene.ambientTemp));
     }
-    const std::string hangeul1 = "CPU온도";
-    bb_h +=bb_ui_draw_measure(s, cpu_temp_val.c_str(), uom_str, ui_draw_text(s, x, y, hangeul1.c_str(), 30, COLOR_WHITE_ALPHA(125), "KaiGenGothicKR-Normal"),
+    bb_h +=bb_ui_draw_measure(s, cpu_temp_val.c_str(), uom_str, "CPU TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
