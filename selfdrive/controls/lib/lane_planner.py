@@ -65,7 +65,7 @@ class LanePlanner:
     mode_select = sm['carState'].cruiseState.modeSel
     if self.drive_routine_on:
       self.sm.update(0)
-      current_road_offset = self.sm['liveMapData'].roadCameraOffset
+      current_road_offset = -self.sm['liveMapData'].roadCameraOffset
     else:
       current_road_offset = 0.0
 
