@@ -654,14 +654,14 @@ public:
   }
 };
 
-class ClosedToRoadEdgeToggle : public ToggleControl {
+class CloseToRoadEdgeToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  ClosedToRoadEdgeToggle() : ToggleControl("Driving Closed to RoadEdge", "This will adjust the camera offset to get close to road edge if the car is on the first or last lane.", "../assets/offroad/icon_shell.png", Params().getBool("ClosedToRoadEdge")) {
-    QObject::connect(this, &ClosedToRoadEdgeToggle::toggleFlipped, [=](int state) {
+  CloseToRoadEdgeToggle() : ToggleControl("Driving Close to RoadEdge", "This will adjust the camera offset to get close to road edge if the car is on the first or last lane.", "../assets/offroad/icon_shell.png", Params().getBool("CloseToRoadEdge")) {
+    QObject::connect(this, &CloseToRoadEdgeToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
-      Params().putBool("ClosedToRoadEdge", status);
+      Params().putBool("CloseToRoadEdge", status);
     });
   }
 };
