@@ -6316,13 +6316,13 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusl.setFixedSize(90, 100);
-  btnplusl.setFixedSize(90, 100);
+  btnminusl.setFixedSize(80, 100);
+  btnplusl.setFixedSize(80, 100);
   hlayout->addWidget(&btnminusl);
   hlayout->addWidget(&btnplusl);
 
   labelr1.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  labelr1.setText("RightEdge: ");
+  labelr1.setText("RigtEdge: ");
   hlayout->addWidget(&labelr1);
   labelr.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   labelr.setStyleSheet("color: #e0e879");
@@ -6343,8 +6343,8 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusr.setFixedSize(90, 100);
-  btnplusr.setFixedSize(90, 100);
+  btnminusr.setFixedSize(80, 100);
+  btnplusr.setFixedSize(80, 100);
   hlayout->addWidget(&btnminusr);
   hlayout->addWidget(&btnplusr);
 
