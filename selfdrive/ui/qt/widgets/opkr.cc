@@ -6292,7 +6292,7 @@ void OPKRTopTextView::refresh() {
   btnplus.setText("▶");
 }
 
-OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to left, - value to move car to right on each lane.", "../assets/offroad/icon_shell.png") {
+OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to left, - value to move car to right on each lane.", "") {
 
   labell1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labell1.setText("LeftEdge: ");
@@ -6316,8 +6316,8 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusl.setFixedSize(100, 100);
-  btnplusl.setFixedSize(100, 100);
+  btnminusl.setFixedSize(90, 100);
+  btnplusl.setFixedSize(90, 100);
   hlayout->addWidget(&btnminusl);
   hlayout->addWidget(&btnplusl);
 
@@ -6343,8 +6343,8 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusr.setFixedSize(100, 100);
-  btnplusr.setFixedSize(100, 100);
+  btnminusr.setFixedSize(90, 100);
+  btnplusr.setFixedSize(90, 100);
   hlayout->addWidget(&btnminusr);
   hlayout->addWidget(&btnplusr);
 
