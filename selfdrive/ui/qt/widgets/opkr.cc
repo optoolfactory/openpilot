@@ -6316,8 +6316,6 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusl.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  btnplusl.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   btnminusl.setFixedSize(100, 100);
   btnplusl.setFixedSize(100, 100);
   hlayout->addWidget(&btnminusl);
@@ -6345,8 +6343,6 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusr.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  btnplusr.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   btnminusr.setFixedSize(100, 100);
   btnplusr.setFixedSize(100, 100);
   hlayout->addWidget(&btnminusr);
