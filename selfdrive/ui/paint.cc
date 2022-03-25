@@ -761,7 +761,7 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
       nvgRestore(s->vg);
     }
   }
-  return (int)((bb_valueFontSize + bb_labelFontSize)*1.9) + 5;
+  return (int)((bb_valueFontSize + bb_labelFontSize)*2) + 5;
 }
 
 static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) {
@@ -871,7 +871,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       snprintf(val_str, sizeof(val_str), "%.2f", (scene.gpsAccuracyUblox));
     }
     snprintf(uom_str, sizeof(uom_str), "%d", (scene.satelliteCount));
-    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "GPS PREC",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "GPS PREC",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
@@ -883,7 +883,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     snprintf(val_str, sizeof(val_str), "%.0f", (scene.altitudeUblox));
     snprintf(uom_str, sizeof(uom_str), "m");
-    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "ALTITUDE",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "ALTITUDE",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
@@ -909,7 +909,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
 
   //finally draw the frame
   nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry, 20);
+  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry - bb_y + 20, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
   nvgStrokeWidth(s->vg, 6);
   nvgStroke(s->vg);
@@ -952,7 +952,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
        snprintf(val_str, sizeof(val_str), "-");
     }
     snprintf(uom_str, sizeof(uom_str), "m");
-    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "REL DIST",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "REL DIST",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
@@ -981,7 +981,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     } else {
       snprintf(uom_str, sizeof(uom_str), "mi/h");
     }
-    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "REL SPD",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "REL SPD",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
@@ -1021,7 +1021,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
        snprintf(val_str, sizeof(val_str), "-");
     }
     snprintf(uom_str, sizeof(uom_str), "");
-    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "SteerRatio",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "SteerRatio",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
@@ -1044,7 +1044,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
       snprintf(val_str, sizeof(val_str), "-");
       snprintf(uom_str, sizeof(uom_str), "");
     }
-    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "Cruise Gap",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "Cruise Gap",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
@@ -1052,7 +1052,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
 
   //finally draw the frame
   nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry, 20);
+  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry - bb_y + 20, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
   nvgStrokeWidth(s->vg, 6);
   nvgStroke(s->vg);
