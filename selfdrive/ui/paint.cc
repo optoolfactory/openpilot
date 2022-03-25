@@ -737,11 +737,11 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
 
     nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, bb_x-80, bb_y+90);
-    nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.025), bb_y+90-(fmin(num_value, 6400)*0.0096875));
+    nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.025), bb_y+90-(fmin(num_value, 6400)*0.0090625));
     nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.025), bb_y+90);
     nvgLineTo(s->vg, bb_x-80, bb_y+90);
     nvgClosePath(s->vg);
-    NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+32, COLOR_GREEN_ALPHA(180), COLOR_RED_ALPHA(230));
+    NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+32, COLOR_GREEN_ALPHA(50), COLOR_RED_ALPHA(255));
     nvgFillPaint(s->vg, rpm_gradient);
     nvgFill(s->vg);
 
@@ -924,7 +924,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
   if (true) {
     //char val_str[16];
     char uom_str[6];
-    std::string engine_rpm_val = std::to_string(int(6000));
+    std::string engine_rpm_val = std::to_string(int(6400));
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     if(scene.engine_rpm > 3000) {
       val_color = nvgRGBA(255, 188, 3, 200);
