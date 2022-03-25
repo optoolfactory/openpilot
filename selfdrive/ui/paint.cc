@@ -737,8 +737,8 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
 
     nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, bb_x-80, bb_y+90);
-    nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.0125), bb_y+90-(fmin(num_value, 6400)*0.0096875));
-    nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.0125), bb_y+90);
+    nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.025), bb_y+90-(fmin(num_value, 6400)*0.0096875));
+    nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.025), bb_y+90);
     nvgLineTo(s->vg, bb_x-80, bb_y+90);
     nvgClosePath(s->vg);
     NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+32, COLOR_GREEN_ALPHA(180), COLOR_RED_ALPHA(230));
