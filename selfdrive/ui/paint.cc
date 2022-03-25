@@ -741,7 +741,7 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     nvgLineTo(s->vg, bb_x-80+(fmin(num_value, 6400)*0.025), bb_y+90);
     nvgLineTo(s->vg, bb_x-80, bb_y+90);
     nvgClosePath(s->vg);
-    NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+32, COLOR_GREEN_ALPHA(50), COLOR_RED_ALPHA(255));
+    NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+32, COLOR_GREEN_ALPHA(100), COLOR_RED_ALPHA(255));
     nvgFillPaint(s->vg, rpm_gradient);
     nvgFill(s->vg);
 
@@ -920,17 +920,16 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         value_fontSize, label_fontSize, uom_fontSize, false);
   }
   //engine rpm
-  // if (scene.batt_less && scene.engine_rpm > 1) {
-  if (true) {
+  if (scene.batt_less && scene.engine_rpm > 1) {
     //char val_str[16];
     char uom_str[6];
-    std::string engine_rpm_val = std::to_string(int(6400));
-    NVGcolor val_color = COLOR_WHITE_ALPHA(200);
+    std::string engine_rpm_val = std::to_string(int(scene.engine_rpm));
+    NVGcolor lab_color = COLOR_WHITE_ALPHA(200);
     if(scene.engine_rpm > 3000) {
-      val_color = nvgRGBA(255, 188, 3, 200);
+      lab_color = nvgRGBA(255, 188, 3, 200);
     }
     if(scene.engine_rpm > 5000) {
-      val_color = nvgRGBA(255, 0, 0, 200);
+      lab_color = nvgRGBA(255, 0, 0, 200);
     }
     snprintf(uom_str, sizeof(uom_str), "rpm");
     bb_ry +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, engine_rpm_val.c_str(),
