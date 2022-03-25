@@ -725,10 +725,10 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   if (other) {
     nvgBeginPath(s->vg);
-    nvgMoveTo(s->vg, bb_x, bb_y+45);
-    nvgLineTo(s->vg, bb_x+170, bb_y);
-    nvgLineTo(s->vg, bb_x+170, bb_y+45);
-    nvgLineTo(s->vg, bb_x, bb_y+45);
+    nvgMoveTo(s->vg, bb_x-80, bb_y+80);
+    nvgLineTo(s->vg, bb_x+80, bb_y);
+    nvgLineTo(s->vg, bb_x+80, bb_y+80);
+    nvgLineTo(s->vg, bb_x-80, bb_y+80);
     nvgClosePath(s->vg);
     nvgStrokeWidth(s->vg, 1);
     nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(200));
