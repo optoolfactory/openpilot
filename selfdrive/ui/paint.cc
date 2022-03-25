@@ -724,7 +724,7 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     int bb_valueFontSize, int bb_labelFontSize, int bb_uomFontSize, bool other)  {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   if (other) {
-    int num_value = bb_value - '0';
+    int num_value = atoi(bb_value);
     nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, bb_x-80, bb_y+90);
     nvgLineTo(s->vg, bb_x+80, bb_y+30);
@@ -738,7 +738,7 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, bb_x-80, bb_y+90);
     nvgLineTo(s->vg, bb_x+(num_value*0.013), bb_y+30);
-    nvgLineTo(s->vg, b_x+(num_value*0.013), bb_y+90);
+    nvgLineTo(s->vg, bb_x+(num_value*0.013), bb_y+90);
     nvgLineTo(s->vg, bb_x-80, bb_y+90);
     nvgClosePath(s->vg);
     NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+30, COLOR_GREEN_ALPHA(200), COLOR_RED_ALPHA(200));
