@@ -174,11 +174,13 @@ class NaviControl():
               spdTarget = self.map_speed
             elif spdTarget == 0:
               self.onSpeedControl = False
+              self.sm['liveMapData'].onSpeedControl = False
               return cruise_set_speed_kph
           elif spdTarget > 19:
             pass
           else:
             self.onSpeedControl = False
+            self.sm['liveMapData'].onSpeedControl = False
             return cruise_set_speed_kph
         if self.map_spdlimit_offset_option == 0:
           cruise_set_speed_kph = spdTarget + round(spdTarget*0.01*self.map_spdlimit_offset)
@@ -188,10 +190,13 @@ class NaviControl():
           cruise_set_speed_kph = int(interp(spdTarget, self.osm_custom_spdlimit_c, self.osm_custom_spdlimit_t))
         if cruise_set_speed_kph+1.5 < v_ego_mph and CS.is_set_speed_in_mph and not CS.out.gasPressed:
           self.onSpeedControl = True
+          self.sm['liveMapData'].onSpeedControl = True
         elif cruise_set_speed_kph+1.5 < v_ego_kph and not CS.is_set_speed_in_mph and not CS.out.gasPressed:
           self.onSpeedControl = True
+          self.sm['liveMapData'].onSpeedControl = True
         else:
           self.onSpeedControl = False
+          self.sm['liveMapData'].onSpeedControl = False
       elif CS.map_enabled and self.liveNaviData.speedLimit > 19:  # mappy speedlimit
         self.map_speed_dist = max(0, self.liveNaviData.speedLimitDistance - 30)
         self.map_speed = self.liveNaviData.speedLimit
@@ -264,12 +269,14 @@ class NaviControl():
       else:
         spdTarget = cruise_set_speed_kph
         self.onSpeedControl = False
+        self.sm['liveMapData'].onSpeedControl = False
         self.map_speed = 0
         self.map_speed_dist = 0
         self.map_speed_block = False
     else:
       spdTarget = cruise_set_speed_kph
       self.onSpeedControl = False
+      self.sm['liveMapData'].onSpeedControl = False
       self.map_speed = 0
       self.map_speed_dist = 0
       self.map_speed_block = False

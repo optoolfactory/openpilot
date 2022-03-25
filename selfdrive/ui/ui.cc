@@ -279,6 +279,7 @@ static void update_state(UIState *s) {
     scene.liveMapData.oturnSpeedLimitEndDistance = lmap_data.getTurnSpeedLimitEndDistance();
     scene.liveMapData.oturnSpeedLimitSign = lmap_data.getTurnSpeedLimitSign();
     scene.liveMapData.ocurrentRoadName = lmap_data.getCurrentRoadName();
+    scene.liveMapData.onSpeedControl = lmap_data.getOnSpeedControl();
   }
   if ((!scene.started || s->is_OpenpilotViewEnabled || scene.cal_view) && sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
@@ -437,7 +438,7 @@ static void update_status(UIState *s) {
     s->scene.top_text_view = std::stoi(params.get("TopTextView"));
     s->scene.steer_wind_down = params.getBool("SteerWindDown");
     s->scene.show_error = params.getBool("ShowError");
-    s->scene.limitSCOffsetOption = params.getBool("OpkrSpeedLimitOffsetOption");
+    s->scene.limitSCOffsetOption = std::stoi(params.get("OpkrSpeedLimitOffsetOption"));
     s->scene.speedlimit_signtype = params.getBool("OpkrSpeedLimitSignType");
     s->scene.sl_decel_off = params.getBool("SpeedLimitDecelOff");
     s->scene.osm_enabled = params.getBool("OSMEnable") || params.getBool("OSMSpeedLimitEnable") || std::stoi(params.get("CurvDecelOption")) == 1 || std::stoi(params.get("CurvDecelOption")) == 3;
