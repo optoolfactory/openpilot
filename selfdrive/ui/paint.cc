@@ -748,7 +748,7 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     //print label
     nvgFontFace(s->vg, "sans-regular");
     nvgFontSize(s->vg, bb_labelFontSize*2.5);
-    nvgFillColor(s->vg, bb_labelColor);
+    nvgFillColor(s->vg, bb_valueColor);
     nvgText(s->vg, bb_x, bb_y + (int)(bb_valueFontSize*2.5)+5 + (int)(bb_labelFontSize*2.5)+5, bb_label, NULL);
     //print uom
     if (strlen(bb_uom) > 0) {
@@ -924,12 +924,12 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     //char val_str[16];
     char uom_str[6];
     std::string engine_rpm_val = std::to_string(int(scene.engine_rpm));
-    NVGcolor lab_color = COLOR_WHITE_ALPHA(200);
+    NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     if(scene.engine_rpm > 3000) {
-      lab_color = nvgRGBA(255, 188, 3, 200);
+      val_color = nvgRGBA(255, 188, 3, 200);
     }
     if(scene.engine_rpm > 5000) {
-      lab_color = nvgRGBA(255, 0, 0, 200);
+      val_color = nvgRGBA(255, 0, 0, 200);
     }
     snprintf(uom_str, sizeof(uom_str), "rpm");
     bb_ry +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, engine_rpm_val.c_str(),
