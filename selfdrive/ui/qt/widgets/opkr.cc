@@ -6322,7 +6322,7 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
   hlayout->addWidget(&btnplusl);
 
   labelr1.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  labelr1.setText("RigtEdge: ");
+  labelr1.setText("RightEdge: ");
   hlayout->addWidget(&labelr1);
   labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labelr.setStyleSheet("color: #e0e879");
