@@ -909,7 +909,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
 
   //finally draw the frame
   nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry - bb_y + 20, 20);
+  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry - bb_y + 40, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
   nvgStrokeWidth(s->vg, 6);
   nvgStroke(s->vg);
@@ -1052,7 +1052,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
 
   //finally draw the frame
   nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry - bb_y + 20, 20);
+  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry - bb_y + 40, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
   nvgStrokeWidth(s->vg, 6);
   nvgStroke(s->vg);
