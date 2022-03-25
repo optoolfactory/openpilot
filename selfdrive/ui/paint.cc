@@ -732,6 +732,7 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     nvgClosePath(s->vg);
     nvgStrokeWidth(s->vg, 1);
     nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(200));
+    nvgStroke(s->vg);
     //print label
     nvgFontFace(s->vg, "sans-regular");
     nvgFontSize(s->vg, bb_labelFontSize*2.5);
