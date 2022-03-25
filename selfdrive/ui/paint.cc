@@ -750,14 +750,13 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     nvgText(s->vg, 0, 0, bb_uom, NULL);
     nvgRestore(s->vg);
   }
-  return (int)((bb_valueFontSize + bb_labelFontSize)*2.5) + 5;
+  return (int)((bb_valueFontSize + bb_labelFontSize)*1.8) + 5;
 }
 
 static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) {
   const UIScene &scene = s->scene;
-  int bb_y_offset = 20;
   int bb_rx = bb_x + (int)(bb_w/2);
-  int bb_ry = bb_y - bb_y_offset;
+  int bb_ry = bb_y;
   int bb_h = 5;
   NVGcolor lab_color = COLOR_WHITE_ALPHA(200);
   NVGcolor uom_color = COLOR_WHITE_ALPHA(200);
@@ -787,7 +786,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*2);
+    bb_ry = bb_y + bb_h;
   }
   //CPU LOAD
   if (scene.batt_less) {
@@ -808,7 +807,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*3);
+    bb_ry = bb_y + bb_h;
   }
   //BAT TEMP
   if (!scene.batt_less) {
@@ -829,7 +828,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*3);
+    bb_ry = bb_y + bb_h;
   }
   //BAT LEVEL
   if(!scene.batt_less) {
@@ -842,7 +841,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*4);
+    bb_ry = bb_y + bb_h;
   }
   //add Ublox GPS accuracy
   if (scene.gpsAccuracyUblox != 0.00) {
@@ -870,7 +869,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    if (!scene.batt_less) {bb_ry = bb_y + bb_h - (bb_y_offset*5);} else {bb_ry = bb_y + bb_h - (bb_y_offset*4);}
+    bb_ry = bb_y + bb_h;
   }
   //add altitude
   if (scene.gpsAccuracyUblox != 0.00) {
@@ -883,7 +882,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    if (!scene.batt_less) {bb_ry = bb_y + bb_h - (bb_y_offset*6);} else {bb_ry = bb_y + bb_h - (bb_y_offset*5);}
+    bb_ry = bb_y + bb_h;
   }
   //engine rpm
   if (scene.batt_less && scene.engine_rpm > 1) {
@@ -902,13 +901,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*7);
+    bb_ry = bb_y + bb_h;
   }
 
   //finally draw the frame
-  if (!scene.batt_less) {bb_h += -(bb_y_offset*1);} else {bb_h += -(bb_y_offset*2);}
-  if (scene.gpsAccuracyUblox != 0.00) {bb_h += -(bb_y_offset*3);} else {bb_h += -(bb_y_offset*1);}
-  if (scene.batt_less && scene.gpsAccuracyUblox != 0.00) {bb_h += (bb_y_offset*2);}
   nvgBeginPath(s->vg);
   nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
@@ -918,9 +914,8 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
 
 static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w ) {
   const UIScene &scene = s->scene;
-  int bb_y_offset = 20;
   int bb_rx = bb_x + (int)(bb_w/2);
-  int bb_ry = bb_y - bb_y_offset;
+  int bb_ry = bb_y;
   int bb_h = 5;
   NVGcolor lab_color = COLOR_WHITE_ALPHA(200);
   NVGcolor uom_color = COLOR_WHITE_ALPHA(200);
@@ -959,7 +954,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*2);
+    bb_ry = bb_y + bb_h;
   }
   //add visual radar relative speed
   if (true) {
@@ -989,7 +984,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*3);
+    bb_ry = bb_y + bb_h;
   }
   //add steering angle
   if (true) {
@@ -1013,7 +1008,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*4);
+    bb_ry = bb_y + bb_h;
   }
 
   //add steerratio from lateralplan
@@ -1031,7 +1026,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*5);
+    bb_ry = bb_y + bb_h;
   }
 
   //cruise gap
@@ -1055,12 +1050,10 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
-    bb_ry = bb_y + bb_h - (bb_y_offset*6);
+    bb_ry = bb_y + bb_h;
   }
 
   //finally draw the frame
-  if (scene.longitudinal_control) {bb_h += -(bb_y_offset*4);} else {bb_h += -(bb_y_offset*3);}
-  if (scene.longitudinal_control && scene.radar_long_helper > 1) {bb_h += bb_y_offset;}
   nvgBeginPath(s->vg);
   nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
