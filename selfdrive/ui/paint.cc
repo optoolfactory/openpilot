@@ -757,7 +757,6 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
   const UIScene &scene = s->scene;
   int bb_rx = bb_x + (int)(bb_w/2);
   int bb_ry = bb_y - 20;
-  int bb_h = 5;
   NVGcolor lab_color = COLOR_WHITE_ALPHA(200);
   NVGcolor uom_color = COLOR_WHITE_ALPHA(200);
   int value_fontSize=30;
@@ -782,11 +781,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     } else {
       snprintf(uom_str, sizeof(uom_str), "%.0f°C", (scene.ambientTemp));
     }
-    bb_h +=bb_ui_draw_measure(s, cpu_temp_val.c_str(), uom_str, "CPU TEMP",
+    bb_ry +=bb_ui_draw_measure(s, cpu_temp_val.c_str(), uom_str, "CPU TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //CPU LOAD
   if (scene.batt_less) {
@@ -803,11 +801,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     // temp is alway in C * 1000
     //snprintf(val_str, sizeof(val_str), "%.0fC", batteryTemp);
     snprintf(uom_str, sizeof(uom_str), "%d", (scene.fanSpeed)/1000);
-    bb_h +=bb_ui_draw_measure(s, cpu_usage_val.c_str(), uom_str, "CPU LOAD",
+    bb_ry +=bb_ui_draw_measure(s, cpu_usage_val.c_str(), uom_str, "CPU LOAD",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //BAT TEMP
   if (!scene.batt_less) {
@@ -824,11 +821,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     // temp is alway in C * 1000
     //snprintf(val_str, sizeof(val_str), "%.0fC", batteryTemp);
     snprintf(uom_str, sizeof(uom_str), "%d", (scene.fanSpeed)/1000);
-    bb_h +=bb_ui_draw_measure(s, bat_temp_val.c_str(), uom_str, "BAT TEMP",
+    bb_ry +=bb_ui_draw_measure(s, bat_temp_val.c_str(), uom_str, "BAT TEMP",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //BAT LEVEL
   if(!scene.batt_less) {
@@ -837,11 +833,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     std::string bat_level_val = std::to_string(int(scene.batPercent)) + "%";
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     snprintf(uom_str, sizeof(uom_str), "%s", scene.deviceState.getBatteryStatus() == "Charging" ? "++" : "--");
-    bb_h +=bb_ui_draw_measure(s, bat_level_val.c_str(), uom_str, "BAT LVL",
+    bb_ry +=bb_ui_draw_measure(s, bat_level_val.c_str(), uom_str, "BAT LVL",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //add Ublox GPS accuracy
   if (scene.gpsAccuracyUblox != 0.00) {
@@ -865,11 +860,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       snprintf(val_str, sizeof(val_str), "%.2f", (scene.gpsAccuracyUblox));
     }
     snprintf(uom_str, sizeof(uom_str), "%d", (scene.satelliteCount));
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "GPS PREC",
+    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "GPS PREC",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //add altitude
   if (scene.gpsAccuracyUblox != 0.00) {
@@ -878,11 +872,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     snprintf(val_str, sizeof(val_str), "%.0f", (scene.altitudeUblox));
     snprintf(uom_str, sizeof(uom_str), "m");
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "ALTITUDE",
+    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "ALTITUDE",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //engine rpm
   if (scene.batt_less && scene.engine_rpm > 1) {
@@ -897,11 +890,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       val_color = nvgRGBA(255, 0, 0, 200);
     }
     snprintf(uom_str, sizeof(uom_str), "rpm");
-    bb_h +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, "ENG RPM",
+    bb_ry +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, "ENG RPM",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, true);
-    bb_ry += bb_h;
   }
 
   //finally draw the frame
@@ -916,7 +908,6 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
   const UIScene &scene = s->scene;
   int bb_rx = bb_x + (int)(bb_w/2);
   int bb_ry = bb_y - 20;
-  int bb_h = 5;
   NVGcolor lab_color = COLOR_WHITE_ALPHA(200);
   NVGcolor uom_color = COLOR_WHITE_ALPHA(200);
   int value_fontSize=30;
@@ -950,11 +941,10 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
        snprintf(val_str, sizeof(val_str), "-");
     }
     snprintf(uom_str, sizeof(uom_str), "m");
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "REL DIST",
+    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "REL DIST",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //add visual radar relative speed
   if (true) {
@@ -980,11 +970,10 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     } else {
       snprintf(uom_str, sizeof(uom_str), "mi/h");
     }
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "REL SPD",
+    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "REL SPD",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
   //add steering angle
   if (true) {
@@ -1004,11 +993,10 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     snprintf(val_str, sizeof(val_str), "%.1f°",(scene.angleSteers));
     snprintf(uom_str, sizeof(uom_str), "   °");
 
-    bb_h +=bb_ui_draw_measure(s, val_str, uom_str, "STR ANG",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "STR ANG",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
 
   //add steerratio from lateralplan
@@ -1046,11 +1034,10 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
       snprintf(val_str, sizeof(val_str), "-");
       snprintf(uom_str, sizeof(uom_str), "");
     }
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "Cruise Gap",
+    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "Cruise Gap",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
 
   //finally draw the frame
