@@ -924,7 +924,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
   if (true) {
     //char val_str[16];
     char uom_str[6];
-    std::string engine_rpm_val = std::to_string(int(3000));
+    std::string engine_rpm_val = std::to_string(int(6000));
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     if(scene.engine_rpm > 3000) {
       val_color = nvgRGBA(255, 188, 3, 200);
