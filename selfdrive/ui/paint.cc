@@ -727,7 +727,7 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     int num_value = atoi(bb_value);
     nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, bb_x-80, bb_y+90);
-    nvgLineTo(s->vg, bb_x+80, bb_y+30);
+    nvgLineTo(s->vg, bb_x+80, bb_y+32);
     nvgLineTo(s->vg, bb_x+80, bb_y+90);
     nvgLineTo(s->vg, bb_x-80, bb_y+90);
     nvgClosePath(s->vg);
@@ -737,11 +737,11 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
 
     nvgBeginPath(s->vg);
     nvgMoveTo(s->vg, bb_x-80, bb_y+90);
-    nvgLineTo(s->vg, bb_x+(num_value*0.013), bb_y+30);
-    nvgLineTo(s->vg, bb_x+(num_value*0.013), bb_y+90);
+    nvgLineTo(s->vg, bb_x-80+(min(num_value, 6400)*0.0125), bb_y-90+(min(num_value, 6400)*0.005));
+    nvgLineTo(s->vg, bb_x-80+(min(num_value, 6400)*0.0125), bb_y+90);
     nvgLineTo(s->vg, bb_x-80, bb_y+90);
     nvgClosePath(s->vg);
-    NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+30, COLOR_GREEN_ALPHA(200), COLOR_RED_ALPHA(200));
+    NVGpaint rpm_gradient = nvgLinearGradient(s->vg, bb_x-80, bb_y+90, bb_x+80, bb_y+30, COLOR_GREEN_ALPHA(180), COLOR_RED_ALPHA(230));
     nvgFillPaint(s->vg, rpm_gradient);
     nvgFill(s->vg);
 
