@@ -723,32 +723,43 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     NVGcolor bb_valueColor, NVGcolor bb_labelColor, NVGcolor bb_uomColor,
     int bb_valueFontSize, int bb_labelFontSize, int bb_uomFontSize, bool other)  {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  int dx = 0;
-  if (strlen(bb_uom) > 0) {
-    dx = (int)(bb_uomFontSize*2.5/2);
-   }
-  //print value
-  nvgFontFace(s->vg, "sans-semibold");
-  nvgFontSize(s->vg, bb_valueFontSize*2.5);
-  nvgFillColor(s->vg, bb_valueColor);
-  nvgText(s->vg, bb_x-dx/2, bb_y+ (int)(bb_valueFontSize*2.5)+5, bb_value, NULL);
-  //print label
-  nvgFontFace(s->vg, "sans-regular");
-  nvgFontSize(s->vg, bb_labelFontSize*2.5);
-  nvgFillColor(s->vg, bb_labelColor);
-  nvgText(s->vg, bb_x, bb_y + (int)(bb_valueFontSize*2.5)+5 + (int)(bb_labelFontSize*2.5)+5, bb_label, NULL);
-  //print uom
-  if (strlen(bb_uom) > 0) {
-      nvgSave(s->vg);
-    int rx =bb_x + bb_uom_dx + bb_valueFontSize -3;
-    int ry = bb_y + (int)(bb_valueFontSize*2.5/2)+25;
-    nvgTranslate(s->vg,rx,ry);
-    nvgRotate(s->vg, -1.5708); //-90deg in radians
+  if (other) {
+    // nvgBeginPath(s->vg);
+    // nvgMoveTo(s->vg, btn_xc1-21, btn_yc-57);
+    // nvgLineTo(s->vg, btn_xc1-31, btn_yc-57);
+    // nvgLineTo(s->vg, btn_xc1-36, btn_yc-9);
+    // nvgLineTo(s->vg, btn_xc1-26, btn_yc-9);
+    // nvgClosePath(s->vg);
+    // nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
+    // nvgFill(s->vg);
+  } else {
+    int dx = 0;
+    if (strlen(bb_uom) > 0) {
+      dx = (int)(bb_uomFontSize*2.5/2);
+    }
+    //print value
+    nvgFontFace(s->vg, "sans-semibold");
+    nvgFontSize(s->vg, bb_valueFontSize*2.5);
+    nvgFillColor(s->vg, bb_valueColor);
+    nvgText(s->vg, bb_x-dx/2, bb_y+ (int)(bb_valueFontSize*2.5)+5, bb_value, NULL);
+    //print label
     nvgFontFace(s->vg, "sans-regular");
-    nvgFontSize(s->vg, (int)(bb_uomFontSize*2.5));
-    nvgFillColor(s->vg, bb_uomColor);
-    nvgText(s->vg, 0, 0, bb_uom, NULL);
-    nvgRestore(s->vg);
+    nvgFontSize(s->vg, bb_labelFontSize*2.5);
+    nvgFillColor(s->vg, bb_labelColor);
+    nvgText(s->vg, bb_x, bb_y + (int)(bb_valueFontSize*2.5)+5 + (int)(bb_labelFontSize*2.5)+5, bb_label, NULL);
+    //print uom
+    if (strlen(bb_uom) > 0) {
+        nvgSave(s->vg);
+      int rx =bb_x + bb_uom_dx + bb_valueFontSize -3;
+      int ry = bb_y + (int)(bb_valueFontSize*2.5/2)+25;
+      nvgTranslate(s->vg,rx,ry);
+      nvgRotate(s->vg, -1.5708); //-90deg in radians
+      nvgFontFace(s->vg, "sans-regular");
+      nvgFontSize(s->vg, (int)(bb_uomFontSize*2.5));
+      nvgFillColor(s->vg, bb_uomColor);
+      nvgText(s->vg, 0, 0, bb_uom, NULL);
+      nvgRestore(s->vg);
+    }
   }
   return (int)((bb_valueFontSize + bb_labelFontSize)*1.9) + 5;
 }
@@ -893,12 +904,12 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     bb_ry +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, "ENG RPM",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
-        value_fontSize, label_fontSize, uom_fontSize, true);
+        value_fontSize, label_fontSize, uom_fontSize, false);
   }
 
   //finally draw the frame
   nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
+  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
   nvgStrokeWidth(s->vg, 6);
   nvgStroke(s->vg);
@@ -1010,11 +1021,10 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
        snprintf(val_str, sizeof(val_str), "-");
     }
     snprintf(uom_str, sizeof(uom_str), "");
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "SteerRatio",
+    bb_ry +=bb_ui_draw_measure(s,  val_str, uom_str, "SteerRatio",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, false);
-    bb_ry += bb_h;
   }
 
   //cruise gap
@@ -1042,7 +1052,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
 
   //finally draw the frame
   nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
+  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_ry, 20);
   nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
   nvgStrokeWidth(s->vg, 6);
   nvgStroke(s->vg);
