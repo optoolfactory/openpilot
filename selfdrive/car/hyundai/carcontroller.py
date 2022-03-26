@@ -111,7 +111,7 @@ class CarController():
 
     self.timer1 = tm.CTime1000("time")
 
-    self.NC = NaviControl(self.p)
+    self.NC = NaviControl()
 
     self.dRel = 0
     self.vRel = 0

@@ -15,9 +15,8 @@ import common.MoveAvg as mvAvg
 LaneChangeState = log.LateralPlan.LaneChangeState
 
 class NaviControl():
-  def __init__(self, p=None):
-    self.p = p
-    
+  def __init__(self):
+
     self.sm = messaging.SubMaster(['liveNaviData', 'lateralPlan', 'radarState', 'controlsState', 'liveMapData'])
 
     self.btn_cnt = 0

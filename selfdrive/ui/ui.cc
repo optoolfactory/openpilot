@@ -173,6 +173,7 @@ static void update_state(UIState *s) {
     scene.stand_still = cs_data.getStandstill();
     scene.a_req_value = cs_data.getAReqValue();
     scene.engine_rpm = cs_data.getEngineRpm();
+    scene.ctrl_speed = cs_data.getCtrlSpeed();
   }
 
   if (sm.updated("liveParameters")) {
@@ -279,7 +280,6 @@ static void update_state(UIState *s) {
     scene.liveMapData.oturnSpeedLimitEndDistance = lmap_data.getTurnSpeedLimitEndDistance();
     scene.liveMapData.oturnSpeedLimitSign = lmap_data.getTurnSpeedLimitSign();
     scene.liveMapData.ocurrentRoadName = lmap_data.getCurrentRoadName();
-    scene.liveMapData.onSpeedControl = lmap_data.getOnSpeedControl();
   }
   if ((!scene.started || s->is_OpenpilotViewEnabled || scene.cal_view) && sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
@@ -412,7 +412,6 @@ static void update_status(UIState *s) {
     s->scene.laneless_mode = std::stoi(params.get("LanelessMode"));
     s->scene.recording_count = std::stoi(params.get("RecordingCount"));
     s->scene.recording_quality = std::stoi(params.get("RecordingQuality"));
-    s->scene.speed_lim_off = std::stoi(params.get("OpkrSpeedLimitOffset"));
     s->scene.monitoring_mode = params.getBool("OpkrMonitoringMode");
     s->scene.brightness = std::stoi(params.get("OpkrUIBrightness"));
     s->scene.nVolumeBoost = std::stoi(params.get("OpkrUIVolumeBoost"));
@@ -438,7 +437,6 @@ static void update_status(UIState *s) {
     s->scene.top_text_view = std::stoi(params.get("TopTextView"));
     s->scene.steer_wind_down = params.getBool("SteerWindDown");
     s->scene.show_error = params.getBool("ShowError");
-    s->scene.limitSCOffsetOption = std::stoi(params.get("OpkrSpeedLimitOffsetOption"));
     s->scene.speedlimit_signtype = params.getBool("OpkrSpeedLimitSignType");
     s->scene.sl_decel_off = params.getBool("SpeedLimitDecelOff");
     s->scene.osm_enabled = params.getBool("OSMEnable") || params.getBool("OSMSpeedLimitEnable") || std::stoi(params.get("CurvDecelOption")) == 1 || std::stoi(params.get("CurvDecelOption")) == 3;

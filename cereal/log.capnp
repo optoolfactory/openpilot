@@ -1416,7 +1416,6 @@ struct LiveMapData {
   lastGpsAccuracy @18 :Float32;
   lastGpsBearingAccuracyDeg @19 :Float32;
   roadCameraOffset @20 :Float32;
-  onSpeedControl @21 :Bool;
 }
 
 struct CameraOdometry {
