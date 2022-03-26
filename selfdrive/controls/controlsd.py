@@ -861,6 +861,7 @@ class Controls:
     controlsState.steerRatio = float(self.steerRatio_to_send)
     controlsState.dynamicTRMode = int(self.sm['longitudinalPlan'].dynamicTRMode)
     controlsState.dynamicTRValue = float(self.sm['longitudinalPlan'].dynamicTRValue)
+    controlsState.accel = float(self.last_actuators.accel)
 
     lat_tuning = self.CP.lateralTuning.which()
     if self.joystick_mode:
