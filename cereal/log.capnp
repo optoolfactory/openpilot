@@ -290,6 +290,7 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   networkType @22 :NetworkType;
   networkInfo @31 :NetworkInfo;
   networkStrength @24 :NetworkStrength;
+  networkMetered @41 :Bool;
   lastAthenaPingTime @32 :UInt64;
 
   started @11 :Bool;
@@ -377,10 +378,10 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   batteryVoltage @16 :Int32;
   batteryTempC @29 :Float32;
   # atom
-  wifiIpAddress @41 :Text;
+  wifiIpAddress @42 :Text;
   # opkr
-  connectName @42 :Text;
-  rSRP @43 :Text;
+  connectName @43 :Text;
+  rSRP @44 :Text;
 }
 
 struct PandaState @0xa7649e2575e4591e {
@@ -433,6 +434,7 @@ struct PandaState @0xa7649e2575e4591e {
     interruptRateKlineInit @19;
     interruptRateClockSource @20;
     interruptRateTick @21;
+    interruptRateExti @22;
     # Update max fault type in boardd when adding faults
   }
 
@@ -584,6 +586,8 @@ struct ControlsState @0x97ff69c53601abf1 {
   dynamicTRMode @68 :UInt8;
   dynamicTRValue @69 :Float32;
   osmOffSpdLimit @70 :Bool;
+  accel @71 :Float32;
+  safetySpeed @72 :Float32;
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
@@ -700,6 +704,7 @@ struct ControlsState @0x97ff69c53601abf1 {
 
 struct ModelDataV2 {
   frameId @0 :UInt32;
+  frameIdExtra @20 :UInt32;
   frameAge @1 :UInt32;
   frameDropPerc @2 :Float32;
   timestampEof @3 :UInt64;
@@ -916,6 +921,7 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   vCurvature @35 :Float32;
   lanelessMode @36 :Bool;
   modelSpeed @37 :Float32;
+  totalCameraOffset @38 :Float32;
 
   enum Desire {
     none @0;
@@ -1411,6 +1417,7 @@ struct LiveMapData {
   lastGpsBearingDeg @17 :Float32;
   lastGpsAccuracy @18 :Float32;
   lastGpsBearingAccuracyDeg @19 :Float32;
+  roadCameraOffset @20 :Float32;
 }
 
 struct CameraOdometry {

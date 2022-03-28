@@ -1,5 +1,5 @@
 import numpy as np
-from cereal import log
+from cereal import log, messaging
 from common.filter_simple import FirstOrderFilter
 from common.numpy_fast import interp
 from common.realtime import DT_MDL
@@ -16,7 +16,7 @@ TRAJECTORY_SIZE = 33
 PATH_OFFSET = -(float(Decimal(Params().get("PathOffsetAdj", encoding="utf8")) * Decimal('0.001')))  # default 0.0
 if EON:
   CAMERA_OFFSET = -(float(Decimal(Params().get("CameraOffsetAdj", encoding="utf8")) * Decimal('0.001')))  # m from center car to camera
-  CAMERA_OFFSET_A = CAMERA_OFFSET + 0.2
+  CAMERA_OFFSET_A = CAMERA_OFFSET + 0.15
 elif TICI:
   CAMERA_OFFSET = 0.04
 else:
@@ -29,9 +29,11 @@ class LanePlanner:
     self.ll_x = np.zeros((TRAJECTORY_SIZE,))
     self.lll_y = np.zeros((TRAJECTORY_SIZE,))
     self.rll_y = np.zeros((TRAJECTORY_SIZE,))
-    self.lane_width_estimate = FirstOrderFilter(3.7, 9.95, DT_MDL)
+    self.lane_width_estimate = FirstOrderFilter(float(Decimal(Params().get("LaneWidth", encoding="utf8")) * Decimal('0.1')), 9.95, DT_MDL)
     self.lane_width_certainty = FirstOrderFilter(1.0, 0.95, DT_MDL)
-    self.lane_width = 3.7
+    self.lane_width = float(Decimal(Params().get("LaneWidth", encoding="utf8")) * Decimal('0.1'))
+    self.spd_lane_width_spd = list(map(float, Params().get("SpdLaneWidthSpd", encoding="utf8").split(',')))
+    self.spd_lane_width_set = list(map(float, Params().get("SpdLaneWidthSet", encoding="utf8").split(',')))
 
     self.lll_prob = 0.
     self.rll_prob = 0.
@@ -49,18 +51,33 @@ class LanePlanner:
     self.left_curv_offset = int(Params().get("LeftCurvOffsetAdj", encoding="utf8"))
     self.right_curv_offset = int(Params().get("RightCurvOffsetAdj", encoding="utf8"))
 
+    self.drive_routine_on = Params().get_bool("RoutineDriveOn")
+    self.drive_close_to_edge = Params().get_bool("CloseToRoadEdge")
+    self.left_edge_offset = float(Decimal(Params().get("LeftEdgeOffset", encoding="utf8")) * Decimal('0.01'))
+    self.right_edge_offset = float(Decimal(Params().get("RightEdgeOffset", encoding="utf8")) * Decimal('0.01'))
+
     self.lp_timer = 0
     self.lp_timer2 = 0
+    
+    self.sm = messaging.SubMaster(['liveMapData'])
+
+    self.total_camera_offset = self.camera_offset
 
   def parse_model(self, md, sm, v_ego):
     curvature = sm['controlsState'].curvature
     mode_select = sm['carState'].cruiseState.modeSel
+    if self.drive_routine_on:
+      self.sm.update(0)
+      current_road_offset = -self.sm['liveMapData'].roadCameraOffset
+    else:
+      current_road_offset = 0.0
+
     Curv = round(curvature, 4)
     # right lane is minus
     lane_differ = round(abs(self.lll_y[0] + self.rll_y[0]), 2)
     lean_offset = 0
     if int(mode_select) == 4:
-      lean_offset = 0.2
+      lean_offset = 0.15
     else:
       lean_offset = 0
 
@@ -68,35 +85,56 @@ class LanePlanner:
       if curvature > 0.0008 and self.left_curv_offset < 0 and lane_differ >= 0: # left curve
         if lane_differ > 0.6:
           lane_differ = 0.6          
-        lean_offset = +round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to left
+        lean_offset = -round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to left
       elif curvature > 0.0008 and self.left_curv_offset > 0 and lane_differ <= 0:
         if lane_differ > 0.6:
           lane_differ = 0.6
-        lean_offset = -round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to right
+        lean_offset = +round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to right
       elif curvature < -0.0008 and self.right_curv_offset < 0 and lane_differ >= 0: # right curve
         if lane_differ > 0.6:
           lane_differ = 0.6    
-        lean_offset = +round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to left
+        lean_offset = -round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to left
       elif curvature < -0.0008 and self.right_curv_offset > 0 and lane_differ <= 0:
         if lane_differ > 0.6:
           lane_differ = 0.6    
-        lean_offset = -round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to right
+        lean_offset = +round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to right
       else:
         lean_offset = 0
 
     self.lp_timer += DT_MDL
     if self.lp_timer > 1.0:
       self.lp_timer = 0.0
+      self.drive_routine_on = Params().get_bool("RoutineDriveOn")
+      self.drive_close_to_edge = Params().get_bool("CloseToRoadEdge")
       if Params().get_bool("OpkrLiveTunePanelEnable"):
         self.camera_offset = -(float(Decimal(Params().get("CameraOffsetAdj", encoding="utf8")) * Decimal('0.001')))
+
+    if self.drive_close_to_edge: # opkr
+      left_edge_prob = np.clip(1.0 - md.roadEdgeStds[0], 0.0, 1.0)
+      left_nearside_prob = md.laneLineProbs[0]
+      left_close_prob = md.laneLineProbs[1]
+      right_close_prob = md.laneLineProbs[2]
+      right_nearside_prob = md.laneLineProbs[3]
+      right_edge_prob = np.clip(1.0 - md.roadEdgeStds[1], 0.0, 1.0)
+      if right_nearside_prob < 0.1 and left_nearside_prob < 0.1:
+        road_edge_offset = 0.0
+      elif right_edge_prob > 0.3 and right_nearside_prob < 0.2 and right_close_prob > 0.5 and left_nearside_prob >= right_nearside_prob:
+        road_edge_offset = -self.right_edge_offset
+      elif left_edge_prob > 0.3 and left_nearside_prob < 0.2 and left_close_prob > 0.5 and right_nearside_prob >= left_nearside_prob:
+        road_edge_offset = -self.left_edge_offset
+      else:
+        road_edge_offset = 0.0
+    else:
+      road_edge_offset = 0.0
+    self.total_camera_offset = self.camera_offset + lean_offset + current_road_offset + road_edge_offset
 
     lane_lines = md.laneLines
     if len(lane_lines) == 4 and len(lane_lines[0].t) == TRAJECTORY_SIZE:
       self.ll_t = (np.array(lane_lines[1].t) + np.array(lane_lines[2].t))/2
       # left and right ll x is the same
       self.ll_x = lane_lines[1].x
-      self.lll_y = np.array(lane_lines[1].y) + self.camera_offset + lean_offset
-      self.rll_y = np.array(lane_lines[2].y) + self.camera_offset + lean_offset
+      self.lll_y = np.array(lane_lines[1].y) + self.total_camera_offset
+      self.rll_y = np.array(lane_lines[2].y) + self.total_camera_offset
       self.lll_prob = md.laneLineProbs[1]
       self.rll_prob = md.laneLineProbs[2]
       self.lll_std = md.laneLineStds[1]
@@ -136,7 +174,7 @@ class LanePlanner:
     self.lane_width_certainty.update(l_prob * r_prob)
     current_lane_width = abs(self.rll_y[0] - self.lll_y[0])
     self.lane_width_estimate.update(current_lane_width)
-    speed_lane_width = interp(v_ego, [0., 31.], [2.8, 3.5])
+    speed_lane_width = interp(v_ego, self.spd_lane_width_spd, self.spd_lane_width_set)
     self.lane_width = self.lane_width_certainty.x * self.lane_width_estimate.x + \
                       (1 - self.lane_width_certainty.x) * speed_lane_width
 

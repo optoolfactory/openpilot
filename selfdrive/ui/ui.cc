@@ -139,6 +139,8 @@ static void update_state(UIState *s) {
     scene.dynamic_tr_mode = scene.controls_state.getDynamicTRMode();
     scene.dynamic_tr_value = scene.controls_state.getDynamicTRValue();
     scene.osm_off_spdlimit = scene.controls_state.getOsmOffSpdLimit();
+    scene.accel = scene.controls_state.getAccel();
+    scene.ctrl_speed = scene.controls_state.getSafetySpeed();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
@@ -256,6 +258,7 @@ static void update_state(UIState *s) {
     scene.lateralPlan.steerRateCost = lp_data.getSteerRateCost();
     scene.lateralPlan.standstillElapsedTime = lp_data.getStandstillElapsedTime();
     scene.lateralPlan.lanelessModeStatus = lp_data.getLanelessMode();
+    scene.lateralPlan.totalCameraOffset = lp_data.getTotalCameraOffset();
   }
   // opkr
   if (sm.updated("liveNaviData")) {
@@ -277,6 +280,7 @@ static void update_state(UIState *s) {
     scene.liveMapData.oturnSpeedLimit = lmap_data.getTurnSpeedLimit();
     scene.liveMapData.oturnSpeedLimitEndDistance = lmap_data.getTurnSpeedLimitEndDistance();
     scene.liveMapData.oturnSpeedLimitSign = lmap_data.getTurnSpeedLimitSign();
+    scene.liveMapData.ocurrentRoadName = lmap_data.getCurrentRoadName();
   }
   if ((!scene.started || s->is_OpenpilotViewEnabled || scene.cal_view) && sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
@@ -409,7 +413,6 @@ static void update_status(UIState *s) {
     s->scene.laneless_mode = std::stoi(params.get("LanelessMode"));
     s->scene.recording_count = std::stoi(params.get("RecordingCount"));
     s->scene.recording_quality = std::stoi(params.get("RecordingQuality"));
-    s->scene.speed_lim_off = std::stoi(params.get("OpkrSpeedLimitOffset"));
     s->scene.monitoring_mode = params.getBool("OpkrMonitoringMode");
     s->scene.brightness = std::stoi(params.get("OpkrUIBrightness"));
     s->scene.nVolumeBoost = std::stoi(params.get("OpkrUIVolumeBoost"));
@@ -432,14 +435,12 @@ static void update_status(UIState *s) {
     s->scene.navi_select = std::stoi(params.get("OPKRNaviSelect"));
     s->scene.radar_long_helper = std::stoi(params.get("RadarLongHelper"));
     s->scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
-    s->scene.kr_date_show = params.getBool("KRDateShow");
-    s->scene.kr_time_show = params.getBool("KRTimeShow");
+    s->scene.top_text_view = std::stoi(params.get("TopTextView"));
     s->scene.steer_wind_down = params.getBool("SteerWindDown");
     s->scene.show_error = params.getBool("ShowError");
-    s->scene.limitSCOffsetOption = params.getBool("OpkrSpeedLimitOffsetOption");
     s->scene.speedlimit_signtype = params.getBool("OpkrSpeedLimitSignType");
     s->scene.sl_decel_off = params.getBool("SpeedLimitDecelOff");
-    s->scene.osm_enabled = params.getBool("OSMSpeedLimitEnable") || std::stoi(params.get("CurvDecelOption")) == 1 || std::stoi(params.get("CurvDecelOption")) == 3;
+    s->scene.osm_enabled = params.getBool("OSMEnable") || params.getBool("OSMSpeedLimitEnable") || std::stoi(params.get("CurvDecelOption")) == 1 || std::stoi(params.get("CurvDecelOption")) == 3;
 
     if (s->scene.autoScreenOff > 0) {
       s->scene.nTime = s->scene.autoScreenOff * 60 * UI_FREQ;

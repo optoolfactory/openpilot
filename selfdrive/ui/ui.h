@@ -191,7 +191,6 @@ typedef struct UIScene {
   bool standStill;
   int limitSpeedCamera;
   float limitSpeedCameraDist;
-  bool limitSCOffsetOption;
   int mapSign;
   float vSetDis;
   bool cruiseAccStatus;
@@ -199,7 +198,6 @@ typedef struct UIScene {
   int recording_count;
   int recording_quality;
   float steerMax_V;
-  int speed_lim_off;
   bool monitoring_mode;
   bool forceGearD;
   bool comma_stock_ui, opkr_livetune_ui;
@@ -216,8 +214,7 @@ typedef struct UIScene {
   int indiInnerLoopGain, indiOuterLoopGain, indiTimeConstant, indiActuatorEffectiveness;
   int lqrScale, lqrKi, lqrDcGain;
   bool live_tune_panel_enable;
-  bool kr_date_show;
-  bool kr_time_show;
+  int top_text_view;
   int live_tune_panel_list = 0;
   int list_count = 3;
   int nTime, autoScreenOff, brightness, awake;
@@ -246,6 +243,8 @@ typedef struct UIScene {
   int radar_long_helper;
   float engine_rpm;
   bool cal_view = false;
+  float ctrl_speed;
+  float accel;
 
   cereal::DeviceState::Reader deviceState;
   cereal::CarState::Reader car_state;
@@ -298,6 +297,7 @@ typedef struct UIScene {
 
     float angleOffset;
     bool lanelessModeStatus;
+    float totalCameraOffset;
   } lateralPlan;
 
   struct _LiveNaviData
@@ -318,6 +318,7 @@ typedef struct UIScene {
     float oturnSpeedLimit;
     float oturnSpeedLimitEndDistance;
     int oturnSpeedLimitSign;
+    std::string ocurrentRoadName;
     //float turnSpeedLimitsAhead[16]; // List
     //float turnSpeedLimitsAheadDistances[16]; // List
     //int turnSpeedLimitsAheadSigns[16]; // List

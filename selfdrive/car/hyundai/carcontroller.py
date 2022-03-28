@@ -111,7 +111,7 @@ class CarController():
 
     self.timer1 = tm.CTime1000("time")
 
-    self.NC = NaviControl(self.p)
+    self.NC = NaviControl()
 
     self.dRel = 0
     self.vRel = 0
@@ -335,7 +335,7 @@ class CarController():
           self.switch_timer -= 1
           self.standstill_fault_reduce_timer += 1
         # at least 0.1 sec delay after entering the standstill
-        elif 10 < self.standstill_fault_reduce_timer and CS.lead_distance != self.last_lead_distance:
+        elif 10 < self.standstill_fault_reduce_timer and CS.lead_distance != self.last_lead_distance and abs(CS.lead_distance - self.last_lead_distance) > 0.05:
           self.acc_standstill_timer = 0
           self.acc_standstill = False
           if self.standstill_resume_alt: # for D.Fyffe, code from neokii
@@ -646,8 +646,8 @@ class CarController():
             elif aReqValue > 0.0:
               stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0], [0.2, 0.8, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
-            elif aReqValue < 0.0 and CS.lead_distance <= 4.3 and accel >= aReqValue and self.stopping_dist_adj_enabled:
-              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 5.0]))
+            elif aReqValue < 0.0 and CS.lead_distance <= 4.2 and accel >= aReqValue and self.stopping_dist_adj_enabled:
+              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 4.0]))
             elif aReqValue < 0.0 and lead_objspd < -15:
               accel = (aReqValue + accel) / 2
             elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
@@ -770,5 +770,6 @@ class CarController():
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.p.STEER_MAX
     new_actuators.accel = self.accel
+    safetycam_speed = self.NC.safetycam_speed
 
-    return new_actuators, can_sends
+    return new_actuators, can_sends, safetycam_speed

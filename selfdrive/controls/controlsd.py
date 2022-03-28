@@ -223,6 +223,8 @@ class Controls:
     self.osm_speedlimit = 255
     self.osm_off_spdlimit = False
     self.osm_off_spdlimit_init = False
+    self.v_cruise_kph_set_timer = 0
+    self.safety_speed = 0
 
   def auto_enable(self, CS):
     if self.state != State.enabled:
@@ -363,7 +365,7 @@ class Controls:
         self.events.add(EventName.cruiseMismatch)
 
     # Check for FCW
-    stock_long_is_braking = self.enabled and not self.CP.openpilotLongitudinalControl and CS.aEgo < -1.5
+    stock_long_is_braking = self.enabled and not self.CP.openpilotLongitudinalControl and CS.aEgo < -1.25
     model_fcw = self.sm['modelV2'].meta.hardBrakePredicted and not CS.brakePressed and not stock_long_is_braking
     planner_fcw = self.sm['longitudinalPlan'].fcw and self.enabled
     if planner_fcw or model_fcw:
@@ -466,6 +468,8 @@ class Controls:
     t_speed = 20 if CS.isMph else 30
     m_unit = CV.MS_TO_MPH if CS.isMph else CV.MS_TO_KPH
 
+    if self.v_cruise_kph_set_timer > 0:
+      self.v_cruise_kph_set_timer -= 1
     # if stock cruise is completely disabled, then we can use our own set speed logic
     if not self.CP.pcmCruise:
       self.v_cruise_kph = update_v_cruise(self.v_cruise_kph, CS.buttonEvents, self.enabled)
@@ -474,6 +478,7 @@ class Controls:
         self.v_cruise_kph = self.CP.vCruisekph
         self.v_cruise_kph_last = self.v_cruise_kph
       elif CS.cruiseButtons == Buttons.RES_ACCEL and self.variable_cruise and CS.cruiseState.modeSel != 0 and CS.vSetDis < (self.v_cruise_kph_last - 1):
+        self.v_cruise_kph_set_timer = 30
         self.v_cruise_kph = self.v_cruise_kph_last
         if round(CS.vSetDis)-1 > self.v_cruise_kph:
           self.v_cruise_kph = round(CS.vSetDis)
@@ -482,6 +487,7 @@ class Controls:
           self.osm_off_spdlimit_init = True
           self.osm_speedlimit = round(self.sm['liveMapData'].speedLimit)
       elif CS.cruiseButtons == Buttons.RES_ACCEL and self.variable_cruise and CS.cruiseState.modeSel != 0 and t_speed <= self.v_cruise_kph_last <= round(CS.vEgo*m_unit):
+        self.v_cruise_kph_set_timer = 30
         self.v_cruise_kph = round(CS.vEgo*m_unit)
         if round(CS.vSetDis)-1 > self.v_cruise_kph:
           self.v_cruise_kph = round(CS.vSetDis)
@@ -489,7 +495,7 @@ class Controls:
         if self.osm_speedlimit_enabled:
           self.osm_off_spdlimit_init = True
           self.osm_speedlimit = round(self.sm['liveMapData'].speedLimit)
-      elif CS.cruiseButtons == Buttons.RES_ACCEL or CS.cruiseButtons == Buttons.SET_DECEL:
+      elif (CS.cruiseButtons == Buttons.RES_ACCEL and not self.v_cruise_kph_set_timer) or CS.cruiseButtons == Buttons.SET_DECEL:
         self.v_cruise_kph = round(CS.cruiseState.speed * m_unit)
         self.v_cruise_kph_last = self.v_cruise_kph
         if self.osm_speedlimit_enabled:
@@ -592,7 +598,7 @@ class Controls:
       if abs(output_scale) >= self.CP.steerMaxV[0] and CS.vEgo > 8 and not CS.steeringPressed:
         self.mpc_frame_sr += 1
         if self.mpc_frame_sr > 20:
-          self.new_steerRatio_prev = interp(CS.steeringAngleDeg, self.steer_angle_range, self.steerRatio_range)
+          self.new_steerRatio_prev = interp(abs(CS.steeringAngleDeg), self.steer_angle_range, self.steerRatio_range)
           if self.new_steerRatio_prev > self.new_steerRatio:
             self.new_steerRatio = self.new_steerRatio_prev
       else:
@@ -782,13 +788,13 @@ class Controls:
           self.hkg_stock_lkas = True
       if not self.hkg_stock_lkas:
         # send car controls over can
-        self.last_actuators, can_sends = self.CI.apply(CC)
+        self.last_actuators, can_sends, self.safety_speed = self.CI.apply(CC)
         self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
         CC.actuatorsOutput = self.last_actuators
     else:
       if not self.read_only and self.initialized:
         # send car controls over can
-        self.last_actuators, can_sends = self.CI.apply(CC)
+        self.last_actuators, can_sends, self.safety_speed = self.CI.apply(CC)
         self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
         CC.actuatorsOutput = self.last_actuators
 
@@ -856,6 +862,8 @@ class Controls:
     controlsState.steerRatio = float(self.steerRatio_to_send)
     controlsState.dynamicTRMode = int(self.sm['longitudinalPlan'].dynamicTRMode)
     controlsState.dynamicTRValue = float(self.sm['longitudinalPlan'].dynamicTRValue)
+    controlsState.accel = float(self.last_actuators.accel)
+    controlsState.safetySpeed = float(self.safety_speed)
 
     lat_tuning = self.CP.lateralTuning.which()
     if self.joystick_mode:

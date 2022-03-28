@@ -207,7 +207,6 @@ def soft_disable_alert(alert_text_2: str) -> AlertCallbackType:
     return SoftDisableAlert(alert_text_2)
   return func
 
-
 def user_soft_disable_alert(alert_text_2: str) -> AlertCallbackType:
   def func(CP: car.CarParams, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
     if soft_disable_time < int(0.5 / DT_CTRL):
@@ -619,6 +618,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       "추돌위험",
       AlertStatus.normal, AlertSize.full,
       Priority.LOW, VisualAlert.none, AudibleAlert.promptRepeat, .1),
+  },
+  EventName.routineDriveOn: {
+    ET.WARNING: Alert(
+      "Driving as Routine",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, 1.),
   },
 
   # ********** events that affect controls state transitions **********
