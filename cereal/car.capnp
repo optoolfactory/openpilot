@@ -171,6 +171,7 @@ struct CarState {
   # brake pedal, 0.0-1.0
   brake @5 :Float32;      # this is user pedal only
   brakePressed @6 :Bool;  # this is user pedal only
+  parkingBrake @39 :Bool;
   brakeHoldActive @38 :Bool;
 
   # steering wheel
@@ -215,25 +216,25 @@ struct CarState {
   rightBlindspot @34 :Bool; # Is there something blocking the right lane change
 
   # opkr-tpms
-  tpms @39 :TPMS;
+  tpms @40 :TPMS;
 
-  radarDistance @40 :Float32;
-  standStill @41 :Bool;
-  vSetDis @42 :Float32;
-  cruiseButtons @43 :Float32;
-  cruiseAccStatus @44 :Bool;
-  driverAcc @45 :Bool;
-  brakeHold @46 :Bool;    # AutoHold
-  cruiseGapSet @47 :UInt8;
+  radarDistance @41 :Float32;
+  standStill @42 :Bool;
+  vSetDis @43 :Float32;
+  cruiseButtons @44 :Float32;
+  cruiseAccStatus @45 :Bool;
+  driverAcc @46 :Bool;
+  brakeHold @47 :Bool;    # AutoHold
+  cruiseGapSet @48 :UInt8;
 
   # opkr
-  safetyDist @48 :Float32;
-  safetySign @49 :Float32;
-  vEgoOP @50 :Float32;  # openpilot speed
-  electGearStep @51 :Int8;
-  isMph @52 :Bool;
-  aReqValue @53 :Float32;
-  engineRpm @54 :Float32;
+  safetyDist @49 :Float32;
+  safetySign @50 :Float32;
+  vEgoOP @51 :Float32;  # openpilot speed
+  electGearStep @52 :Int8;
+  isMph @53 :Bool;
+  aReqValue @54 :Float32;
+  engineRpm @55 :Float32;
 
   struct TPMS {
     unit @0 :Int8;
@@ -342,7 +343,8 @@ struct RadarData @0x888ad6581cf0aacb {
 struct CarControl {
   # must be true for any actuator commands to work
   enabled @0 :Bool;
-  active @7 :Bool;
+  latActive @11: Bool;
+  longActive @12: Bool;
 
   # Actuator commands as computed by controlsd
   actuators @6 :Actuators;
@@ -352,8 +354,8 @@ struct CarControl {
   # and matches what is sent to the car
   actuatorsOutput @10 :Actuators;
 
-  roll @8 :Float32;
-  pitch @9 :Float32;
+  orientationNED @13 :List(Float32);
+  angularVelocity @14 :List(Float32);
 
   cruiseControl @4 :CruiseControl;
   hudControl @5 :HUDControl;
@@ -434,6 +436,9 @@ struct CarControl {
   gasDEPRECATED @1 :Float32;
   brakeDEPRECATED @2 :Float32;
   steeringTorqueDEPRECATED @3 :Float32;
+  activeDEPRECATED @7 :Bool;
+  rollDEPRECATED @8 :Float32;
+  pitchDEPRECATED @9 :Float32;
 }
 
 # ****** car param ******
@@ -458,8 +463,8 @@ struct CarParams {
   safetyModelPassive @42 :SafetyModel = silent;
   safetyParam @10 :Int16;
 
-  steerMaxBP @11 :List(Float32);
-  steerMaxV @12 :List(Float32);
+  steerMaxBPDEPRECATED @11 :List(Float32);
+  steerMaxVDEPRECATED @12 :List(Float32);
   gasMaxBPDEPRECATED @13 :List(Float32);
   gasMaxVDEPRECATED @14 :List(Float32);
   brakeMaxBPDEPRECATED @15 :List(Float32);
@@ -614,6 +619,7 @@ struct CarParams {
     hyundaiLegacy @23;
     hyundaiCommunity @24;
     stellantis @25;
+    faw @26;
   }
 
   enum SteerControlType {

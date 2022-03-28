@@ -224,7 +224,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"SteerDeltaUpBaseAdj", PERSISTENT},
     {"SteerDeltaDownAdj", PERSISTENT},
     {"SteerDeltaDownBaseAdj", PERSISTENT},
-    {"SteerMaxvAdj", PERSISTENT},
     {"OpkrBatteryChargingControl", PERSISTENT},
     {"OpkrBatteryChargingMin", PERSISTENT},
     {"OpkrBatteryChargingMax", PERSISTENT},

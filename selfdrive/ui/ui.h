@@ -197,7 +197,6 @@ typedef struct UIScene {
   int laneless_mode;
   int recording_count;
   int recording_quality;
-  float steerMax_V;
   bool monitoring_mode;
   bool forceGearD;
   bool comma_stock_ui, opkr_livetune_ui;

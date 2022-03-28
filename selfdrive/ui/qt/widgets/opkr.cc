@@ -3183,69 +3183,6 @@ void SteerMaxMax::refresh() {
   btnplus.setText("＋");
 }
 
-SteerMaxv::SteerMaxv() : AbstractControl("SteerMaxV", "Adjust the SteerMaxV value.", "../assets/offroad/icon_shell.png") {
-
-  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  label.setStyleSheet("color: #e0e879");
-  hlayout->addWidget(&label);
-
-  btnminus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnplus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnminus.setFixedSize(150, 100);
-  btnplus.setFixedSize(150, 100);
-  hlayout->addWidget(&btnminus);
-  hlayout->addWidget(&btnplus);
-
-  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("SteerMaxvAdj"));
-    int value = str.toInt();
-    value = value - 1;
-    if (value <= 10 ) {
-      value = 10;
-    }
-    QString values = QString::number(value);
-    params.put("SteerMaxvAdj", values.toStdString());
-    refresh();
-  });
-  
-  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("SteerMaxvAdj"));
-    int value = str.toInt();
-    value = value + 1;
-    if (value >= 30 ) {
-      value = 30;
-    }
-    QString values = QString::number(value);
-    params.put("SteerMaxvAdj", values.toStdString());
-    refresh();
-  });
-  refresh();
-}
-
-void SteerMaxv::refresh() {
-  auto strs = QString::fromStdString(params.get("SteerMaxvAdj"));
-  int valuei = strs.toInt();
-  float valuef = valuei * 0.1;
-  QString valuefs = QString::number(valuef);
-  label.setText(QString::fromStdString(valuefs.toStdString()));
-  btnminus.setText("－");
-  btnplus.setText("＋");
-}
-
 SteerDeltaUpBase::SteerDeltaUpBase() : AbstractControl("SteerDeltaUpDefault", "Adjust the Steer DeltaUp default value.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);

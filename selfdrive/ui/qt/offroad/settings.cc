@@ -685,7 +685,6 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new TireStiffnessFactor());
   layout->addWidget(new SteerMaxBase());
   layout->addWidget(new SteerMaxMax());
-  layout->addWidget(new SteerMaxv());
   layout->addWidget(new VariableSteerMaxToggle());
   layout->addWidget(new SteerDeltaUpBase());
   layout->addWidget(new SteerDeltaUpMax());

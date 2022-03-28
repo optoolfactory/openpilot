@@ -245,7 +245,6 @@ static void update_state(UIState *s) {
   if (sm.updated("carParams")) {
     auto cp_data = sm["carParams"].getCarParams();
     scene.longitudinal_control = cp_data.getOpenpilotLongitudinalControl();
-    scene.steerMax_V = cp_data.getSteerMaxV()[0];
     scene.steer_actuator_delay = cp_data.getSteerActuatorDelay();
   }
   if (sm.updated("lateralPlan")) {
