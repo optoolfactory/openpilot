@@ -459,6 +459,7 @@ struct CarParams {
   minSteerSpeed @8 :Float32;
   maxSteeringAngleDeg @54 :Float32;
   unsafeMode @64 :Int16;
+  alternativeExperience @65 :Int16;      # panda flag for features like no disengage on gas 
   safetyModel @9 :SafetyModel;
   safetyModelPassive @42 :SafetyModel = silent;
   safetyParam @10 :Int16;
