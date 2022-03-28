@@ -453,16 +453,13 @@ struct CarParams {
   enableDsu @5 :Bool;        # driving support unit
   enableApgs @6 :Bool;       # advanced parking guidance system
   enableBsm @56 :Bool;       # blind spot monitoring
-  flags @63 :UInt32;         # flags for car specific quirks
+  flags @64 :UInt32;         # flags for car specific quirks
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
   maxSteeringAngleDeg @54 :Float32;
-  unsafeMode @64 :Int16;
+  unsafeMode @62 :Int16;
   alternativeExperience @65 :Int16;      # panda flag for features like no disengage on gas 
-  safetyModel @9 :SafetyModel;
-  safetyModelPassive @42 :SafetyModel = silent;
-  safetyParam @10 :Int16;
 
   steerMaxBPDEPRECATED @11 :List(Float32);
   steerMaxVDEPRECATED @12 :List(Float32);
@@ -517,23 +514,23 @@ struct CarParams {
   fingerprintSource @49: FingerprintSource;
   networkLocation @50 :NetworkLocation;  # Where Panda/C2 is integrated into the car's CAN network
 
-  wheelSpeedFactor @62 :Float32; # Multiplier on wheels speeds to computer actual speeds
+  wheelSpeedFactor @63 :Float32; # Multiplier on wheels speeds to computer actual speeds
 
-  mdpsBus @65: Int8;
-  sasBus @66: Int8;
-  sccBus @67: Int8;
-  fcaBus @68: Int8;
-  bsmAvailable @69: Bool;
-  lfaAvailable @70: Bool;
-  lvrAvailable @71: Bool;
-  evgearAvailable @72: Bool;
-  emsAvailable @73: Bool;
-  standStill @74: Bool;
-  vCruisekph @75: Float32;
-  resSpeed @76: Float32;
-  vFuture @77: Float32;
-  aqValue @78: Float32;
-  aqValueRaw @79: Float32;
+  mdpsBus @66: Int8;
+  sasBus @67: Int8;
+  sccBus @68: Int8;
+  fcaBus @69: Int8;
+  bsmAvailable @70: Bool;
+  lfaAvailable @71: Bool;
+  lvrAvailable @72: Bool;
+  evgearAvailable @73: Bool;
+  emsAvailable @74: Bool;
+  standStill @75: Bool;
+  vCruisekph @76: Float32;
+  resSpeed @77: Float32;
+  vFuture @78: Float32;
+  aqValue @79: Float32;
+  aqValueRaw @80: Float32;
 
   struct LateralParams {
     torqueBP @0 :List(Int32);
@@ -681,6 +678,9 @@ struct CarParams {
   enableCameraDEPRECATED @4 :Bool;
   isPandaBlackDEPRECATED @39 :Bool;
   hasStockCameraDEPRECATED @57 :Bool;
+  safetyParam @10 :Int16;
+  safetyModel @9 :SafetyModel;
+  safetyModelPassive @42 :SafetyModel = silent;
   minSpeedCanDEPRECATED @51 :Float32;
   startAccelDEPRECATED @32 :Float32;
   communityFeatureDEPRECATED @46: Bool;
