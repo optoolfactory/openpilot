@@ -140,6 +140,7 @@ static void update_state(UIState *s) {
     scene.dynamic_tr_value = scene.controls_state.getDynamicTRValue();
     scene.osm_off_spdlimit = scene.controls_state.getOsmOffSpdLimit();
     scene.accel = scene.controls_state.getAccel();
+    scene.ctrl_speed = scene.controls_state.getSafetySpeed();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
@@ -174,7 +175,6 @@ static void update_state(UIState *s) {
     scene.stand_still = cs_data.getStandstill();
     scene.a_req_value = cs_data.getAReqValue();
     scene.engine_rpm = cs_data.getEngineRpm();
-    scene.ctrl_speed = cs_data.getCtrlSpeed();
   }
 
   if (sm.updated("liveParameters")) {

@@ -587,6 +587,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   dynamicTRValue @69 :Float32;
   osmOffSpdLimit @70 :Bool;
   accel @71 :Float32;
+  safetySpeed @72 :Float32;
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;

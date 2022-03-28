@@ -770,5 +770,6 @@ class CarController():
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.p.STEER_MAX
     new_actuators.accel = self.accel
+    safetycam_speed = self.NC.safetycam_speed
 
-    return new_actuators, can_sends
+    return new_actuators, can_sends, safetycam_speed
