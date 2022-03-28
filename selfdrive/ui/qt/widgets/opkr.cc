@@ -4298,7 +4298,7 @@ void DcGain::refresh() {
 }
 
 CruiseGapTR::CruiseGapTR() : AbstractControl("크루즈갭", "크루즈갭에 따른 차간거리(TR)를 조절 합니다. TR은 앞차와 추돌시간(초)을 말하며 커질수록 앞차와 더 먼 간격을 유지합니다.", "") {
-  QString dtr = QString::fromStdString(params.get("DynamicTR"));
+  QString dtr = QString::fromStdString(params.get("DynamicTRGap"));
   if (dtr == "0") {
     btn1.setStyleSheet(R"(
       padding: -10;
@@ -4515,7 +4515,7 @@ void CruiseGapTR::refresh4() {
   btn4.setText("▲");
 }
 
-DynamicTR::DynamicTR() : AbstractControl("다이나믹TR 사용(갭할당)", "DynamicTR을 사용 및 해당갭에 할당합니다.", "../assets/offroad/icon_shell.png") {
+DynamicTRGap::DynamicTRGap() : AbstractControl("다이나믹TR 사용(갭할당)", "DynamicTR을 사용 및 해당갭에 할당합니다.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -4543,33 +4543,33 @@ DynamicTR::DynamicTR() : AbstractControl("다이나믹TR 사용(갭할당)", "Dy
   hlayout->addWidget(&btnplus);
 
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("DynamicTR"));
+    auto str = QString::fromStdString(params.get("DynamicTRGap"));
     int value = str.toInt();
     value = value - 1;
     if (value <= -1 ) {
       value = 4;
     }
     QString values = QString::number(value);
-    params.put("DynamicTR", values.toStdString());
+    params.put("DynamicTRGap", values.toStdString());
     refresh();
   });
   
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("DynamicTR"));
+    auto str = QString::fromStdString(params.get("DynamicTRGap"));
     int value = str.toInt();
     value = value + 1;
     if (value >= 5 ) {
       value = 0;
     }
     QString values = QString::number(value);
-    params.put("DynamicTR", values.toStdString());
+    params.put("DynamicTRGap", values.toStdString());
     refresh();
   });
   refresh();
 }
 
-void DynamicTR::refresh() {
-  QString option = QString::fromStdString(params.get("DynamicTR"));
+void DynamicTRGap::refresh() {
+  QString option = QString::fromStdString(params.get("DynamicTRGap"));
   if (option == "0") {
     label.setText(QString::fromStdString("사용안함"));
   } else if (option == "1") {
@@ -4926,6 +4926,9 @@ void LiveSRPercent::refresh() {
   btnplus.setText("+");
 }
 
+VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CV] [TargetSpeed])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {
+}
+
 VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   btn.setStyleSheet(R"(
     padding: -10;
@@ -4993,7 +4996,7 @@ void VCurvSpeed::refresh() {
   btn.setText("EDIT");
 }
 
-VCurvSpeedUD::VCurvSpeedUD() : AbstractControl("VisionCurvDecel([CVs] [TargetSpeeds])", "Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)", "../assets/offroad/icon_shell.png") {
+OCurvSpeedUD::OCurvSpeedUD() : AbstractControl("OSMCurvDecel([TSL] [TargetSpeed])", "Adjust the curve deceleration speed according to turn speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
 }
 
 OCurvSpeed::OCurvSpeed() : AbstractControl("", "", "") {
@@ -5061,9 +5064,6 @@ void OCurvSpeed::refresh() {
   edit1.setText(QString::fromStdString(strs1.toStdString()));
   edit2.setText(QString::fromStdString(strs2.toStdString()));
   btn.setText("EDIT");
-}
-
-OCurvSpeedUD::OCurvSpeedUD() : AbstractControl("OSMCurvDecel([TSL] [TargetSpeed])", "Adjust the curve deceleration speed according to turn speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
 }
 
 GetOffAlert::GetOffAlert() : AbstractControl("이온 탈착 경고음", "시동이 꺼지면 장치가 이온을 분리하도록 경보를 알려줍니다.(알리지 않음/한국어/영어)", "../assets/offroad/icon_shell.png") {
@@ -5837,6 +5837,9 @@ void AutoRESDelay::refresh() {
   btnplus.setText("+");
 }
 
+OSMCustomSpeedLimitUD::OSMCustomSpeedLimitUD() : AbstractControl("OSMCustomSpeedLimit([SL] [TargetSpeed])", "Set the offset speed according to speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
+}
+
 OSMCustomSpeedLimit::OSMCustomSpeedLimit() : AbstractControl("", "", "") {
   btn.setStyleSheet(R"(
     padding: -10;
@@ -5902,9 +5905,6 @@ void OSMCustomSpeedLimit::refresh() {
   edit1.setText(QString::fromStdString(strs1.toStdString()));
   edit2.setText(QString::fromStdString(strs2.toStdString()));
   btn.setText("EDIT");
-}
-
-OSMCustomSpeedLimitUD::OSMCustomSpeedLimitUD() : AbstractControl("OSMCustomSpeedLimit([SL] [TargetSpeed])", "Set the offset speed according to speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
 }
 
 DesiredCurvatureLimit::DesiredCurvatureLimit() : AbstractControl("DesiredCurvatureLimit", "Adjust DisiredCurvatureLimit, Default is 0.05(DT_MDL), For HKG, maybe 0.2 is preferred from user's experience. If the steering digs into inside on intersection, upper the value. And then it will limit your scope of steering angle. In case of opposite situation, lower the value. this is multiplier of desired curvature rate not real limit value.", "../assets/offroad/icon_shell.png") {
@@ -6003,4 +6003,418 @@ void DesiredCurvatureLimit::refresh() {
   float valuef = valuei * 0.01;
   QString valuefs = QString::number(valuef);
   label.setText("＊ " + QString::fromStdString(valuefs.toStdString()));
+}
+
+DynamicTRUD::DynamicTRUD() : AbstractControl("DynamicTR: [Speed] [TRs]", "Set TR of each speeds. (Mid range is interpolation values)", "../assets/offroad/icon_shell.png") {
+}
+
+DynamicTRBySpeed::DynamicTRBySpeed() : AbstractControl("", "", "") {
+  btn.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  edit1.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  edit2.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  btn.setFixedSize(150, 100);
+  edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  edit2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+
+  hlayout->addWidget(&edit1);
+  hlayout->addWidget(&edit2);
+  hlayout->addWidget(&btn);
+
+  QObject::connect(&btn, &QPushButton::clicked, [=]() {
+    int list_count1 = 0;
+    int list_count2 = 0;
+    QString targetvalue1 = InputDialog::getText("Set Speed values with comma", this, "ex) 0,20,40,60,110", false, 1, QString::fromStdString(params.get("DynamicTRSpd")));
+    if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("DynamicTRSpd"))) {
+      QStringList list1 = targetvalue1.split(",");
+      list_count1 = list1.size();
+      params.put("DynamicTRSpd", targetvalue1.toStdString());
+      refresh();
+    } else {
+      QStringList list1 = QString::fromStdString(params.get("DynamicTRSpd")).split(",");
+      list_count1 = list1.size();
+    }
+    QString targetvalue2 = InputDialog::getText("Set TR values with comma", this, "ex) 1.2,1.3,1.4,1.5,1.6", false, 1, QString::fromStdString(params.get("DynamicTRSet")));
+    if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("DynamicTRSet"))) {
+      QStringList list2 = targetvalue2.split(",");
+      list_count2 = list2.size();
+      params.put("DynamicTRSet", targetvalue2.toStdString());
+      refresh();
+    } else {
+      QStringList list2 = QString::fromStdString(params.get("DynamicTRSet")).split(",");
+      list_count2 = list2.size();
+    }
+    if (list_count1 != list_count2) {
+      ConfirmationDialog::alert("Index count does not match. Check your input again.", this);
+    }
+  });
+  refresh();
+}
+
+void DynamicTRBySpeed::refresh() {
+  auto strs1 = QString::fromStdString(params.get("DynamicTRSpd"));
+  auto strs2 = QString::fromStdString(params.get("DynamicTRSet"));
+  edit1.setText(QString::fromStdString(strs1.toStdString()));
+  edit2.setText(QString::fromStdString(strs2.toStdString()));
+  btn.setText("EDIT");
+}
+
+LaneWidth::LaneWidth() : AbstractControl("Set LaneWidth", "Set LaneWidth (default:3.7)", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("LaneWidth"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 23 ) {
+      value = 23;
+    }
+    QString values = QString::number(value);
+    params.put("LaneWidth", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("LaneWidth"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 40 ) {
+      value = 40;
+    }
+    QString values = QString::number(value);
+    params.put("LaneWidth", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void LaneWidth::refresh() {
+  auto strs = QString::fromStdString(params.get("LaneWidth"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.1;
+  QString valuefs = QString::number(valuef);
+  label.setText(QString::fromStdString(valuefs.toStdString()));
+  btnminus.setText("－");
+  btnplus.setText("＋");
+}
+
+SpeedLaneWidthUD::SpeedLaneWidthUD() : AbstractControl("Speed LaneWidth: [Spd(m/s)] [LaneWidth]", "Set LaneWidths by speed. Speed is m/s values not kph or mph. (Mid range is interpolation values)", "../assets/offroad/icon_shell.png") {
+}
+
+SpeedLaneWidth::SpeedLaneWidth() : AbstractControl("", "", "") {
+  btn.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  edit1.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  edit2.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  btn.setFixedSize(150, 100);
+  edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  edit2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+
+  hlayout->addWidget(&edit1);
+  hlayout->addWidget(&edit2);
+  hlayout->addWidget(&btn);
+
+  QObject::connect(&btn, &QPushButton::clicked, [=]() {
+    int list_count1 = 0;
+    int list_count2 = 0;
+    QString targetvalue1 = InputDialog::getText("Set Speed(m/s) values with comma", this, "ex) 0,31", false, 1, QString::fromStdString(params.get("SpdLaneWidthSpd")));
+    if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("SpdLaneWidthSpd"))) {
+      QStringList list1 = targetvalue1.split(",");
+      list_count1 = list1.size();
+      params.put("SpdLaneWidthSpd", targetvalue1.toStdString());
+      refresh();
+    } else {
+      QStringList list1 = QString::fromStdString(params.get("SpdLaneWidthSpd")).split(",");
+      list_count1 = list1.size();
+    }
+    QString targetvalue2 = InputDialog::getText("Set LW(m) values with comma", this, "ex) 2.8,3.5", false, 1, QString::fromStdString(params.get("SpdLaneWidthSet")));
+    if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("SpdLaneWidthSet"))) {
+      QStringList list2 = targetvalue2.split(",");
+      list_count2 = list2.size();
+      params.put("SpdLaneWidthSet", targetvalue2.toStdString());
+      refresh();
+    } else {
+      QStringList list2 = QString::fromStdString(params.get("SpdLaneWidthSet")).split(",");
+      list_count2 = list2.size();
+    }
+    if (list_count1 != list_count2) {
+      ConfirmationDialog::alert("Index count does not match. Check your input again.", this);
+    }
+  });
+  refresh();
+}
+
+void SpeedLaneWidth::refresh() {
+  auto strs1 = QString::fromStdString(params.get("SpdLaneWidthSpd"));
+  auto strs2 = QString::fromStdString(params.get("SpdLaneWidthSet"));
+  edit1.setText(QString::fromStdString(strs1.toStdString()));
+  edit2.setText(QString::fromStdString(strs2.toStdString()));
+  btn.setText("EDIT");
+}
+
+OPKRTopTextView::OPKRTopTextView() : AbstractControl("Top Text View", "Date/Time/OSM Street Name", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TopTextView"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= -1 ) {
+      value = 7;
+    }
+    QString values = QString::number(value);
+    params.put("TopTextView", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TopTextView"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 8 ) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    params.put("TopTextView", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void OPKRTopTextView::refresh() {
+  QString option = QString::fromStdString(params.get("TopTextView"));
+  if (option == "0") {
+    label.setText(QString::fromStdString("None"));
+    QUIState::ui_state.scene.top_text_view = 0;
+  } else if (option == "1") {
+    label.setText(QString::fromStdString("Date+Time"));
+    QUIState::ui_state.scene.top_text_view = 1;
+  } else if (option == "2") {
+    label.setText(QString::fromStdString("Date"));
+    QUIState::ui_state.scene.top_text_view = 2;
+  } else if (option == "3") {
+    label.setText(QString::fromStdString("Time"));
+    QUIState::ui_state.scene.top_text_view = 3;
+  } else if (option == "4") {
+    label.setText(QString::fromStdString("Date+Time+OSM"));
+    QUIState::ui_state.scene.top_text_view = 4;
+  } else if (option == "5") {
+    label.setText(QString::fromStdString("Date+OSM"));
+    QUIState::ui_state.scene.top_text_view = 5;
+  } else if (option == "6") {
+    label.setText(QString::fromStdString("Time+OSM"));
+    QUIState::ui_state.scene.top_text_view = 6;
+  } else {
+    label.setText(QString::fromStdString("OSM"));
+    QUIState::ui_state.scene.top_text_view = 7;
+  }
+  btnminus.setText("◀");
+  btnplus.setText("▶");
+}
+
+OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to left, - value to move car to right on each lane.", "") {
+
+  labell1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  labell1.setText("LeftEdge: ");
+  hlayout->addWidget(&labell1);
+  labell.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  labell.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&labell);
+  btnminusl.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplusl.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminusl.setFixedSize(80, 100);
+  btnplusl.setFixedSize(80, 100);
+  hlayout->addWidget(&btnminusl);
+  hlayout->addWidget(&btnplusl);
+
+  labelr1.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  labelr1.setText("RightEdge: ");
+  hlayout->addWidget(&labelr1);
+  labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  labelr.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&labelr);
+  btnminusr.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplusr.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminusr.setFixedSize(80, 100);
+  btnplusr.setFixedSize(80, 100);
+  hlayout->addWidget(&btnminusr);
+  hlayout->addWidget(&btnplusr);
+
+  btnminusl.setText("－");
+  btnplusl.setText("＋");
+  btnminusr.setText("－");
+  btnplusr.setText("＋");
+
+  QObject::connect(&btnminusl, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("LeftEdgeOffset"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= -50 ) {
+      value = -50;
+    }
+    QString values = QString::number(value);
+    params.put("LeftEdgeOffset", values.toStdString());
+    refreshl();
+  });
+  
+  QObject::connect(&btnplusl, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("LeftEdgeOffset"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 50 ) {
+      value = 50;
+    }
+    QString values = QString::number(value);
+    params.put("LeftEdgeOffset", values.toStdString());
+    refreshl();
+  });
+  QObject::connect(&btnminusr, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("RightEdgeOffset"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= -50 ) {
+      value = -50;
+    }
+    QString values = QString::number(value);
+    params.put("RightEdgeOffset", values.toStdString());
+    refreshr();
+  });
+  
+  QObject::connect(&btnplusr, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("RightEdgeOffset"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 50 ) {
+      value = 50;
+    }
+    QString values = QString::number(value);
+    params.put("RightEdgeOffset", values.toStdString());
+    refreshr();
+  });
+  refreshl();
+  refreshr();
+}
+
+void OPKREdgeOffset::refreshl() {
+  auto strs = QString::fromStdString(params.get("LeftEdgeOffset"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.01;
+  QString valuefs = QString::number(valuef);
+  labell.setText(QString::fromStdString(valuefs.toStdString()));
+}
+
+void OPKREdgeOffset::refreshr() {
+  auto strs = QString::fromStdString(params.get("RightEdgeOffset"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.01;
+  QString valuefs = QString::number(valuef);
+  labelr.setText(QString::fromStdString(valuefs.toStdString()));
 }
