@@ -433,40 +433,6 @@ public:
   }
 };
 
-class KRDateToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  KRDateToggle() : ToggleControl("주행화면 날짜 표시", "주행화면에 현재 날짜를 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("KRDateShow")) {
-    QObject::connect(this, &KRDateToggle::toggleFlipped, [=](int state) {
-      bool status = state ? true : false;
-      Params().putBool("KRDateShow", status);
-      if (state) {
-        QUIState::ui_state.scene.kr_date_show = true;
-      } else {
-        QUIState::ui_state.scene.kr_date_show = false;
-      }
-    });
-  }
-};
-
-class KRTimeToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  KRTimeToggle() : ToggleControl("주행화면 시간 표시", "주행화면에 현재 시간을 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("KRTimeShow")) {
-    QObject::connect(this, &KRTimeToggle::toggleFlipped, [=](int state) {
-      bool status = state ? true : false;
-      Params().putBool("KRTimeShow", status);
-      if (state) {
-        QUIState::ui_state.scene.kr_time_show = true;
-      } else {
-        QUIState::ui_state.scene.kr_time_show = false;
-      }
-    });
-  }
-};
-
 class GitPullOnBootToggle : public ToggleControl {
   Q_OBJECT
 
@@ -540,6 +506,18 @@ public:
     QObject::connect(this, &GoogleMapEnabledToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("GoogleMapEnabled", status);
+    });
+  }
+};
+
+class OSMEnabledToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  OSMEnabledToggle() : ToggleControl("Enable OSM", "This enables OSM.", "../assets/offroad/icon_shell.png", Params().getBool("OSMEnable")) {
+    QObject::connect(this, &OSMEnabledToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("OSMEnable", status);
     });
   }
 };
@@ -648,6 +626,42 @@ public:
     QObject::connect(this, &C2WithCommaPowerToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("C2WithCommaPower", status);
+    });
+  }
+};
+
+class CustomTRToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  CustomTRToggle() : ToggleControl("Custom TR Enable", "to use Custom TR not 1.45(comma default).", "../assets/offroad/icon_shell.png", Params().getBool("CustomTREnabled")) {
+    QObject::connect(this, &CustomTRToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("CustomTREnabled", status);
+    });
+  }
+};
+
+class RoutineDriveOnToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  RoutineDriveOnToggle() : ToggleControl("Routine Drive by RoadName", "This will adjust the camera offset(for now) by roadname. If you want to use, edit the file, /data/params/d/RoadList. modify like this RoadName1,offset1(ex:+0.05),RoadName2,offset2(ex:-0.05),...", "../assets/offroad/icon_shell.png", Params().getBool("RoutineDriveOn")) {
+    QObject::connect(this, &RoutineDriveOnToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("RoutineDriveOn", status);
+    });
+  }
+};
+
+class CloseToRoadEdgeToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  CloseToRoadEdgeToggle() : ToggleControl("Driving Close to RoadEdge", "This will adjust the camera offset to get close to road edge if the car is on the first or last lane.", "../assets/offroad/icon_shell.png", Params().getBool("CloseToRoadEdge")) {
+    QObject::connect(this, &CloseToRoadEdgeToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("CloseToRoadEdge", status);
     });
   }
 };
@@ -1631,11 +1645,11 @@ private:
   void refresh4();
 };
 
-class DynamicTR : public AbstractControl {
+class DynamicTRGap : public AbstractControl {
   Q_OBJECT
 
 public:
-  DynamicTR();
+  DynamicTRGap();
 
 private:
   QPushButton btnplus;
@@ -1644,6 +1658,13 @@ private:
   Params params;
   
   void refresh();
+};
+
+class DynamicTRUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  DynamicTRUD();
 };
 
 class LCTimingFactor : public AbstractControl {
@@ -1763,6 +1784,13 @@ private:
   void refresh();
 };
 
+class VCurvSpeedUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  VCurvSpeedUD();
+};
+
 class VCurvSpeed : public AbstractControl {
   Q_OBJECT
 
@@ -1778,11 +1806,11 @@ private:
   void refresh();
 };
 
-class VCurvSpeedUD : public AbstractControl {
+class OCurvSpeedUD : public AbstractControl {
   Q_OBJECT
 
 public:
-  VCurvSpeedUD();
+  OCurvSpeedUD();
 };
 
 class OCurvSpeed : public AbstractControl {
@@ -1798,13 +1826,6 @@ private:
   Params params;
 
   void refresh();
-};
-
-class OCurvSpeedUD : public AbstractControl {
-  Q_OBJECT
-
-public:
-  OCurvSpeedUD();
 };
 
 class GetOffAlert : public AbstractControl {
@@ -1956,6 +1977,13 @@ private:
   void refresh();
 };
 
+class OSMCustomSpeedLimitUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  OSMCustomSpeedLimitUD();
+};
+
 class OSMCustomSpeedLimit : public AbstractControl {
   Q_OBJECT
 
@@ -1969,13 +1997,6 @@ private:
   Params params;
 
   void refresh();
-};
-
-class OSMCustomSpeedLimitUD : public AbstractControl {
-  Q_OBJECT
-
-public:
-  OSMCustomSpeedLimitUD();
 };
 
 class DesiredCurvatureLimit : public AbstractControl {
@@ -1993,4 +2014,92 @@ private:
   float digit = 0.01;
   
   void refresh();
+};
+
+class DynamicTRBySpeed : public AbstractControl {
+  Q_OBJECT
+
+public:
+  DynamicTRBySpeed();
+
+private:
+  QPushButton btn;
+  QLineEdit edit1;
+  QLineEdit edit2;
+  Params params;
+
+  void refresh();
+};
+
+class LaneWidth : public AbstractControl {
+  Q_OBJECT
+
+public:
+  LaneWidth();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class SpeedLaneWidthUD : public AbstractControl {
+  Q_OBJECT
+
+public:
+  SpeedLaneWidthUD();
+};
+
+class SpeedLaneWidth : public AbstractControl {
+  Q_OBJECT
+
+public:
+  SpeedLaneWidth();
+
+private:
+  QPushButton btn;
+  QLineEdit edit1;
+  QLineEdit edit2;
+  Params params;
+
+  void refresh();
+};
+
+class OPKRTopTextView : public AbstractControl {
+  Q_OBJECT
+
+public:
+  OPKRTopTextView();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class OPKREdgeOffset : public AbstractControl {
+  Q_OBJECT
+
+public:
+  OPKREdgeOffset();
+
+private:
+  QPushButton btnplusl;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QPushButton btnminusr;
+  QLabel labell1;
+  QLabel labelr1;
+  QLabel labell;
+  QLabel labelr;
+  Params params;
+  
+  void refreshl();
+  void refreshr();
 };
