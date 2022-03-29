@@ -287,12 +287,14 @@ class CarController:
 
     can_sends = []
     can_sends.append(create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lkas_active,
-                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
+                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, CC.enabled,
+                                   hud_control.leftLaneVisible, hud_control.rightLaneVisible,
                                    left_lane_warning, right_lane_warning, 0, self.ldws_fix, self.steer_wind_down_enabled))
 
     if self.CP.mdpsBus: # send lkas11 bus 1 if mdps is bus 1
       can_sends.append(create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lkas_active,
-                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
+                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, CC.enabled,
+                                   hud_control.leftLaneVisible, hud_control.rightLaneVisible,
                                    left_lane_warning, right_lane_warning, 1, self.ldws_fix, self.steer_wind_down_enabled))
       if self.frame % 2: # send clu11 to mdps if it is not on bus 0
         can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.NONE, enabled_speed, self.CP.mdpsBus))
@@ -410,7 +412,7 @@ class CarController:
       self.standstill_res_button = False
       self.auto_res_starting = False
 
-    if not enabled:
+    if not CC.enabled:
       self.cruise_init = False
     if CS.cruise_buttons == 4:
       self.cancel_counter += 1
@@ -537,6 +539,8 @@ class CarController:
     #   stopping = (actuators.longControlState == LongCtrlState.stopping)
     #   set_speed_in_units = hud_speed * (CV.MS_TO_MPH if CS.clu11["CF_Clu_SPEED_UNIT"] == 1 else CV.MS_TO_KPH)
     #   can_sends.extend(create_acc_commands(self.packer, enabled, accel, jerk, int(self.frame / 2), lead_visible, set_speed_in_units, stopping))
+    set_speed = round(hud_control.setSpeed * CV.MS_TO_KPH)
+    lead_visible = hud_control.leadVisible
 
     if self.radar_disabled_conf: #xps-genesis's way
       if self.prev_cruiseButton != CS.cruise_buttons:  # gap change for RadarDisable
@@ -700,12 +704,12 @@ class CarController:
         can_sends.append(create_scc11(self.packer, self.frame, set_speed, lead_visible, self.scc_live, self.dRel, self.vRel, self.yRel, 
          self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.acc_standstill, self.gapsettingdance, self.stopped, radar_recog, CS.scc11))
         if (CS.brake_check or CS.cancel_check) and self.car_fingerprint != CAR.NIRO_EV:
-          can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, 1, 
+          can_sends.append(create_scc12(self.packer, accel, CC.enabled, self.scc_live, CS.out.gasPressed, 1, 
            CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
         else:
-          can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, CS.out.brakePressed, 
+          can_sends.append(create_scc12(self.packer, accel, CC.enabled, self.scc_live, CS.out.gasPressed, CS.out.brakePressed, 
            CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
-        can_sends.append(create_scc14(self.packer, enabled, CS.scc14, CS.out.stockAeb, lead_visible, self.dRel, 
+        can_sends.append(create_scc14(self.packer, CC.enabled, CS.scc14, CS.out.stockAeb, lead_visible, self.dRel, 
          CS.out.vEgo, self.acc_standstill, self.car_fingerprint))
         self.accel = accel
       if self.frame % 20 == 0:
@@ -723,15 +727,14 @@ class CarController:
       self.scc12cnt = CS.scc12init["CR_VSM_Alive"]
       self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
-    setSpeed = round(set_speed * CV.MS_TO_KPH)
     str_log1 = 'MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  FR={:03.0f}'.format(
       CS.out.cruiseState.modeSel, self.CP.mdpsBus, self.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), self.params.STEER_MAX, self.params.STEER_DELTA_UP, self.params.STEER_DELTA_DOWN, self.timer1.sampleTime())
     if CS.out.cruiseState.accActive:
       str_log2 = 'AQ={:+04.2f}  VF={:03.0f}  TS={:03.0f}  SS/VS={:03.0f}/{:03.0f}  RD/LD={:04.1f}/{:03.1f}  CG={:1.0f}  FR={:03.0f}'.format(
-       self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, self.NC.ctrl_speed , setSpeed, round(CS.VSetDis), CS.lead_distance, self.last_lead_distance, CS.cruiseGapSet, self.timer1.sampleTime())
+       self.aq_value if self.longcontrol else CS.scc12["aReqValue"], hud_control.vFuture, self.NC.ctrl_speed, set_speed, round(CS.VSetDis), CS.lead_distance, self.last_lead_distance, CS.cruiseGapSet, self.timer1.sampleTime())
     else:
       str_log2 = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
-       CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, CS.cruiseGapSet, self.timer1.sampleTime())
+       CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], hud_control.vFuture, CS.cruiseGapSet, self.timer1.sampleTime())
     trace1.printf2( '{}'.format( str_log2 ) )
 
     # str_log3 = 'ST1/ST2={}/{} CI/D={}/{:.1f} TM/D/V={:03.0f}/{:03.0f}/{:03.0f}'.format(int(self.sm['radarState'].leadOne.status), int(self.sm['radarState'].leadTwo.status), \
@@ -765,7 +768,7 @@ class CarController:
       can_sends.append(create_lfahda_mfc(self.packer, lkas_active))
 
     elif self.frame % 5 == 0 and self.car_fingerprint in FEATURES["send_hda_mfa"]:
-      can_sends.append(create_hda_mfc(self.packer, CS, enabled, left_lane, right_lane ))
+      can_sends.append(create_hda_mfc(self.packer, CS, CC.enabled, hud_control.leftLaneVisible, hud_control.rightLaneVisible))
 
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.params.STEER_MAX
