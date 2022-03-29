@@ -222,7 +222,7 @@ class CarController:
       new_steer = int(round(actuators.steer * self.steerMax * (self.driver_steering_torque_above_timer / 100)))
     else:
       new_steer = int(round(actuators.steer * self.steerMax))
-    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
+    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
     self.steer_rate_limited = new_steer != apply_steer
 
     # disable when temp fault is active, or below LKA minimum speed
