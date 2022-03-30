@@ -436,7 +436,7 @@ struct CarControl {
   gasDEPRECATED @1 :Float32;
   brakeDEPRECATED @2 :Float32;
   steeringTorqueDEPRECATED @3 :Float32;
-  activeDEPRECATED @7 :Bool;
+  active @7 :Bool;
   rollDEPRECATED @8 :Float32;
   pitchDEPRECATED @9 :Float32;
 }
