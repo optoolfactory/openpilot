@@ -794,12 +794,15 @@ class Controls:
         self.hkg_stock_lkas_timer = 0
       elif not self.enabled and not self.hkg_stock_lkas:
         self.hkg_stock_lkas_timer += 1
-        if self.hkg_stock_lkas_timer > 300:
+        if self.CP.openpilotLongitudinalControl and CS.cruiseState.available:
+          self.hkg_stock_lkas = False
           self.hkg_stock_lkas_timer = 0
+        elif self.hkg_stock_lkas_timer > 300:
           self.hkg_stock_lkas = True
+          self.hkg_stock_lkas_timer = 0
         elif CS.gearShifter != GearShifter.drive and self.hkg_stock_lkas_timer > 150:
-          self.hkg_stock_lkas_timer = 0
           self.hkg_stock_lkas = True
+          self.hkg_stock_lkas_timer = 0
       if not self.hkg_stock_lkas:
         # send car controls over can
         self.last_actuators, can_sends, self.safety_speed = self.CI.apply(CC)
