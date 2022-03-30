@@ -24,35 +24,34 @@ VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
 
 
-def process_hud_alert(enabled, fingerprint, hud_control):
-  sys_warning = (hud_control.visualAlert in (VisualAlert.steerRequired, VisualAlert.ldw))
+def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
+                      right_lane, left_lane_depart, right_lane_depart):
+  sys_warning = (visual_alert in (VisualAlert.steerRequired, VisualAlert.ldw))
 
   # initialize to no line visible
   sys_state = 1
-  if hud_control.leftLaneVisible and hud_control.rightLaneVisible or sys_warning:  # HUD alert only display when LKAS status is active
+  if left_lane and right_lane or sys_warning:  # HUD alert only display when LKAS status is active
     sys_state = 3 if enabled or sys_warning else 4
-  elif hud_control.leftLaneVisible:
+  elif left_lane:
     sys_state = 5
-  elif hud_control.rightLaneVisible:
+  elif right_lane:
     sys_state = 6
 
   # initialize to no warnings
   left_lane_warning = 0
   right_lane_warning = 0
-  if hud_control.leftLaneDepart:
+  if left_lane_depart:
     left_lane_warning = 1 if fingerprint in (CAR.GENESIS_G90, CAR.GENESIS_G80) else 2
-  if hud_control.rightLaneDepart:
+  if right_lane_depart:
     right_lane_warning = 1 if fingerprint in (CAR.GENESIS_G90, CAR.GENESIS_G80) else 2
 
   return sys_warning, sys_state, left_lane_warning, right_lane_warning
 
 
-class CarController:
+class CarController():
   def __init__(self, dbc_name, CP, VM):
-    self.CP = CP
-    self.params = CarControllerParams(CP)
+    self.p = CarControllerParams(CP)
     self.packer = CANPacker(dbc_name)
-    self.frame = 0
 
     self.apply_steer_last = 0
     self.car_fingerprint = CP.carFingerprint
@@ -85,24 +84,24 @@ class CarController:
 
     self.v_cruise_kph_auto_res = 0
 
-    self.c_params = Params()
-    self.mode_change_switch = int(self.c_params.get("CruiseStatemodeSelInit", encoding="utf8"))
-    self.opkr_variablecruise = self.c_params.get_bool("OpkrVariableCruise")
-    self.opkr_autoresume = self.c_params.get_bool("OpkrAutoResume")
-    self.opkr_cruisegap_auto_adj = self.c_params.get_bool("CruiseGapAdjust")
-    self.opkr_cruise_auto_res = self.c_params.get_bool("CruiseAutoRes")
-    self.opkr_cruise_auto_res_option = int(self.c_params.get("AutoResOption", encoding="utf8"))
-    self.opkr_cruise_auto_res_condition = int(self.c_params.get("AutoResCondition", encoding="utf8"))
+    self.params = Params()
+    self.mode_change_switch = int(self.params.get("CruiseStatemodeSelInit", encoding="utf8"))
+    self.opkr_variablecruise = self.params.get_bool("OpkrVariableCruise")
+    self.opkr_autoresume = self.params.get_bool("OpkrAutoResume")
+    self.opkr_cruisegap_auto_adj = self.params.get_bool("CruiseGapAdjust")
+    self.opkr_cruise_auto_res = self.params.get_bool("CruiseAutoRes")
+    self.opkr_cruise_auto_res_option = int(self.params.get("AutoResOption", encoding="utf8"))
+    self.opkr_cruise_auto_res_condition = int(self.params.get("AutoResCondition", encoding="utf8"))
 
-    self.opkr_turnsteeringdisable = self.c_params.get_bool("OpkrTurnSteeringDisable")
-    self.steer_wind_down_enabled = self.c_params.get_bool("SteerWindDown")
-    self.opkr_maxanglelimit = float(int(self.c_params.get("OpkrMaxAngleLimit", encoding="utf8")))
-    self.mad_mode_enabled = self.c_params.get_bool("MadModeEnabled")
-    self.ldws_fix = self.c_params.get_bool("LdwsCarFix")
-    self.radar_helper_option = int(self.c_params.get("RadarLongHelper", encoding="utf8"))
-    self.stopping_dist_adj_enabled = self.c_params.get_bool("StoppingDistAdj")
-    self.standstill_resume_alt = self.c_params.get_bool("StandstillResumeAlt")
-    self.auto_res_delay = int(self.c_params.get("AutoRESDelay", encoding="utf8")) * 100
+    self.opkr_turnsteeringdisable = self.params.get_bool("OpkrTurnSteeringDisable")
+    self.steer_wind_down_enabled = self.params.get_bool("SteerWindDown")
+    self.opkr_maxanglelimit = float(int(self.params.get("OpkrMaxAngleLimit", encoding="utf8")))
+    self.mad_mode_enabled = self.params.get_bool("MadModeEnabled")
+    self.ldws_fix = self.params.get_bool("LdwsCarFix")
+    self.radar_helper_option = int(self.params.get("RadarLongHelper", encoding="utf8"))
+    self.stopping_dist_adj_enabled = self.params.get_bool("StoppingDistAdj")
+    self.standstill_resume_alt = self.params.get_bool("StandstillResumeAlt")
+    self.auto_res_delay = int(self.params.get("AutoRESDelay", encoding="utf8")) * 100
     self.auto_res_delay_timer = 0
     self.stopped = False
 
@@ -123,35 +122,35 @@ class CarController:
     self.cruise_gap_adjusting = False
     self.standstill_fault_reduce_timer = 0
     self.standstill_res_button = False
-    self.standstill_res_count = int(self.c_params.get("RESCountatStandstill", encoding="utf8"))
+    self.standstill_res_count = int(self.params.get("RESCountatStandstill", encoding="utf8"))
 
     self.standstill_status = 0
     self.standstill_status_timer = 0
     self.switch_timer = 0
     self.auto_res_timer = 0
     self.auto_res_limit_timer = 0
-    self.auto_res_limit_sec = int(self.c_params.get("AutoResLimitTime", encoding="utf8")) * 100
+    self.auto_res_limit_sec = int(self.params.get("AutoResLimitTime", encoding="utf8")) * 100
     self.auto_res_starting = False
     self.res_speed = 0
     self.res_speed_timer = 0
     self.autohold_popup_timer = 0
     self.autohold_popup_switch = False
 
-    self.steerMax_base = int(self.c_params.get("SteerMaxBaseAdj", encoding="utf8"))
-    self.steerDeltaUp_base = int(self.c_params.get("SteerDeltaUpBaseAdj", encoding="utf8"))
-    self.steerDeltaDown_base = int(self.c_params.get("SteerDeltaDownBaseAdj", encoding="utf8"))
+    self.steerMax_base = int(self.params.get("SteerMaxBaseAdj", encoding="utf8"))
+    self.steerDeltaUp_base = int(self.params.get("SteerDeltaUpBaseAdj", encoding="utf8"))
+    self.steerDeltaDown_base = int(self.params.get("SteerDeltaDownBaseAdj", encoding="utf8"))
     self.model_speed_range = [30, 100, 255]
-    self.steerMax_range = [self.params.STEER_MAX, self.steerMax_base, self.steerMax_base]
-    self.steerDeltaUp_range = [self.params.STEER_DELTA_UP, self.steerDeltaUp_base, self.steerDeltaUp_base]
-    self.steerDeltaDown_range = [self.params.STEER_DELTA_DOWN, self.steerDeltaDown_base, self.steerDeltaDown_base]
+    self.steerMax_range = [self.p.STEER_MAX, self.steerMax_base, self.steerMax_base]
+    self.steerDeltaUp_range = [self.p.STEER_DELTA_UP, self.steerDeltaUp_base, self.steerDeltaUp_base]
+    self.steerDeltaDown_range = [self.p.STEER_DELTA_DOWN, self.steerDeltaDown_base, self.steerDeltaDown_base]
     self.steerMax = 0
     self.steerDeltaUp = 0
     self.steerDeltaDown = 0
     self.steer_wind_down = 0
 
-    self.variable_steer_max = self.c_params.get_bool("OpkrVariableSteerMax")
-    self.variable_steer_delta = self.c_params.get_bool("OpkrVariableSteerDelta")
-    self.osm_spdlimit_enabled = self.c_params.get_bool("OSMSpeedLimitEnable")
+    self.variable_steer_max = self.params.get_bool("OpkrVariableSteerMax")
+    self.variable_steer_delta = self.params.get_bool("OpkrVariableSteerDelta")
+    self.osm_spdlimit_enabled = self.params.get_bool("OSMSpeedLimitEnable")
 
     self.cc_timer = 0
     self.on_speed_control = False
@@ -161,7 +160,7 @@ class CarController:
     self.keep_decel_on = False
     self.change_accel_fast = False
 
-    self.radar_disabled_conf = self.c_params.get_bool("RadarDisable")
+    self.radar_disabled_conf = self.params.get_bool("RadarDisable")
     self.prev_cruiseButton = 0
     self.gapsettingdance = 4
     self.lead_visible = False
@@ -182,14 +181,14 @@ class CarController:
 
     self.sm = messaging.SubMaster(['controlsState', 'radarState'])
 
-  def update(self, CC, CS):
-    actuators = CC.actuators
-    hud_control = CC.hudControl
-    pcm_cancel_cmd = CC.cruiseControl.cancel
+  def update(self, c, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
+             left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, v_future):
 
-    self.vFuture = hud_control.vFuture
+    param = self.p
+
+    self.vFuture = v_future
     path_plan = self.NC.update_lateralPlan()
-    if self.frame % 10 == 0:
+    if frame % 10 == 0:
       self.model_speed = path_plan.modelSpeed
 
     self.sm.update(0)
@@ -213,26 +212,26 @@ class CarController:
       self.steerDeltaUp = self.steerDeltaUp_base
       self.steerDeltaDown = self.steerDeltaDown_base
 
-    self.params.STEER_MAX = min(self.params.STEER_MAX, self.steerMax) # variable steermax
-    self.params.STEER_DELTA_UP = min(self.params.STEER_DELTA_UP, self.steerDeltaUp) # variable deltaUp
-    self.params.STEER_DELTA_DOWN = min(self.params.STEER_DELTA_DOWN, self.steerDeltaDown) # variable deltaDown
+    self.p.STEER_MAX = min(self.p.STEER_MAX, self.steerMax) # variable steermax
+    self.p.STEER_DELTA_UP = min(self.p.STEER_DELTA_UP, self.steerDeltaUp) # variable deltaUp
+    self.p.STEER_DELTA_DOWN = min(self.p.STEER_DELTA_DOWN, self.steerDeltaDown) # variable deltaDown
 
     # Steering Torque
     if 0 <= self.driver_steering_torque_above_timer < 100:
       new_steer = int(round(actuators.steer * self.steerMax * (self.driver_steering_torque_above_timer / 100)))
     else:
       new_steer = int(round(actuators.steer * self.steerMax))
-    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
+    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
     self.steer_rate_limited = new_steer != apply_steer
 
     # disable when temp fault is active, or below LKA minimum speed
     if self.opkr_maxanglelimit == 90 and not self.steer_wind_down_enabled:
-      lkas_active = CC.latActive and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
+      lkas_active = c.active and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
     elif self.opkr_maxanglelimit > 90 and not self.steer_wind_down_enabled:
       str_angle_limit = interp(CS.out.vEgo * CV.MS_TO_KPH, [0, 20], [self.opkr_maxanglelimit+60, self.opkr_maxanglelimit])
-      lkas_active = CC.latActive and abs(CS.out.steeringAngleDeg) < str_angle_limit and CS.out.gearShifter == GearShifter.drive
+      lkas_active = c.active and abs(CS.out.steeringAngleDeg) < str_angle_limit and CS.out.gearShifter == GearShifter.drive
     else:
-      lkas_active = CC.latActive and not CS.out.steerFaultTemporary and CS.out.gearShifter == GearShifter.drive
+      lkas_active = c.active and not CS.out.steerFaultTemporary and CS.out.gearShifter == GearShifter.drive
 
     if (( CS.out.leftBlinker and not CS.out.rightBlinker) or ( CS.out.rightBlinker and not CS.out.leftBlinker)) and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and self.opkr_turnsteeringdisable:
       self.lanechange_manual_timer = 50
@@ -266,7 +265,7 @@ class CarController:
     if lkas_active or CS.out.steeringPressed:
       self.steer_wind_down = 0
 
-    if self.frame % 95 == 0 and abs(CS.out.steeringAngleDeg) >= 90: # test from Greg's comment
+    if frame % 95 == 0 and abs(CS.out.steeringAngleDeg) >= 90: # test from Greg's comment
       lkas_active = 0
 
     self.apply_steer_last = apply_steer
@@ -280,8 +279,9 @@ class CarController:
       self.need_brake = False
       self.need_brake_timer = 0
 
-    sys_warning, sys_state, left_lane_warning, right_lane_warning = process_hud_alert(CC.enabled, self.car_fingerprint,
-                                                                                      hud_control)
+    sys_warning, sys_state, left_lane_warning, right_lane_warning =\
+      process_hud_alert(lkas_active, self.car_fingerprint, visual_alert,
+                        left_lane, right_lane, left_lane_depart, right_lane_depart)
 
     clu11_speed = CS.clu11["CF_Clu_Vanz"]
     enabled_speed = 38 if CS.is_set_speed_in_mph else 60
@@ -289,18 +289,16 @@ class CarController:
       enabled_speed = clu11_speed
 
     can_sends = []
-    can_sends.append(create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lkas_active,
-                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, CC.enabled,
-                                   hud_control.leftLaneVisible, hud_control.rightLaneVisible,
+    can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
+                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
                                    left_lane_warning, right_lane_warning, 0, self.ldws_fix, self.steer_wind_down_enabled))
 
-    if self.CP.mdpsBus: # send lkas11 bus 1 if mdps is bus 1
-      can_sends.append(create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lkas_active,
-                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, CC.enabled,
-                                   hud_control.leftLaneVisible, hud_control.rightLaneVisible,
+    if CS.CP.mdpsBus: # send lkas11 bus 1 if mdps is bus 1
+      can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
+                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
                                    left_lane_warning, right_lane_warning, 1, self.ldws_fix, self.steer_wind_down_enabled))
-      if self.frame % 2: # send clu11 to mdps if it is not on bus 0
-        can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.NONE, enabled_speed, self.CP.mdpsBus))
+      if frame % 2: # send clu11 to mdps if it is not on bus 0
+        can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.NONE, enabled_speed, CS.CP.mdpsBus))
 
     if CS.out.cruiseState.modeSel == 0 and self.mode_change_switch == 5:
       self.mode_change_timer = 50
@@ -324,7 +322,7 @@ class CarController:
       self.mode_change_timer -= 1
 
     if pcm_cancel_cmd and self.longcontrol:
-      can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.CANCEL, clu11_speed, self.CP.sccBus))
+      can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL, clu11_speed, CS.CP.sccBus))
 
     if CS.out.cruiseState.standstill:
       self.standstill_status = 1
@@ -345,18 +343,18 @@ class CarController:
           self.acc_standstill = False
           if self.standstill_resume_alt: # for D.Fyffe, code from neokii
             self.standstill_res_button = True
-            can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, clu11_speed, self.CP.sccBus))
+            can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL, clu11_speed, CS.CP.sccBus))
             self.resume_cnt += 1
             if self.resume_cnt >= randint(6, 8):
               self.resume_cnt = 0
               self.switch_timer = randint(30, 36)
           else:
-            if (self.frame - self.last_resume_frame) * DT_CTRL > 0.1:
+            if (frame - self.last_resume_frame) * DT_CTRL > 0.1:
               self.standstill_res_button = True
               # send 25 messages at a time to increases the likelihood of resume being accepted, value 25 is not acceptable at some cars.
-              can_sends.extend([create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL)] * self.standstill_res_count) if not self.longcontrol \
-              else can_sends.extend([create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, self.CP.sccBus)] * self.standstill_res_count)
-              self.last_resume_frame = self.frame
+              can_sends.extend([create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)] * self.standstill_res_count) if not self.longcontrol \
+              else can_sends.extend([create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, CS.CP.sccBus)] * self.standstill_res_count)
+              self.last_resume_frame = frame
           self.standstill_fault_reduce_timer += 1
         # gap save after 1sec
         elif 100 < self.standstill_fault_reduce_timer and self.cruise_gap_prev == 0 and CS.cruiseGapSet != 1.0 and self.opkr_autoresume and self.opkr_cruisegap_auto_adj: 
@@ -364,8 +362,8 @@ class CarController:
           self.cruise_gap_set_init = 1
         # gap adjust to 1 for fast start
         elif 110 < self.standstill_fault_reduce_timer and CS.cruiseGapSet != 1.0 and self.opkr_autoresume and self.opkr_cruisegap_auto_adj:
-          can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
-            else can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, self.CP.sccBus))
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
           self.resume_cnt += 1
           if self.resume_cnt >= randint(6, 8):
             self.resume_cnt = 0
@@ -388,8 +386,8 @@ class CarController:
         if self.switch_timer > 0:
           self.switch_timer -= 1
         elif self.dRel > 17 and self.vRel*3.6 < 5 and self.cruise_gap_prev != CS.cruiseGapSet and self.cruise_gap_set_init == 1 and self.opkr_autoresume:
-          can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
-            else can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, self.CP.sccBus))
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
           self.cruise_gap_adjusting = True
           self.resume_cnt += 1
           if self.resume_cnt >= randint(6, 8):
@@ -404,7 +402,7 @@ class CarController:
       if not self.cruise_gap_adjusting:
         if btn_signal != None:
           can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal)) if not self.longcontrol \
-          else can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, btn_signal, clu11_speed, self.CP.sccBus))
+          else can_sends.append(create_clu11(self.packer, frame, CS.clu11, btn_signal, clu11_speed, CS.CP.sccBus))
           self.resume_cnt += 1
         else:
           self.resume_cnt = 0
@@ -415,7 +413,7 @@ class CarController:
       self.standstill_res_button = False
       self.auto_res_starting = False
 
-    if not CC.enabled:
+    if not enabled:
       self.cruise_init = False
     if CS.cruise_buttons == 4:
       self.cancel_counter += 1
@@ -461,8 +459,8 @@ class CarController:
      self.opkr_cruise_auto_res and opkr_cruise_auto_res_condition and (self.auto_res_limit_sec == 0 or self.auto_res_limit_timer < self.auto_res_limit_sec) and \
      (self.auto_res_delay == 0 or self.auto_res_delay_timer >= self.auto_res_delay):
       if self.opkr_cruise_auto_res_option == 0:
-        can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL)) if not self.longcontrol \
-         else can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, self.CP.sccBus))  # auto res
+        can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)) if not self.longcontrol \
+         else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, CS.CP.sccBus))  # auto res
         self.auto_res_starting = True
         self.res_speed = round(CS.VSetDis) if CS.is_set_speed_in_mph or self.osm_spdlimit_enabled else round(CS.clu_Vanz*1.1)
         self.res_speed_timer = 300
@@ -471,8 +469,8 @@ class CarController:
           self.resume_cnt = 0
           self.auto_res_timer = randint(30, 36)
       elif self.opkr_cruise_auto_res_option == 1:
-        can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.SET_DECEL)) if not self.longcontrol \
-         else can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.SET_DECEL, clu11_speed, self.CP.sccBus)) # auto res but set_decel to set current speed
+        can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL)) if not self.longcontrol \
+         else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL, clu11_speed, CS.CP.sccBus)) # auto res but set_decel to set current speed
         self.auto_res_starting = True
         self.v_cruise_kph_auto_res = round(CS.clu_Vanz)
         self.res_speed_timer = 50
@@ -482,11 +480,11 @@ class CarController:
           self.auto_res_timer = randint(30, 36)
       elif self.opkr_cruise_auto_res_option == 2:
         if not self.longcontrol:
-          can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL)) if 1 < CS.lead_distance < 149 \
-           else can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.SET_DECEL))
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)) if 1 < CS.lead_distance < 149 \
+           else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL))
         else:
-          can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, self.CP.sccBus)) if 1 < CS.lead_distance < 149 \
-           else can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.SET_DECEL, clu11_speed, self.CP.sccBus))
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, CS.CP.sccBus)) if 1 < CS.lead_distance < 149 \
+           else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL, clu11_speed, CS.CP.sccBus))
         self.auto_res_starting = True
         self.v_cruise_kph_auto_res = round(CS.clu_Vanz)
         self.res_speed_timer = 50
@@ -503,7 +501,7 @@ class CarController:
     if self.standstill_status == 1 and CS.out.vEgo > 1:
       self.standstill_status = 0
       self.standstill_fault_reduce_timer = 0
-      self.last_resume_frame = self.frame
+      self.last_resume_frame = frame
       self.res_switch_timer = 0
       self.resume_cnt = 0
 
@@ -524,15 +522,15 @@ class CarController:
       self.acc_standstill = False
       self.acc_standstill_timer = 0
 
-    if self.CP.mdpsBus: # send mdps12 to LKAS to prevent LKAS error
-      can_sends.append(create_mdps12(self.packer, self.frame, CS.mdps12))
+    if CS.CP.mdpsBus: # send mdps12 to LKAS to prevent LKAS error
+      can_sends.append(create_mdps12(self.packer, frame, CS.mdps12))
 
     # # tester present - w/ no response (keeps radar disabled)
-    # if self.CP.openpilotLongitudinalControl:
-    #   if (self.frame % 100) == 0:
+    # if CS.CP.openpilotLongitudinalControl:
+    #   if (frame % 100) == 0:
     #     can_sends.append([0x7D0, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", 0])
 
-    # if self.frame % 2 == 0 and self.CP.openpilotLongitudinalControl:
+    # if frame % 2 == 0 and CS.CP.openpilotLongitudinalControl:
     #   lead_visible = False
     #   accel = actuators.accel if enabled else 0
     #   jerk = clip(2.0 * (accel - CS.out.aEgo), -12.7, 12.7)
@@ -541,9 +539,7 @@ class CarController:
     #   accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
     #   stopping = (actuators.longControlState == LongCtrlState.stopping)
     #   set_speed_in_units = hud_speed * (CV.MS_TO_MPH if CS.clu11["CF_Clu_SPEED_UNIT"] == 1 else CV.MS_TO_KPH)
-    #   can_sends.extend(create_acc_commands(self.packer, enabled, accel, jerk, int(self.frame / 2), lead_visible, set_speed_in_units, stopping))
-    set_speed = round(hud_control.setSpeed * CV.MS_TO_KPH)
-    lead_visible = hud_control.leadVisible
+    #   can_sends.extend(create_acc_commands(self.packer, enabled, accel, jerk, int(frame / 2), lead_visible, set_speed_in_units, stopping))
 
     if self.radar_disabled_conf: #xps-genesis's way
       if self.prev_cruiseButton != CS.cruise_buttons:  # gap change for RadarDisable
@@ -563,17 +559,17 @@ class CarController:
       if self.radarDisableOverlapTimer >= 30:
         self.radarDisableActivated = True
         if 200 > self.radarDisableOverlapTimer > 36:
-          if self.frame % 41 == 0 or self.radarDisableOverlapTimer == 37:
+          if frame % 41 == 0 or self.radarDisableOverlapTimer == 37:
             can_sends.append(create_scc7d0(b'\x02\x10\x03\x00\x00\x00\x00\x00'))
-          elif self.frame % 43 == 0 or self.radarDisableOverlapTimer == 37:
+          elif frame % 43 == 0 or self.radarDisableOverlapTimer == 37:
             can_sends.append(create_scc7d0(b'\x03\x28\x03\x01\x00\x00\x00\x00'))
-          elif self.frame % 19 == 0 or self.radarDisableOverlapTimer == 37:
+          elif frame % 19 == 0 or self.radarDisableOverlapTimer == 37:
             can_sends.append(create_scc7d0(b'\x02\x10\x85\x00\x00\x00\x00\x00')) # off
       else:
         self.counter_init = False
         can_sends.append(create_scc7d0(b'\x02\x10\x90\x00\x00\x00\x00\x00')) # on
         can_sends.append(create_scc7d0(b'\x03\x29\x03\x01\x00\x00\x00\x00'))
-      if (self.frame % 50 == 0 or self.radarDisableOverlapTimer == 37) and self.radarDisableOverlapTimer >= 30:
+      if (frame % 50 == 0 or self.radarDisableOverlapTimer == 37) and self.radarDisableOverlapTimer >= 30:
         can_sends.append(create_scc7d0(b'\x02\x3E\x00\x00\x00\x00\x00\x00'))
       if self.radarDisableOverlapTimer > 200:
         self.radarDisableOverlapTimer = 200
@@ -582,8 +578,8 @@ class CarController:
       else:
         self.objdiststat = 0
 
-    if (self.CP.sccBus != 0 or self.radarDisableActivated) and self.counter_init and self.longcontrol:
-      if self.frame % 2 == 0:
+    if (CS.CP.sccBus != 0 or self.radarDisableActivated) and self.counter_init and self.longcontrol:
+      if frame % 2 == 0:
         if self.radar_disabled_conf:
           self.fca11supcnt += 1
           self.fca11supcnt %= 0xF
@@ -598,7 +594,7 @@ class CarController:
           else:
             self.fca11inc += 4
           self.fca11alivecnt = self.fca11maxcnt - self.fca11inc
-          if self.CP.fcaBus == -1:
+          if CS.CP.fcaBus == -1:
             can_sends.append(create_fca11(self.packer, CS.fca11, self.fca11alivecnt, self.fca11supcnt))
 
         self.scc12cnt += 1
@@ -607,8 +603,8 @@ class CarController:
         self.scc11cnt %= 0x10
         lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
-        faccel = actuators.accel if CC.longActive else 0
-        accel = actuators.oaccel if CC.longActive and not CS.out.gasPressed else 0
+        faccel = actuators.accel if c.active else 0
+        accel = actuators.oaccel if c.active and not CS.out.gasPressed else 0
         stopping = (actuators.longControlState == LongCtrlState.stopping)
         radar_recog = (0 < CS.lead_distance <= 149)
         if 0 < CS.lead_distance <= 149 and self.radar_helper_option == 1:
@@ -704,25 +700,25 @@ class CarController:
         accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
         self.aq_value = accel
         self.aq_value_raw = aReqValue
-        can_sends.append(create_scc11(self.packer, self.frame, set_speed, lead_visible, self.scc_live, self.dRel, self.vRel, self.yRel, 
+        can_sends.append(create_scc11(self.packer, frame, set_speed, lead_visible, self.scc_live, self.dRel, self.vRel, self.yRel, 
          self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.acc_standstill, self.gapsettingdance, self.stopped, radar_recog, CS.scc11))
         if (CS.brake_check or CS.cancel_check) and self.car_fingerprint != CAR.NIRO_EV:
-          can_sends.append(create_scc12(self.packer, accel, CC.enabled, self.scc_live, CS.out.gasPressed, 1, 
+          can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, 1, 
            CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
         else:
-          can_sends.append(create_scc12(self.packer, accel, CC.enabled, self.scc_live, CS.out.gasPressed, CS.out.brakePressed, 
+          can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, CS.out.brakePressed, 
            CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
-        can_sends.append(create_scc14(self.packer, CC.enabled, CS.scc14, CS.out.stockAeb, lead_visible, self.dRel, 
+        can_sends.append(create_scc14(self.packer, enabled, CS.scc14, CS.out.stockAeb, lead_visible, self.dRel, 
          CS.out.vEgo, self.acc_standstill, self.car_fingerprint))
         self.accel = accel
-      if self.frame % 20 == 0:
+      if frame % 20 == 0:
         if self.radar_disabled_conf:
-          if self.CP.fcaBus == -1:
+          if CS.CP.fcaBus == -1:
             can_sends.append(create_fca12(self.packer))
         can_sends.append(create_scc13(self.packer, CS.scc13))
-      if self.frame % 50 == 0:
+      if frame % 50 == 0:
         can_sends.append(create_scc42a(self.packer))
-    elif (self.CP.sccBus != 0 or self.radarDisableActivated) and self.longcontrol:
+    elif (CS.CP.sccBus != 0 or self.radarDisableActivated) and self.longcontrol:
       if self.radar_disabled_conf:
         self.fca11alivecnt = CS.fca11init["CR_FCA_Alive"]
         self.fca11supcnt = CS.fca11init["Supplemental_Counter"]
@@ -730,14 +726,15 @@ class CarController:
       self.scc12cnt = CS.scc12init["CR_VSM_Alive"]
       self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
+    setSpeed = round(set_speed * CV.MS_TO_KPH)
     str_log1 = 'MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  FR={:03.0f}'.format(
-      CS.out.cruiseState.modeSel, self.CP.mdpsBus, self.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), self.params.STEER_MAX, self.params.STEER_DELTA_UP, self.params.STEER_DELTA_DOWN, self.timer1.sampleTime())
+      CS.out.cruiseState.modeSel, CS.CP.mdpsBus, CS.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), self.p.STEER_MAX, self.p.STEER_DELTA_UP, self.p.STEER_DELTA_DOWN, self.timer1.sampleTime())
     if CS.out.cruiseState.accActive:
       str_log2 = 'AQ={:+04.2f}  VF={:03.0f}  TS={:03.0f}  SS/VS={:03.0f}/{:03.0f}  RD/LD={:04.1f}/{:03.1f}  CG={:1.0f}  FR={:03.0f}'.format(
-       self.aq_value if self.longcontrol else CS.scc12["aReqValue"], hud_control.vFuture, self.NC.ctrl_speed, set_speed, round(CS.VSetDis), CS.lead_distance, self.last_lead_distance, CS.cruiseGapSet, self.timer1.sampleTime())
+       self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, self.NC.ctrl_speed , setSpeed, round(CS.VSetDis), CS.lead_distance, self.last_lead_distance, CS.cruiseGapSet, self.timer1.sampleTime())
     else:
       str_log2 = 'MDPS={}  LKAS={}  LEAD={}  AQ={:+04.2f}  VF={:03.0f}  CG={:1.0f}  FR={:03.0f}'.format(
-       CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], hud_control.vFuture, CS.cruiseGapSet, self.timer1.sampleTime())
+       CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, CS.cruiseGapSet, self.timer1.sampleTime())
     trace1.printf2( '{}'.format( str_log2 ) )
 
     # str_log3 = 'ST1/ST2={}/{} CI/D={}/{:.1f} TM/D/V={:03.0f}/{:03.0f}/{:03.0f}'.format(int(self.sm['radarState'].leadOne.status), int(self.sm['radarState'].leadTwo.status), \
@@ -747,34 +744,34 @@ class CarController:
     self.cc_timer += 1
     if self.cc_timer > 100:
       self.cc_timer = 0
-      self.radar_helper_option = int(self.c_params.get("RadarLongHelper", encoding="utf8"))
-      self.stopping_dist_adj_enabled = self.c_params.get_bool("StoppingDistAdj")
-      self.standstill_res_count = int(self.c_params.get("RESCountatStandstill", encoding="utf8"))
-      self.opkr_cruisegap_auto_adj = self.c_params.get_bool("CruiseGapAdjust")
-      if self.c_params.get_bool("OpkrLiveTunePanelEnable"):
-        if self.CP.lateralTuning.which() == 'pid':
-          self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.1f}/{:0.5f}'.format(float(Decimal(self.c_params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
-           float(Decimal(self.c_params.get("PidKi", encoding="utf8"))*Decimal('0.001')), float(Decimal(self.c_params.get("PidKd", encoding="utf8"))*Decimal('0.01')), \
-           float(Decimal(self.c_params.get("PidKf", encoding="utf8"))*Decimal('0.00001')))
-        elif self.CP.lateralTuning.which() == 'indi':
-          self.str_log2 = 'T={:03.1f}/{:03.1f}/{:03.1f}/{:03.1f}'.format(float(Decimal(self.c_params.get("InnerLoopGain", encoding="utf8"))*Decimal('0.1')), \
-           float(Decimal(self.c_params.get("OuterLoopGain", encoding="utf8"))*Decimal('0.1')), float(Decimal(self.c_params.get("TimeConstant", encoding="utf8"))*Decimal('0.1')), \
-           float(Decimal(self.c_params.get("ActuatorEffectiveness", encoding="utf8"))*Decimal('0.1')))
-        elif self.CP.lateralTuning.which() == 'lqr':
-          self.str_log2 = 'T={:04.0f}/{:05.3f}/{:07.5f}'.format(float(Decimal(self.c_params.get("Scale", encoding="utf8"))*Decimal('1.0')), \
-           float(Decimal(self.c_params.get("LqrKi", encoding="utf8"))*Decimal('0.001')), float(Decimal(self.c_params.get("DcGain", encoding="utf8"))*Decimal('0.00001')))
+      self.radar_helper_option = int(self.params.get("RadarLongHelper", encoding="utf8"))
+      self.stopping_dist_adj_enabled = self.params.get_bool("StoppingDistAdj")
+      self.standstill_res_count = int(self.params.get("RESCountatStandstill", encoding="utf8"))
+      self.opkr_cruisegap_auto_adj = self.params.get_bool("CruiseGapAdjust")
+      if self.params.get_bool("OpkrLiveTunePanelEnable"):
+        if CS.CP.lateralTuning.which() == 'pid':
+          self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.1f}/{:0.5f}'.format(float(Decimal(self.params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
+           float(Decimal(self.params.get("PidKi", encoding="utf8"))*Decimal('0.001')), float(Decimal(self.params.get("PidKd", encoding="utf8"))*Decimal('0.01')), \
+           float(Decimal(self.params.get("PidKf", encoding="utf8"))*Decimal('0.00001')))
+        elif CS.CP.lateralTuning.which() == 'indi':
+          self.str_log2 = 'T={:03.1f}/{:03.1f}/{:03.1f}/{:03.1f}'.format(float(Decimal(self.params.get("InnerLoopGain", encoding="utf8"))*Decimal('0.1')), \
+           float(Decimal(self.params.get("OuterLoopGain", encoding="utf8"))*Decimal('0.1')), float(Decimal(self.params.get("TimeConstant", encoding="utf8"))*Decimal('0.1')), \
+           float(Decimal(self.params.get("ActuatorEffectiveness", encoding="utf8"))*Decimal('0.1')))
+        elif CS.CP.lateralTuning.which() == 'lqr':
+          self.str_log2 = 'T={:04.0f}/{:05.3f}/{:07.5f}'.format(float(Decimal(self.params.get("Scale", encoding="utf8"))*Decimal('1.0')), \
+           float(Decimal(self.params.get("LqrKi", encoding="utf8"))*Decimal('0.001')), float(Decimal(self.params.get("DcGain", encoding="utf8"))*Decimal('0.00001')))
 
     trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
 
     # 20 Hz LFA MFA message
-    if self.frame % 5 == 0 and self.car_fingerprint in FEATURES["send_lfahda_mfa"]:
+    if frame % 5 == 0 and self.car_fingerprint in FEATURES["send_lfahda_mfa"]:
       can_sends.append(create_lfahda_mfc(self.packer, lkas_active))
 
-    elif self.frame % 5 == 0 and self.car_fingerprint in FEATURES["send_hda_mfa"]:
-      can_sends.append(create_hda_mfc(self.packer, CS, CC.enabled, hud_control.leftLaneVisible, hud_control.rightLaneVisible))
+    elif frame % 5 == 0 and self.car_fingerprint in FEATURES["send_hda_mfa"]:
+      can_sends.append(create_hda_mfc(self.packer, CS, enabled, left_lane, right_lane))
 
     new_actuators = actuators.copy()
-    new_actuators.steer = apply_steer / self.params.STEER_MAX
+    new_actuators.steer = apply_steer / self.p.STEER_MAX
     new_actuators.accel = self.accel
     safetycam_speed = self.NC.safetycam_speed
 
