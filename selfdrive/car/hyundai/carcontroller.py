@@ -266,6 +266,9 @@ class CarController:
     if lkas_active or CS.out.steeringPressed:
       self.steer_wind_down = 0
 
+    if self.frame % 95 == 0 and abs(CS.out.steeringAngleDeg) >= 90: # test from Greg's comment
+      lkas_active = 0
+
     self.apply_steer_last = apply_steer
 
     if CS.cruise_active and CS.lead_distance > 149 and self.dRel < ((CS.out.vEgo * CV.MS_TO_KPH)+5) < 100 and \
