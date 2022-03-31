@@ -145,8 +145,7 @@ static void ui_draw_vision_lane_lines(UIState *s) {
   const UIScene &scene = s->scene;
   NVGpaint track_bg;
   int steerOverride = scene.car_state.getSteeringPressed();
-  float steer_max_v = scene.steerMax_V - (1.5 * (scene.steerMax_V - 0.9));
-  int torque_scale = (int)fabs(255*(float)scene.output_scale*steer_max_v);
+  int torque_scale = (int)fabs(255*(float)scene.output_scale*0.9);
   int red_lvl = fmin(255, torque_scale);
   int green_lvl = fmin(255, 255-torque_scale);
 
@@ -1618,7 +1617,7 @@ static void ui_draw_live_tune_panel(UIState *s) {
 
 static void ui_draw_auto_hold(UIState *s) {
   int y_pos = 0;
-  if (s->scene.steer_warning && (s->scene.car_state.getVEgo() < 0.1 || s->scene.stand_still) && !s->scene.steer_wind_down && s->scene.car_state.getSteeringAngleDeg() < 90) {
+  if (s->scene.steer_warning && (s->scene.car_state.getVEgo() < 0.1 || s->scene.stand_still) && s->scene.car_state.getSteeringAngleDeg() < 90) {
     y_pos = 500;
   } else {
     y_pos = 740;

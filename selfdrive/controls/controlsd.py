@@ -9,7 +9,7 @@ from common.realtime import sec_since_boot, config_realtime_process, Priority, R
 from common.profiler import Profiler
 from common.params import Params, put_nonblocking
 import cereal.messaging as messaging
-from selfdrive.config import Conversions as CV
+from common.conversions import Conversions as CV
 from selfdrive.swaglog import cloudlog
 from selfdrive.boardd.boardd import can_list_to_can_capnp
 from selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
@@ -100,6 +100,7 @@ class Controls:
     get_one_can(self.can_sock)
 
     self.CI, self.CP, candidate = get_car(self.can_sock, self.pm.sock['sendcan'])
+    self.CP.alternativeExperience = 0  # see panda/board/safety_declarations.h for allowed values
 
     # read params
     self.is_metric = params.get_bool("IsMetric")
@@ -580,7 +581,7 @@ class Controls:
           self.v_cruise_kph_last = 0
 
     # Check if actuators are enabled
-    self.active = self.state == State.enabled or self.state == State.softDisabling
+    self.active = self.state in (State.enabled, State.softDisabling)
     if self.active:
       self.current_alert_types.append(ET.WARNING)
 
@@ -588,14 +589,14 @@ class Controls:
     self.enabled = self.active or self.state == State.preEnabled
 
   def state_control(self, CS):
-    """Given the state, this function returns an actuators packet"""
+    """Given the state, this function returns a CarControl packet"""
     lat_plan = self.sm['lateralPlan']
     long_plan = self.sm['longitudinalPlan']
 
     # opkr
     output_scale = lat_plan.outputScale
     if not self.live_sr:
-      if abs(output_scale) >= self.CP.steerMaxV[0] and CS.vEgo > 8 and not CS.steeringPressed:
+      if abs(output_scale) >= 1.0 and CS.vEgo > 8 and not CS.steeringPressed:
         self.mpc_frame_sr += 1
         if self.mpc_frame_sr > 20:
           self.new_steerRatio_prev = interp(abs(CS.steeringAngleDeg), self.steer_angle_range, self.steerRatio_range)
@@ -709,10 +710,14 @@ class Controls:
     CC.active = self.active
     CC.actuators = actuators
 
-    orientation_value = self.sm['liveLocationKalman'].orientationNED.value
+    # Orientation and angle rates can be useful for carcontroller
+    # Only calibrated (car) frame is relevant for the carcontroller
+    orientation_value = list(self.sm['liveLocationKalman'].calibratedOrientationNED.value)
     if len(orientation_value) > 2:
-      CC.roll = orientation_value[0]
-      CC.pitch = orientation_value[1]
+      CC.orientationNED = orientation_value
+    angular_rate_value = list(self.sm['liveLocationKalman'].angularVelocityCalibrated.value)
+    if len(angular_rate_value) > 2:
+      CC.angularVelocity = angular_rate_value
 
     CC.cruiseControl.cancel = self.CP.pcmCruise and not self.enabled and CS.cruiseState.enabled
 
@@ -781,11 +786,11 @@ class Controls:
       elif not self.enabled and not self.hkg_stock_lkas:
         self.hkg_stock_lkas_timer += 1
         if self.hkg_stock_lkas_timer > 300:
-          self.hkg_stock_lkas_timer = 0
           self.hkg_stock_lkas = True
+          self.hkg_stock_lkas_timer = 0
         elif CS.gearShifter != GearShifter.drive and self.hkg_stock_lkas_timer > 150:
-          self.hkg_stock_lkas_timer = 0
           self.hkg_stock_lkas = True
+          self.hkg_stock_lkas_timer = 0
       if not self.hkg_stock_lkas:
         # send car controls over can
         self.last_actuators, can_sends, self.safety_speed = self.CI.apply(CC)

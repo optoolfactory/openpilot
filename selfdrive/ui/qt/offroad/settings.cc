@@ -608,6 +608,8 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RoutineDriveOnToggle());
   layout->addWidget(new CloseToRoadEdgeToggle());
   layout->addWidget(new OPKREdgeOffset());
+  layout->addWidget(new ToAvoidLKASFaultToggle());
+  layout->addWidget(new ToAvoidLKASFault());
 }
 
 DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
@@ -632,7 +634,6 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SteerWarningFixToggle());
   layout->addWidget(new IgnoreCanErroronISGToggle());
   layout->addWidget(new FCA11MessageToggle());
-  layout->addWidget(new SteerWindDownToggle());
   layout->addWidget(new MadModeEnabledToggle());
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new C2WithCommaPowerToggle());
@@ -685,7 +686,6 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new TireStiffnessFactor());
   layout->addWidget(new SteerMaxBase());
   layout->addWidget(new SteerMaxMax());
-  layout->addWidget(new SteerMaxv());
   layout->addWidget(new VariableSteerMaxToggle());
   layout->addWidget(new SteerDeltaUpBase());
   layout->addWidget(new SteerDeltaUpMax());
