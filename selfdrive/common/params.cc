@@ -262,7 +262,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CruiseAutoRes", PERSISTENT},
     {"AutoResOption", PERSISTENT},
     {"AutoResCondition", PERSISTENT},
-    {"SteerWindDown", PERSISTENT},
     {"OpkrMonitoringMode", PERSISTENT},
     {"OpkrMonitorEyesThreshold", PERSISTENT},
     {"OpkrMonitorNormalEyesThreshold", PERSISTENT},
@@ -344,6 +343,9 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CloseToRoadEdge", PERSISTENT},
     {"LeftEdgeOffset", PERSISTENT},
     {"RightEdgeOffset", PERSISTENT},
+    {"AvoidLKASFaultEnabled", PERSISTENT},
+    {"AvoidLKASFaultMaxAngle", PERSISTENT},
+    {"AvoidLKASFaultMaxFrame", PERSISTENT},
 };
 
 } // namespace

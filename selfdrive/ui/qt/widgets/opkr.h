@@ -166,18 +166,6 @@ public:
   }
 };
 
-class SteerWindDownToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  SteerWindDownToggle() : ToggleControl("Steer Wind Down", "Slowly lower the torq when Steer Warning is performed. In some vehicles, steering angle limit lamps may appear, so turn off the function to use the maximum steering angle regardless of error.", "../assets/offroad/icon_shell.png", Params().getBool("SteerWindDown")) {
-    QObject::connect(this, &SteerWindDownToggle::toggleFlipped, [=](int state) {
-      bool status = state ? true : false;
-      Params().putBool("SteerWindDown", status);
-    });
-  }
-};
-
 class LiveSteerRatioToggle : public ToggleControl {
   Q_OBJECT
 
@@ -662,6 +650,18 @@ public:
     QObject::connect(this, &CloseToRoadEdgeToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("CloseToRoadEdge", status);
+    });
+  }
+};
+
+class ToAvoidLKASFaultToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  ToAvoidLKASFaultToggle() : ToggleControl("To Avoid LKAS Fault", "to avoid LKAS fault above max angle limit(car specific). This is live value. Find out your maxframe while driving.", "../assets/offroad/icon_shell.png", Params().getBool("AvoidLKASFaultEnabled")) {
+    QObject::connect(this, &ToAvoidLKASFaultToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("AvoidLKASFaultEnabled", status);
     });
   }
 };
@@ -2073,6 +2073,27 @@ class OPKREdgeOffset : public AbstractControl {
 
 public:
   OPKREdgeOffset();
+
+private:
+  QPushButton btnplusl;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QPushButton btnminusr;
+  QLabel labell1;
+  QLabel labelr1;
+  QLabel labell;
+  QLabel labelr;
+  Params params;
+  
+  void refreshl();
+  void refreshr();
+};
+
+class ToAvoidLKASFault : public AbstractControl {
+  Q_OBJECT
+
+public:
+  ToAvoidLKASFault();
 
 private:
   QPushButton btnplusl;

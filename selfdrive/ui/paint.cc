@@ -1617,7 +1617,7 @@ static void ui_draw_live_tune_panel(UIState *s) {
 
 static void ui_draw_auto_hold(UIState *s) {
   int y_pos = 0;
-  if (s->scene.steer_warning && (s->scene.car_state.getVEgo() < 0.1 || s->scene.stand_still) && !s->scene.steer_wind_down && s->scene.car_state.getSteeringAngleDeg() < 90) {
+  if (s->scene.steer_warning && (s->scene.car_state.getVEgo() < 0.1 || s->scene.stand_still) && s->scene.car_state.getSteeringAngleDeg() < 90) {
     y_pos = 500;
   } else {
     y_pos = 740;

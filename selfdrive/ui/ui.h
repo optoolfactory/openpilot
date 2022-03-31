@@ -226,7 +226,6 @@ typedef struct UIScene {
   bool auto_gitpull = false;
   bool is_speed_over_limit = false;
   bool controlAllowed;
-  bool steer_wind_down;
   bool steer_warning;
   bool stand_still;
   bool show_error;

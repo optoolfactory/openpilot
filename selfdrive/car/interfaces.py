@@ -47,7 +47,6 @@ class CarInterfaceBase(ABC):
     if CarController is not None:
       self.CC = CarController(self.cp.dbc_name, CP, self.VM)
 
-    self.steer_wind_down_enabled = Params().get_bool("SteerWindDown")
     self.steer_warning_fix_enabled = Params().get_bool("SteerWarningFix")
 
   @staticmethod
@@ -151,7 +150,7 @@ class CarInterfaceBase(ABC):
     self.steering_unpressed = 0 if cs_out.steeringPressed else self.steering_unpressed + 1
     if cs_out.steerFaultTemporary and not self.steer_warning_fix_enabled:
       # if the user overrode recently, show a less harsh alert
-      if (cs_out.vEgo < 0.1 or cs_out.standstill) and not self.steer_wind_down_enabled and cs_out.steeringAngleDeg < 90:
+      if (cs_out.vEgo < 0.1 or cs_out.standstill) and cs_out.steeringAngleDeg < 90:
         events.add(EventName.isgActive)
       elif self.silent_steer_warning or cs_out.standstill or self.steering_unpressed < int(1.5 / DT_CTRL) and cs_out.vEgo > 1:
         self.silent_steer_warning = True

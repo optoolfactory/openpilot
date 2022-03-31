@@ -70,7 +70,6 @@ AutoEnable:1
 CruiseAutoRes:0
 AutoResOption:0
 AutoResCondition:0
-SteerWindDown:0
 OpkrMonitoringMode:0
 OpkrMonitorEyesThreshold:45
 OpkrMonitorNormalEyesThreshold:45
@@ -122,3 +121,6 @@ SpdLaneWidthSet:2.8,3.5
 CloseToRoadEdge:0
 LeftEdgeOffset:0
 RightEdgeOffset:0
+AvoidLKASFaultEnabled:0
+AvoidLKASFaultMaxAngle:90
+AvoidLKASFaultMaxFrame:90
