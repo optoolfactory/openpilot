@@ -1496,7 +1496,7 @@ void draw_top_text(UIState *s) {
     text_out = road_name;
   }
   float tw = nvgTextBounds(s->vg, 0, 0, text_out.c_str(), nullptr, nullptr);
-  rect_w = tw;
+  rect_w = tw*2;
   rect_x = s->fb_w/2 - rect_w/2;
   nvgBeginPath(s->vg);
   nvgRoundedRect(s->vg, rect_x, rect_y, rect_w, rect_h, 15);
