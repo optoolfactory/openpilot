@@ -733,6 +733,10 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     nvgFill(s->vg);
 
     //print value
+    int dx = 0;
+    if (strlen(bb_uom) > 0) {
+      dx = (int)(bb_uomFontSize*2.5/2);
+    }
     nvgFontFace(s->vg, "sans-semibold");
     nvgFontSize(s->vg, bb_valueFontSize*0.5);
     nvgFillColor(s->vg, bb_valueColor);
