@@ -194,7 +194,7 @@ class VariableSteerDeltaToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  VariableSteerDeltaToggle() : ToggleControl("DeltaUP&DN/Variable Delta Toggle", "Use variable SteerDelta by curvature. If this is off, runs only with base value below. DUBase: Steer DeltaUp Default value. DUMax: Steer DeltaUp Maximum value. DDBase: Steer DeltaDown Default value. DDMax: Steer DeltaDown Maximum value.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrVariableSteerDelta")) {
+  VariableSteerDeltaToggle() : ToggleControl("DeltaUpDown/Variable Delta Toggle", "Use variable SteerDelta by curvature. If this is off, runs only with base value below. DUBase: Steer DeltaUp Default value. DUMax: Steer DeltaUp Maximum value. DDBase: Steer DeltaDown Default value. DDMax: Steer DeltaDown Maximum value.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrVariableSteerDelta")) {
     QObject::connect(this, &VariableSteerDeltaToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("OpkrVariableSteerDelta", status);
