@@ -164,6 +164,7 @@ class CarController():
     self.to_avoid_lkas_fault_enabled = self.params.get_bool("AvoidLKASFaultEnabled")
     self.to_avoid_lkas_fault_max_angle = int(self.params.get("AvoidLKASFaultMaxAngle", encoding="utf8"))
     self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
+    self.enable_steer_more = self.params.get_bool("AvoidLKASFaultBeyond")
 
     self.radar_disabled_conf = self.params.get_bool("RadarDisable")
     self.prev_cruiseButton = 0
@@ -201,7 +202,12 @@ class CarController():
     self.vRel = self.sm['radarState'].leadOne.vRel #EON Lead
     self.yRel = self.sm['radarState'].leadOne.yRel #EON Lead
 
-    if CS.out.vEgo > 8:
+    if self.enable_steer_more and self.to_avoid_lkas_fault_enabled and abs(CS.out.steeringAngleDeg) > 60 and \
+     CS.out.vEgo <= 8.3 and not (0 <= self.driver_steering_torque_above_timer < 100):
+      self.steerMax = self.p.STEER_MAX
+      self.steerDeltaUp = self.p.STEER_DELTA_UP
+      self.steerDeltaDown = self.p.STEER_DELTA_DOWN
+    elif CS.out.vEgo > 8.3:
       if self.variable_steer_max:
         self.steerMax = interp(int(abs(self.model_speed)), self.model_speed_range, self.steerMax_range)
       else:

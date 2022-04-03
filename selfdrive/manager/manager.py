@@ -196,6 +196,7 @@ def manager_init() -> None:
     ("AvoidLKASFaultEnabled", "0"),
     ("AvoidLKASFaultMaxAngle", "85"),
     ("AvoidLKASFaultMaxFrame", "90"),
+    ("AvoidLKASFaultBeyond", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

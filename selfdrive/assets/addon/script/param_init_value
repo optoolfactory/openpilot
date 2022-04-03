@@ -122,5 +122,6 @@ CloseToRoadEdge:0
 LeftEdgeOffset:0
 RightEdgeOffset:0
 AvoidLKASFaultEnabled:0
-AvoidLKASFaultMaxAngle:90
+AvoidLKASFaultMaxAngle:85
 AvoidLKASFaultMaxFrame:90
+AvoidLKASFaultBeyond:0
