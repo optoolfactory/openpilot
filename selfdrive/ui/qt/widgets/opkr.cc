@@ -3198,7 +3198,7 @@ void SteerMax::refreshr() {
 SteerDeltaUp::SteerDeltaUp() : AbstractControl("", "", "") {
 
   labell1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  labell1.setText("DeltaUpBase: ");
+  labell1.setText("DtUpBase: ");
   hlayout->addWidget(&labell1);
   labell.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labell.setStyleSheet("color: #e0e879");
@@ -3225,7 +3225,7 @@ SteerDeltaUp::SteerDeltaUp() : AbstractControl("", "", "") {
   hlayout->addWidget(&btnplusl);
 
   labelr1.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  labelr1.setText("DeltaUpMax: ");
+  labelr1.setText("DtUpMax: ");
   hlayout->addWidget(&labelr1);
   labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labelr.setStyleSheet("color: #e0e879");
@@ -3328,7 +3328,7 @@ void SteerDeltaUp::refreshr() {
 SteerDeltaDown::SteerDeltaDown() : AbstractControl("", "", "") {
 
   labell1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  labell1.setText("DeltaDnBase: ");
+  labell1.setText("DtDnBase: ");
   hlayout->addWidget(&labell1);
   labell.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labell.setStyleSheet("color: #e0e879");
@@ -3355,7 +3355,7 @@ SteerDeltaDown::SteerDeltaDown() : AbstractControl("", "", "") {
   hlayout->addWidget(&btnplusl);
 
   labelr1.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  labelr1.setText("DeltaDnMax: ");
+  labelr1.setText("DtDnMax: ");
   hlayout->addWidget(&labelr1);
   labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labelr.setStyleSheet("color: #e0e879");
