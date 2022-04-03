@@ -2313,7 +2313,7 @@ void MaxSteer::refresh() {
   btnplus.setText("＋");
 }
 
-MaxRTDelta::MaxRTDelta() : AbstractControl("RT_DELTA", "Modify the panda RT_DELTA value. Press the Run button below to apply.", "../assets/offroad/icon_shell.png") {
+MaxRTDelta::MaxRTDelta() : AbstractControl("RT_DELTA", "Modify the panda RT_DELTA value. Press the Run button below to apply. It might be 7(DeltaDown)X16=112?", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
