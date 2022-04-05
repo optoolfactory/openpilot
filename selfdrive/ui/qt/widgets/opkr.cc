@@ -3070,7 +3070,7 @@ void TireStiffnessFactor::refresh() {
   label.setText(QString::fromStdString(valuefs.toStdString()));
 }
 
-SteerMaxBase::SteerMaxBase() : AbstractControl("SteerMax기본값", "SteerMax기본값을 조정합니다.", "../assets/offroad/icon_shell.png") {
+SteerMax::SteerMax() : AbstractControl("", "", "") {
 
   labell1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labell1.setText("SMBase: ");
