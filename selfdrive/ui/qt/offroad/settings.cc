@@ -726,6 +726,7 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RadarLongHelperOption());
   layout->addWidget(new StoppingDistAdjToggle());
   layout->addWidget(new E2ELongToggle());
+  layout->addWidget(new StockDecelonCamToggle());
   //layout->addWidget(new RadarDisableToggle());
   //layout->addWidget(new UseRadarTrackToggle());
 }
