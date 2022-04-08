@@ -930,7 +930,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
       val_color = nvgRGBA(255, 0, 0, 200);
     }
     if (scene.animated_rpm) {
-      snprintf(uom_str, sizeof(uom_str), "%d", (scene.engine_rpm));
+      snprintf(uom_str, sizeof(uom_str), "%.0f", (scene.engine_rpm));
     } else {
       snprintf(uom_str, sizeof(uom_str), "rpm");
     }
