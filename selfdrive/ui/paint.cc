@@ -738,10 +738,11 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
     if (strlen(bb_uom) > 0) {
       dx = (int)(bb_uomFontSize*2.5/2);
     }
-    nvgFontFace(s->vg, "sans-semibold");
-    nvgFontSize(s->vg, bb_valueFontSize*0.8);
-    nvgFillColor(s->vg, bb_valueColor);
-    nvgText(s->vg, bb_x-dx/2-20, bb_y+ (int)(bb_valueFontSize*2.5)+5-20, bb_value, NULL);
+    //print value
+    // nvgFontFace(s->vg, "sans-semibold");
+    // nvgFontSize(s->vg, bb_valueFontSize*0.8);
+    // nvgFillColor(s->vg, bb_valueColor);
+    // nvgText(s->vg, bb_x-dx/2-20, bb_y+ (int)(bb_valueFontSize*2.5)+5-20, bb_value, NULL);
     //print label
     nvgFontFace(s->vg, "sans-regular");
     nvgFontSize(s->vg, bb_labelFontSize*2.5);
@@ -928,11 +929,15 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     if(scene.engine_rpm > 3500) {
       val_color = nvgRGBA(255, 0, 0, 200);
     }
-    snprintf(uom_str, sizeof(uom_str), "rpm");
+    if (scene.animated_rpm) {
+      snprintf(uom_str, sizeof(uom_str), "%d", (scene.engine_rpm));
+    } else {
+      snprintf(uom_str, sizeof(uom_str), "rpm");
+    }
     bb_ry +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, "ENG RPM",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
-        value_fontSize, label_fontSize, uom_fontSize, true);
+        value_fontSize, label_fontSize, uom_fontSize, scene.animated_rpm);
   }
 
   //finally draw the frame
