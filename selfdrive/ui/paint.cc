@@ -739,9 +739,9 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
       dx = (int)(bb_uomFontSize*2.5/2);
     }
     nvgFontFace(s->vg, "sans-semibold");
-    nvgFontSize(s->vg, bb_valueFontSize*0.6);
+    nvgFontSize(s->vg, bb_valueFontSize*0.8);
     nvgFillColor(s->vg, bb_valueColor);
-    nvgText(s->vg, bb_x-dx/2-15, bb_y+ (int)(bb_valueFontSize*2.5)+5-20, bb_value, NULL);
+    nvgText(s->vg, bb_x-dx/2-20, bb_y+ (int)(bb_valueFontSize*2.5)+5-20, bb_value, NULL);
     //print label
     nvgFontFace(s->vg, "sans-regular");
     nvgFontSize(s->vg, bb_labelFontSize*2.5);
