@@ -638,7 +638,7 @@ CHECKSUM = {
 
 FEATURES = {
   # Use Cluster for Gear Selection, rather than Transmission
-  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.GRANDEUR_IG_FL, CAR.KONA_N},
+  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.KONA_N},
   # Use TCU Message for Gear Selection
   "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER},
   # Use E_GEAR Message for Gear Selection
@@ -652,7 +652,7 @@ FEATURES = {
   "send_hda_mfa": {CAR.GRANDEUR_IG_HEV},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
   # Insert your car in this if you see front collision error on your cluster.
-  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE},
+  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE},
 }
 
 HYBRID_CAR = {CAR.K5_HEV, CAR.IONIQ_HEV, CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.K7_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NIRO_HEV, CAR.KONA_HEV}
