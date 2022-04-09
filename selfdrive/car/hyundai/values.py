@@ -1,7 +1,10 @@
-# flake8: noqa
+from dataclasses import dataclass
+from typing import Dict, List, Union
 
 from cereal import car
+from common.conversions import Conversions as CV
 from selfdrive.car import dbc_dict
+from selfdrive.car.docs_definitions import CarInfo
 from common.params import Params
 Ecu = car.CarParams.Ecu
 
@@ -33,6 +36,7 @@ class CAR:
   SONATA_LF_TURBO = "HYUNDAI SONATA LF TURBO"
   SONATA_LF_HEV = "HYUNDAI SONATA LF HYBRID"
   KONA = "HYUNDAI KONA 2019"
+  KONA_N = "HYUNDAI KONA N 2021"
   KONA_EV = "HYUNDAI KONA EV 2019"
   KONA_HEV = "HYUNDAI KONA HEV 2019"
   IONIQ_EV = "HYUNDAI IONIQ ELECTRIC LIMITED 2019"
@@ -59,6 +63,61 @@ class CAR:
   SELTOS = "KIA SELTOS 2021"
   SOUL_EV = "KIA SOUL EV 2019"
   MOHAVE = "KIA MOHAVE 2019"
+
+
+@dataclass
+class HyundaiCarInfo(CarInfo):
+  package: str = "SCC + LKAS"
+  good_torque: bool = True
+
+
+CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
+  # genesis
+  CAR.GENESIS: HyundaiCarInfo("Genesis 2015-2016"),
+  CAR.GENESIS_G70: HyundaiCarInfo("Genesis G70 2018", "All"),
+  CAR.GENESIS_G80: HyundaiCarInfo("Genesis G80 2017", "All"),
+  CAR.GENESIS_G90: HyundaiCarInfo("Genesis G90 2017", "All"),
+
+  # hyundai
+  CAR.AVANTE: HyundaiCarInfo("Hyundai Avante", video_link="https://youtu.be/_EdYQtV52-c"),
+  CAR.I30: HyundaiCarInfo("Hyundai I30", "All"),
+  CAR.SONATA: HyundaiCarInfo("Hyundai Sonata 2020-22", "All", video_link="https://www.youtube.com/watch?v=ix63r9kE3Fw"),
+  CAR.SONATA_HEV: HyundaiCarInfo("Hyundai Sonata Hybrid 2021-22", "All"),
+  CAR.SONATA_LF: HyundaiCarInfo("Hyundai LF Sonata"),
+  CAR.SONATA_LF_TURBO: HyundaiCarInfo("Hyundai LF Sonata Turbo"),
+  CAR.SONATA_LF_HEV: HyundaiCarInfo("Hyundai LF Sonata Hybrid"),
+  CAR.KONA: HyundaiCarInfo("Hyundai Kona 2020"),
+  CAR.KONA_EV: HyundaiCarInfo("Hyundai Kona Electric 2018-19"),
+  CAR.KONA_HEV: HyundaiCarInfo("Hyundai Kona Hybrid 2020", video_link="https://youtu.be/_EdYQtV52-c"),
+  CAR.IONIQ_EV: HyundaiCarInfo("Hyundai Ioniq Electric 2019", "All"),
+  CAR.IONIQ_HEV: HyundaiCarInfo("Hyundai Ioniq Hybrid 2020-22", "SCC + LFA"),
+  CAR.SANTA_FE: HyundaiCarInfo("Hyundai Santa Fe 2019-20", "All"),
+  CAR.PALISADE: [
+    HyundaiCarInfo("Hyundai Palisade 2020-21", "All", video_link="https://youtu.be/TAnDqjF4fDY?t=456"),
+    HyundaiCarInfo("Kia Telluride 2020"),
+  ],
+  CAR.VELOSTER: HyundaiCarInfo("Hyundai Veloster 2019-20", "All"),
+  CAR.GRANDEUR_IG: HyundaiCarInfo("Hyundai Grandeur IG", "All"),
+  CAR.GRANDEUR_IG_HEV: HyundaiCarInfo("Hyundai Grandeur IG Hybrid", "All"),
+  CAR.GRANDEUR_IG_FL: HyundaiCarInfo("Hyundai Grandeur IG FL", "All"),
+  CAR.GRANDEUR_IG_FL_HEV: HyundaiCarInfo("Hyundai Grandeur IG FL Hybrid", "All"),
+  CAR.NEXO: HyundaiCarInfo("Hyundai Nexo", "All"),
+
+  # Kia
+  CAR.K3: HyundaiCarInfo("Kia K3 2018-21"),
+  CAR.K5: HyundaiCarInfo("Kia K5 2021-22", "SCC + LFA"),
+  CAR.K5_HEV: HyundaiCarInfo("Kia K5 Hybrid 2017"),
+  CAR.SPORTAGE: HyundaiCarInfo("Kia Sportage"),
+  CAR.SORENTO: HyundaiCarInfo("Kia Sorento 2018-19", video_link="https://www.youtube.com/watch?v=Fkh3s6WHJz8"),
+  CAR.STINGER: HyundaiCarInfo("Kia Stinger 2018", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0"),
+  CAR.NIRO_EV: HyundaiCarInfo("Kia Niro Electric 2019-22", "All", video_link="https://www.youtube.com/watch?v=lT7zcG6ZpGo"),
+  CAR.NIRO_HEV: HyundaiCarInfo("Kia Niro Plug-In Hybrid 2019"),
+  CAR.K7: HyundaiCarInfo("Kia K7 2016-19"),
+  CAR.K7_HEV: HyundaiCarInfo("Kia K7 Hybrid 2016-19"),
+  CAR.SELTOS: HyundaiCarInfo("Kia Seltos 2021"),
+  CAR.SOUL_EV: HyundaiCarInfo("Kia Soul EV 2019"),
+  CAR.MOHAVE: HyundaiCarInfo("Kia Mohave 2019"),
+}
 
 class Buttons:
   NONE = 0
@@ -151,6 +210,8 @@ FINGERPRINTS = {
     67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 354: 3, 356: 4, 544: 8, 593: 8, 608: 8, 688: 5, 809: 8, 832: 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 909: 8, 916: 8, 1040: 8, 1064: 8, 1078: 4, 1107: 5, 1136: 8, 1151: 6, 1156: 8, 1170: 8, 1173: 8, 1186: 2, 1191: 2, 1265: 4, 1280: 1, 1287: 4, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1384: 8, 1394: 8, 1407: 8, 1414: 3, 1419: 8, 1427: 6, 1456: 4, 1470: 8, 1988: 8, 1990: 8, 1998: 8, 2001: 8, 2004: 8, 2009: 8, 2012: 8, 2015: 8
     },{
     67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 354: 3, 356: 4, 544: 8, 593: 8, 608: 8, 688: 5, 809: 8, 832: 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1056: 8, 1057: 8, 1078: 4, 1107: 5, 1136: 8, 1156: 8, 1170: 8, 1173: 8, 1186: 2, 1191: 2, 1193: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1384: 8, 1394: 8, 1407: 8, 1414: 3, 1419: 8, 1427: 6, 1456: 4, 1470: 8
+  }],
+  CAR.KONA_N: [{
   }],
   CAR.KONA_EV: [{
     127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 549: 8, 593: 8, 688: 5, 832: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1136: 8, 1151: 6, 1168: 7, 1173: 8, 1183: 8, 1186: 2, 1191: 2, 1225: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1307: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1378: 4, 1407: 8, 1419: 8, 1426: 8, 1427: 6, 1429: 8, 1430: 8, 1456: 4, 1470: 8, 1473: 8, 1507: 8, 1535: 8, 2000: 8, 2004: 8, 2008: 8, 2012: 8
@@ -577,21 +638,21 @@ CHECKSUM = {
 
 FEATURES = {
   # Use Cluster for Gear Selection, rather than Transmission
-  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.GRANDEUR_IG_FL},
+  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.KONA_N},
   # Use TCU Message for Gear Selection
-  "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.SPORTAGE, CAR.STINGER},
+  "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER},
   # Use E_GEAR Message for Gear Selection
   "use_elect_gears": {CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.KONA_EV, CAR.KONA_HEV, CAR.IONIQ_EV, CAR.IONIQ_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NEXO,
                       CAR.K5_HEV, CAR.K7_HEV, CAR.NIRO_EV, CAR.NIRO_HEV, CAR.SOUL_EV},
 
   # send LFA MFA message for new HKG models
   # Insert your car in this if you want turn LFA icon on.
-  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER},
+  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER, CAR.KONA_N},
 
   "send_hda_mfa": {CAR.GRANDEUR_IG_HEV},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
   # Insert your car in this if you see front collision error on your cluster.
-  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE},
+  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE},
 }
 
 HYBRID_CAR = {CAR.K5_HEV, CAR.IONIQ_HEV, CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.K7_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NIRO_HEV, CAR.KONA_HEV}
@@ -656,6 +717,7 @@ else:
     CAR.SONATA_LF_TURBO: dbc_dict('hyundai_kia_generic', None),
     CAR.SONATA_LF_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA: dbc_dict('hyundai_kia_generic', None),
+    CAR.KONA_N: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_EV: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.IONIQ_EV: dbc_dict('hyundai_kia_generic', None),
