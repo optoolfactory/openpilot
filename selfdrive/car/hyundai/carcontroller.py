@@ -643,7 +643,7 @@ class CarController():
         self.scc11cnt %= 0x10
         lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
-        faccel = actuators.accel if c.active else 0
+        faccel = actuators.accel if c.active and not CS.out.gasPressed else 0
         accel = actuators.oaccel if c.active and not CS.out.gasPressed else 0
         stopping = (actuators.longControlState == LongCtrlState.stopping)
         radar_recog = (0 < CS.lead_distance <= 149)
@@ -689,12 +689,11 @@ class CarController():
               self.change_accel_fast = False
               pass
             elif aReqValue > 0.0:
-              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0], [0.2, 0.9, 1.0])
-              accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
+              accel = interp(CS.lead_distance, [3.5, 15.0], [max(accel, aReqValue), aReqValue])
             elif aReqValue < 0.0 and CS.lead_distance <= 4.2 and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
               accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
-            elif aReqValue < 0.0 and lead_objspd < -15:
-              accel = (aReqValue + accel) / 2
+            elif aReqValue < 0.0 and lead_objspd <= -15:
+              accel = interp(abs(lead_objspd), [15.0, 30.0], [(accel + aReqValue)/2, min(accel, aReqValue)])
             elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
               stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2, 0.85, 1.0, 0.4, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
@@ -717,7 +716,7 @@ class CarController():
               self.stopped = False
           elif 0.1 < self.dRel:
             self.stopped = False
-            pass
+            accel = interp(self.dRel, [13, 18, 30], [accel, (accel+faccel)/2, faccel])
           else:
             self.stopped = False
             accel = aReqValue
