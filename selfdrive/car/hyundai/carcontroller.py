@@ -689,7 +689,7 @@ class CarController():
               self.change_accel_fast = False
               pass
             elif aReqValue > 0.0:
-              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0], [0.2, 0.8, 1.0])
+              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0], [0.2, 0.9, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
             elif aReqValue < 0.0 and CS.lead_distance <= 4.2 and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
               accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
