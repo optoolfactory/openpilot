@@ -5,7 +5,7 @@ from typing import Dict, Union, Callable, List, Optional
 from cereal import log, car
 import cereal.messaging as messaging
 from common.realtime import DT_CTRL
-from selfdrive.config import Conversions as CV
+from common.conversions import Conversions as CV
 from selfdrive.locationd.calibrationd import MIN_SPEED_FILTER
 
 AlertSize = log.ControlsState.AlertSize
@@ -236,7 +236,7 @@ def calibration_incomplete_alert(CP: car.CarParams, sm: messaging.SubMaster, met
 
 
 def no_gps_alert(CP: car.CarParams, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
-  gps_integrated = sm['pandaState'].pandaType in (log.PandaState.PandaType.uno, log.PandaState.PandaType.dos)
+  gps_integrated = sm['pandaState'].pandaType in [log.PandaState.PandaType.uno, log.PandaState.PandaType.dos]
   return Alert(
     "GPS 신호 약함",
     "환경에 문제가 없을경우 서비스팀에 연락하세요" if gps_integrated else "GPS안테나 위치를 점검하세요",
@@ -995,7 +995,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.lkasDisabled: {
-    ET.PERMANENT: NormalPermanentAlert("LKAS Disabled: Enable LKAS to engage"),
+    ET.PERMANENT: NormalPermanentAlert("LKAS 꺼져있습니다 : 오픈파일럿 사용을 위해 LKAS를 켜세요"),
     ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
   },
 
