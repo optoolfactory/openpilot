@@ -1,6 +1,7 @@
 from cereal import log
+from common.conversions import Conversions as CV
 from common.realtime import DT_MDL
-from selfdrive.config import Conversions as CV
+
 from common.numpy_fast import interp
 from common.params import Params
 from decimal import Decimal
@@ -8,7 +9,9 @@ from decimal import Decimal
 LaneChangeState = log.LateralPlan.LaneChangeState
 LaneChangeDirection = log.LateralPlan.LaneChangeDirection
 
-if Params().get_bool("IsMetric"):
+if int(Params().get("OpkrLaneChangeSpeed", encoding="utf8")) < 19:
+  LANE_CHANGE_SPEED_MIN = -1
+elif Params().get_bool("IsMetric"):
   LANE_CHANGE_SPEED_MIN = float(int(Params().get("OpkrLaneChangeSpeed", encoding="utf8")) * CV.KPH_TO_MS)
 else:
   LANE_CHANGE_SPEED_MIN = float(int(Params().get("OpkrLaneChangeSpeed", encoding="utf8")) * CV.MPH_TO_MS)
@@ -80,7 +83,7 @@ class DesireHelper:
     elif carstate.rightBlinker:
       self.lane_change_direction = LaneChangeDirection.right
 
-    if (not controlstate.active) or (self.lane_change_timer > LANE_CHANGE_TIME_MAX) or (abs(self.output_scale) >= (CP.steerMaxV[0]-0.15) and self.lane_change_timer > 1):
+    if (not controlstate.active) or (self.lane_change_timer > LANE_CHANGE_TIME_MAX) or (abs(self.output_scale) >= 0.8 and self.lane_change_timer > 1):
       self.lane_change_state = LaneChangeState.off
       self.lane_change_direction = LaneChangeDirection.none
     else:

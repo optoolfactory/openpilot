@@ -556,6 +556,7 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new OPKRMapboxStyle());
   layout->addWidget(new GoogleMapEnabledToggle());
   layout->addWidget(new OPKRTopTextView());
+  layout->addWidget(new RPMAnimatedToggle());
 }
 
 DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
@@ -608,6 +609,8 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RoutineDriveOnToggle());
   layout->addWidget(new CloseToRoadEdgeToggle());
   layout->addWidget(new OPKREdgeOffset());
+  layout->addWidget(new ToAvoidLKASFaultToggle());
+  layout->addWidget(new ToAvoidLKASFault());
 }
 
 DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
@@ -632,10 +635,10 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SteerWarningFixToggle());
   layout->addWidget(new IgnoreCanErroronISGToggle());
   layout->addWidget(new FCA11MessageToggle());
-  layout->addWidget(new SteerWindDownToggle());
   layout->addWidget(new MadModeEnabledToggle());
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new C2WithCommaPowerToggle());
+  layout->addWidget(new JoystickModeToggle());
   layout->addWidget(new TimeZoneSelectCombo());
   const char* cal_ok = "cp -f /data/openpilot/selfdrive/assets/addon/param/CalibrationParams /data/params/d/";
   auto calokbtn = new ButtonControl("캘리브레이션 강제 활성화", "실행");
@@ -683,15 +686,12 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SteerRateCost());
   layout->addWidget(new SteerLimitTimer());
   layout->addWidget(new TireStiffnessFactor());
-  layout->addWidget(new SteerMaxBase());
-  layout->addWidget(new SteerMaxMax());
-  layout->addWidget(new SteerMaxv());
   layout->addWidget(new VariableSteerMaxToggle());
-  layout->addWidget(new SteerDeltaUpBase());
-  layout->addWidget(new SteerDeltaUpMax());
-  layout->addWidget(new SteerDeltaDownBase());
-  layout->addWidget(new SteerDeltaDownMax());
+  layout->addWidget(new SteerMax());
   layout->addWidget(new VariableSteerDeltaToggle());
+  layout->addWidget(new SteerDeltaUp());
+  layout->addWidget(new SteerDeltaDown());
+  layout->addWidget(new ToAvoidLKASFaultBeyondToggle());
   layout->addWidget(new SteerThreshold());
   layout->addWidget(new DesiredCurvatureLimit());
 
@@ -728,6 +728,7 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RadarLongHelperOption());
   layout->addWidget(new StoppingDistAdjToggle());
   layout->addWidget(new E2ELongToggle());
+  layout->addWidget(new StockDecelonCamToggle());
   //layout->addWidget(new RadarDisableToggle());
   //layout->addWidget(new UseRadarTrackToggle());
 }

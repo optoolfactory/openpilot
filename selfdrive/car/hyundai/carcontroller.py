@@ -1,7 +1,7 @@
 from cereal import car, messaging
 from common.realtime import DT_CTRL
 from common.numpy_fast import clip, interp
-from selfdrive.config import Conversions as CV
+from common.conversions import Conversions as CV
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_hda_mfc, \
                                              create_scc11, create_scc12, create_scc13, create_scc14, \
@@ -52,6 +52,9 @@ class CarController():
   def __init__(self, dbc_name, CP, VM):
     self.p = CarControllerParams(CP)
     self.packer = CANPacker(dbc_name)
+    self.angle_limit_counter = 0
+    self.cut_steer_frames = 0
+    self.cut_steer = False
 
     self.apply_steer_last = 0
     self.car_fingerprint = CP.carFingerprint
@@ -94,7 +97,6 @@ class CarController():
     self.opkr_cruise_auto_res_condition = int(self.params.get("AutoResCondition", encoding="utf8"))
 
     self.opkr_turnsteeringdisable = self.params.get_bool("OpkrTurnSteeringDisable")
-    self.steer_wind_down_enabled = self.params.get_bool("SteerWindDown")
     self.opkr_maxanglelimit = float(int(self.params.get("OpkrMaxAngleLimit", encoding="utf8")))
     self.mad_mode_enabled = self.params.get_bool("MadModeEnabled")
     self.ldws_fix = self.params.get_bool("LdwsCarFix")
@@ -139,18 +141,22 @@ class CarController():
     self.steerMax_base = int(self.params.get("SteerMaxBaseAdj", encoding="utf8"))
     self.steerDeltaUp_base = int(self.params.get("SteerDeltaUpBaseAdj", encoding="utf8"))
     self.steerDeltaDown_base = int(self.params.get("SteerDeltaDownBaseAdj", encoding="utf8"))
+    self.steerMax_Max = int(self.params.get("SteerMaxAdj", encoding="utf8"))
+    self.steerDeltaUp_Max = int(self.params.get("SteerDeltaUpAdj", encoding="utf8"))
+    self.steerDeltaDown_Max = int(self.params.get("SteerDeltaDownAdj", encoding="utf8"))
     self.model_speed_range = [30, 100, 255]
-    self.steerMax_range = [self.p.STEER_MAX, self.steerMax_base, self.steerMax_base]
-    self.steerDeltaUp_range = [self.p.STEER_DELTA_UP, self.steerDeltaUp_base, self.steerDeltaUp_base]
-    self.steerDeltaDown_range = [self.p.STEER_DELTA_DOWN, self.steerDeltaDown_base, self.steerDeltaDown_base]
+    self.steerMax_range = [self.steerMax_Max, self.steerMax_base, self.steerMax_base]
+    self.steerDeltaUp_range = [self.steerDeltaUp_Max, self.steerDeltaUp_base, self.steerDeltaUp_base]
+    self.steerDeltaDown_range = [self.steerDeltaDown_Max, self.steerDeltaDown_base, self.steerDeltaDown_base]
     self.steerMax = 0
     self.steerDeltaUp = 0
     self.steerDeltaDown = 0
-    self.steer_wind_down = 0
 
     self.variable_steer_max = self.params.get_bool("OpkrVariableSteerMax")
     self.variable_steer_delta = self.params.get_bool("OpkrVariableSteerDelta")
     self.osm_spdlimit_enabled = self.params.get_bool("OSMSpeedLimitEnable")
+    self.stock_safety_decel_enabled = self.params.get_bool("UseStockDecelOnSS")
+    self.joystick_debug_mode = self.params.get_bool("JoystickDebugMode")
 
     self.cc_timer = 0
     self.on_speed_control = False
@@ -159,6 +165,11 @@ class CarController():
     self.cruise_init = False
     self.keep_decel_on = False
     self.change_accel_fast = False
+
+    self.to_avoid_lkas_fault_enabled = self.params.get_bool("AvoidLKASFaultEnabled")
+    self.to_avoid_lkas_fault_max_angle = int(self.params.get("AvoidLKASFaultMaxAngle", encoding="utf8"))
+    self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
+    self.enable_steer_more = self.params.get_bool("AvoidLKASFaultBeyond")
 
     self.radar_disabled_conf = self.params.get_bool("RadarDisable")
     self.prev_cruiseButton = 0
@@ -184,8 +195,6 @@ class CarController():
   def update(self, c, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, v_future):
 
-    param = self.p
-
     self.vFuture = v_future
     path_plan = self.NC.update_lateralPlan()
     if frame % 10 == 0:
@@ -196,7 +205,12 @@ class CarController():
     self.vRel = self.sm['radarState'].leadOne.vRel #EON Lead
     self.yRel = self.sm['radarState'].leadOne.yRel #EON Lead
 
-    if CS.out.vEgo > 8:
+    if self.enable_steer_more and self.to_avoid_lkas_fault_enabled and abs(CS.out.steeringAngleDeg) > self.to_avoid_lkas_fault_max_angle*0.5 and \
+     CS.out.vEgo <= 12.5 and not (0 <= self.driver_steering_torque_above_timer < 100):
+      self.steerMax = self.steerMax_Max
+      self.steerDeltaUp = self.steerDeltaUp_Max
+      self.steerDeltaDown = self.steerDeltaDown_Max
+    elif CS.out.vEgo > 8.3:
       if self.variable_steer_max:
         self.steerMax = interp(int(abs(self.model_speed)), self.model_speed_range, self.steerMax_range)
       else:
@@ -212,9 +226,9 @@ class CarController():
       self.steerDeltaUp = self.steerDeltaUp_base
       self.steerDeltaDown = self.steerDeltaDown_base
 
-    self.p.STEER_MAX = min(self.p.STEER_MAX, self.steerMax) # variable steermax
-    self.p.STEER_DELTA_UP = min(self.p.STEER_DELTA_UP, self.steerDeltaUp) # variable deltaUp
-    self.p.STEER_DELTA_DOWN = min(self.p.STEER_DELTA_DOWN, self.steerDeltaDown) # variable deltaDown
+    self.p.STEER_MAX = self.steerMax
+    self.p.STEER_DELTA_UP = self.steerDeltaUp
+    self.p.STEER_DELTA_DOWN = self.steerDeltaDown
 
     # Steering Torque
     if 0 <= self.driver_steering_torque_above_timer < 100:
@@ -224,21 +238,54 @@ class CarController():
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
     self.steer_rate_limited = new_steer != apply_steer
 
-    # disable when temp fault is active, or below LKA minimum speed
-    if self.opkr_maxanglelimit == 90 and not self.steer_wind_down_enabled:
-      lkas_active = c.active and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
-    elif self.opkr_maxanglelimit > 90 and not self.steer_wind_down_enabled:
-      str_angle_limit = interp(CS.out.vEgo * CV.MS_TO_KPH, [0, 20], [self.opkr_maxanglelimit+60, self.opkr_maxanglelimit])
-      lkas_active = c.active and abs(CS.out.steeringAngleDeg) < str_angle_limit and CS.out.gearShifter == GearShifter.drive
+    if self.to_avoid_lkas_fault_enabled: # Shane and Greg's idea
+      lkas_active = c.active
+      if lkas_active and abs(CS.out.steeringAngleDeg) > self.to_avoid_lkas_fault_max_angle:
+        self.angle_limit_counter += 1
+      else:
+        self.angle_limit_counter = 0
+
+      # stop requesting torque to avoid 90 degree fault and hold torque with induced temporary fault
+      # two cycles avoids race conditions every few minutes
+      if self.angle_limit_counter > self.to_avoid_lkas_fault_max_frame:
+        self.cut_steer = True
+      elif self.cut_steer_frames > 1:
+        self.cut_steer_frames = 0
+        self.cut_steer = False
+
+      cut_steer_temp = False
+      if self.cut_steer:
+        cut_steer_temp = True
+        self.angle_limit_counter = 0
+        self.cut_steer_frames += 1
     else:
-      lkas_active = c.active and not CS.out.steerFaultTemporary and CS.out.gearShifter == GearShifter.drive
+      if self.joystick_debug_mode:
+        lkas_active = c.active
+      # disable when temp fault is active, or below LKA minimum speed
+      elif self.opkr_maxanglelimit == 90:
+        lkas_active = c.active and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
+      elif self.opkr_maxanglelimit > 90:
+        str_angle_limit = interp(CS.out.vEgo * CV.MS_TO_KPH, [0, 20], [self.opkr_maxanglelimit+60, self.opkr_maxanglelimit])
+        lkas_active = c.active and abs(CS.out.steeringAngleDeg) < str_angle_limit and CS.out.gearShifter == GearShifter.drive
+      else:
+        lkas_active = c.active and CS.out.gearShifter == GearShifter.drive
+      if CS.mdps_error_cnt > self.to_avoid_lkas_fault_max_frame:
+        self.cut_steer = True
+      elif self.cut_steer_frames > 1:
+        self.cut_steer_frames = 0
+        self.cut_steer = False
+
+      cut_steer_temp = False
+      if self.cut_steer:
+        cut_steer_temp = True
+        self.cut_steer_frames += 1
 
     if (( CS.out.leftBlinker and not CS.out.rightBlinker) or ( CS.out.rightBlinker and not CS.out.leftBlinker)) and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and self.opkr_turnsteeringdisable:
       self.lanechange_manual_timer = 50
     if CS.out.leftBlinker and CS.out.rightBlinker:
       self.emergency_manual_timer = 50
     if self.lanechange_manual_timer:
-      lkas_active = 0
+      lkas_active = False
     if self.lanechange_manual_timer > 0:
       self.lanechange_manual_timer -= 1
     if self.emergency_manual_timer > 0:
@@ -260,10 +307,6 @@ class CarController():
 
     if not lkas_active:
       apply_steer = 0
-      if self.apply_steer_last != 0:
-        self.steer_wind_down = 1
-    if lkas_active or CS.out.steeringPressed:
-      self.steer_wind_down = 0
 
     self.apply_steer_last = apply_steer
 
@@ -287,13 +330,13 @@ class CarController():
 
     can_sends = []
     can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
-                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
-                                   left_lane_warning, right_lane_warning, 0, self.ldws_fix, self.steer_wind_down_enabled))
+                                   cut_steer_temp, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
+                                   left_lane_warning, right_lane_warning, 0, self.ldws_fix))
 
     if CS.CP.mdpsBus: # send lkas11 bus 1 if mdps is bus 1
       can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
-                                   self.steer_wind_down, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
-                                   left_lane_warning, right_lane_warning, 1, self.ldws_fix, self.steer_wind_down_enabled))
+                                   cut_steer_temp, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
+                                   left_lane_warning, right_lane_warning, 1, self.ldws_fix))
       if frame % 2: # send clu11 to mdps if it is not on bus 0
         can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.NONE, enabled_speed, CS.CP.mdpsBus))
 
@@ -335,7 +378,7 @@ class CarController():
           self.switch_timer -= 1
           self.standstill_fault_reduce_timer += 1
         # at least 0.1 sec delay after entering the standstill
-        elif 10 < self.standstill_fault_reduce_timer and CS.lead_distance != self.last_lead_distance and abs(CS.lead_distance - self.last_lead_distance) > 0.05:
+        elif 10 < self.standstill_fault_reduce_timer and CS.lead_distance != self.last_lead_distance and abs(CS.lead_distance - self.last_lead_distance) > 0.1:
           self.acc_standstill_timer = 0
           self.acc_standstill = False
           if self.standstill_resume_alt: # for D.Fyffe, code from neokii
@@ -600,22 +643,63 @@ class CarController():
         self.scc11cnt %= 0x10
         lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
-        faccel = actuators.accel if c.active else 0
+        faccel = actuators.accel if c.active and not CS.out.gasPressed else 0
         accel = actuators.oaccel if c.active and not CS.out.gasPressed else 0
         stopping = (actuators.longControlState == LongCtrlState.stopping)
         radar_recog = (0 < CS.lead_distance <= 149)
-        if 0 < CS.lead_distance <= 149 and self.radar_helper_option == 1:
-          # neokii's logic, opkr mod
-          stock_weight = 0.0
-          if aReqValue > 0.0:
-            stock_weight = interp(CS.lead_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
-          elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
-            stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0], [0.2, 1.0, 1.0, 0.0])
-          elif aReqValue < 0.0:
-            stock_weight = interp(CS.lead_distance, [3.5, 25.0], [1.0, 0.0])
+        if self.joystick_debug_mode:
+          accel = actuators.accel
+        elif self.radar_helper_option == 0:
+          if 0 < CS.lead_distance <= 4.0: # use radar by force to stop anyway below 4.0m if lead car is detected.
+            stock_weight = interp(CS.lead_distance, [2.5, 4.0], [1., 0.])
+            accel = accel * (1. - stock_weight) + aReqValue * stock_weight
+          elif 0.1 < self.dRel < 6.0 and self.vRel < 0:
+            accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
+            self.stopped = False
+          elif 0.1 < self.dRel < 6.0:
+            accel = min(-0.5, faccel*0.3)
+            if stopping:
+              self.stopped = True
+            else:
+              self.stopped = False
+          elif 0.1 < self.dRel:
+            self.stopped = False
+            pass
           else:
+            self.stopped = False
+            accel = aReqValue
+        elif self.radar_helper_option == 1:
+          if 0 < CS.lead_distance <= 149:
+            # neokii's logic, opkr mod
             stock_weight = 0.0
-          accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
+            if aReqValue > 0.0:
+              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 13.0, 25.0], [0.5, 1.0, 1.0, 0.0])
+            elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
+              stock_weight = interp(CS.lead_distance, [4.5, 8.0, 20.0, 25.0], [0.2, 1.0, 1.0, 0.0])
+            elif aReqValue < 0.0:
+              stock_weight = interp(CS.lead_distance, [3.5, 25.0], [1.0, 0.0])
+            else:
+              stock_weight = 0.0
+            accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
+          else:
+            if 0 < CS.lead_distance <= 4.0: # use radar by force to stop anyway below 4.0m if lead car is detected.
+              stock_weight = interp(CS.lead_distance, [2.5, 4.0], [1., 0.])
+              accel = accel * (1. - stock_weight) + aReqValue * stock_weight
+            elif 0.1 < self.dRel < 6.0 and self.vRel < 0:
+              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
+              self.stopped = False
+            elif 0.1 < self.dRel < 6.0:
+              accel = min(-0.5, faccel*0.3)
+              if stopping:
+                self.stopped = True
+              else:
+                self.stopped = False
+            elif 0.1 < self.dRel:
+              self.stopped = False
+              pass
+            else:
+              self.stopped = False
+              accel = aReqValue
         elif self.radar_helper_option == 2:
           accel = aReqValue
         elif self.radar_helper_option == 3:
@@ -633,7 +717,7 @@ class CarController():
                 self.change_accel_fast = False
               else:
                 accel = (aReqValue + accel) / 2
-            elif aReqValue < 0 and accel > 0 and accel - aReqValue > 0.3:
+            elif aReqValue < 0 and accel > 0 and accel - aReqValue > 0.3 and lead_objspd > 0:
               self.change_accel_fast = True
             elif CS.lead_distance < 30.0 and aReqValue > 0.8 and lead_objspd > 0 and aReqValue - accel > 0.8:
               accel = (aReqValue + accel) / 3
@@ -644,25 +728,24 @@ class CarController():
               self.change_accel_fast = False
               pass
             elif aReqValue > 0.0:
-              stock_weight = interp(CS.lead_distance, [3.5, 8.0, 15.0], [0.2, 0.8, 1.0])
-              accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
-            elif aReqValue < 0.0 and CS.lead_distance <= 4.2 and accel >= aReqValue and self.stopping_dist_adj_enabled:
-              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 4.0]))
-            elif aReqValue < 0.0 and lead_objspd < -15:
-              accel = (aReqValue + accel) / 2
+              accel = interp(CS.lead_distance, [3.5, 15.0], [max(accel, aReqValue, faccel), aReqValue])
+            elif aReqValue < 0.0 and CS.lead_distance <= 4.2 and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
+              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
+            elif aReqValue < 0.0 and lead_objspd <= -15:
+              accel = interp(abs(lead_objspd), [15.0, 30.0], [(accel + aReqValue)/2, min(accel, aReqValue)])
             elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
-              stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 35.0], [0.1, 0.85, 1.0, 0.5, 1.0])
+              stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2, 0.85, 1.0, 0.4, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
             elif aReqValue < 0.0:
-              stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 35.0], [1.0, 0.85, 1.0, 0.5, 1.0])
+              stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 0.85, 1.0, 0.4, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
             else:
               stock_weight = 0.0
               self.keep_decel_on = False
               self.change_accel_fast = False
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
-          elif 0.1 < self.dRel < 6.0 and self.vRel < 0:
-            accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 3.0], [1.5, 5.0]))
+          elif 0.1 < self.dRel < 6.0 and int(self.vRel*3.6) < 0:
+            accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
             self.stopped = False
           elif 0.1 < self.dRel < 6.0:
             accel = min(-0.5, faccel*0.3)
@@ -676,24 +759,13 @@ class CarController():
           else:
             self.stopped = False
             accel = aReqValue
-        elif 0 < CS.lead_distance <= 4.0: # use radar by force to stop anyway below 4.0m if lead car is detected.
-          stock_weight = interp(CS.lead_distance, [2.5, 4.0], [1., 0.])
-          accel = accel * (1. - stock_weight) + aReqValue * stock_weight
-        elif 0.1 < self.dRel < 6.0 and self.vRel < 0:
-          accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 3.0], [1.5, 5.0]))
-          self.stopped = False
-        elif 0.1 < self.dRel < 6.0:
-          accel = min(-0.5, faccel*0.3)
-          if stopping:
-            self.stopped = True
-          else:
-            self.stopped = False
-        elif 0.1 < self.dRel:
-          self.stopped = False
-          pass
         else:
           self.stopped = False
           stock_weight = 0.
+
+        if self.stock_safety_decel_enabled:
+          if CS.scc11["Navi_SCC_Camera_Act"] == 2 and accel > aReqValue:
+            accel = aReqValue
         accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
         self.aq_value = accel
         self.aq_value_raw = aReqValue
@@ -724,8 +796,8 @@ class CarController():
       self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
     setSpeed = round(set_speed * CV.MS_TO_KPH)
-    str_log1 = 'MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  FR={:03.0f}'.format(
-      CS.out.cruiseState.modeSel, CS.CP.mdpsBus, CS.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), self.p.STEER_MAX, self.p.STEER_DELTA_UP, self.p.STEER_DELTA_DOWN, self.timer1.sampleTime())
+    str_log1 = 'MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}/{:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  FR={:03.0f}'.format(
+      CS.out.cruiseState.modeSel, CS.CP.mdpsBus, CS.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), abs(CS.out.steeringTorque), self.p.STEER_MAX, self.p.STEER_DELTA_UP, self.p.STEER_DELTA_DOWN, self.timer1.sampleTime())
     if CS.out.cruiseState.accActive:
       str_log2 = 'AQ={:+04.2f}  VF={:03.0f}  TS={:03.0f}  SS/VS={:03.0f}/{:03.0f}  RD/LD={:04.1f}/{:03.1f}  CG={:1.0f}  FR={:03.0f}'.format(
        self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, self.NC.ctrl_speed , setSpeed, round(CS.VSetDis), CS.lead_distance, self.last_lead_distance, CS.cruiseGapSet, self.timer1.sampleTime())
@@ -745,6 +817,9 @@ class CarController():
       self.stopping_dist_adj_enabled = self.params.get_bool("StoppingDistAdj")
       self.standstill_res_count = int(self.params.get("RESCountatStandstill", encoding="utf8"))
       self.opkr_cruisegap_auto_adj = self.params.get_bool("CruiseGapAdjust")
+      self.to_avoid_lkas_fault_enabled = self.params.get_bool("AvoidLKASFaultEnabled")
+      self.to_avoid_lkas_fault_max_angle = int(self.params.get("AvoidLKASFaultMaxAngle", encoding="utf8"))
+      self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
       if self.params.get_bool("OpkrLiveTunePanelEnable"):
         if CS.CP.lateralTuning.which() == 'pid':
           self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.1f}/{:0.5f}'.format(float(Decimal(self.params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
@@ -765,7 +840,7 @@ class CarController():
       can_sends.append(create_lfahda_mfc(self.packer, lkas_active))
 
     elif frame % 5 == 0 and self.car_fingerprint in FEATURES["send_hda_mfa"]:
-      can_sends.append(create_hda_mfc(self.packer, CS, enabled, left_lane, right_lane ))
+      can_sends.append(create_hda_mfc(self.packer, CS, enabled, left_lane, right_lane))
 
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.p.STEER_MAX

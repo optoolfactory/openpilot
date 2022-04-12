@@ -1,11 +1,11 @@
 import copy
 from cereal import car
 import cereal.messaging as messaging
-from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_CAR, HYBRID_CAR, Buttons
-from selfdrive.car.interfaces import CarStateBase
+from common.conversions import Conversions as CV
 from opendbc.can.parser import CANParser
 from opendbc.can.can_define import CANDefine
-from selfdrive.config import Conversions as CV
+from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_CAR, HYBRID_CAR, Buttons
+from selfdrive.car.interfaces import CarStateBase
 from common.numpy_fast import interp
 from common.params import Params
 
@@ -41,7 +41,6 @@ class CarState(CarStateBase):
     
     self.steer_anglecorrection = float(int(Params().get("OpkrSteerAngleCorrection", encoding="utf8")) * 0.1)
     self.gear_correction = Params().get_bool("JustDoGearD")
-    self.steer_wind_down = Params().get_bool("SteerWindDown")
     self.fca11_message = Params().get_bool("FCA11Message")
     self.rd_conf = Params().get_bool("RadarDisable")
     self.brake_check = False
@@ -187,11 +186,8 @@ class CarState(CarStateBase):
     ret.steeringTorqueEps = cp_mdps.vl["MDPS12"]["CR_Mdps_OutTq"]
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
 
-    if self.steer_wind_down:
-      ret.steerFaultTemporary = cp_mdps.vl["MDPS12"]["CF_Mdps_ToiUnavail"] != 0 or cp_mdps.vl["MDPS12"]["CF_Mdps_ToiFlt"] != 0
-    else:
-      self.mdps_error_cnt += 1 if cp_mdps.vl["MDPS12"]["CF_Mdps_ToiUnavail"] != 0 else -self.mdps_error_cnt
-      ret.steerFaultTemporary = self.mdps_error_cnt > 100 #cp_mdps.vl["MDPS12"]["CF_Mdps_ToiUnavail"] != 0
+    self.mdps_error_cnt += 1 if cp_mdps.vl["MDPS12"]["CF_Mdps_ToiUnavail"] != 0 else -self.mdps_error_cnt
+    ret.steerFaultTemporary = self.mdps_error_cnt > 100 #cp_mdps.vl["MDPS12"]["CF_Mdps_ToiUnavail"] != 0
 
     self.VSetDis = cp_scc.vl["SCC11"]["VSetDis"]
     ret.vSetDis = self.VSetDis
@@ -262,17 +258,15 @@ class CarState(CarStateBase):
     if self.CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       if self.CP.carFingerprint in HYBRID_CAR:
         ret.gas = cp.vl["E_EMS11"]["CR_Vcu_AccPedDep_Pos"] / 254.
+        ret.engineRpm = cp.vl["E_EMS11"]["N"] # opkr
       else:
         ret.gas = cp.vl["E_EMS11"]["Accel_Pedal_Pos"] / 254.
+        ret.engineRpm = 9999
       ret.gasPressed = ret.gas > 0
-      ret.engineRpm = 0
     else:
       ret.gas = cp.vl["EMS12"]["PV_AV_CAN"] / 100.
       ret.gasPressed = bool(cp.vl["EMS16"]["CF_Ems_AclAct"])
-      try:
-        ret.engineRpm = cp.vl["EMS_366"]["N"]
-      except KeyError:
-        ret.engineRpm = 0
+      ret.engineRpm = cp.vl["EMS_366"]["N"]
 
     ret.espDisabled = (cp.vl["TCS15"]["ESC_Off_Step"] != 0)
 
@@ -589,11 +583,12 @@ class CarState(CarStateBase):
     if CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       if CP.carFingerprint in HYBRID_CAR:
         signals += [
-          ("CR_Vcu_AccPedDep_Pos", "E_EMS11")
+          ("CR_Vcu_AccPedDep_Pos", "E_EMS11"),
+          ("N", "E_EMS11"),
         ]
       else:
         signals += [
-          ("Accel_Pedal_Pos", "E_EMS11")
+          ("Accel_Pedal_Pos", "E_EMS11"),
         ]
       checks += [
         ("E_EMS11", 50),

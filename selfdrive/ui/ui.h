@@ -173,6 +173,7 @@ typedef struct UIScene {
   int blindspot_blinkingrate = 120;
   int car_valid_status_changed = 0;
   float angleSteers;
+  float desired_angle_steers;
   float steerRatio;
   bool brakeLights;
   bool steerOverride;
@@ -197,7 +198,6 @@ typedef struct UIScene {
   int laneless_mode;
   int recording_count;
   int recording_quality;
-  float steerMax_V;
   bool monitoring_mode;
   bool forceGearD;
   bool comma_stock_ui, opkr_livetune_ui;
@@ -227,7 +227,6 @@ typedef struct UIScene {
   bool auto_gitpull = false;
   bool is_speed_over_limit = false;
   bool controlAllowed;
-  bool steer_wind_down;
   bool steer_warning;
   bool stand_still;
   bool show_error;
@@ -245,6 +244,7 @@ typedef struct UIScene {
   bool cal_view = false;
   float ctrl_speed;
   float accel;
+  bool animated_rpm;
 
   cereal::DeviceState::Reader deviceState;
   cereal::CarState::Reader car_state;

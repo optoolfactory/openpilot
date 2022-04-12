@@ -224,7 +224,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"SteerDeltaUpBaseAdj", PERSISTENT},
     {"SteerDeltaDownAdj", PERSISTENT},
     {"SteerDeltaDownBaseAdj", PERSISTENT},
-    {"SteerMaxvAdj", PERSISTENT},
     {"OpkrBatteryChargingControl", PERSISTENT},
     {"OpkrBatteryChargingMin", PERSISTENT},
     {"OpkrBatteryChargingMax", PERSISTENT},
@@ -263,7 +262,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CruiseAutoRes", PERSISTENT},
     {"AutoResOption", PERSISTENT},
     {"AutoResCondition", PERSISTENT},
-    {"SteerWindDown", PERSISTENT},
     {"OpkrMonitoringMode", PERSISTENT},
     {"OpkrMonitorEyesThreshold", PERSISTENT},
     {"OpkrMonitorNormalEyesThreshold", PERSISTENT},
@@ -345,6 +343,12 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CloseToRoadEdge", PERSISTENT},
     {"LeftEdgeOffset", PERSISTENT},
     {"RightEdgeOffset", PERSISTENT},
+    {"AvoidLKASFaultEnabled", PERSISTENT},
+    {"AvoidLKASFaultMaxAngle", PERSISTENT},
+    {"AvoidLKASFaultMaxFrame", PERSISTENT},
+    {"AvoidLKASFaultBeyond", PERSISTENT},
+    {"UseStockDecelOnSS", PERSISTENT},
+    {"AnimatedRPM", PERSISTENT},
 };
 
 } // namespace
