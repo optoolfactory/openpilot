@@ -867,7 +867,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     if ((scene.fanSpeed/1000) > 64) {
       uom_color2 = nvgRGBA(255, 0, 0, 200);
     } else if ((scene.fanSpeed/1000) > 31) {
-      uom_color2 = nvgRGBA(0, 0, 255, 200);
+      uom_color2 = nvgRGBA(255, 188, 3, 200);
     } else if ((scene.fanSpeed/1000) > 15) {
       uom_color2 = nvgRGBA(0, 255, 0, 200);
     }
