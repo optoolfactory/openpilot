@@ -166,18 +166,6 @@ public:
   }
 };
 
-class SteerWindDownToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  SteerWindDownToggle() : ToggleControl("Steer Wind Down", "Steer Warning 시 토크를 서서히 다운시킵니다. 일부 차량의 경우 조향각 제한등이 나타날 수 있으니 에러상관없이 최대조향각을 쓰려면 기능을 끄십시오.", "../assets/offroad/icon_shell.png", Params().getBool("SteerWindDown")) {
-    QObject::connect(this, &SteerWindDownToggle::toggleFlipped, [=](int state) {
-      bool status = state ? true : false;
-      Params().putBool("SteerWindDown", status);
-    });
-  }
-};
-
 class LiveSteerRatioToggle : public ToggleControl {
   Q_OBJECT
 
@@ -666,6 +654,66 @@ public:
   }
 };
 
+class ToAvoidLKASFaultToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  ToAvoidLKASFaultToggle() : ToggleControl("To Avoid LKAS Fault", "to avoid LKAS fault above max angle limit(car specific). This is live value. Find out your maxframe while driving.", "../assets/offroad/icon_shell.png", Params().getBool("AvoidLKASFaultEnabled")) {
+    QObject::connect(this, &ToAvoidLKASFaultToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("AvoidLKASFaultEnabled", status);
+    });
+  }
+};
+
+class ToAvoidLKASFaultBeyondToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  ToAvoidLKASFaultBeyondToggle() : ToggleControl("To Avoid LKAS Fault with More Steer", "This is just in case you are using other panda setting.(delta up&down, maxsteer, rtdelta and etc).", "../assets/offroad/icon_shell.png", Params().getBool("AvoidLKASFaultBeyond")) {
+    QObject::connect(this, &ToAvoidLKASFaultBeyondToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("AvoidLKASFaultBeyond", status);
+    });
+  }
+};
+
+class StockDecelonCamToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  StockDecelonCamToggle() : ToggleControl("Use Stock Decel on SaftySection", "Use stock deceleration on safety section.(the vehicle equipped with Stock Navigation)", "../assets/offroad/icon_shell.png", Params().getBool("UseStockDecelOnSS")) {
+    QObject::connect(this, &StockDecelonCamToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("UseStockDecelOnSS", status);
+    });
+  }
+};
+
+class JoystickModeToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  JoystickModeToggle() : ToggleControl("JoyStick Debug Mode", "How to use: https://github.com/commaai/openpilot/tree/master/tools/joystick", "../assets/offroad/icon_shell.png", Params().getBool("JoystickDebugMode")) {
+    QObject::connect(this, &JoystickModeToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("JoystickDebugMode", status);
+    });
+  }
+};
+
+class RPMAnimatedToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  RPMAnimatedToggle() : ToggleControl("RPM Animated", "Animated RPM", "../assets/offroad/icon_shell.png", Params().getBool("AnimatedRPM")) {
+    QObject::connect(this, &RPMAnimatedToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("AnimatedRPM", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
@@ -1094,111 +1142,68 @@ private:
   void refresh();
 };
 
-class SteerMaxBase : public AbstractControl {
+class SteerMax : public AbstractControl {
   Q_OBJECT
 
 public:
-  SteerMaxBase();
+  SteerMax();
 
 private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
+  QPushButton btnplusl;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QPushButton btnminusr;
+  QLabel labell1;
+  QLabel labelr1;
+  QLabel labell;
+  QLabel labelr;
   Params params;
   
-  void refresh();
+  void refreshl();
+  void refreshr();
 };
 
-class SteerMaxMax : public AbstractControl {
+class SteerDeltaUp : public AbstractControl {
   Q_OBJECT
 
 public:
-  SteerMaxMax();
+  SteerDeltaUp();
 
 private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
+  QPushButton btnplusl;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QPushButton btnminusr;
+  QLabel labell1;
+  QLabel labelr1;
+  QLabel labell;
+  QLabel labelr;
   Params params;
   
-  void refresh();
+  void refreshl();
+  void refreshr();
 };
 
-class SteerMaxv : public AbstractControl {
+class SteerDeltaDown : public AbstractControl {
   Q_OBJECT
 
 public:
-  SteerMaxv();
+  SteerDeltaDown();
 
 private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
+  QPushButton btnplusl;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QPushButton btnminusr;
+  QLabel labell1;
+  QLabel labelr1;
+  QLabel labell;
+  QLabel labelr;
   Params params;
   
-  void refresh();
+  void refreshl();
+  void refreshr();
 };
-
-class SteerDeltaUpBase : public AbstractControl {
-  Q_OBJECT
-
-public:
-  SteerDeltaUpBase();
-
-private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-  Params params;
-  
-  void refresh();
-};
-
-class SteerDeltaUpMax : public AbstractControl {
-  Q_OBJECT
-
-public:
-  SteerDeltaUpMax();
-
-private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-  Params params;
-  
-  void refresh();
-};
-
-class SteerDeltaDownBase : public AbstractControl {
-  Q_OBJECT
-
-public:
-  SteerDeltaDownBase();
-
-private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-  Params params;
-  
-  void refresh();
-};
-
-class SteerDeltaDownMax : public AbstractControl {
-  Q_OBJECT
-
-public:
-  SteerDeltaDownMax();
-
-private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-  Params params;
-  
-  void refresh();
-};
-
 
 // control
 class LateralControl : public AbstractControl {
@@ -2088,6 +2093,27 @@ class OPKREdgeOffset : public AbstractControl {
 
 public:
   OPKREdgeOffset();
+
+private:
+  QPushButton btnplusl;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QPushButton btnminusr;
+  QLabel labell1;
+  QLabel labelr1;
+  QLabel labell;
+  QLabel labelr;
+  Params params;
+  
+  void refreshl();
+  void refreshr();
+};
+
+class ToAvoidLKASFault : public AbstractControl {
+  Q_OBJECT
+
+public:
+  ToAvoidLKASFault();
 
 private:
   QPushButton btnplusl;
