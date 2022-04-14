@@ -1027,10 +1027,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     NVGcolor val_color = COLOR_GREEN_ALPHA(200);
     //show Orange if more than 30 degrees
     //show red if  more than 50 degrees
-    if(((int)(scene.angleSteers) < -30) || ((int)(scene.angleSteers) > 30)) {
+    if(((int)(scene.angleSteers) < -90) || ((int)(scene.angleSteers) > 90)) {
       val_color = COLOR_ORANGE_ALPHA(200);
     }
-    if(((int)(scene.angleSteers) < -50) || ((int)(scene.angleSteers) > 50)) {
+    if(((int)(scene.angleSteers) < -180) || ((int)(scene.angleSteers) > 180)) {
       val_color = COLOR_RED_ALPHA(200);
     }
     // steering is in degrees
