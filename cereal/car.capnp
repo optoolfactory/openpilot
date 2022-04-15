@@ -231,7 +231,7 @@ struct CarState {
   safetyDist @49 :Float32;
   safetySign @50 :Float32;
   vEgoOP @51 :Float32;  # openpilot speed
-  electGearStep @52 :Int8;
+  gearStep @52 :Int8;
   isMph @53 :Bool;
   aReqValue @54 :Float32;
   engineRpm @55 :Float32;

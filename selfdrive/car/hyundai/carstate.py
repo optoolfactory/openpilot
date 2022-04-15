@@ -343,14 +343,16 @@ class CarState(CarStateBase):
     # as this seems to be standard over all cars, but is not the preferred method.
     if self.CP.carFingerprint in FEATURES["use_cluster_gears"]:
       gear = cp.vl["CLU15"]["CF_Clu_Gear"]
+      ret.gearStep = 0
     elif self.CP.carFingerprint in FEATURES["use_tcu_gears"]:
       gear = cp.vl["TCU12"]["CUR_GR"]
+      ret.gearStep = 0
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
-      ret.electGearStep = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"] # opkr
+      ret.gearStep = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"] # opkr
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
-      ret.electGearStep = 0
+      ret.gearStep = cp.vl["LVR11"]["CF_Lvr_GearInf"] # opkr
 
     if self.gear_correction:
       ret.gearShifter = GearShifter.drive
@@ -626,9 +628,11 @@ class CarState(CarStateBase):
     else:
       signals += [
         ("CF_Lvr_Gear", "LVR12")
+        ("CF_Lvr_GearInf", "LVR11")
       ]
       checks += [
         ("LVR12", 100)
+        ("LVR11", 100)
       ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0, enforce_checks=False)
