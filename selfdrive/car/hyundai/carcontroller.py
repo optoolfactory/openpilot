@@ -1,4 +1,4 @@
-from cereal import car, messaging
+from cereal import car, log, messaging
 from common.realtime import DT_CTRL
 from common.numpy_fast import clip, interp
 from common.conversions import Conversions as CV
