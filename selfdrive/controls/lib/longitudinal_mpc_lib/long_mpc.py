@@ -202,7 +202,7 @@ class LongitudinalMpc:
     self.desired_TR = desired_TR
     self.v_ego = 0.
     self.reset()
-    self.source = SOURCES[2]
+    self.source = SOURCES[3]
 
     self.TR = 1.45
     self.dynamic_TR = 0
@@ -219,6 +219,8 @@ class LongitudinalMpc:
     self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
 
     self.ms_to_spd = CV.MS_TO_KPH if Params().get_bool("IsMetric") else CV.MS_TO_MPH
+
+    self.long_custom_mode = int(self.params.get("RadarLongHelper", encoding="utf8"))
 
     self.lo_timer = 0 
 
@@ -348,6 +350,7 @@ class LongitudinalMpc:
       self.e2e = Params().get_bool("E2ELong")
       self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
       self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
+      self.long_custom_mode = int(self.params.get("RadarLongHelper", encoding="utf8"))
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status or stopping
 
@@ -381,7 +384,8 @@ class LongitudinalMpc:
     # and then treat that as a stopped car/obstacle at this new distance.
     lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
-    if stopping:
+
+    if stopping and not (radarstate.leadOne.status or radarstate.leadTwo.status):
       stop_line_obstacle = (model.stopLine.x + 6.0) * np.ones(N+1)
     else:
       stop_line_obstacle = 400 * np.ones(N+1)

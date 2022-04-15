@@ -22,6 +22,7 @@ from decimal import Decimal
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
+LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
 
 
 def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
@@ -190,7 +191,7 @@ class CarController():
     elif CP.lateralTuning.which() == 'lqr':
       self.str_log2 = 'T={:04.0f}/{:05.3f}/{:07.5f}'.format(CP.lateralTuning.lqr.scale, CP.lateralTuning.lqr.ki, CP.lateralTuning.lqr.dcGain)
 
-    self.sm = messaging.SubMaster(['controlsState', 'radarState'])
+    self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
 
   def update(self, c, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, v_future):
@@ -761,7 +762,10 @@ class CarController():
             pass
           else:
             self.stopped = False
-            accel = aReqValue
+            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+              pass
+            else:
+              accel = aReqValue
         else:
           self.stopped = False
           stock_weight = 0.
