@@ -213,14 +213,12 @@ class LongitudinalMpc:
 
     self.dynamic_tr_spd = list(map(float, Params().get("DynamicTRSpd", encoding="utf8").split(',')))
     self.dynamic_tr_set = list(map(float, Params().get("DynamicTRSet", encoding="utf8").split(',')))
-
     self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
-
     self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
 
     self.ms_to_spd = CV.MS_TO_KPH if Params().get_bool("IsMetric") else CV.MS_TO_MPH
 
-    self.long_custom_mode = int(self.params.get("RadarLongHelper", encoding="utf8"))
+    self.stop_line = Params().get_bool("ShowStopLine")
 
     self.lo_timer = 0 
 
@@ -341,7 +339,10 @@ class LongitudinalMpc:
   def update(self, carstate, radarstate, model, v_cruise):
     self.v_ego = carstate.vEgo
     v_ego = self.x0[1]
-    stopping = model.stopLine.prob > 0.5
+    if self.stop_line:
+      stopping = model.stopLine.prob > 0.5
+    else:
+      stopping = False
 
     # opkr
     self.lo_timer += 1
@@ -350,7 +351,6 @@ class LongitudinalMpc:
       self.e2e = Params().get_bool("E2ELong")
       self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
       self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
-      self.long_custom_mode = int(self.params.get("RadarLongHelper", encoding="utf8"))
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status or stopping
 

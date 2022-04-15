@@ -158,6 +158,7 @@ class CarController():
     self.osm_spdlimit_enabled = self.params.get_bool("OSMSpeedLimitEnable")
     self.stock_safety_decel_enabled = self.params.get_bool("UseStockDecelOnSS")
     self.joystick_debug_mode = self.params.get_bool("JoystickDebugMode")
+    self.stop_line_enabled = self.params.get_bool("ShowStopLine")
 
     self.cc_timer = 0
     self.on_speed_control = False
@@ -762,8 +763,11 @@ class CarController():
             pass
           else:
             self.stopped = False
-            if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-              pass
+            if self.stop_line_enabled:
+              if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+                pass
+              else:
+                accel = aReqValue
             else:
               accel = aReqValue
         else:
