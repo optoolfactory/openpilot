@@ -627,11 +627,11 @@ class CarState(CarStateBase):
       checks += [("ELECT_GEAR", 20)]
     else:
       signals += [
-        ("CF_Lvr_Gear", "LVR12")
+        ("CF_Lvr_Gear", "LVR12"),
         ("CF_Lvr_GearInf", "LVR11")
       ]
       checks += [
-        ("LVR12", 100)
+        ("LVR12", 100),
         ("LVR11", 100)
       ]
 
