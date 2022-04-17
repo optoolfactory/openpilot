@@ -229,7 +229,7 @@ class NaviControl():
       elif CS.safety_sign > 19 and self.stock_navi_info_enabled:  # cat stock navi speedlimit
         self.map_speed_dist = max(0, CS.safety_dist - 30)
         self.map_speed = CS.safety_sign
-        if CS.safety_block_remain_dist < 255:
+        if CS.safety_block_sl < 150:
           self.map_speed_block = True
         else:
           self.map_speed_block = False
