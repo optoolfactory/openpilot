@@ -670,7 +670,7 @@ FEATURES = {
   # Use Cluster for Gear Selection, rather than Transmission
   "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.KONA_N},
   # Use TCU Message for Gear Selection
-  "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER, , CAR.SPORTAGE},
+  "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER, CAR.SPORTAGE},
   # Use E_GEAR Message for Gear Selection
   "use_elect_gears": {CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.KONA_EV, CAR.KONA_HEV, CAR.IONIQ_EV, CAR.IONIQ_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NEXO,
                       CAR.K5_HEV, CAR.K7_HEV, CAR.NIRO_EV, CAR.NIRO_HEV, CAR.SOUL_EV, CAR.K5_DL3_HEV},
