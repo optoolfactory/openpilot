@@ -192,7 +192,7 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.I30:
       ret.mass = 1380. + STD_CARGO_KG
       ret.wheelbase = 2.65
-    elif candidate == CAR.KONA:
+    elif candidate in (CAR.KONA, CAR.KONA_N):
       ret.mass = 1275. + STD_CARGO_KG
       ret.wheelbase = 2.7
     elif candidate in (CAR.KONA_HEV, CAR.KONA_EV):
@@ -217,7 +217,7 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.SORENTO:
       ret.mass = 1985. + STD_CARGO_KG
       ret.wheelbase = 2.78
-    elif candidate in (CAR.K5, CAR.K5_HEV):
+    elif candidate in (CAR.K5, CAR.K5_HEV, CAR.K5_DL3, CAR.K5_DL3_HEV):
       ret.wheelbase = 2.805
       ret.mass = 1600. + STD_CARGO_KG
     elif candidate == CAR.STINGER:
