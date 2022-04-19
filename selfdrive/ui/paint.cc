@@ -1678,7 +1678,7 @@ static void ui_draw_rpm_animation(UIState *s) {
     nvgStroke(s->vg);
     if (count < 17) {
       nvgFillColor(s->vg, nvgRGBA(4*count,10*count,4*count,14*count));
-    } else if (count < 23) {
+    } else if (count < 22) {
       nvgFillColor(s->vg, nvgRGBA(8.3*count,5*count,3.5*count,10*count));
     } else if (count < 28) {
       nvgFillColor(s->vg, nvgRGBA(6.5*count,1.5*count,1.5*count,8*count));
@@ -1688,7 +1688,7 @@ static void ui_draw_rpm_animation(UIState *s) {
     target2 = (float)(NVG_PI/12.0f)*((float)count+2.0f);
   }
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-  ui_draw_text(s, center_x, center_y+100, s->scene.is_metric?"KPH":"MPH", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
+  ui_draw_text(s, center_x, center_y+110, s->scene.is_metric?"KPH":"MPH", 65, s->scene.brakeLights?COLOR_RED_ALPHA(200):COLOR_WHITE_ALPHA(200), "sans-semibold");
 }
 
 static void ui_draw_grid(UIState *s) {
