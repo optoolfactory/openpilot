@@ -679,7 +679,7 @@ static void ui_draw_vision_speed(UIState *s) {
     val_color = nvgRGBA((255-int(gas_opacity)), (255-int((act_accel*10))), (255-int(gas_opacity)), 255);
   }
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  ui_draw_text(s, s->fb_w/2, 210+(scene.animated_rpm?50:0), speed_str.c_str(), 96 * 2.5, val_color, "sans-bold");
+  ui_draw_text(s, s->fb_w/2, 210+(scene.animated_rpm?100:0), speed_str.c_str(), 96 * 2.5, val_color, "sans-bold");
   if (!s->scene.animated_rpm) {
     ui_draw_text(s, s->fb_w/2, 290, s->scene.is_metric ? "km/h" : "mph", 36 * 2.5, scene.brakeLights?nvgRGBA(201, 34, 49, 100):COLOR_WHITE_ALPHA(200), "sans-regular");
   }
@@ -1661,22 +1661,21 @@ static void ui_draw_rpm_animation(UIState *s) {
   const int radius_i = 140;
   const int radius_o = 185;
   //int rpm = scene.engine_rpm;
-  //int rpm = 1500;
+  int rpm = 1500;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
-  //int rpm_to_deg = 9 + ((27-9)/(3600-0)) * (rpm - 0); // min:9, max:27
-  int rpm_to_deg = 27;
+  int rpm_to_deg = 9 + ((27-9)/(3600-0)) * (rpm - 0); // min:9, max:27
 
   nvgBeginPath(s->vg);
   nvgMoveTo(s->vg, center_x-(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
   nvgLineTo(s->vg, center_x-(radius_o*fabs(cos(NVG_PI/4))), center_y+(radius_o*fabs(sin(NVG_PI/4))));
   nvgArc(s->vg, center_x, center_y, radius_o, NVG_PI / 12 * 9, NVG_PI / 12 * rpm_to_deg, NVG_CW);
-  nvgLineTo(s->vg, center_x+(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
+  nvgLineTo(s->vg, center_x-(radius_i*fabs(cos(NVG_PI/12*rpm_to_deg))), center_y+(radius_i*fabs(sin(NVG_PI/12*rpm_to_deg))));
   nvgArc(s->vg, center_x, center_y, radius_i, NVG_PI / 12 * rpm_to_deg, NVG_PI / 12 * 9, NVG_CCW);
   nvgClosePath(s->vg);
   nvgStrokeWidth(s->vg, 1);
   nvgStroke(s->vg);
-  //nvgFillColor(s->vg, nvgRGBA(255,128,0,150));
-  //nvgFill(s->vg);
+  nvgFillColor(s->vg, nvgRGBA(255,128,0,150));
+  nvgFill(s->vg);
 }
 
 static void ui_draw_grid(UIState *s) {
