@@ -1664,7 +1664,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   //int rpm = 1500;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
   //int rpm_to_deg = 9 + ((27-9)/(3600-0)) * (rpm - 0); // min:9, max:27
-  int rpm_to_deg = 27
+  int rpm_to_deg = 27;
 
   nvgBeginPath(s->vg);
   nvgMoveTo(s->vg, center_x-(radius_i*fabs(cos(45))), center_y+(radius_i*fabs(sin(45))));
