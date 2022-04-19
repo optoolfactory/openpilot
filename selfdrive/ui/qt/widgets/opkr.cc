@@ -6516,3 +6516,81 @@ void ToAvoidLKASFault::refreshl() {
 void ToAvoidLKASFault::refreshr() {
   labelr.setText(QString::fromStdString(params.get("AvoidLKASFaultMaxFrame")));
 }
+
+RoutineDriveOption::RoutineDriveOption() : AbstractControl("", "", "") {
+
+  btn0.setFixedSize(125, 100);
+  btn1.setFixedSize(125, 100);
+  btn0.setText("CO");
+  btn1.setText("SL");
+  hlayout->addWidget(&btn0);
+  hlayout->addWidget(&btn1);
+
+  QObject::connect(&btn0, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("RoutineDriveOption"));
+    bool is_value = str.contains("0");
+    if (is_value) {
+      QString values = str.replace("0", "");
+      params.put("RoutineDriveOption", values.toStdString());
+    } else {
+      QString values = str + "0";
+      params.put("RoutineDriveOption", values.toStdString());
+    }
+    refresh();
+  });
+  QObject::connect(&btn1, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("RoutineDriveOption"));
+    bool is_value = str.contains("1");
+    if (is_value) {
+      QString values = str.replace("1", "");
+      params.put("RoutineDriveOption", values.toStdString());
+    } else {
+      QString values = str + "1";
+      params.put("RoutineDriveOption", values.toStdString());
+    }
+    refresh();
+  });
+  refresh();
+}
+
+void RoutineDriveOption::refresh() {
+  QString option = QString::fromStdString(params.get("RoutineDriveOption"));
+  if (option.contains("0")) {
+    btn0.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #00A12E;
+    )");
+  } else {
+    btn0.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+  }
+  if (option.contains("1")) {
+    btn1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #00A12E;
+    )");
+  } else {
+    btn1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+  }
+}
