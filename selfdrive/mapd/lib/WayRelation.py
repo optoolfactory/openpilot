@@ -209,7 +209,7 @@ class WayRelation():
   @property
   def road_name(self):
     if self.name is not None:
-      return self.name
+      return self.name + "(" + self.ref + ")" if self.ref is not None else self.name
     return self.ref
 
   def update(self, location_rad, bearing_rad, location_stdev):
