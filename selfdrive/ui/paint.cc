@@ -1660,7 +1660,8 @@ static void ui_draw_rpm_animation(UIState *s) {
   float center_y = 250.0f;
   float radius_i = 140.0f;
   float radius_o = 185.0f;
-  float rpm = s->scene.engine_rpm;
+  //float rpm = s->scene.engine_rpm;
+  float rpm = 4000.0f;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
   float rpm_to_deg = floor(9.0f + ((27.0f-9.0f)/(3600.0f-0.0f)) * (rpm - 0.0f)); // min:9, max:27
   float target1 = (float)(NVG_PI/12.0f)*9.0f;
@@ -1672,17 +1673,22 @@ static void ui_draw_rpm_animation(UIState *s) {
     nvgArc(s->vg, center_x, center_y, radius_i, target1, target2, NVG_CW);
     nvgArc(s->vg, center_x, center_y, radius_o, target2, target1, NVG_CCW);
     nvgClosePath(s->vg);
-    if (count < 18) {
-      nvgFillColor(s->vg, nvgRGBA(4*count,10*count,4*count,10*count));
-    } else if (count < 22) {
-      nvgFillColor(s->vg, nvgRGBA(8.3*count,5*count,3.5*count,8.6*count));
+    nvgStrokeWidth(s->vg, 2);
+    nvgStrokeColor(s->vg, COLOR_BLACK_ALPHA(100));
+    nvgStroke(s->vg);
+    if (count < 17) {
+      nvgFillColor(s->vg, nvgRGBA(4*count,10*count,4*count,14*count));
+    } else if (count < 23) {
+      nvgFillColor(s->vg, nvgRGBA(8.3*count,5*count,3.5*count,10*count));
     } else if (count < 28) {
-      nvgFillColor(s->vg, nvgRGBA(6.5*count,1.5*count,1.5*count,6.7*count));
+      nvgFillColor(s->vg, nvgRGBA(6.5*count,1.5*count,1.5*count,8*count));
     }
     nvgFill(s->vg);
     target1 = target2;
     target2 = (float)(NVG_PI/12.0f)*((float)count+2.0f);
   }
+  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+  ui_draw_text(s, center_x, center_y+100, s->scene.is_metric?"KPH":"MPH", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
 }
 
 static void ui_draw_grid(UIState *s) {
