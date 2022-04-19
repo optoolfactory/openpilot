@@ -1660,7 +1660,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   float center_y = 250.0f;
   float radius_i = 140.0f;
   float radius_o = 185.0f;
-  //float rpm = scene.engine_rpm;
+  //float rpm = s->scene.engine_rpm;
   float rpm = 3600.0f;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
   float rpm_to_deg = floor(9.0f + ((27.0f-9.0f)/(3600.0f-0.0f)) * (rpm - 0.0f)); // min:9, max:27
@@ -1673,9 +1673,9 @@ static void ui_draw_rpm_animation(UIState *s) {
     nvgArc(s->vg, center_x, center_y, radius_i, target1, target2, NVG_CW);
     nvgArc(s->vg, center_x, center_y, radius_o, target2, target1, NVG_CCW);
     nvgClosePath(s->vg);
-    if (rpm < 1800.0f) {
+    if (count < 18) {
       nvgFillColor(s->vg, nvgRGBA(10,200,10,10*count));
-    } else if (rpm < 2500.0f) {
+    } else if (count < 22) {
       nvgFillColor(s->vg, nvgRGBA(200,150,10,8.6*count));
     } else {
       nvgFillColor(s->vg, nvgRGBA(200,10,10,6.7*count));
