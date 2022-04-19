@@ -6542,10 +6542,11 @@ RoutineDriveOption::RoutineDriveOption() : AbstractControl("", "", "") {
     bool is_value = str.contains("1");
     if (is_value) {
       QString values = str.replace("1", "");
+      params.put("RoutineDriveOption", values.toStdString());
     } else {
       QString values = str + "1";
+      params.put("RoutineDriveOption", values.toStdString());
     }
-    params.put("RoutineDriveOption", values.toStdString());
     refresh();
   });
   refresh();
@@ -6553,7 +6554,7 @@ RoutineDriveOption::RoutineDriveOption() : AbstractControl("", "", "") {
 
 void RoutineDriveOption::refresh() {
   QString option = QString::fromStdString(params.get("RoutineDriveOption"));
-  if (option.contains("0") {
+  if (option.contains("0")) {
     btn0.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
@@ -6572,7 +6573,7 @@ void RoutineDriveOption::refresh() {
     background-color: #393939;
     )");
   }
-  if (option.contains("1") {
+  if (option.contains("1")) {
     btn1.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
