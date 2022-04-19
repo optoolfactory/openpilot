@@ -1661,18 +1661,19 @@ static void ui_draw_rpm_animation(UIState *s) {
   const int radius_i = 140;
   const int radius_o = 185;
   //int rpm = scene.engine_rpm;
-  int rpm = 3600;
+  //int rpm = 3600;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
-  int rpm_to_deg = int(round(9 + ((27-9)/(3600-0)) * (rpm - 0))); // min:9, max:27
+  //int rpm_to_deg = int(round(9 + ((27-9)/(3600-0)) * (rpm - 0))); // min:9, max:27
   //int rpm_to_deg = 27;
 
   nvgBeginPath(s->vg);
   nvgMoveTo(s->vg, center_x-(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
   nvgLineTo(s->vg, center_x-(radius_o*fabs(cos(NVG_PI/4))), center_y+(radius_o*fabs(sin(NVG_PI/4))));
-  nvgArc(s->vg, center_x, center_y, radius_o, (NVG_PI/12)*9, (NVG_PI/12)*rpm_to_deg, NVG_CW);
+  //nvgArc(s->vg, center_x, center_y, radius_o, (NVG_PI/12)*9, (NVG_PI/12)*rpm_to_deg, NVG_CW);
+  nvgArc(s->vg, center_x, center_y, radius_o, (NVG_PI/12)*9, (NVG_PI/12)*27, NVG_CW);
   nvgLineTo(s->vg, center_x+(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
-  //nvgLineTo(s->vg, center_x+(radius_i*cos(NVG_PI/12*rpm_to_deg)), center_y+(radius_i*sin(NVG_PI/12*rpm_to_deg)));
-  nvgArc(s->vg, center_x, center_y, radius_i, (NVG_PI/12)*rpm_to_deg, (NVG_PI/12)*9, NVG_CCW);
+  //nvgLineTo(s->vg, center_x+(radius_i*cos((NVG_PI/12)*27)), center_y+(radius_i*sin((NVG_PI/12)*27)));
+  nvgArc(s->vg, center_x, center_y, radius_i, (NVG_PI/12)*27, (NVG_PI/12)*9, NVG_CCW);
   nvgClosePath(s->vg);
   nvgStrokeWidth(s->vg, 1);
   nvgStroke(s->vg);
