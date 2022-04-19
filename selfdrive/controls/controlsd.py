@@ -226,7 +226,11 @@ class Controls:
     self.osm_off_spdlimit_init = False
     self.v_cruise_kph_set_timer = 0
     self.safety_speed = 0
-    self.roadname_and_slc = Params().get("RoadList", encoding="utf8").strip().splitlines()[1].split(',')
+    try:
+      self.roadname_and_slc = Params().get("RoadList", encoding="utf8").strip().splitlines()[1].split(',')
+    except:
+      self.roadname_and_slc = ""
+      pass
 
     self.desired_angle_deg = 0
 
