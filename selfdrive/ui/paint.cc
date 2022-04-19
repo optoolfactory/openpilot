@@ -1683,7 +1683,7 @@ static void ui_draw_rpm_animation(UIState *s) {
     }
     nvgFill(s->vg);
     target1 = target2;
-    target2 = (float)(NVG_PI/12.0f)*(float)count;
+    target2 = (float)(NVG_PI/12.0f)*((float)count+2.0f);
   }
 }
 
