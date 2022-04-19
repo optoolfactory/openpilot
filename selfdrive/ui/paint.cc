@@ -1661,7 +1661,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   const int radius_i = 140;
   const int radius_o = 185;
   //int rpm = scene.engine_rpm;
-  int rpm = 700;
+  int rpm = 3600;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
   int rpm_to_deg = 9 + ((27-9)/(3600-0)) * (rpm - 0); // min:9, max:27
   //int rpm_to_deg = 27;
