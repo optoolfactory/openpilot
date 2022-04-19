@@ -1657,12 +1657,12 @@ static void ui_draw_auto_hold(UIState *s) {
 
 static void ui_draw_rpm_animation(UIState *s) {
   const int center_x = s->fb_w/2;
-  const int center_y = 200;
-  const int radius_i = 100;
-  const int radius_o = 150;
+  const int center_y = 195;
+  const int radius_i = 90;
+  const int radius_o = 140;
   //int rpm = scene.engine_rpm;
   //int rpm = 1500;
-  int rpm_to_deg = 405;
+  int rpm_to_deg = 45;
   nvgBeginPath(s->vg);
   nvgMoveTo(s->vg, center_x-(radius_i*fabs(sin(45))), center_y+(radius_i*fabs(sin(45))));
   nvgArc(s->vg, center_x, center_y, radius_i, NVG_PI / 4 * 3, rpm_to_deg, NVG_CW);
