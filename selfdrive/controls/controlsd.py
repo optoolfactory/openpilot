@@ -861,8 +861,11 @@ class Controls:
         controlsState.limitSpeedCamera = int(round(self.sm['liveMapData'].speedLimit))
         controlsState.limitSpeedCameraDist = float(self.sm['liveMapData'].speedLimitAheadDistance)
       elif self.sm['liveMapData'].currentRoadName in self.roadname_and_slc:
-        r_index = self.roadname_and_slc.index(self.sm['liveMapData'].currentRoadName)
-        controlsState.limitSpeedCamera = float(self.roadname_and_slc[r_index+1])
+        try:
+          r_index = self.roadname_and_slc.index(self.sm['liveMapData'].currentRoadName)
+          controlsState.limitSpeedCamera = float(self.roadname_and_slc[r_index+1])
+        except:
+          pass
     elif self.map_enabled:
       controlsState.limitSpeedCamera = int(round(self.sm['liveNaviData'].speedLimit))
       controlsState.limitSpeedCameraDist = float(self.sm['liveNaviData'].speedLimitDistance)
