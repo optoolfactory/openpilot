@@ -2093,3 +2093,17 @@ private:
   void refreshl();
   void refreshr();
 };
+
+class RoutineDriveOption : public AbstractControl {
+  Q_OBJECT
+
+public:
+  RoutineDriveOption();
+
+private:
+  QPushButton btn0;
+  QPushButton btn1;
+  Params params;
+  
+  void refresh();
+};
