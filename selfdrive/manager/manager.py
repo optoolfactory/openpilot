@@ -185,7 +185,7 @@ def manager_init() -> None:
     ("DesiredCurvatureLimit", "5"),
     ("C2WithCommaPower", "0"),
     ("CustomTREnabled", "0"),
-    ("RoadList", "RoadName1,+0.0,RoadName2,-0.0"),
+    ("RoadList", "RoadName1,+0.0,RoadName2,-0.0\nRoadName3,30,RoadName4,60"),
     ("LaneWidth", "37"),
     ("SpdLaneWidthSpd", "0,31"),
     ("SpdLaneWidthSet", "2.8,3.5"),
@@ -200,7 +200,8 @@ def manager_init() -> None:
     ("UseStockDecelOnSS", "0"),
     ("AnimatedRPM", "1"),
     ("ShowStopLine", "0"),
-  ]
+    ("RoutineDriveOption", ""),
+   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
 

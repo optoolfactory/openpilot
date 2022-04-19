@@ -336,6 +336,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"DesiredCurvatureLimit", PERSISTENT},
     {"C2WithCommaPower", PERSISTENT},
     {"RoutineDriveOn", PERSISTENT},
+    {"RoutineDriveOption", PERSISTENT},
     {"RoadList", PERSISTENT},
     {"LaneWidth", PERSISTENT},
     {"SpdLaneWidthSpd", PERSISTENT},

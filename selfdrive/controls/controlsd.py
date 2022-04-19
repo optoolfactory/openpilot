@@ -226,6 +226,7 @@ class Controls:
     self.osm_off_spdlimit_init = False
     self.v_cruise_kph_set_timer = 0
     self.safety_speed = 0
+    self.roadname_and_slc = Params().get("RoadList", encoding="utf8").strip().splitlines()[1].split(',')
 
     self.desired_angle_deg = 0
 
@@ -851,12 +852,13 @@ class Controls:
     controlsState.alertTextMsg2 = self.log_alertTextMsg2
     controlsState.alertTextMsg3 = self.log_alertTextMsg3
     controlsState.osmOffSpdLimit = self.osm_off_spdlimit
-    if int(self.sm['liveMapData'].speedLimit) and self.osm_speedlimit_enabled:
-      if self.stock_navi_info_enabled and int(CS.safetySign):
-        controlsState.limitSpeedCamera = min(int(round(self.sm['liveMapData'].speedLimit)), int(CS.safetySign))
-      else:
+    if self.osm_speedlimit_enabled:
+      if int(self.sm['liveMapData'].speedLimit):
         controlsState.limitSpeedCamera = int(round(self.sm['liveMapData'].speedLimit))
-      controlsState.limitSpeedCameraDist = float(self.sm['liveMapData'].speedLimitAheadDistance)
+        controlsState.limitSpeedCameraDist = float(self.sm['liveMapData'].speedLimitAheadDistance)
+      elif self.sm['liveMapData'].currentRoadName in self.roadname_and_slc:
+        r_index = self.roadname_and_slc.index(self.sm['liveMapData'].currentRoadName)
+        controlsState.limitSpeedCamera = float(self.roadname_and_slc[r_index+1])
     elif self.map_enabled:
       controlsState.limitSpeedCamera = int(round(self.sm['liveNaviData'].speedLimit))
       controlsState.limitSpeedCameraDist = float(self.sm['liveNaviData'].speedLimitDistance)
