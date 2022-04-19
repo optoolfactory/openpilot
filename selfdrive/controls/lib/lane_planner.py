@@ -53,7 +53,10 @@ class LanePlanner:
     self.left_curv_offset = int(Params().get("LeftCurvOffsetAdj", encoding="utf8"))
     self.right_curv_offset = int(Params().get("RightCurvOffsetAdj", encoding="utf8"))
 
-    self.drive_routine_on_co = Params().get_bool("RoutineDriveOn") and Params().get("RoutineDriveOption", encoding="utf8").find("0")
+    try:
+      self.drive_routine_on_co = Params().get_bool("RoutineDriveOn") and Params().get("RoutineDriveOption", encoding="utf8").find('0')
+    except:
+      self.drive_routine_on_co = False
     self.drive_close_to_edge = Params().get_bool("CloseToRoadEdge")
     self.left_edge_offset = float(Decimal(Params().get("LeftEdgeOffset", encoding="utf8")) * Decimal('0.01'))
     self.right_edge_offset = float(Decimal(Params().get("RightEdgeOffset", encoding="utf8")) * Decimal('0.01'))

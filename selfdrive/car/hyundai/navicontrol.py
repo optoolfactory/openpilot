@@ -56,7 +56,10 @@ class NaviControl():
     self.cut_in = False
     self.cut_in_run_timer = 0
 
-    self.drive_routine_on_sl = Params().get_bool("RoutineDriveOn") and Params().get("RoutineDriveOption", encoding="utf8").find("1")
+    try:
+      self.drive_routine_on_sl = Params().get_bool("RoutineDriveOn") and Params().get("RoutineDriveOption", encoding="utf8").find('1')
+    except:
+      self.drive_routine_on_sl = False
     try:
       self.roadname_and_sl = Params().get("RoadList", encoding="utf8").strip().splitlines()[1].split(',')
     except:
