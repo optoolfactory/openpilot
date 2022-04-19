@@ -1668,10 +1668,10 @@ static void ui_draw_rpm_animation(UIState *s) {
   nvgBeginPath(s->vg);
   nvgStrokeWidth(s->vg, 1);
   nvgArc(s->vg, center_x, center_y, radius_i, NVG_PI / 12 * 9, NVG_PI / 12 * rpm_to_deg, NVG_CW);
+  nvgArc(s->vg, center_x, center_y, radius_o, NVG_PI / 12 * 9, NVG_PI / 12 * rpm_to_deg, NVG_CW);
   //nvgMoveTo(s->vg, center_x+(radius_i*fabs(sin(45))), center_y+(radius_i*fabs(sin(45))));
-  nvgLineTo(s->vg, center_x+(radius_o*fabs(cos(rpm_to_deg*15))), center_y+(radius_o*fabs(sin(rpm_to_deg*15))));
-  //nvgArc(s->vg, center_x, center_y, radius_o, rpm_to_deg, NVG_PI / 4 * 3, NVG_CCW);
-  //nvgLineTo(s->vg, center_x-(radius_i*fabs(sin(45))), center_y+(radius_i*fabs(sin(45))));
+  //nvgLineTo(s->vg, center_x+(radius_o*fabs(cos(rpm_to_deg*15))), center_y+(radius_o*fabs(sin(rpm_to_deg*15))));
+  //nvgLineTo(s->vg, center_x+(radius_i*fabs(cos(rpm_to_deg*15))), center_y+(radius_i*fabs(sin(rpm_to_deg*15))));
   nvgStroke(s->vg);
   //nvgFillColor(s->vg, nvgRGBA(255,128,0,150));
   //nvgFill(s->vg);
