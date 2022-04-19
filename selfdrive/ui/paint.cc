@@ -1660,8 +1660,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   float center_y = 250.0f;
   float radius_i = 140.0f;
   float radius_o = 185.0f;
-  //float rpm = s->scene.engine_rpm;
-  float rpm = fmin(3600.0f, 4000.0f);
+  float rpm = fmin(s->scene.engine_rpm, 3600.0f);
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
   float rpm_to_deg = floor(9.0f + ((27.0f-9.0f)/(3600.0f-0.0f)) * (rpm - 0.0f)); // min:9, max:27
   float target1 = (float)(NVG_PI/12.0f)*9.0f;
