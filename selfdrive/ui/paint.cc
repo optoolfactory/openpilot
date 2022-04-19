@@ -1659,7 +1659,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   const int center_x = s->fb_w/2;
   const int center_y = 198;
   const int radius_i = 90;
-  const int radius_o = 135;
+  //const int radius_o = 135;
   //int rpm = scene.engine_rpm;
   //int rpm = 1500;
   int rpm_to_deg = 45;
