@@ -1667,10 +1667,10 @@ static void ui_draw_rpm_animation(UIState *s) {
   int rpm_to_deg = 27;
 
   nvgBeginPath(s->vg);
-  nvgMoveTo(s->vg, center_x-(radius_i*fabs(cos(45))), center_y+(radius_i*fabs(sin(45))));
-  nvgLineTo(s->vg, center_x-(radius_o*fabs(cos(45))), center_y+(radius_o*fabs(sin(45))));
+  nvgMoveTo(s->vg, center_x-(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
+  nvgLineTo(s->vg, center_x-(radius_o*fabs(cos(NVG_PI/4))), center_y+(radius_o*fabs(sin(NVG_PI/4))));
   nvgArc(s->vg, center_x, center_y, radius_o, NVG_PI / 12 * 9, NVG_PI / 12 * rpm_to_deg, NVG_CW);
-  nvgLineTo(s->vg, center_x+(radius_i*fabs(cos(45))), center_y+(radius_i*fabs(sin(45))));
+  nvgLineTo(s->vg, center_x+(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
   nvgArc(s->vg, center_x, center_y, radius_o, NVG_PI / 12 * rpm_to_deg, NVG_PI / 12 * 9, NVG_CCW);
   nvgClosePath(s->vg);
   nvgStrokeWidth(s->vg, 1);
