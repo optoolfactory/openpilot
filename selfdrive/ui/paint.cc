@@ -1662,7 +1662,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   const int radius_o = 135;
   //int rpm = scene.engine_rpm;
   //int rpm = 1500;
-  //int rpm_to_deg = 45;
+  int rpm_to_deg = 45;
   nvgBeginPath(s->vg);
   nvgStrokeWidth(s->vg, 1);
   nvgMoveTo(s->vg, center_x-(radius_i*fabs(sin(45))), center_y+(radius_i*fabs(sin(45))));
