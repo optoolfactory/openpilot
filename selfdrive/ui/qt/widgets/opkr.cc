@@ -6531,10 +6531,11 @@ RoutineDriveOption::RoutineDriveOption() : AbstractControl("", "", "") {
     bool is_value = str.contains("0");
     if (is_value) {
       QString values = str.replace("0", "");
+      params.put("RoutineDriveOption", values.toStdString());
     } else {
       QString values = str + "0";
+      params.put("RoutineDriveOption", values.toStdString());
     }
-    params.put("RoutineDriveOption", values.toStdString());
     refresh();
   });
   QObject::connect(&btn1, &QPushButton::clicked, [=]() {
