@@ -410,12 +410,14 @@ static void ui_draw_debug(UIState *s) {
     }
     nvgFontSize(s->vg, 50);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-    if (scene.lateralControlMethod == 0) {
-      ui_print(s, ui_viz_rx_center, bdr_s+295, "PID");
-    } else if (scene.lateralControlMethod == 1) {
-      ui_print(s, ui_viz_rx_center, bdr_s+295, "INDI");
-    } else if (scene.lateralControlMethod == 2) {
-      ui_print(s, ui_viz_rx_center, bdr_s+295, "LQR");
+    if (!scene.animated_rpm) {
+      if (scene.lateralControlMethod == 0) {
+        ui_print(s, ui_viz_rx_center, bdr_s+295, "PID");
+      } else if (scene.lateralControlMethod == 1) {
+        ui_print(s, ui_viz_rx_center, bdr_s+295, "INDI");
+      } else if (scene.lateralControlMethod == 2) {
+        ui_print(s, ui_viz_rx_center, bdr_s+295, "LQR");
+      }
     }
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
     if (scene.osm_enabled) {
@@ -677,8 +679,10 @@ static void ui_draw_vision_speed(UIState *s) {
     val_color = nvgRGBA((255-int(gas_opacity)), (255-int((act_accel*10))), (255-int(gas_opacity)), 255);
   }
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  ui_draw_text(s, s->fb_w/2, 210, speed_str.c_str(), 96 * 2.5, val_color, "sans-bold");
-  ui_draw_text(s, s->fb_w/2, 290, s->scene.is_metric ? "km/h" : "mph", 36 * 2.5, scene.brakeLights?nvgRGBA(201, 34, 49, 100):COLOR_WHITE_ALPHA(200), "sans-regular");
+  ui_draw_text(s, s->fb_w/2, 210+(scene.animated_rpm?50:0), speed_str.c_str(), 96 * 2.5, val_color, "sans-bold");
+  if (!s->scene.animated_rpm) {
+    ui_draw_text(s, s->fb_w/2, 290, s->scene.is_metric ? "km/h" : "mph", 36 * 2.5, scene.brakeLights?nvgRGBA(201, 34, 49, 100):COLOR_WHITE_ALPHA(200), "sans-regular");
+  }
 }
 
 static void ui_draw_vision_event(UIState *s) {
@@ -1651,6 +1655,18 @@ static void ui_draw_auto_hold(UIState *s) {
   ui_draw_text(s, rect.centerX(), rect.centerY(), "AUTO HOLD", 100, COLOR_GREEN_ALPHA(150), "sans-bold");
 }
 
+static void ui_draw_rpm_animation(UIState *s) {
+  const int center_x = s->fb_w/2;
+  const int center_y = 260;
+  const int radius = 100;
+  nvgBeginPath(s->vg);
+  nvgMoveTo(s->vg, center_x, center_y);
+  nvgArc(s->vg, center_x, center_y, radius, NVG_PI / 4 * 3, NVG_PI / 4, NVG_CW);
+  nvgLineTo(s->vg, center_x, center_y);
+  nvgFillColor(s->vg, nvgRGBA(255,128,0,150));
+  nvgFill(s->vg);
+}
+
 static void ui_draw_grid(UIState *s) {
   NVGcolor color = COLOR_WHITE_ALPHA(230);
   nvgBeginPath(s->vg);
@@ -1693,6 +1709,9 @@ static void ui_draw_vision(UIState *s) {
   }
   if (scene->brakeHold && !scene->comma_stock_ui) {
     ui_draw_auto_hold(s);
+  }
+  if (s->scene.animated_rpm && !scene->comma_stock_ui) {
+    ui_draw_rpm_animation(s);
   }
   if (scene->cal_view) {
     ui_draw_grid(s);
