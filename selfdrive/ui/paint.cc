@@ -1663,20 +1663,21 @@ static void ui_draw_rpm_animation(UIState *s) {
   //int rpm = scene.engine_rpm;
   int rpm = 3600;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
-  int rpm_to_deg = 9 + ((27-9)/(3600-0)) * (rpm - 0); // min:9, max:27
+  int rpm_to_deg = (int)(9 + ((27-9)/(3600-0)) * (rpm - 0)); // min:9, max:27
   //int rpm_to_deg = 27;
 
   nvgBeginPath(s->vg);
   nvgMoveTo(s->vg, center_x-(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
   nvgLineTo(s->vg, center_x-(radius_o*fabs(cos(NVG_PI/4))), center_y+(radius_o*fabs(sin(NVG_PI/4))));
   nvgArc(s->vg, center_x, center_y, radius_o, NVG_PI / 12 * 9, NVG_PI / 12 * rpm_to_deg, NVG_CW);
-  nvgLineTo(s->vg, center_x+(radius_i*cos(NVG_PI/12*rpm_to_deg)), center_y+(radius_i*sin(NVG_PI/12*rpm_to_deg)));
+  nvgLineTo(s->vg, center_x+(radius_i*fabs(cos(NVG_PI/4))), center_y+(radius_i*fabs(sin(NVG_PI/4))));
+  //nvgLineTo(s->vg, center_x+(radius_i*cos(NVG_PI/12*rpm_to_deg)), center_y+(radius_i*sin(NVG_PI/12*rpm_to_deg)));
   nvgArc(s->vg, center_x, center_y, radius_i, NVG_PI / 12 * rpm_to_deg, NVG_PI / 12 * 9, NVG_CCW);
   nvgClosePath(s->vg);
   nvgStrokeWidth(s->vg, 1);
   nvgStroke(s->vg);
-  nvgFillColor(s->vg, nvgRGBA(255,128,0,150));
-  nvgFill(s->vg);
+  // nvgFillColor(s->vg, nvgRGBA(255,128,0,150));
+  // nvgFill(s->vg);
 }
 
 static void ui_draw_grid(UIState *s) {
