@@ -312,7 +312,8 @@ def thermald_thread() -> NoReturn:
           os.system("nmcli conn up lte")
           registered_count = 0
 
-        wifiIpAddress = HARDWARE.get_ip_address()
+        if EON:
+          wifiIpAddress = HARDWARE.get_ip_address()
         try:
           ping_test = subprocess.check_output(["ping", "-c", "1", "-W", "1", "google.com"])
           Params().put("LastAthenaPingTime", str(int(sec_since_boot() * 1e9))) if ping_test else False
