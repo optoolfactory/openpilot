@@ -201,6 +201,7 @@ def manager_init() -> None:
     ("AnimatedRPM", "1"),
     ("ShowStopLine", "0"),
     ("RoutineDriveOption", ""),
+    ("SshEnabled", "1"),
    ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
