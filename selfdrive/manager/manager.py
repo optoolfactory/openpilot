@@ -200,7 +200,7 @@ def manager_init() -> None:
     ("UseStockDecelOnSS", "0"),
     ("AnimatedRPM", "1"),
     ("ShowStopLine", "0"),
-    ("RoutineDriveOption", "-"),
+    ("RoutineDriveOption", "OPKR"),
     ("SshEnabled", "1"),
    ]
   if not PC:
