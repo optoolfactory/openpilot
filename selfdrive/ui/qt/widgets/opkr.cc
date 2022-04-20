@@ -1094,8 +1094,8 @@ RecordQuality::RecordQuality() : AbstractControl("녹화 화질 설정", "녹화
   )");
   btnminus.setFixedSize(150, 100);
   btnplus.setFixedSize(150, 100);
-  btnminus.setText("－");
-  btnplus.setText("＋");
+  btnminus.setText("◀");
+  btnplus.setText("▶");
   hlayout->addWidget(&btnminus);
   hlayout->addWidget(&btnplus);
 
@@ -1464,7 +1464,7 @@ void CruisemodeSelInit::refresh() {
   }
 }
 
-LaneChangeSpeed::LaneChangeSpeed() : AbstractControl("차선변경 속도 설정", "차선변경 가능 속도를 설정합니다.", "../assets/offroad/icon_shell.png") {
+LaneChangeSpeed::LaneChangeSpeed() : AbstractControl("차선변경 속도 설정", "차선변경 가능 속도를 설정합니다. (-버튼을 누르면 끌수 있습니다)", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -3520,7 +3520,7 @@ void SteerThreshold::refresh() {
 }
 
 //제어
-LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조향제어 방법을 설정합니다(PID/INDI/LQR). Reboot Required.", "../assets/offroad/icon_shell.png") {
+LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조향제어 방법을 설정합니다(PID/INDI/LQR/ANGLE/TORQUE). Reboot Required.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -3544,8 +3544,8 @@ LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조�
   )");
   btnminus.setFixedSize(150, 100);
   btnplus.setFixedSize(150, 100);
-  btnminus.setText("－");
-  btnplus.setText("＋");
+  btnminus.setText("◀");
+  btnplus.setText("▶");
   hlayout->addWidget(&btnminus);
   hlayout->addWidget(&btnplus);
 
@@ -3554,7 +3554,7 @@ LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조�
     int latcontrol = str.toInt();
     latcontrol = latcontrol - 1;
     if (latcontrol <= -1) {
-      latcontrol = 2;
+      latcontrol = 4;
     }
     QString latcontrols = QString::number(latcontrol);
     params.put("LateralControlMethod", latcontrols.toStdString());
@@ -3565,7 +3565,7 @@ LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조�
     auto str = QString::fromStdString(params.get("LateralControlMethod"));
     int latcontrol = str.toInt();
     latcontrol = latcontrol + 1;
-    if (latcontrol >= 3) {
+    if (latcontrol >= 5) {
       latcontrol = 0;
     }
     QString latcontrols = QString::number(latcontrol);
@@ -3583,6 +3583,10 @@ void LateralControl::refresh() {
     label.setText(QString::fromStdString("INDI"));
   } else if (latcontrol == "2") {
     label.setText(QString::fromStdString("LQR"));
+  } else if (latcontrol == "3") {
+    label.setText(QString::fromStdString("ANGLE"));
+  } else if (latcontrol == "4") {
+    label.setText(QString::fromStdString("TORQUE"));
   }
 }
 
@@ -3610,8 +3614,8 @@ PidKp::PidKp() : AbstractControl("Kp", "Kp값을 조정합니다.", "../assets/o
   )");
   btnminus.setFixedSize(150, 100);
   btnplus.setFixedSize(150, 100);
-  btnminus.setText("◀");
-  btnplus.setText("▶");
+  btnminus.setText("－");
+  btnplus.setText("＋");
   hlayout->addWidget(&btnminus);
   hlayout->addWidget(&btnplus);
 
