@@ -8,8 +8,8 @@ class LongTunes(Enum):
   TSS = 2
 
 class LatTunes(Enum):
-  INDI_PRIUS = 0
-  LQR_RAV4 = 1
+  INDI = 0
+  LQR = 1
   PID_A = 2
   PID_B = 3
   PID_C = 4
@@ -58,7 +58,7 @@ def set_lat_tune(tune, name, MAX_TORQUE=2.5, FRICTION=.1):
     tune.torque.kf = 1.0 / MAX_TORQUE
     tune.torque.ki = 0.5 / MAX_TORQUE
     tune.torque.friction = FRICTION
-  elif name == LatTunes.INDI_PRIUS:
+  elif name == LatTunes.INDI:
     tune.init('indi')
     tune.indi.innerLoopGainBP = [0.]
     tune.indi.innerLoopGainV = [4.0]
