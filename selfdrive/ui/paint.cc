@@ -417,6 +417,10 @@ static void ui_draw_debug(UIState *s) {
         ui_print(s, ui_viz_rx_center, bdr_s+295, "INDI");
       } else if (scene.lateralControlMethod == 2) {
         ui_print(s, ui_viz_rx_center, bdr_s+295, "LQR");
+      } else if (scene.lateralControlMethod == 3) {
+        ui_print(s, ui_viz_rx_center, bdr_s+295, "ANGLE");
+      } else if (scene.lateralControlMethod == 4) {
+        ui_print(s, ui_viz_rx_center, bdr_s+295, "TORQUE");
       }
     }
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);

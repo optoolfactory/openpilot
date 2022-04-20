@@ -146,6 +146,10 @@ static void update_state(UIState *s) {
       scene.output_scale = scene.controls_state.getLateralControlState().getIndiState().getOutput();
     } else if (scene.lateralControlMethod == 2) {
       scene.output_scale = scene.controls_state.getLateralControlState().getLqrState().getOutput();
+    } else if (scene.lateralControlMethod == 3) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getAngleState().getOutput();
+    } else if (scene.lateralControlMethod == 4) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getTorqueState().getOutput();
     }
 
     scene.alertTextMsg1 = scene.controls_state.getAlertTextMsg1(); //debug1
