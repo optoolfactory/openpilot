@@ -1699,7 +1699,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   ui_draw_text(s, center_x, center_y+110, s->scene.is_metric?"KPH":"MPH", 65, s->scene.brakeLights?COLOR_RED_ALPHA(200):COLOR_WHITE_ALPHA(200), "sans-semibold");
   snprintf(gearstep_str, sizeof(gearstep_str), "%d", s->scene.gear_step);
-  ui_draw_text(s, center_x, center_y-100, gearstep_str, 60, COLOR_WHITE_ALPHA(200), "sans-semibold");
+  ui_draw_text(s, center_x, center_y-90, gearstep_str, 55, COLOR_WHITE_ALPHA(200), "sans-semibold");
   snprintf(rpm_str, sizeof(rpm_str), "%.0f", s->scene.engine_rpm);
   ui_draw_text(s, center_x, center_y-120, s->scene.engine_rpm>1?rpm_str:"2500", 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
 }
