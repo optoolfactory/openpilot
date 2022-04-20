@@ -1660,6 +1660,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   float center_y = 250.0f;
   float radius_i = 140.0f;
   float radius_o = 185.0f;
+  char gearstep_str[3];
   float rpm = fmin(s->scene.engine_rpm, 3600.0f);
   //float rpm = 3600.0f;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
@@ -1695,6 +1696,8 @@ static void ui_draw_rpm_animation(UIState *s) {
   }
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   ui_draw_text(s, center_x, center_y+110, s->scene.is_metric?"KPH":"MPH", 65, s->scene.brakeLights?COLOR_RED_ALPHA(200):COLOR_WHITE_ALPHA(200), "sans-semibold");
+  snprintf(gearstep_str, sizeof(gearstep_str), "%d", s->scene.gear_step);
+  ui_draw_text(s, center_x, center_y-100, gearstep_str, 65, COLOR_WHITE_ALPHA(200), "sans-semibold");
 }
 
 static void ui_draw_grid(UIState *s) {
