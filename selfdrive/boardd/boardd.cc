@@ -365,8 +365,8 @@ void panda_state_thread() {
         LOGW("reading hwmon took %lfms", read_time);
       }
     } else {
-      ps.setVoltage(pandaState.voltage_pkt);
-      ps.setCurrent(pandaState.current_pkt);
+      ps.setVoltage(pandaState.voltage);
+      ps.setCurrent(pandaState.current);
     }
 
     ps.setIgnitionLine(pandaState.ignition_line);
