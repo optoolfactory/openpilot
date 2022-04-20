@@ -1655,6 +1655,7 @@ static void ui_draw_auto_hold(UIState *s) {
   ui_draw_text(s, rect.centerX(), rect.centerY(), "AUTO HOLD", 100, COLOR_GREEN_ALPHA(150), "sans-bold");
 }
 
+// rpm animation by opkr
 static void ui_draw_rpm_animation(UIState *s) {
   float center_x = (float)s->fb_w/2.0f;
   float center_y = 250.0f;
@@ -1700,6 +1701,7 @@ static void ui_draw_rpm_animation(UIState *s) {
   ui_draw_text(s, center_x, center_y-100, gearstep_str, 65, COLOR_WHITE_ALPHA(200), "sans-semibold");
 }
 
+// grid line by opkr for mounting device appropriate position  BF:Back and Forth Angle, RL:Right and Left Angle
 static void ui_draw_grid(UIState *s) {
   NVGcolor color = COLOR_WHITE_ALPHA(230);
   nvgBeginPath(s->vg);
