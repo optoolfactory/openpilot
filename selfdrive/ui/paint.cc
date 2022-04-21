@@ -1637,6 +1637,18 @@ static void ui_draw_live_tune_panel(UIState *s) {
     ui_print(s, s->fb_w/2, y_pos + height/2, "%0.5f", s->scene.lqrDcGain*0.00001);
     nvgFontSize(s->vg, 120);
     ui_print(s, s->fb_w/2, y_pos - 95, "LQR: DcGain");
+  } else if (s->scene.live_tune_panel_list == (s->scene.list_count+0) && s->scene.lateralControlMethod == 3) {
+    ui_print(s, s->fb_w/2, y_pos + height/2, "%0.1f", s->scene.torqueKp*0.1);
+    nvgFontSize(s->vg, 120);
+    ui_print(s, s->fb_w/2, y_pos - 95, "TORQUE: Kp");
+  } else if (s->scene.live_tune_panel_list == (s->scene.list_count+1) && s->scene.lateralControlMethod == 3) {
+    ui_print(s, s->fb_w/2, y_pos + height/2, "%0.1f", s->scene.torqueKf*0.1);
+    nvgFontSize(s->vg, 120);
+    ui_print(s, s->fb_w/2, y_pos - 95, "TORQUE: Kf");
+  } else if (s->scene.live_tune_panel_list == (s->scene.list_count+2) && s->scene.lateralControlMethod == 3) {
+    ui_print(s, s->fb_w/2, y_pos + height/2, "%0.1f", s->scene.torqueKi*0.1);
+    nvgFontSize(s->vg, 120);
+    ui_print(s, s->fb_w/2, y_pos - 95, "TORQUE: Ki");
   }
   nvgFillColor(s->vg, nvgRGBA(171,242,0,150));
   nvgFill(s->vg);

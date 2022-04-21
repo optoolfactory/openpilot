@@ -147,8 +147,6 @@ static void update_state(UIState *s) {
     } else if (scene.lateralControlMethod == 2) {
       scene.output_scale = scene.controls_state.getLateralControlState().getLqrState().getOutput();
     } else if (scene.lateralControlMethod == 3) {
-      scene.output_scale = scene.controls_state.getLateralControlState().getAngleState().getOutput();
-    } else if (scene.lateralControlMethod == 4) {
       scene.output_scale = scene.controls_state.getLateralControlState().getTorqueState().getOutput();
     }
 
@@ -451,6 +449,9 @@ static void update_status(UIState *s) {
     s->scene.pidKi = std::stoi(params.get("PidKi"));
     s->scene.pidKd = std::stoi(params.get("PidKd"));
     s->scene.pidKf = std::stoi(params.get("PidKf"));
+    s->scene.torqueKp = std::stoi(params.get("TorqueKp"));
+    s->scene.torqueKf = std::stoi(params.get("TorqueKf"));
+    s->scene.torqueKi = std::stoi(params.get("TorqueKi"));
     s->scene.indiInnerLoopGain = std::stoi(params.get("InnerLoopGain"));
     s->scene.indiOuterLoopGain = std::stoi(params.get("OuterLoopGain"));
     s->scene.indiTimeConstant = std::stoi(params.get("TimeConstant"));

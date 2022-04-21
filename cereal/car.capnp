@@ -561,12 +561,13 @@ struct CarParams {
     kpV @1 :List(Float32);
     kiBP @2 :List(Float32);
     kiV @3 :List(Float32);
+    kf @6 :Float32;
     deadzoneBP @4 :List(Float32);
     deadzoneV @5 :List(Float32);
-    kdBP @6 :List(Float32) = [0.];
-    kdV @7 :List(Float32) = [0.];
-    kfBP @8 :List(Float32);
-    kfV @9 :List(Float32);
+    kdBP @7 :List(Float32) = [0.];
+    kdV @8 :List(Float32) = [0.];
+    kfBP @9 :List(Float32);
+    kfV @10 :List(Float32);
   }
 
   struct LateralINDITuning {
