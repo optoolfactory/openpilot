@@ -324,6 +324,24 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         QString value = QString::number(QUIState::ui_state.scene.lqrDcGain);
         Params().put("DcGain", value.toStdString());
         return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+0) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueKp = QUIState::ui_state.scene.torqueKp - 1;
+        if (QUIState::ui_state.scene.torqueKp <= 1) QUIState::ui_state.scene.torqueKp = 1;
+        QString value = QString::number(QUIState::ui_state.scene.torqueKp);
+        Params().put("TorqueKp", value.toStdString());
+        return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+1) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueKf = QUIState::ui_state.scene.torqueKf - 1;
+        if (QUIState::ui_state.scene.torqueKf <= 1) QUIState::ui_state.scene.torqueKf = 1;
+        QString value = QString::number(QUIState::ui_state.scene.torqueKf);
+        Params().put("TorqueKf", value.toStdString());
+        return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+2) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueKi = QUIState::ui_state.scene.torqueKi - 1;
+        if (QUIState::ui_state.scene.torqueKi <= 1) QUIState::ui_state.scene.torqueKi = 1;
+        QString value = QString::number(QUIState::ui_state.scene.torqueKi);
+        Params().put("TorqueKi", value.toStdString());
+        return;
       }
     }
     if (QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top && livetunepanel_right_btn.ptInRect(e->x(), e->y())) {
@@ -414,11 +432,29 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         QString value = QString::number(QUIState::ui_state.scene.lqrDcGain);
         Params().put("DcGain", value.toStdString());
         return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+0) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueKp = QUIState::ui_state.scene.torqueKp + 1;
+        if (QUIState::ui_state.scene.torqueKp >= 25) QUIState::ui_state.scene.torqueKp = 25;
+        QString value = QString::number(QUIState::ui_state.scene.torqueKp);
+        Params().put("TorqueKp", value.toStdString());
+        return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+1) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueKf = QUIState::ui_state.scene.torqueKf + 1;
+        if (QUIState::ui_state.scene.torqueKf >= 25) QUIState::ui_state.scene.torqueKf = 25;
+        QString value = QString::number(QUIState::ui_state.scene.torqueKf);
+        Params().put("TorqueKf", value.toStdString());
+        return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+2) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueKi = QUIState::ui_state.scene.torqueKi + 1;
+        if (QUIState::ui_state.scene.torqueKi >= 25) QUIState::ui_state.scene.torqueKi = 25;
+        QString value = QString::number(QUIState::ui_state.scene.torqueKi);
+        Params().put("TorqueKi", value.toStdString());
+        return;
       }
     }
     if (QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top && livetunepanel_left_above_btn.ptInRect(e->x(), e->y())) {
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list - 1;
-      if (QUIState::ui_state.scene.lateralControlMethod == 2 && QUIState::ui_state.scene.live_tune_panel_list < 0) {
+      if (QUIState::ui_state.scene.lateralControlMethod > 1 && QUIState::ui_state.scene.live_tune_panel_list < 0) {
         QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count+2;
       } else if (QUIState::ui_state.scene.live_tune_panel_list < 0) {
         QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count+3;
@@ -427,7 +463,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
     }
     if (QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top && livetunepanel_right_above_btn.ptInRect(e->x(), e->y())) {
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list + 1;
-      if (QUIState::ui_state.scene.lateralControlMethod == 2 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+2)) {
+      if (QUIState::ui_state.scene.lateralControlMethod > 1 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+2)) {
         QUIState::ui_state.scene.live_tune_panel_list = 0;
       } else if (QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+3)) {
         QUIState::ui_state.scene.live_tune_panel_list = 0;
