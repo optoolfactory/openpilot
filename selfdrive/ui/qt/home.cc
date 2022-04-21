@@ -452,7 +452,6 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         return;
       }
     }
-    }
     if (QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top && livetunepanel_left_above_btn.ptInRect(e->x(), e->y())) {
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list - 1;
       if (QUIState::ui_state.scene.lateralControlMethod > 1 && QUIState::ui_state.scene.live_tune_panel_list < 0) {
