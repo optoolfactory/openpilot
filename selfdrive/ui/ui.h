@@ -213,6 +213,7 @@ typedef struct UIScene {
   int pidKp, pidKi, pidKd, pidKf;
   int indiInnerLoopGain, indiOuterLoopGain, indiTimeConstant, indiActuatorEffectiveness;
   int lqrScale, lqrKi, lqrDcGain;
+  int torqueKp, torqueKf, torqueKi;
   bool live_tune_panel_enable;
   int top_text_view;
   int live_tune_panel_list = 0;
@@ -245,6 +246,7 @@ typedef struct UIScene {
   float ctrl_speed;
   float accel;
   bool animated_rpm;
+  int max_animated_rpm;
   bool stop_line;
   int gear_step;
 
