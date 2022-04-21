@@ -680,9 +680,9 @@ static void ui_draw_vision_speed(UIState *s) {
   	val_color = nvgRGBA(201, 34, 49, 100);
   } else if (scene.gasPress && !scene.comma_stock_ui) {
     val_color = nvgRGBA(0, 240, 0, 255);
-  } else if (act_accel < 0 && !scene.comma_stock_ui) {
+  } else if (act_accel < 0 && act_accel > -5.0 && !scene.comma_stock_ui) {
     val_color = nvgRGBA((255-int(abs(act_accel*8))), (255-int(brake_opacity)), (255-int(brake_opacity)), 255);
-  } else if (act_accel > 0 && !scene.comma_stock_ui) {
+  } else if (act_accel > 0 && act_accel < 3.0 && !scene.comma_stock_ui) {
     val_color = nvgRGBA((255-int(gas_opacity)), (255-int((act_accel*10))), (255-int(gas_opacity)), 255);
   }
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
