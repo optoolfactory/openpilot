@@ -948,7 +948,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     if(scene.engine_rpm > 3500) {
       val_color = nvgRGBA(255, 0, 0, 200);
     }
-    snprintf(uom_str, sizeof(uom_str), "rpm");
+    snprintf(uom_str, sizeof(uom_str), "%d", scene.gear_step);
     bb_ry +=bb_ui_draw_measure(s, engine_rpm_val.c_str(), uom_str, "ENG RPM",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
@@ -1661,12 +1661,12 @@ static void ui_draw_rpm_animation(UIState *s) {
   float center_y = 250.0f;
   float radius_i = 140.0f;
   float radius_o = 185.0f;
-  char gearstep_str[3];
   char rpm_str[6];
-  float rpm = fmin(s->scene.engine_rpm, 3600.0f);
+  float max_rpm = (float)s->scene.max_animated_rpm;
+  float rpm = fmin(s->scene.engine_rpm, max_rpm);
   //float rpm = 3600.0f;
   // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
-  float rpm_to_deg = floor(9.0f + ((27.0f-9.0f)/(3600.0f-0.0f)) * (rpm - 0.0f)); // min:9, max:27
+  float rpm_to_deg = floor(9.0f + ((27.0f-9.0f)/(max_rpm-0.0f)) * (rpm - 0.0f)); // min:9, max:27
   float target1 = (float)(NVG_PI/12.0f)*9.0f;
   float target2 = (float)(NVG_PI/12.0f)*10.0f;
 
@@ -1698,10 +1698,8 @@ static void ui_draw_rpm_animation(UIState *s) {
   }
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   ui_draw_text(s, center_x, center_y+110, s->scene.is_metric?"KPH":"MPH", 65, s->scene.brakeLights?COLOR_RED_ALPHA(200):COLOR_WHITE_ALPHA(200), "sans-semibold");
-  snprintf(gearstep_str, sizeof(gearstep_str), "%d", s->scene.gear_step);
-  ui_draw_text(s, center_x, center_y-90, gearstep_str, 55, COLOR_WHITE_ALPHA(200), "sans-semibold");
   snprintf(rpm_str, sizeof(rpm_str), "%.0f", s->scene.engine_rpm);
-  ui_draw_text(s, center_x, center_y-120, s->scene.engine_rpm>1?rpm_str:"", 45, COLOR_WHITE_ALPHA(200), "sans-semibold");
+  ui_draw_text(s, center_x, center_y-110, s->scene.engine_rpm>1?rpm_str:"", 55, COLOR_WHITE_ALPHA(200), "sans-semibold");
 }
 
 // grid line by opkr for mounting device appropriate position  BF:Back and Forth Angle, RL:Right and Left Angle

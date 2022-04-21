@@ -245,6 +245,7 @@ typedef struct UIScene {
   float ctrl_speed;
   float accel;
   bool animated_rpm;
+  int max_animated_rpm;
   bool stop_line;
   int gear_step;
 

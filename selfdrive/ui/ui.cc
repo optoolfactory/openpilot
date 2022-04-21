@@ -462,6 +462,7 @@ static void update_status(UIState *s) {
     s->scene.radar_long_helper = std::stoi(params.get("RadarLongHelper"));
     s->scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
     s->scene.top_text_view = std::stoi(params.get("TopTextView"));
+    s->scene.max_animated_rpm = std::stoi(params.get("AnimatedRPMMax"));
     s->scene.show_error = params.getBool("ShowError");
     s->scene.speedlimit_signtype = params.getBool("OpkrSpeedLimitSignType");
     s->scene.sl_decel_off = params.getBool("SpeedLimitDecelOff");

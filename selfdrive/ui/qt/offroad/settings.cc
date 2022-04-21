@@ -557,6 +557,7 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new GoogleMapEnabledToggle());
   layout->addWidget(new OPKRTopTextView());
   layout->addWidget(new RPMAnimatedToggle());
+  layout->addWidget(new RPMAnimatedMaxValue());
   layout->addWidget(new ShowStopLineToggle());
 }
 

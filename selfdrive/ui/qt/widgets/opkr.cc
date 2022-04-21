@@ -6598,3 +6598,62 @@ void RoutineDriveOption::refresh() {
     )");
   }
 }
+
+RPMAnimatedMaxValue::RPMAnimatedMaxValue() : AbstractControl("AnimatedRPM Max", "Set Max RPM for animated rpm value.", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("AnimatedRPMMax"));
+    int value = str.toInt();
+    value = value - 100;
+    if (value <= 500) {
+      value = 500;
+    }
+    QString values = QString::number(value);
+    params.put("AnimatedRPMMax", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("AnimatedRPMMax"));
+    int value = str.toInt();
+    value = value + 100;
+    if (value >= 6500) {
+      value = 6500;
+    }
+    QString values = QString::number(value);
+    params.put("AnimatedRPMMax", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void RPMAnimatedMaxValue::refresh() {
+  label.setText(QString::fromStdString(params.get("AnimatedRPMMax")));
+}

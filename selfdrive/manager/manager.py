@@ -199,6 +199,7 @@ def manager_init() -> None:
     ("AvoidLKASFaultBeyond", "0"),
     ("UseStockDecelOnSS", "0"),
     ("AnimatedRPM", "1"),
+    ("AnimatedRPMMax", "3600"),
     ("ShowStopLine", "0"),
     ("RoutineDriveOption", "OPKR"),
     ("SshEnabled", "1"),
