@@ -33,7 +33,7 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Ch
           if (branchid.length() > 0) {
             getBranchID(branchid);
             githubbranch = branchid;
-            QString cmd0 = QString::fromStdString("Change repository/branch. It takes a little time to complete. Do you want to proceed?\n") + QString::fromStdString("https://github.com/") + githubid + QString::fromStdString("/") + githubrepo + QString::fromStdString(".git\n") + QString::fromStdString("Branch: ") + githubbranch;
+            QString cmd0 = QString::fromStdString("This will download the branch and takes a little time.\n") + QString::fromStdString("https://github.com/") + githubid + QString::fromStdString("/") + githubrepo + QString::fromStdString(".git\n") + QString::fromStdString("Branch: ") + githubbranch;
             if (ConfirmationDialog::confirm(cmd0, this)) {
               setText("DONE");
               setEnabled(true);
@@ -3520,7 +3520,7 @@ void SteerThreshold::refresh() {
 }
 
 //제어
-LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조향제어 방법을 설정합니다(PID/INDI/LQR/ANGLE/TORQUE). Reboot Required.", "../assets/offroad/icon_shell.png") {
+LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조향제어 방법을 설정합니다(PID/INDI/LQR/TORQUE). Reboot Required.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -3554,7 +3554,7 @@ LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조�
     int latcontrol = str.toInt();
     latcontrol = latcontrol - 1;
     if (latcontrol <= -1) {
-      latcontrol = 4;
+      latcontrol = 3;
     }
     QString latcontrols = QString::number(latcontrol);
     params.put("LateralControlMethod", latcontrols.toStdString());
@@ -3565,7 +3565,7 @@ LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조�
     auto str = QString::fromStdString(params.get("LateralControlMethod"));
     int latcontrol = str.toInt();
     latcontrol = latcontrol + 1;
-    if (latcontrol >= 5) {
+    if (latcontrol >= 4) {
       latcontrol = 0;
     }
     QString latcontrols = QString::number(latcontrol);
@@ -3584,8 +3584,6 @@ void LateralControl::refresh() {
   } else if (latcontrol == "2") {
     label.setText(QString::fromStdString("LQR"));
   } else if (latcontrol == "3") {
-    label.setText(QString::fromStdString("ANGLE"));
-  } else if (latcontrol == "4") {
     label.setText(QString::fromStdString("TORQUE"));
   }
 }
@@ -4275,6 +4273,195 @@ void DcGain::refresh() {
   auto strs = QString::fromStdString(params.get("DcGain"));
   int valuei = strs.toInt();
   float valuef = valuei * 0.00001;
+  QString valuefs = QString::number(valuef);
+  label.setText(QString::fromStdString(valuefs.toStdString()));
+}
+
+TorqueKp::TorqueKp() : AbstractControl("Kp", "Adjust Kp", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueKp"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 1) {
+      value = 1;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueKp", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueKp"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 25) {
+      value = 25;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueKp", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void TorqueKp::refresh() {
+  auto strs = QString::fromStdString(params.get("TorqueKp"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.1;
+  QString valuefs = QString::number(valuef);
+  label.setText(QString::fromStdString(valuefs.toStdString()));
+}
+
+TorqueKf::TorqueKf() : AbstractControl("Kf", "Adjust Kf", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueKf"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 1) {
+      value = 1;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueKf", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueKf"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 25) {
+      value = 25;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueKf", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void TorqueKf::refresh() {
+  auto strs = QString::fromStdString(params.get("TorqueKf"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.1;
+  QString valuefs = QString::number(valuef);
+  label.setText(QString::fromStdString(valuefs.toStdString()));
+}
+
+TorqueKi::TorqueKi() : AbstractControl("Ki", "Adjust Ki", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueKi"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 1) {
+      value = 1;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueKi", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueKi"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 25) {
+      value = 25;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueKi", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void TorqueKi::refresh() {
+  auto strs = QString::fromStdString(params.get("TorqueKi"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.1;
   QString valuefs = QString::number(valuef);
   label.setText(QString::fromStdString(valuefs.toStdString()));
 }
@@ -6304,7 +6491,7 @@ OPKREdgeOffset::OPKREdgeOffset() : AbstractControl("", "+ value to move car to l
   hlayout->addWidget(&btnplusl);
 
   labelr1.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  labelr1.setText("RigtEdge: ");
+  labelr1.setText("RightEdge: ");
   hlayout->addWidget(&labelr1);
   labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labelr.setStyleSheet("color: #e0e879");
@@ -6597,4 +6784,63 @@ void RoutineDriveOption::refresh() {
     background-color: #393939;
     )");
   }
+}
+
+RPMAnimatedMaxValue::RPMAnimatedMaxValue() : AbstractControl("AnimatedRPM Max", "Set Max RPM for animated rpm value.", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("AnimatedRPMMax"));
+    int value = str.toInt();
+    value = value - 100;
+    if (value <= 500) {
+      value = 500;
+    }
+    QString values = QString::number(value);
+    params.put("AnimatedRPMMax", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("AnimatedRPMMax"));
+    int value = str.toInt();
+    value = value + 100;
+    if (value >= 6500) {
+      value = 6500;
+    }
+    QString values = QString::number(value);
+    params.put("AnimatedRPMMax", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void RPMAnimatedMaxValue::refresh() {
+  label.setText(QString::fromStdString(params.get("AnimatedRPMMax")));
 }
