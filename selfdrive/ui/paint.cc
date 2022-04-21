@@ -686,7 +686,7 @@ static void ui_draw_vision_speed(UIState *s) {
     val_color = nvgRGBA((255-int(gas_opacity)), (255-int((act_accel*10))), (255-int(gas_opacity)), 255);
   }
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  ui_draw_text(s, s->fb_w/2, 210, speed_str.c_str(), 96 * 2.5, val_color, "sans-bold");
+  ui_draw_text(s, s->fb_w/2, 210+(s->scene.animated_rpm?35:0), speed_str.c_str(), 96 * 2.5, val_color, "sans-bold");
   if (!s->scene.animated_rpm) {
     ui_draw_text(s, s->fb_w/2, 290, s->scene.is_metric ? "km/h" : "mph", 36 * 2.5, scene.brakeLights?nvgRGBA(201, 34, 49, 100):COLOR_WHITE_ALPHA(200), "sans-regular");
   }
@@ -1661,7 +1661,7 @@ static void ui_draw_auto_hold(UIState *s) {
 // rpm animation by opkr
 static void ui_draw_rpm_animation(UIState *s) {
   float center_x = (float)s->fb_w/2.0f;
-  float center_y = 150.0f;
+  float center_y = 185.0f;
   float radius_i = 140.0f;
   float radius_o = 185.0f;
   char rpm_str[6];
