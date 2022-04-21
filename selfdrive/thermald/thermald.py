@@ -289,8 +289,7 @@ def thermald_thread() -> NoReturn:
     if (count % int(10. / DT_TRML)) == 0:
       try:
         network_type = HARDWARE.get_network_type()
-        if EON:
-          network_strength, connect_name, rsrp = HARDWARE.get_network_strength(network_type)
+        network_strength, connect_name, rsrp = HARDWARE.get_network_strength(network_type)
         network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
         if TICI:
           nvme_temps = HARDWARE.get_nvme_temperatures()
@@ -312,8 +311,7 @@ def thermald_thread() -> NoReturn:
           os.system("nmcli conn up lte")
           registered_count = 0
 
-        if EON:
-          wifiIpAddress = HARDWARE.get_ip_address()
+        wifiIpAddress = HARDWARE.get_ip_address()
         try:
           ping_test = subprocess.check_output(["ping", "-c", "1", "-W", "1", "google.com"])
           Params().put("LastAthenaPingTime", str(int(sec_since_boot() * 1e9))) if ping_test else False
