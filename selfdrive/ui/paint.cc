@@ -724,7 +724,7 @@ static void ui_draw_vision_face(UIState *s) {
   const int radius = 85;
   const int center_x = radius + bdr_s;
   const int center_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
-  ui_draw_circle_image(s, center_x, center_y, radius, "driver_face", s->scene.dm_active);
+  ui_draw_circle_image(s, center_x, !s->scene.animated_rpm?center_y:(center_y-60), radius, "driver_face", s->scene.dm_active);
 }
 
 //BB START: functions added for the display of various items
