@@ -678,6 +678,54 @@ public:
   }
 };
 
+class StockDecelonCamToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  StockDecelonCamToggle() : ToggleControl("Use Stock Decel on SaftySection", "Use stock deceleration on safety section.(the vehicle equipped with Stock Navigation)", "../assets/offroad/icon_shell.png", Params().getBool("UseStockDecelOnSS")) {
+    QObject::connect(this, &StockDecelonCamToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("UseStockDecelOnSS", status);
+    });
+  }
+};
+
+class JoystickModeToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  JoystickModeToggle() : ToggleControl("JoyStick Debug Mode", "How to use: https://github.com/commaai/openpilot/tree/master/tools/joystick", "../assets/offroad/icon_shell.png", Params().getBool("JoystickDebugMode")) {
+    QObject::connect(this, &JoystickModeToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("JoystickDebugMode", status);
+    });
+  }
+};
+
+class RPMAnimatedToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  RPMAnimatedToggle() : ToggleControl("RPM Animated", "Animated RPM", "../assets/offroad/icon_shell.png", Params().getBool("AnimatedRPM")) {
+    QObject::connect(this, &RPMAnimatedToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("AnimatedRPM", status);
+    });
+  }
+};
+
+class ShowStopLineToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  ShowStopLineToggle() : ToggleControl("Show Stop Line", "Show stop line on the screen.", "../assets/offroad/icon_shell.png", Params().getBool("ShowStopLine")) {
+    QObject::connect(this, &ShowStopLineToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("ShowStopLine", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
@@ -1355,6 +1403,51 @@ class DcGain : public AbstractControl {
 
 public:
   DcGain();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class TorqueKp : public AbstractControl {
+  Q_OBJECT
+
+public:
+  TorqueKp();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class TorqueKf : public AbstractControl {
+  Q_OBJECT
+
+public:
+  TorqueKf();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class TorqueKi : public AbstractControl {
+  Q_OBJECT
+
+public:
+  TorqueKi();
 
 private:
   QPushButton btnplus;
@@ -2103,6 +2196,21 @@ public:
 private:
   QPushButton btn0;
   QPushButton btn1;
+  Params params;
+  
+  void refresh();
+};
+
+class RPMAnimatedMaxValue : public AbstractControl {
+  Q_OBJECT
+
+public:
+  RPMAnimatedMaxValue();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
   Params params;
   
   void refresh();
