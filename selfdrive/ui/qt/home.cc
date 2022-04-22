@@ -69,7 +69,7 @@ void HomeWindow::showDriverView(bool show) {
 }
 
 void HomeWindow::mousePressEvent(QMouseEvent* e) {
-  int max_lat_accel = 25;
+  float max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel * 0.1;
   // OPKR add map
   if (QUIState::ui_state.scene.started && map_overlay_btn.ptInRect(e->x(), e->y())) {
     QSoundEffect effect1;
@@ -343,6 +343,12 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         QString value = QString::number(QUIState::ui_state.scene.torqueKi);
         Params().put("TorqueKi", value.toStdString());
         return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+3) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueMaxLatAccel = QUIState::ui_state.scene.torqueMaxLatAccel - 1;
+        if (QUIState::ui_state.scene.torqueMaxLatAccel <= 1) QUIState::ui_state.scene.torqueMaxLatAccel = 1;
+        QString value = QString::number(QUIState::ui_state.scene.torqueMaxLatAccel);
+        Params().put("TorqueMaxLatAccel", value.toStdString());
+        return;
       }
     }
     if (QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top && livetunepanel_right_btn.ptInRect(e->x(), e->y())) {
@@ -451,11 +457,17 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         QString value = QString::number(QUIState::ui_state.scene.torqueKi);
         Params().put("TorqueKi", value.toStdString());
         return;
+      } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+3) && QUIState::ui_state.scene.lateralControlMethod == 3) {
+        QUIState::ui_state.scene.torqueMaxLatAccel = QUIState::ui_state.scene.torqueMaxLatAccel + 1;
+        if (QUIState::ui_state.scene.torqueMaxLatAccel >= 50) QUIState::ui_state.scene.torqueMaxLatAccel = 50;
+        QString value = QString::number(QUIState::ui_state.scene.torqueMaxLatAccel);
+        Params().put("TorqueMaxLatAccel", value.toStdString());
+        return;
       }
     }
     if (QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top && livetunepanel_left_above_btn.ptInRect(e->x(), e->y())) {
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list - 1;
-      if (QUIState::ui_state.scene.lateralControlMethod > 1 && QUIState::ui_state.scene.live_tune_panel_list < 0) {
+      if (QUIState::ui_state.scene.lateralControlMethod == 2 && QUIState::ui_state.scene.live_tune_panel_list < 0) {
         QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count+2;
       } else if (QUIState::ui_state.scene.live_tune_panel_list < 0) {
         QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count+3;
@@ -464,7 +476,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
     }
     if (QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top && livetunepanel_right_above_btn.ptInRect(e->x(), e->y())) {
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list + 1;
-      if (QUIState::ui_state.scene.lateralControlMethod > 1 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+2)) {
+      if (QUIState::ui_state.scene.lateralControlMethod == 2 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+2)) {
         QUIState::ui_state.scene.live_tune_panel_list = 0;
       } else if (QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+3)) {
         QUIState::ui_state.scene.live_tune_panel_list = 0;
