@@ -36,6 +36,7 @@ class CAR:
   SONATA_LF_TURBO = "HYUNDAI SONATA LF TURBO"
   SONATA_LF_HEV = "HYUNDAI SONATA LF HYBRID"
   KONA = "HYUNDAI KONA 2019"
+  KONA_N = "HYUNDAI KONA N 2021"
   KONA_EV = "HYUNDAI KONA EV 2019"
   KONA_HEV = "HYUNDAI KONA HEV 2019"
   IONIQ_EV = "HYUNDAI IONIQ ELECTRIC LIMITED 2019"
@@ -52,6 +53,8 @@ class CAR:
   K3 = "KIA K3 E 2018"
   K5 = "KIA K5 SX 2019 & 2016"
   K5_HEV = "KIA K5 HYBRID 2017 & SPORTS 2019"
+  K5_DL3 = "KIA K5 2021 (DL3)" 
+  K5_DL3_HEV = "KIA K5 HEV 2021 (DL3)"
   SPORTAGE = "KIA SPORTAGE S 2020"
   SORENTO = "KIA SORENTO GT LINE 2018"
   STINGER = "KIA STINGER GT2 2018"
@@ -210,6 +213,8 @@ FINGERPRINTS = {
     },{
     67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 354: 3, 356: 4, 544: 8, 593: 8, 608: 8, 688: 5, 809: 8, 832: 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1056: 8, 1057: 8, 1078: 4, 1107: 5, 1136: 8, 1156: 8, 1170: 8, 1173: 8, 1186: 2, 1191: 2, 1193: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1384: 8, 1394: 8, 1407: 8, 1414: 3, 1419: 8, 1427: 6, 1456: 4, 1470: 8
   }],
+  CAR.KONA_N: [{
+  }],
   CAR.KONA_EV: [{
     127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 549: 8, 593: 8, 688: 5, 832: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1136: 8, 1151: 6, 1168: 7, 1173: 8, 1183: 8, 1186: 2, 1191: 2, 1225: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1307: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1378: 4, 1407: 8, 1419: 8, 1426: 8, 1427: 6, 1429: 8, 1430: 8, 1456: 4, 1470: 8, 1473: 8, 1507: 8, 1535: 8, 2000: 8, 2004: 8, 2008: 8, 2012: 8
     },{
@@ -338,6 +343,10 @@ FINGERPRINTS = {
     68: 8, 127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 593: 8, 688: 5, 832: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 6, 916: 8, 1040: 8, 1056: 8, 1057: 8, 1078: 4, 1136: 6, 1151: 6, 1168: 7, 1173: 8, 1236: 2, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1322: 8, 1331: 8, 1332: 8, 1333: 8, 1342: 6, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1371: 8, 1407: 8, 1419: 8, 1427: 6, 1429: 8, 1430: 8, 1448: 8, 1456: 4, 1470: 8, 1476: 8, 1535: 8
     },{
     68: 8, 127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 576: 8, 593: 8, 688: 5, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 909: 8, 912: 7, 916: 8, 1040: 8, 1056: 8, 1057: 8, 1078: 4, 1136: 6, 1151: 6, 1168: 7, 1173: 8, 1180: 8, 1186: 2, 1191: 2, 1265: 4, 1268: 8, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1371: 8, 1407: 8, 1419: 8, 1420: 8, 1425: 2, 1427: 6, 1429: 8, 1430: 8, 1448: 8, 1456: 4, 1470: 8, 1476: 8, 1535: 8
+  }],
+  CAR.K5_DL3: [{
+  }],
+  CAR.K5_DL3_HEV: [{
   }],
   CAR.SPORTAGE: [{
     67: 8, 68: 8, 127: 8, 273: 8, 274: 8, 275: 8, 339: 8, 356: 4, 399: 8, 447: 8, 512: 6, 544: 8, 593: 8, 608: 8, 688: 5, 790: 8, 809: 8, 832: 8, 884: 8, 897: 8, 899: 8, 902: 8, 903: 6, 909: 8, 916: 8, 1040: 8, 1078: 4, 1170: 8, 1191: 2, 1253: 8, 1254: 8, 1255: 8, 1265: 4, 1280: 1, 1282: 4, 1287: 4, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1349: 8, 1351: 8, 1353: 8, 1363: 8, 1365: 8, 1366: 8, 1367: 8, 1369: 8, 1407: 8, 1419: 8, 1427: 6, 1440: 8, 1456: 4, 1470: 8, 1472: 8, 1486: 8, 1487: 8, 1491: 8, 1492: 8, 1530: 8
@@ -581,6 +590,30 @@ if Params().get_bool("FingerprintTwoSet"):
         b"\xf1\x816T7B0051\x00\x00\xf1\x006T7B0_C2\x00\x006T7B0051\x00\x00TJF2H20KA0\xf4'\\\x91",
       ],
     },
+    CAR.K5_DL3: {
+      (Ecu.fwdRadar, 0x7D0, None): [
+        b'\xf1\000DL3_ SCC FHCUP      1.00 1.03 99110-L2000         ',
+        b'\xf1\x8799110L2000\xf1\000DL3_ SCC FHCUP      1.00 1.03 99110-L2000         ',
+      ],
+      (Ecu.fwdCamera, 0x7C4, None): [
+        b'\xf1\000DL3 MFC  AT USA LHD 1.00 1.03 99210-L3000 200915',
+      ],
+      (Ecu.eps, 0x7D4, None): [
+        b'\xf1\x8756310-L3110\xf1\000DL3 MDPS C 1.00 1.01 56310-L3110 4DLAC101',
+      ],
+      (Ecu.esp, 0x7D1, None): [
+        b'\xf1\000DL ESC \006 101 \004\002 58910-L3200',
+        b'\xf1\x8758910-L3200\xf1\000DL ESC \006 101 \004\002 58910-L3200',
+      ],
+      (Ecu.engine, 0x7E0, None): [
+        b'\xf1\x87391212MKT0\xf1\xa00240',
+        b'\xf1\x87391212MKT0',
+      ],
+      (Ecu.transmission, 0x7E1, None): [
+        b'\xf1\000bcsh8p54  U913\000\000\000\000\000\000TDL2T16NB1ia\v\xb8',
+        b'\xf1\x87SALFEA5652514GK2UUeV\x88\x87\x88xxwg\x87ww\x87wwfwvd/\xfb\xffvU_\xff\x93\xd3\xf1\x81U913\000\000\000\000\000\000\xf1\000bcsh8p54  U913\000\000\000\000\000\000TDL2T16NB1ia\v\xb8',
+      ],
+    },
     CAR.STINGER: {
       (Ecu.fwdRadar, 0x7d0, None): [ b'\xf1\x00CK__ SCC F_CUP      1.00 1.01 96400-J5100         \xf1\xa01.01',],
       (Ecu.engine, 0x7e0, None): [ b'\xf1\x81640E0051\x00\x00\x00\x00\x00\x00\x00\x00',],
@@ -629,30 +662,30 @@ if Params().get_bool("FingerprintTwoSet"):
   }
 
 CHECKSUM = {
-  "crc8": [CAR.SANTA_FE, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SELTOS, CAR.AVANTE, CAR.SOUL_EV],
+  "crc8": [CAR.SANTA_FE, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SELTOS, CAR.AVANTE, CAR.SOUL_EV, CAR.K5_DL3, CAR.K5_DL3_HEV],
   "6B": [CAR.SORENTO, CAR.GENESIS],
 }
 
 FEATURES = {
   # Use Cluster for Gear Selection, rather than Transmission
-  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.GRANDEUR_IG_FL},
+  "use_cluster_gears": {CAR.AVANTE, CAR.KONA, CAR.I30, CAR.K7, CAR.GRANDEUR_IG, CAR.KONA_N},
   # Use TCU Message for Gear Selection
-  "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER},
+  "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER, CAR.SPORTAGE},
   # Use E_GEAR Message for Gear Selection
   "use_elect_gears": {CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.KONA_EV, CAR.KONA_HEV, CAR.IONIQ_EV, CAR.IONIQ_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NEXO,
-                      CAR.K5_HEV, CAR.K7_HEV, CAR.NIRO_EV, CAR.NIRO_HEV, CAR.SOUL_EV},
+                      CAR.K5_HEV, CAR.K7_HEV, CAR.NIRO_EV, CAR.NIRO_HEV, CAR.SOUL_EV, CAR.K5_DL3_HEV},
 
   # send LFA MFA message for new HKG models
   # Insert your car in this if you want turn LFA icon on.
-  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER},
+  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER, CAR.KONA_N, CAR.K5_DL3, CAR.K5_DL3_HEV},
 
   "send_hda_mfa": {CAR.GRANDEUR_IG_HEV},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
   # Insert your car in this if you see front collision error on your cluster.
-  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE},
+  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE},
 }
 
-HYBRID_CAR = {CAR.K5_HEV, CAR.IONIQ_HEV, CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.K7_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NIRO_HEV, CAR.KONA_HEV}
+HYBRID_CAR = {CAR.K5_HEV, CAR.IONIQ_HEV, CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.K7_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NIRO_HEV, CAR.KONA_HEV, CAR.K5_DL3_HEV}
 EV_CAR = {CAR.IONIQ_EV, CAR.KONA_EV, CAR.NIRO_EV, CAR.NEXO, CAR.SOUL_EV}
 
 if Params().get_bool("UseRadarTrack"):
@@ -687,6 +720,8 @@ if Params().get_bool("UseRadarTrack"):
     CAR.K3: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K5: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K5_HEV: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.K5_DL3: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.K5_DL3_HEV: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.SPORTAGE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.SORENTO: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.STINGER: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -714,6 +749,7 @@ else:
     CAR.SONATA_LF_TURBO: dbc_dict('hyundai_kia_generic', None),
     CAR.SONATA_LF_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA: dbc_dict('hyundai_kia_generic', None),
+    CAR.KONA_N: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_EV: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.IONIQ_EV: dbc_dict('hyundai_kia_generic', None),
@@ -730,6 +766,8 @@ else:
     CAR.K3: dbc_dict('hyundai_kia_generic', None),
     CAR.K5: dbc_dict('hyundai_kia_generic', None),
     CAR.K5_HEV: dbc_dict('hyundai_kia_generic', None),
+    CAR.K5_DL3: dbc_dict('hyundai_kia_generic', None),
+    CAR.K5_DL3_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.SPORTAGE: dbc_dict('hyundai_kia_generic', None),
     CAR.SORENTO: dbc_dict('hyundai_kia_generic', None),
     CAR.STINGER: dbc_dict('hyundai_kia_generic', None),
