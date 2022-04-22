@@ -483,7 +483,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count+2;
       } else if (QUIState::ui_state.scene.lateralControlMethod == 3 && QUIState::ui_state.scene.live_tune_panel_list < 0) {
         QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count+4;
-      } else if (QUIState::ui_state.scene.live_tune_panel_list < 0) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod < 2 && QUIState::ui_state.scene.live_tune_panel_list < 0) {
         QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count+3;
       }
       return;
@@ -492,9 +492,9 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list + 1;
       if (QUIState::ui_state.scene.lateralControlMethod == 2 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+2)) {
         QUIState::ui_state.scene.live_tune_panel_list = 0;
-      } else if (QUIState::ui_state.scene.lateralControlMethod == 3 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+5)) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 3 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+4)) {
         QUIState::ui_state.scene.live_tune_panel_list = 0;
-      } else if (QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+3)) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod < 2 && QUIState::ui_state.scene.live_tune_panel_list > (QUIState::ui_state.scene.list_count+3)) {
         QUIState::ui_state.scene.live_tune_panel_list = 0;
       }
       return;
