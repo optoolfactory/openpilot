@@ -1652,6 +1652,10 @@ static void ui_draw_live_tune_panel(UIState *s) {
     ui_print(s, s->fb_w/2, y_pos + height/2, "%0.1f", s->scene.torqueMaxLatAccel*0.1);
     nvgFontSize(s->vg, 120);
     ui_print(s, s->fb_w/2, y_pos - 95, "TORQUE: MaxL");
+  } else if (s->scene.live_tune_panel_list == (s->scene.list_count+4) && s->scene.lateralControlMethod == 3) {
+    ui_print(s, s->fb_w/2, y_pos + height/2, "%0.2f", s->scene.torqueFriction*0.01);
+    nvgFontSize(s->vg, 120);
+    ui_print(s, s->fb_w/2, y_pos - 95, "TORQUE: Fric");
   }
   nvgFillColor(s->vg, nvgRGBA(171,242,0,150));
   nvgFill(s->vg);
