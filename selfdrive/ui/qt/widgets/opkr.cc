@@ -4320,8 +4320,9 @@ TorqueKp::TorqueKp() : AbstractControl("Kp", "Adjust Kp", "../assets/offroad/ico
   
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("TorqueKp"));
+    auto str1 = QString::fromStdString(params.get("TorqueMaxLatAccel"));
     int value = str.toInt();
-    int max_lat_accel = 25;
+    int max_lat_accel = str1.toInt();
     value = value + 1;
     if (value >= max_lat_accel) {
       value = max_lat_accel;
@@ -4335,7 +4336,8 @@ TorqueKp::TorqueKp() : AbstractControl("Kp", "Adjust Kp", "../assets/offroad/ico
 
 void TorqueKp::refresh() {
   auto strs = QString::fromStdString(params.get("TorqueKp"));
-  float max_lat_accel = 2.5;
+  auto strs1 = QString::fromStdString(params.get("TorqueMaxLatAccel"));
+  float max_lat_accel = strs1.toInt() * 0.1;
   int valuei = strs.toInt();
   float valuef = valuei * 0.1;
   float valuef1 = valuef/max_lat_accel;
@@ -4386,8 +4388,9 @@ TorqueKf::TorqueKf() : AbstractControl("Kf", "Adjust Kf", "../assets/offroad/ico
   
  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("TorqueKf"));
+    auto str1 = QString::fromStdString(params.get("TorqueMaxLatAccel"));
     int value = str.toInt();
-    int max_lat_accel = 25;
+    int max_lat_accel = str1.toInt();
     value = value + 1;
     if (value >= max_lat_accel) {
       value = max_lat_accel;
@@ -4401,7 +4404,8 @@ TorqueKf::TorqueKf() : AbstractControl("Kf", "Adjust Kf", "../assets/offroad/ico
 
 void TorqueKf::refresh() {
   auto strs = QString::fromStdString(params.get("TorqueKf"));
-  float max_lat_accel = 2.5;
+  auto strs1 = QString::fromStdString(params.get("TorqueMaxLatAccel"));
+  float max_lat_accel = strs1.toInt() * 0.1;
   int valuei = strs.toInt();
   float valuef = valuei * 0.1;
   float valuef1 = valuef/max_lat_accel;
@@ -4452,8 +4456,9 @@ TorqueKi::TorqueKi() : AbstractControl("Ki", "Adjust Ki", "../assets/offroad/ico
   
  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("TorqueKi"));
+    auto str1 = QString::fromStdString(params.get("TorqueMaxLatAccel"));
     int value = str.toInt();
-    int max_lat_accel = 25;
+    int max_lat_accel = str1.toInt();
     value = value + 1;
     if (value >= max_lat_accel) {
       value = max_lat_accel;
@@ -4467,7 +4472,8 @@ TorqueKi::TorqueKi() : AbstractControl("Ki", "Adjust Ki", "../assets/offroad/ico
 
 void TorqueKi::refresh() {
   auto strs = QString::fromStdString(params.get("TorqueKi"));
-  float max_lat_accel = 2.5;
+  auto strs1 = QString::fromStdString(params.get("TorqueMaxLatAccel"));
+  float max_lat_accel = strs1.toInt() * 0.1;
   int valuei = strs.toInt();
   float valuef = valuei * 0.1;
   float valuef1 = valuef/max_lat_accel;
@@ -4534,6 +4540,69 @@ void TorqueFriction::refresh() {
   auto strs = QString::fromStdString(params.get("TorqueFriction"));
   int valuei = strs.toInt();
   float valuef = valuei * 0.01;
+  QString valuefs = QString::number(valuef);
+  label.setText(QString::fromStdString(valuefs.toStdString()));
+}
+
+TorqueMaxLatAccel::TorqueMaxLatAccel() : AbstractControl("MaxLatAccel", "Adjust MaxLatAccel", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueMaxLatAccel"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 1) {
+      value = 1;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueMaxLatAccel", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("TorqueMaxLatAccel"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 50) {
+      value = 50;
+    }
+    QString values = QString::number(value);
+    params.put("TorqueMaxLatAccel", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void TorqueMaxLatAccel::refresh() {
+  auto strs = QString::fromStdString(params.get("TorqueMaxLatAccel"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.1;
   QString valuefs = QString::number(valuef);
   label.setText(QString::fromStdString(valuefs.toStdString()));
 }
