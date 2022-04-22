@@ -722,6 +722,8 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
     layout->addWidget(new TorqueKp());
     layout->addWidget(new TorqueKf());
     layout->addWidget(new TorqueKi());
+    layout->addWidget(new TorqueFriction());
+    layout->addWidget(new TorqueUseAngle());
   }
 
   layout->addWidget(horizontal_line());

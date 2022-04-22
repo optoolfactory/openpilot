@@ -213,6 +213,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"TorqueKp", PERSISTENT},
     {"TorqueKf", PERSISTENT},
     {"TorqueKi", PERSISTENT},
+    {"TorqueFriction", PERSISTENT},
+    {"TorqueUseAngle", PERSISTENT},
     {"CameraOffsetAdj", PERSISTENT},
     {"PathOffsetAdj", PERSISTENT},
     {"SteerRatioAdj", PERSISTENT},

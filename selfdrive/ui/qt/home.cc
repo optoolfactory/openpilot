@@ -69,6 +69,7 @@ void HomeWindow::showDriverView(bool show) {
 }
 
 void HomeWindow::mousePressEvent(QMouseEvent* e) {
+  int max_lat_accel = 25;
   // OPKR add map
   if (QUIState::ui_state.scene.started && map_overlay_btn.ptInRect(e->x(), e->y())) {
     QSoundEffect effect1;
@@ -434,19 +435,19 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
         return;
       } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+0) && QUIState::ui_state.scene.lateralControlMethod == 3) {
         QUIState::ui_state.scene.torqueKp = QUIState::ui_state.scene.torqueKp + 1;
-        if (QUIState::ui_state.scene.torqueKp >= 25) QUIState::ui_state.scene.torqueKp = 25;
+        if (QUIState::ui_state.scene.torqueKp >= max_lat_accel) QUIState::ui_state.scene.torqueKp = max_lat_accel;
         QString value = QString::number(QUIState::ui_state.scene.torqueKp);
         Params().put("TorqueKp", value.toStdString());
         return;
       } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+1) && QUIState::ui_state.scene.lateralControlMethod == 3) {
         QUIState::ui_state.scene.torqueKf = QUIState::ui_state.scene.torqueKf + 1;
-        if (QUIState::ui_state.scene.torqueKf >= 25) QUIState::ui_state.scene.torqueKf = 25;
+        if (QUIState::ui_state.scene.torqueKf >= max_lat_accel) QUIState::ui_state.scene.torqueKf = max_lat_accel;
         QString value = QString::number(QUIState::ui_state.scene.torqueKf);
         Params().put("TorqueKf", value.toStdString());
         return;
       } else if (QUIState::ui_state.scene.live_tune_panel_list == (QUIState::ui_state.scene.list_count+2) && QUIState::ui_state.scene.lateralControlMethod == 3) {
         QUIState::ui_state.scene.torqueKi = QUIState::ui_state.scene.torqueKi + 1;
-        if (QUIState::ui_state.scene.torqueKi >= 25) QUIState::ui_state.scene.torqueKi = 25;
+        if (QUIState::ui_state.scene.torqueKi >= max_lat_accel) QUIState::ui_state.scene.torqueKi = max_lat_accel;
         QString value = QString::number(QUIState::ui_state.scene.torqueKi);
         Params().put("TorqueKi", value.toStdString());
         return;

@@ -42,18 +42,20 @@ def set_long_tune(tune, name):
 
 
 ###### LAT ######
-def set_lat_tune(tune, name, MAX_TORQUE=2.5, FRICTION=.1):
+def set_lat_tune(tune, name, max_lat_accel=2.5, FRICTION=.1):
   params = Params()
   if name == LatTunes.TORQUE:
     TorqueKp = float(Decimal(params.get("TorqueKp", encoding="utf8")) * Decimal('0.1'))
     TorqueKf = float(Decimal(params.get("TorqueKf", encoding="utf8")) * Decimal('0.1'))
     TorqueKi = float(Decimal(params.get("TorqueKi", encoding="utf8")) * Decimal('0.1'))
+    TorqueFriction = float(Decimal(params.get("TorqueFriction", encoding="utf8")) * Decimal('0.01'))
+    TorqueUseAngle = params.get_bool('TorqueUseAngle')
     tune.init('torque')
-    tune.torque.useSteeringAngle = True
-    tune.torque.kp = TorqueKp / MAX_TORQUE # 2.0
-    tune.torque.kf = TorqueKf / MAX_TORQUE # 1.0
-    tune.torque.ki = TorqueKi / MAX_TORQUE # 0.5
-    tune.torque.friction = FRICTION
+    tune.torque.useSteeringAngle = TorqueUseAngle
+    tune.torque.kp = TorqueKp / max_lat_accel # 2.0/2.5 = 0.8
+    tune.torque.kf = TorqueKf / max_lat_accel # 1.0/2.5 = 0.4
+    tune.torque.ki = TorqueKi / max_lat_accel # 0.5/2.5 = 0.2
+    tune.torque.friction = TorqueFriction
   elif name == LatTunes.LQR:
     Scale = float(Decimal(params.get("Scale", encoding="utf8")) * Decimal('1.0'))
     LqrKi = float(Decimal(params.get("LqrKi", encoding="utf8")) * Decimal('0.001'))

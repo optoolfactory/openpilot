@@ -1458,6 +1458,33 @@ private:
   void refresh();
 };
 
+class TorqueFriction : public AbstractControl {
+  Q_OBJECT
+
+public:
+  TorqueFriction();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class TorqueUseAngle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  TorqueUseAngle() : ToggleControl("UseAngle", "Use Steer Angle On/Off", "../assets/offroad/icon_shell.png", Params().getBool("TorqueUseAngle")) {
+    QObject::connect(this, &TorqueUseAngle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("TorqueUseAngle", status);
+    });
+  }
+};
+
 class SteerAngleCorrection : public AbstractControl {
   Q_OBJECT
 
