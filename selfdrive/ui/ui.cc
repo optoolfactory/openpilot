@@ -452,6 +452,8 @@ static void update_status(UIState *s) {
     s->scene.torqueKp = std::stoi(params.get("TorqueKp"));
     s->scene.torqueKf = std::stoi(params.get("TorqueKf"));
     s->scene.torqueKi = std::stoi(params.get("TorqueKi"));
+    s->scene.torqueFriction = std::stoi(params.get("TorqueFriction"));
+    s->scene.torqueMaxLatAccel = std::stoi(params.get("TorqueMaxLatAccel"));
     s->scene.indiInnerLoopGain = std::stoi(params.get("InnerLoopGain"));
     s->scene.indiOuterLoopGain = std::stoi(params.get("OuterLoopGain"));
     s->scene.indiTimeConstant = std::stoi(params.get("TimeConstant"));
