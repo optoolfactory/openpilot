@@ -575,21 +575,21 @@ struct ControlsState @0x97ff69c53601abf1 {
   canErrorCounter @57 :UInt32;
 
   # atom
-  alertTextMsg1  @60 :Text;
-  alertTextMsg2  @61 :Text;
-  alertTextMsg3  @62 :Text;
+  alertTextMsg1  @61 :Text;
+  alertTextMsg2  @62 :Text;
+  alertTextMsg3  @63 :Text;
   # opkr
-  lateralControlMethod  @63 :UInt8;
-  limitSpeedCamera @64 :Float32;
-  limitSpeedCameraDist @65 :Float32;
-  steerRatio @66 :Float32;
-  mapSign @67 :Float32;
-  dynamicTRMode @68 :UInt8;
-  dynamicTRValue @69 :Float32;
-  osmOffSpdLimit @70 :Bool;
-  accel @71 :Float32;
-  safetySpeed @72 :Float32;
-  steeringAngleDesiredDeg @73 :Float32;
+  lateralControlMethod  @64 :UInt8;
+  limitSpeedCamera @65 :Float32;
+  limitSpeedCameraDist @66 :Float32;
+  steerRatio @67 :Float32;
+  mapSign @68 :Float32;
+  dynamicTRMode @69 :UInt8;
+  dynamicTRValue @70 :Float32;
+  osmOffSpdLimit @71 :Bool;
+  accel @72 :Float32;
+  safetySpeed @73 :Float32;
+  steeringAngleDesiredDeg @74 :Float32;
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
@@ -597,6 +597,7 @@ struct ControlsState @0x97ff69c53601abf1 {
     lqrState @55 :LateralLQRState;
     angleState @58 :LateralAngleState;
     debugState @59 :LateralDebugState;
+    torqueState @60 :LateralTorqueState;
   }
 
   enum OpenpilotState @0xdbe58b96d2d1ac61 {
@@ -646,6 +647,18 @@ struct ControlsState @0x97ff69c53601abf1 {
     output @7 :Float32;
     saturated @8 :Bool;
     steeringAngleDesiredDeg @9 :Float32;
+   }
+  
+  struct LateralTorqueState {
+    active @0 :Bool;
+    error @1 :Float32;
+    errorRate @8 :Float32;
+    p @2 :Float32;
+    i @3 :Float32;
+    d @4 :Float32;
+    f @5 :Float32;
+    output @6 :Float32;
+    saturated @7 :Bool;
    }
 
   struct LateralLQRState {
@@ -732,6 +745,9 @@ struct ModelDataV2 {
   leads @11 :List(LeadDataV2);
   leadsV3 @18 :List(LeadDataV3);
 
+  # predicted stop line
+  stopLine @21 :StopLineData;
+
   meta @12 :MetaData;
 
   # All SI units and in device frame
@@ -774,6 +790,28 @@ struct ModelDataV2 {
     aStd @10 :List(Float32);
   }
 
+  struct StopLineData {
+    prob @0 :Float32;
+
+    x @1 :Float32;
+    xStd @2 :Float32;
+    y @3 :Float32;
+    yStd @4 :Float32;
+    z @5 :Float32;
+    zStd @6 :Float32;
+
+    roll @7 :Float32;
+    rollStd @8 :Float32;
+    pitch @9 :Float32;
+    pitchStd @10 :Float32;
+    yaw @11 :Float32;
+    yawStd @12 :Float32;
+
+    speedAtLine @13 :Float32;
+    speedAtLineStd @14 :Float32;
+    secondsUntilLine @15 :Float32;
+    secondsUntilLineStd @16 :Float32;
+  }
 
   struct MetaData {
     engagedProb @0 :Float32;
@@ -858,6 +896,7 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
     lead1 @2;
     lead2 @3;
     e2e @4;
+    stop @5;
   }
 
   # deprecated
@@ -1709,6 +1748,7 @@ struct LiveMapData {
   lastGpsAccuracy @18 :Float32;
   lastGpsBearingAccuracyDeg @19 :Float32;
   roadCameraOffset @20 :Float32;
+  ref @21 :Text;
 }
 
 struct CameraOdometry {

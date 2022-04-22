@@ -24,7 +24,7 @@ LONG_MPC_DIR = os.path.dirname(os.path.abspath(__file__))
 EXPORT_DIR = os.path.join(LONG_MPC_DIR, "c_generated_code")
 JSON_FILE = os.path.join(LONG_MPC_DIR, "acados_ocp_long.json")
 
-SOURCES = ['lead0', 'lead1', 'cruise']
+SOURCES = ['lead0', 'lead1', 'stop', 'cruise']
 
 X_DIM = 3
 U_DIM = 1
@@ -38,7 +38,7 @@ X_EGO_COST = 0.
 V_EGO_COST = 0.
 A_EGO_COST = 0.
 J_EGO_COST = 5.0
-A_CHANGE_COST = 100.      # 낮을수록 선행차에 민강하게 반응. def:0.5
+A_CHANGE_COST = 50.      # 낮을수록 선행차에 민강하게 반응. def:0.5
 DANGER_ZONE_COST = 100.
 CRASH_DISTANCE = .5
 LIMIT_COST = 1e6
@@ -202,7 +202,7 @@ class LongitudinalMpc:
     self.desired_TR = desired_TR
     self.v_ego = 0.
     self.reset()
-    self.source = SOURCES[2]
+    self.source = SOURCES[3]
 
     self.TR = 1.45
     self.dynamic_TR = 0
@@ -213,12 +213,12 @@ class LongitudinalMpc:
 
     self.dynamic_tr_spd = list(map(float, Params().get("DynamicTRSpd", encoding="utf8").split(',')))
     self.dynamic_tr_set = list(map(float, Params().get("DynamicTRSet", encoding="utf8").split(',')))
-
     self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
-
     self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
 
     self.ms_to_spd = CV.MS_TO_KPH if Params().get_bool("IsMetric") else CV.MS_TO_MPH
+
+    self.stop_line = Params().get_bool("ShowStopLine")
 
     self.lo_timer = 0 
 
@@ -336,9 +336,13 @@ class LongitudinalMpc:
     self.desired_TR = desired_TR
     self.set_weights()
 
-  def update(self, carstate, radarstate, v_cruise):
+  def update(self, carstate, radarstate, model, v_cruise):
     self.v_ego = carstate.vEgo
     v_ego = self.x0[1]
+    if self.stop_line:
+      stopping = model.stopLine.prob > 0.5
+    else:
+      stopping = False
 
     # opkr
     self.lo_timer += 1
@@ -348,7 +352,7 @@ class LongitudinalMpc:
       self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
       self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
 
-    self.status = radarstate.leadOne.status or radarstate.leadTwo.status
+    self.status = radarstate.leadOne.status or radarstate.leadTwo.status or stopping
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
@@ -381,6 +385,11 @@ class LongitudinalMpc:
     lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
+    if stopping and not (radarstate.leadOne.status or radarstate.leadTwo.status) and self.v_ego < 16.7:
+      stop_line_obstacle = model.stopLine.x * np.ones(N+1)
+    else:
+      stop_line_obstacle = 400 * np.ones(N+1)
+
     # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
     # when the leads are no factor.
     v_lower = v_ego + (T_IDXS * self.cruise_min_a * 1.05)
@@ -390,7 +399,7 @@ class LongitudinalMpc:
                                v_upper)
     cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, self.desired_TR)
 
-    x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
+    x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, stop_line_obstacle, cruise_obstacle])
     self.source = SOURCES[np.argmin(x_obstacles[0])]
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)

@@ -195,11 +195,15 @@ class LongControl():
       self.long_plan_source = "lead2"
     elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.e2e:
       self.long_plan_source = "e2e"
+    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.stop:
+      self.long_plan_source = "stop"
     else:
       self.long_plan_source = "---"
 
     if CP.sccBus != 0 and self.long_log:
-      str_log3 = 'LS={:s}  LP={:s}  AQ/AR/AT/FA={:+04.2f}/{:+04.2f}/{:+04.2f}/{:+04.2f}  GS={}  ED/RD={:04.1f}/{:04.1f}  TG={:04.2f}/{:04.2f}'.format(self.long_stat, self.long_plan_source, CP.aqValue, CP.aqValueRaw, a_target, final_accel, int(CS.gasPressed), dRel, CS.radarDistance, v_target, v_target_future)
+      str_log3 = 'LS={:s}  LP={:s}  AQ/AR/AT/FA={:+04.2f}/{:+04.2f}/{:+04.2f}/{:+04.2f}  GB={}  ED/RD={:04.1f}/{:04.1f}  TG={:03.0f}/{:03.0f}'.format(self.long_stat, \
+       self.long_plan_source, CP.aqValue, CP.aqValueRaw, a_target, final_accel, int(CS.gasPressed or CS.brakePressed), dRel, CS.radarDistance, \
+       (v_target*CV.MS_TO_MPH+10.0) if CS.isMph else (v_target*CV.MS_TO_KPH), (v_target_future*CV.MS_TO_MPH+10.0) if CS.isMph else (v_target_future*CV.MS_TO_KPH))
       trace1.printf2('{}'.format(str_log3))
 
     return final_accel, a_target

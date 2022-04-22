@@ -68,6 +68,18 @@ static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTDa
   assert(pvd->cnt <= std::size(pvd->v));
 }
 
+static void update_stop_line_data(const UIState *s, const cereal::ModelDataV2::StopLineData::Reader &line,
+                                  float x_off, float y_off, float z_off, line_vertices_data *pvd) {
+  const auto line_x = line.getX(), line_y = line.getY(), line_z = line.getZ();
+  vertex_data *v = &pvd->v[0];
+  v += calib_frame_to_full_frame(s, line_x + x_off, line_y - y_off, line_z + z_off, v);
+  v += calib_frame_to_full_frame(s, line_x + x_off, line_y + y_off, line_z + z_off, v);
+  v += calib_frame_to_full_frame(s, line_x - x_off, line_y + y_off, line_z + z_off, v);
+  v += calib_frame_to_full_frame(s, line_x - x_off, line_y - y_off, line_z + z_off, v);
+  pvd->cnt = v - pvd->v;
+  assert(pvd->cnt <= std::size(pvd->v));
+}
+
 static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   UIScene &scene = s->scene;
   auto model_position = model.getPosition();
@@ -99,6 +111,14 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   }
   max_idx = get_path_length_idx(model_position, max_distance);
   update_line_data(s, model_position, 0.5, 1.22, &scene.track_vertices, max_idx);
+
+  // update stop lines
+  if (scene.stop_line) {
+    const auto stop_line = model.getStopLine();
+    if (stop_line.getProb() > .5) {
+      update_stop_line_data(s, stop_line, .5, 2, 1.22, &scene.stop_line_vertices);
+    }
+  }
 }
 
 static void update_sockets(UIState *s) {
@@ -126,6 +146,8 @@ static void update_state(UIState *s) {
       scene.output_scale = scene.controls_state.getLateralControlState().getIndiState().getOutput();
     } else if (scene.lateralControlMethod == 2) {
       scene.output_scale = scene.controls_state.getLateralControlState().getLqrState().getOutput();
+    } else if (scene.lateralControlMethod == 3) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getTorqueState().getOutput();
     }
 
     scene.alertTextMsg1 = scene.controls_state.getAlertTextMsg1(); //debug1
@@ -176,6 +198,7 @@ static void update_state(UIState *s) {
     scene.stand_still = cs_data.getStandstill();
     scene.a_req_value = cs_data.getAReqValue();
     scene.engine_rpm = cs_data.getEngineRpm();
+    scene.gear_step = cs_data.getGearStep();
   }
 
   if (sm.updated("liveParameters")) {
@@ -281,6 +304,7 @@ static void update_state(UIState *s) {
     scene.liveMapData.oturnSpeedLimitEndDistance = lmap_data.getTurnSpeedLimitEndDistance();
     scene.liveMapData.oturnSpeedLimitSign = lmap_data.getTurnSpeedLimitSign();
     scene.liveMapData.ocurrentRoadName = lmap_data.getCurrentRoadName();
+    scene.liveMapData.oref = lmap_data.getRef();
   }
   if ((!scene.started || s->is_OpenpilotViewEnabled || scene.cal_view) && sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
@@ -425,6 +449,11 @@ static void update_status(UIState *s) {
     s->scene.pidKi = std::stoi(params.get("PidKi"));
     s->scene.pidKd = std::stoi(params.get("PidKd"));
     s->scene.pidKf = std::stoi(params.get("PidKf"));
+    s->scene.torqueKp = std::stoi(params.get("TorqueKp"));
+    s->scene.torqueKf = std::stoi(params.get("TorqueKf"));
+    s->scene.torqueKi = std::stoi(params.get("TorqueKi"));
+    s->scene.torqueFriction = std::stoi(params.get("TorqueFriction"));
+    s->scene.torqueMaxLatAccel = std::stoi(params.get("TorqueMaxLatAccel"));
     s->scene.indiInnerLoopGain = std::stoi(params.get("InnerLoopGain"));
     s->scene.indiOuterLoopGain = std::stoi(params.get("OuterLoopGain"));
     s->scene.indiTimeConstant = std::stoi(params.get("TimeConstant"));
@@ -436,11 +465,13 @@ static void update_status(UIState *s) {
     s->scene.radar_long_helper = std::stoi(params.get("RadarLongHelper"));
     s->scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
     s->scene.top_text_view = std::stoi(params.get("TopTextView"));
+    s->scene.max_animated_rpm = std::stoi(params.get("AnimatedRPMMax"));
     s->scene.show_error = params.getBool("ShowError");
     s->scene.speedlimit_signtype = params.getBool("OpkrSpeedLimitSignType");
     s->scene.sl_decel_off = params.getBool("SpeedLimitDecelOff");
     s->scene.osm_enabled = params.getBool("OSMEnable") || params.getBool("OSMSpeedLimitEnable") || std::stoi(params.get("CurvDecelOption")) == 1 || std::stoi(params.get("CurvDecelOption")) == 3;
     s->scene.animated_rpm = params.getBool("AnimatedRPM");
+    s->scene.stop_line = params.getBool("ShowStopLine");
 
     if (s->scene.autoScreenOff > 0) {
       s->scene.nTime = s->scene.autoScreenOff * 60 * UI_FREQ;

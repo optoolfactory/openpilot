@@ -212,6 +212,12 @@ class WayRelation():
       return self.name
     return self.ref
 
+  @property
+  def ref_num(self):
+    if self.ref is not None:
+      return self.ref
+    return None
+
   def update(self, location_rad, bearing_rad, location_stdev):
     """Will update and validate the associated way with a given `location_rad` and `bearing_rad`.
        Specifically it will find the nodes behind and ahead of the current location and bearing.

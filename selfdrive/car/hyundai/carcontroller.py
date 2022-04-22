@@ -1,4 +1,4 @@
-from cereal import car, messaging
+from cereal import car, log, messaging
 from common.realtime import DT_CTRL
 from common.numpy_fast import clip, interp
 from common.conversions import Conversions as CV
@@ -22,6 +22,7 @@ from decimal import Decimal
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
+LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
 
 
 def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
@@ -157,6 +158,7 @@ class CarController():
     self.osm_spdlimit_enabled = self.params.get_bool("OSMSpeedLimitEnable")
     self.stock_safety_decel_enabled = self.params.get_bool("UseStockDecelOnSS")
     self.joystick_debug_mode = self.params.get_bool("JoystickDebugMode")
+    self.stop_line_enabled = self.params.get_bool("ShowStopLine")
 
     self.cc_timer = 0
     self.on_speed_control = False
@@ -189,8 +191,10 @@ class CarController():
        CP.lateralTuning.indi.timeConstantV[0], CP.lateralTuning.indi.actuatorEffectivenessV[0])
     elif CP.lateralTuning.which() == 'lqr':
       self.str_log2 = 'T={:04.0f}/{:05.3f}/{:07.5f}'.format(CP.lateralTuning.lqr.scale, CP.lateralTuning.lqr.ki, CP.lateralTuning.lqr.dcGain)
+    elif CP.lateralTuning.which() == 'torque':
+      self.str_log2 = 'T={:0.2f}/{:0.2f}/{:0.2f}/{:0.2f}'.format(CP.lateralTuning.torque.kp, CP.lateralTuning.torque.kf, CP.lateralTuning.torque.ki, CP.lateralTuning.torque.friction)
 
-    self.sm = messaging.SubMaster(['controlsState', 'radarState'])
+    self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
 
   def update(self, c, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, v_future):
@@ -728,13 +732,16 @@ class CarController():
               self.change_accel_fast = False
               pass
             elif aReqValue > 0.0:
-              accel = interp(CS.lead_distance, [3.5, 15.0], [max(accel, aReqValue, faccel), aReqValue])
+              accel = interp(CS.lead_distance, [14.0, 15.0], [max(accel, aReqValue, faccel), aReqValue])
             elif aReqValue < 0.0 and CS.lead_distance <= 4.2 and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
-              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
+              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0-(0.5*(3.0-CS.cruiseGapSet))]))
             elif aReqValue < 0.0 and lead_objspd <= -15:
               accel = interp(abs(lead_objspd), [15.0, 30.0], [(accel + aReqValue)/2, min(accel, aReqValue)])
             elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
-              stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2, 0.85, 1.0, 0.4, 1.0])
+              if CS.cruiseGapSet <= 2.0:
+                stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2+(0.1*(3.0-CS.cruiseGapSet)), 0.85+(0.05*(3.0-CS.cruiseGapSet)), 1.0, 0.4, 1.0])
+              else:
+                stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2, 0.85, 1.0, 0.4, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
             elif aReqValue < 0.0:
               stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 0.85, 1.0, 0.4, 1.0])
@@ -758,7 +765,13 @@ class CarController():
             pass
           else:
             self.stopped = False
-            accel = aReqValue
+            if self.stop_line_enabled:
+              if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+                pass
+              else:
+                accel = aReqValue
+            else:
+              accel = aReqValue
         else:
           self.stopped = False
           stock_weight = 0.
@@ -832,6 +845,11 @@ class CarController():
         elif CS.CP.lateralTuning.which() == 'lqr':
           self.str_log2 = 'T={:04.0f}/{:05.3f}/{:07.5f}'.format(float(Decimal(self.params.get("Scale", encoding="utf8"))*Decimal('1.0')), \
            float(Decimal(self.params.get("LqrKi", encoding="utf8"))*Decimal('0.001')), float(Decimal(self.params.get("DcGain", encoding="utf8"))*Decimal('0.00001')))
+        elif CS.CP.lateralTuning.which() == 'torque':
+          max_lat_accel = float(Decimal(self.params.get("TorqueKp", encoding="utf8"))*Decimal('0.1'))
+          self.str_log2 = 'T={:0.2f}/{:0.2f}/{:0.2f}/{:0.2f}'.format(float(Decimal(self.params.get("TorqueKp", encoding="utf8"))*Decimal('0.1'))/max_lat_accel, \
+           float(Decimal(self.params.get("TorqueKf", encoding="utf8"))*Decimal('0.1'))/max_lat_accel, float(Decimal(self.params.get("TorqueKi", encoding="utf8"))*Decimal('0.1'))/max_lat_accel, \
+           float(Decimal(self.params.get("TorqueFriction", encoding="utf8")) * Decimal('0.01')))
 
     trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
 

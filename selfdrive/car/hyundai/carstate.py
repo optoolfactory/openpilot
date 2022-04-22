@@ -49,10 +49,8 @@ class CarState(CarStateBase):
     self.cruise_gap = 4
     self.safety_sign_check = 0
     self.safety_sign = 0
-    self.safety_sign_prev = 0
-    self.safety_sign_last = 0
     self.safety_dist = 0
-    self.safety_block_remain_dist = 255
+    self.safety_block_sl = 150
     self.is_highway = False
     self.is_set_speed_in_mph = False
     self.map_enabled = False
@@ -290,49 +288,36 @@ class CarState(CarStateBase):
     self.sm.update(0)
     vCruiseMax = self.sm['controlsState'].vCruise
     self.safety_sign_check = cp.vl["NAVI"]["OPKR_S_Sign"]
+    self.safety_block_sl = cp.vl["NAVI"]["OPKR_SBR_LSpd"]
     if cp.vl["NAVI"]["OPKR_S_Dist"] < 1023:
       self.safety_dist = cp.vl["NAVI"]["OPKR_S_Dist"]
-    elif cp.vl["NAVI"]["OPKR_SBR_Dist"] < 255:
+    elif cp.vl["NAVI"]["OPKR_SBR_Dist"] < 65535:
       self.safety_dist = cp.vl["NAVI"]["OPKR_SBR_Dist"]
     else:
       self.safety_dist = 0
-    self.safety_block_remain_dist = cp.vl["NAVI"]["OPKR_SBR_Dist"]
     self.is_highway = cp_scc.vl["SCC11"]["Navi_SCC_Camera_Act"] != 0.
     if self.safety_sign_check in (24., 25., 26.) and 19 < round(vCruiseMax) <= (69 if not self.is_set_speed_in_mph else 59):
       self.safety_sign = 30. if not self.is_set_speed_in_mph else 40.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (0., 1., 2.) and 19 < round(vCruiseMax) <= (79 if not self.is_set_speed_in_mph else 64):
       self.safety_sign = 40. if not self.is_set_speed_in_mph else 45.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (8., 9., 10.) and 19 < round(vCruiseMax) <= (89 if not self.is_set_speed_in_mph else 69):
       self.safety_sign = 50. if not self.is_set_speed_in_mph else 50.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (16., 17., 18.) and 19 < round(vCruiseMax) <= (99 if not self.is_set_speed_in_mph else 74):
       self.safety_sign = 60. if not self.is_set_speed_in_mph else 55.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (24., 25., 26.) and 19 < round(vCruiseMax) <= (109 if not self.is_set_speed_in_mph else 79):
       self.safety_sign = 70. if not self.is_set_speed_in_mph else 60.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (0., 1., 2.) and 19 < round(vCruiseMax):
       self.safety_sign = 80. if not self.is_set_speed_in_mph else 65.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (8., 9., 10.) and 19 < round(vCruiseMax):
       self.safety_sign = 90. if not self.is_set_speed_in_mph else 70.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (16., 17., 18.) and 19 < round(vCruiseMax):
       self.safety_sign = 100. if not self.is_set_speed_in_mph else 75.
-      self.safety_sign_last = self.safety_sign
     elif self.safety_sign_check in (24., 25., 26.) and 19 < round(vCruiseMax):
       self.safety_sign = 110. if not self.is_set_speed_in_mph else 80.
-      self.safety_sign_last = self.safety_sign
-    elif round(self.safety_block_remain_dist) < 255. and self.safety_sign_prev:
-      self.safety_sign = self.safety_sign_prev
-    elif round(self.safety_block_remain_dist) < 255.:
-      self.safety_sign = self.safety_sign_last
-      self.safety_sign_prev = self.safety_sign_last
+    elif self.safety_block_sl < 150:
+      self.safety_sign = self.safety_block_sl
     else:
       self.safety_sign = 0.
-      self.safety_sign_prev = 0.
 
     ret.safetySign = self.safety_sign
     ret.safetyDist = self.safety_dist
@@ -343,14 +328,16 @@ class CarState(CarStateBase):
     # as this seems to be standard over all cars, but is not the preferred method.
     if self.CP.carFingerprint in FEATURES["use_cluster_gears"]:
       gear = cp.vl["CLU15"]["CF_Clu_Gear"]
+      ret.gearStep = 0
     elif self.CP.carFingerprint in FEATURES["use_tcu_gears"]:
       gear = cp.vl["TCU12"]["CUR_GR"]
+      ret.gearStep = 0
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
-      ret.electGearStep = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"] # opkr
+      ret.gearStep = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"] # opkr
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
-      ret.electGearStep = 0
+      ret.gearStep = cp.vl["LVR11"]["CF_Lvr_GearInf"] # opkr
 
     if self.gear_correction:
       ret.gearShifter = GearShifter.drive
@@ -518,6 +505,7 @@ class CarState(CarStateBase):
       ("OPKR_S_Dist", "NAVI"),
       ("OPKR_S_Sign", "NAVI"),
       ("OPKR_SBR_Dist", "NAVI"),
+      ("OPKR_SBR_LSpd", "NAVI"),
 
       ("N", "EMS_366"),
     ]
@@ -625,10 +613,12 @@ class CarState(CarStateBase):
       checks += [("ELECT_GEAR", 20)]
     else:
       signals += [
-        ("CF_Lvr_Gear", "LVR12")
+        ("CF_Lvr_Gear", "LVR12"),
+        ("CF_Lvr_GearInf", "LVR11")
       ]
       checks += [
-        ("LVR12", 100)
+        ("LVR12", 100),
+        ("LVR11", 100)
       ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0, enforce_checks=False)
