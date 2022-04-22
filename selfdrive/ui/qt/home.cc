@@ -69,7 +69,7 @@ void HomeWindow::showDriverView(bool show) {
 }
 
 void HomeWindow::mousePressEvent(QMouseEvent* e) {
-  float max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel * 0.1;
+  float max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel;
   // OPKR add map
   if (QUIState::ui_state.scene.started && map_overlay_btn.ptInRect(e->x(), e->y())) {
     QSoundEffect effect1;
