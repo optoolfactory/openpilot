@@ -6126,8 +6126,8 @@ AutoRESDelay::AutoRESDelay() : AbstractControl("AutoRES Delay(sec)", "Give delay
     auto str = QString::fromStdString(params.get("AutoRESDelay"));
     int value = str.toInt();
     value = value + 1;
-    if (value >= 10) {
-      value = 10;
+    if (value >= 20) {
+      value = 20;
     }
     QString values = QString::number(value);
     params.put("AutoRESDelay", values.toStdString());
