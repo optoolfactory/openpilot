@@ -172,6 +172,7 @@ class CarController():
     self.to_avoid_lkas_fault_max_angle = int(self.params.get("AvoidLKASFaultMaxAngle", encoding="utf8"))
     self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
     self.enable_steer_more = self.params.get_bool("AvoidLKASFaultBeyond")
+    self.no_mdps_mods = self.params.get_bool("NoSmartMDPS")
 
     self.radar_disabled_conf = self.params.get_bool("RadarDisable")
     self.prev_cruiseButton = 0
@@ -309,6 +310,8 @@ class CarController():
       if self.driver_steering_torque_above_timer >= 100:
         self.driver_steering_torque_above_timer = 100
 
+    if self.no_mdps_mods and CS.out.vEgo < CS.CP.minSteerSpeed:
+      lkas_active = False
     if not lkas_active:
       apply_steer = 0
 
