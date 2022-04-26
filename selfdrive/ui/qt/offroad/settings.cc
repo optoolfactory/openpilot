@@ -642,6 +642,7 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new C2WithCommaPowerToggle());
   layout->addWidget(new JoystickModeToggle());
+  layout->addWidget(new NoSmartMDPSToggle());
   layout->addWidget(new TimeZoneSelectCombo());
   const char* cal_ok = "cp -f /data/openpilot/selfdrive/assets/addon/param/CalibrationParams /data/params/d/";
   auto calokbtn = new ButtonControl("캘리브레이션 강제 활성화", "실행");

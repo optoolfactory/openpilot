@@ -114,6 +114,7 @@ class Controls:
     self.variable_cruise = params.get_bool('OpkrVariableCruise')
     self.cruise_over_maxspeed = params.get_bool('CruiseOverMaxSpeed')
     self.stock_lkas_on_disengaged_status = params.get_bool('StockLKASEnabled')
+    self.no_mdps_mods = params.get_bool('NoSmartMDPS')
 
     # detect sound card presence and ensure successful init
     sounds_available = HARDWARE.get_sound_card_online()
@@ -431,7 +432,7 @@ class Controls:
     #  self.events.add(EventName.noTarget)
 
     # atom
-    if self.auto_enabled:
+    if self.auto_enabled and not self.no_mdps_mods:
       self.ready_timer += 1 if self.ready_timer < 350 else 350
       self.auto_enable( CS )
 
@@ -653,7 +654,7 @@ class Controls:
       actuators.accel, actuators.oaccel = self.LoC.update(self.active and CS.cruiseState.speed > 1., CS, self.CP, long_plan, pid_accel_limits, t_since_plan, self.sm['radarState'])
 
       # Steering PID loop and lateral MPC
-      lat_active = self.active and not CS.steerFaultPermanent and CS.vEgo > self.CP.minSteerSpeed
+      lat_active = self.active and not CS.steerFaultPermanent and (False if (CS.vEgo < self.CP.minSteerSpeed and self.no_mdps_mods) else True)
       desired_curvature, desired_curvature_rate = get_lag_adjusted_curvature(self.CP, CS.vEgo,
                                                                              lat_plan.psis,
                                                                              lat_plan.curvatures,

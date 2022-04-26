@@ -726,6 +726,18 @@ public:
   }
 };
 
+class NoSmartMDPSToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  NoSmartMDPSToggle() : ToggleControl("No Smart MDPS", "Turn on, if you have no smartmdps or no mdps harness to avoid sending can under certain speed that is not able to use lane keeping.", "../assets/offroad/icon_shell.png", Params().getBool("NoSmartMDPS")) {
+    QObject::connect(this, &NoSmartMDPSToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("NoSmartMDPS", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
