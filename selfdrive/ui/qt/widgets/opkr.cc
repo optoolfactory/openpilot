@@ -2161,8 +2161,8 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl("자동 인게이지 속도
     auto str = QString::fromStdString(params.get("AutoEnableSpeed"));
     int value = str.toInt();
     value = value - 3;
-    if (value <= 0) {
-      value = 0;
+    if (value <= -3) {
+      value = -3;
     }
     QString values = QString::number(value);
     params.put("AutoEnableSpeed", values.toStdString());
@@ -2185,7 +2185,9 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl("자동 인게이지 속도
 
 void AutoEnableSpeed::refresh() {
   QString option = QString::fromStdString(params.get("AutoEnableSpeed"));
-  if (option == "0") {
+  if (option == "-3") {
+    label.setText(QString::fromStdString("기어D모드"));
+  } else if (option == "0") {
     label.setText(QString::fromStdString("출발시"));
   } else {
     label.setText(QString::fromStdString(params.get("AutoEnableSpeed")));
