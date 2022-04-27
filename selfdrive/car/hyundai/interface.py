@@ -22,7 +22,7 @@ class CarInterface(CarInterfaceBase):
 
     self.blinker_status = 0
     self.blinker_timer = 0
-    self.mad_mode_enabled = Params().get_bool('MadModeEnabled')
+    self.ufc_mode_enabled = Params().get_bool('UFCModeEnabled')
     self.no_mdps_mods = Params().get_bool('NoSmartMDPS')
 
   @staticmethod
@@ -221,7 +221,7 @@ class CarInterface(CarInterfaceBase):
     #  ret.safetyParam |= Panda.FLAG_HYUNDAI_LONG
 
     # set safety_hyundai_community only for non-SCC, MDPS harrness or SCC harrness cars or cars that have unknown issue
-    if ret.radarOffCan or ret.mdpsBus == 1 or ret.openpilotLongitudinalControl or params.get_bool("MadModeEnabled"):
+    if ret.radarOffCan or ret.mdpsBus == 1 or ret.openpilotLongitudinalControl or params.get_bool("UFCModeEnabled"):
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
     return ret
 
@@ -249,7 +249,7 @@ class CarInterface(CarInterfaceBase):
       self.CP.pcmCruise = True
 
     # most HKG cars has no long control, it is safer and easier to engage by main on
-    if self.mad_mode_enabled:
+    if self.ufc_mode_enabled:
       ret.cruiseState.enabled = ret.cruiseState.available
 
     buttonEvents = []
@@ -281,7 +281,7 @@ class CarInterface(CarInterfaceBase):
       events.add(EventName.brakeUnavailable)
     #if abs(ret.steeringAngle) > 90. and EventName.steerTempUnavailable not in events.events:
     #  events.add(EventName.steerTempUnavailable)
-    # if self.mad_mode_enabled and EventName.pedalPressed in events.events:
+    # if self.ufc_mode_enabled and EventName.pedalPressed in events.events:
     #   events.events.remove(EventName.pedalPressed)
     if ret.vEgo < self.CP.minSteerSpeed and self.no_mdps_mods:
       events.add(car.CarEvent.EventName.belowSteerSpeed)

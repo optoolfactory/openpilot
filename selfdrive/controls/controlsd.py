@@ -109,7 +109,7 @@ class Controls:
     openpilot_enabled_toggle = params.get_bool("OpenpilotEnabledToggle")
     passive = params.get_bool("Passive") or not openpilot_enabled_toggle
     self.commIssue_ignored = params.get_bool("ComIssueGone")
-    self.auto_enabled = params.get_bool("AutoEnable") and params.get_bool("MadModeEnabled")
+    self.auto_enabled = params.get_bool("AutoEnable") and params.get_bool("UFCModeEnabled")
     self.batt_less = params.get_bool("OpkrBattLess")
     self.variable_cruise = params.get_bool('OpkrVariableCruise')
     self.cruise_over_maxspeed = params.get_bool('CruiseOverMaxSpeed')
@@ -217,7 +217,7 @@ class Controls:
     self.second = 0.0
     self.map_enabled = False
     self.lane_change_delay = int(Params().get("OpkrAutoLaneChangeDelay", encoding="utf8"))
-    self.auto_enable_speed = max(1, int(Params().get("AutoEnableSpeed", encoding="utf8")))
+    self.auto_enable_speed = max(1, int(Params().get("AutoEnableSpeed", encoding="utf8"))) if int(Params().get("AutoEnableSpeed", encoding="utf8")) > -1 else int(Params().get("AutoEnableSpeed", encoding="utf8"))
     self.e2e_long_alert_prev = True
     self.stock_navi_info_enabled = Params().get_bool("StockNaviSpeedEnabled")
     self.ignore_can_error_on_isg = Params().get_bool("IgnoreCANErroronISG")

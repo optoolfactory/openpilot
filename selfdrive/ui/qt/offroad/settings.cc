@@ -638,7 +638,7 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SteerWarningFixToggle());
   layout->addWidget(new IgnoreCanErroronISGToggle());
   layout->addWidget(new FCA11MessageToggle());
-  layout->addWidget(new MadModeEnabledToggle());
+  layout->addWidget(new UFCModeEnabledToggle());
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new C2WithCommaPowerToggle());
   layout->addWidget(new JoystickModeToggle());

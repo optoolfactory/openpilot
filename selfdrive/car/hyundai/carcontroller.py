@@ -99,7 +99,7 @@ class CarController():
 
     self.opkr_turnsteeringdisable = self.params.get_bool("OpkrTurnSteeringDisable")
     self.opkr_maxanglelimit = float(int(self.params.get("OpkrMaxAngleLimit", encoding="utf8")))
-    self.mad_mode_enabled = self.params.get_bool("MadModeEnabled")
+    self.ufc_mode_enabled = self.params.get_bool("UFCModeEnabled")
     self.ldws_fix = self.params.get_bool("LdwsCarFix")
     self.radar_helper_option = int(self.params.get("RadarLongHelper", encoding="utf8"))
     self.stopping_dist_adj_enabled = self.params.get_bool("StoppingDistAdj")
