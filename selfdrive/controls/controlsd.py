@@ -217,7 +217,7 @@ class Controls:
     self.second = 0.0
     self.map_enabled = False
     self.lane_change_delay = int(Params().get("OpkrAutoLaneChangeDelay", encoding="utf8"))
-    self.auto_enable_speed = max(1, int(Params().get("AutoEnableSpeed", encoding="utf8")))
+    self.auto_enable_speed = max(1, int(Params().get("AutoEnableSpeed", encoding="utf8"))) if int(Params().get("AutoEnableSpeed", encoding="utf8")) > -1 else int(Params().get("AutoEnableSpeed", encoding="utf8"))
     self.e2e_long_alert_prev = True
     self.stock_navi_info_enabled = Params().get_bool("StockNaviSpeedEnabled")
     self.ignore_can_error_on_isg = Params().get_bool("IgnoreCANErroronISG")

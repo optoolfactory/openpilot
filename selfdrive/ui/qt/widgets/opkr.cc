@@ -2130,7 +2130,7 @@ void AutoResLimitTime::refresh() {
   btnplus.setText("+");
 }
 
-AutoEnableSpeed::AutoEnableSpeed() : AbstractControl("Auto Engage Speed(km/h)", "Set the automatic engage speed.", "../assets/offroad/icon_shell.png") {
+AutoEnableSpeed::AutoEnableSpeed() : AbstractControl("Auto Engage Spd(kph)", "Set the automatic engage speed.", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -2161,8 +2161,8 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl("Auto Engage Speed(km/h)", 
     auto str = QString::fromStdString(params.get("AutoEnableSpeed"));
     int value = str.toInt();
     value = value - 3;
-    if (value <= 0) {
-      value = 0;
+    if (value <= -3) {
+      value = -3;
     }
     QString values = QString::number(value);
     params.put("AutoEnableSpeed", values.toStdString());
@@ -2185,7 +2185,9 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl("Auto Engage Speed(km/h)", 
 
 void AutoEnableSpeed::refresh() {
   QString option = QString::fromStdString(params.get("AutoEnableSpeed"));
-  if (option == "0") {
+  if (option == "-3") {
+    label.setText(QString::fromStdString("atDGear"));
+  } else if (option == "0") {
     label.setText(QString::fromStdString("atDepart"));
   } else {
     label.setText(QString::fromStdString(params.get("AutoEnableSpeed")));
