@@ -130,14 +130,14 @@ public:
   }
 };
 
-class MadModeEnabledToggle : public ToggleControl {
+class UFCModeEnabledToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  MadModeEnabledToggle() : ToggleControl("MainSW 오픈파일럿 ON/OFF", "크루즈 MainSW를 이용하여 오파를 활성화 합니다.", "../assets/offroad/icon_shell.png", Params().getBool("MadModeEnabled")) {
-    QObject::connect(this, &MadModeEnabledToggle::toggleFlipped, [=](int state) {
+  UFCModeEnabledToggle() : ToggleControl("사용자 친화적 컨트롤 모드 (UFC)", "오픈파일럿은 메인 크루즈 버튼, 주행중 오토리줌(AutoRES)으로 활성화 됩니다, 가감속과 핸들조향이 분리됩니다, 기타등", "../assets/offroad/icon_shell.png", Params().getBool("UFCModeEnabled")) {
+    QObject::connect(this, &UFCModeEnabledToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
-      Params().putBool("MadModeEnabled", status);
+      Params().putBool("UFCModeEnabled", status);
     });
   }
 };
