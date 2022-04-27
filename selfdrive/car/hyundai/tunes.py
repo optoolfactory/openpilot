@@ -62,13 +62,13 @@ def set_lat_tune(tune, name, max_lat_accel=2.5, FRICTION=.1):
     LqrKi = float(Decimal(params.get("LqrKi", encoding="utf8")) * Decimal('0.001'))
     DcGain = float(Decimal(params.get("DcGain", encoding="utf8")) * Decimal('0.00001'))
     tune.init('lqr')
-    tune.lqr.scale = Scale
-    tune.lqr.ki = LqrKi
+    tune.lqr.scale = 1680
+    tune.lqr.ki = 0.01
     tune.lqr.a = [0., 1., -0.22619643, 1.21822268]
     tune.lqr.b = [-1.92006585e-04, 3.95603032e-05]
     tune.lqr.c = [1., 0.]
-    tune.lqr.k = [-110., 451.]
-    tune.lqr.l = [0.33, 0.318]
+    tune.lqr.k = [-110.73572306, 451.22718255]
+    tune.lqr.l = [0.3233671, 0.3185757]
     tune.lqr.dcGain = DcGain
   elif name == LatTunes.INDI:
     InnerLoopGain = float(Decimal(params.get("InnerLoopGain", encoding="utf8")) * Decimal('0.1'))
