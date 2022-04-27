@@ -109,7 +109,7 @@ class Controls:
     openpilot_enabled_toggle = params.get_bool("OpenpilotEnabledToggle")
     passive = params.get_bool("Passive") or not openpilot_enabled_toggle
     self.commIssue_ignored = params.get_bool("ComIssueGone")
-    self.auto_enabled = params.get_bool("AutoEnable") and params.get_bool("MadModeEnabled")
+    self.auto_enabled = params.get_bool("AutoEnable") and params.get_bool("UFCModeEnabled")
     self.batt_less = params.get_bool("OpkrBattLess")
     self.variable_cruise = params.get_bool('OpkrVariableCruise')
     self.cruise_over_maxspeed = params.get_bool('CruiseOverMaxSpeed')

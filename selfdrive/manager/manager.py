@@ -134,7 +134,7 @@ def manager_init() -> None:
     ("OpkrMonitorEyesThreshold", "45"),
     ("OpkrMonitorNormalEyesThreshold", "45"),
     ("OpkrMonitorBlinkThreshold", "35"),
-    ("MadModeEnabled", "1"),
+    ("UFCModeEnabled", "1"),
     ("WhitePandaSupport", "0"),
     ("SteerWarningFix", "0"),
     ("OpkrRunNaviOnBoot", "0"),

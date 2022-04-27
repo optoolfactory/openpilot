@@ -130,14 +130,14 @@ public:
   }
 };
 
-class MadModeEnabledToggle : public ToggleControl {
+class UFCModeEnabledToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  MadModeEnabledToggle() : ToggleControl("MainSwitch Openpilot ON/OFF", "Activate the open pilot using the cruise Main Switch.", "../assets/offroad/icon_shell.png", Params().getBool("MadModeEnabled")) {
-    QObject::connect(this, &MadModeEnabledToggle::toggleFlipped, [=](int state) {
+  UFCModeEnabledToggle() : ToggleControl("User-Friendly Control(UFC) Mode", "OP activates with Main Cruise Switch, AutoRES while driving, Seperate Lat/Long and etc", "../assets/offroad/icon_shell.png", Params().getBool("UFCModeEnabled")) {
+    QObject::connect(this, &UFCModeEnabledToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
-      Params().putBool("MadModeEnabled", status);
+      Params().putBool("UFCModeEnabled", status);
     });
   }
 };
