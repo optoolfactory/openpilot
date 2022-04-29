@@ -42,6 +42,8 @@ class CAR:
   IONIQ_EV = "HYUNDAI IONIQ ELECTRIC LIMITED 2019"
   IONIQ_HEV = "HYUNDAI IONIQ HYBRID PREMIUM 2017"
   SANTA_FE = "HYUNDAI SANTA FE LIMITED 2019"
+  SANTA_FE_2022 = "HYUNDAI SANTA FE 2022"
+  SANTA_FE_HEV_2022 = "HYUNDAI SANTA FE HYBRID 2022"
   PALISADE = "HYUNDAI PALISADE 2020"
   VELOSTER = "HYUNDAI VELOSTER 2019"
   GRANDEUR_IG = "HYUNDAI GRANDEUR IG 2017"
@@ -281,6 +283,10 @@ FINGERPRINTS = {
     67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 356: 4, 544: 8, 546: 8, 547: 8, 548: 8, 593: 8, 608: 8, 688: 6, 809: 8, 832: 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1064: 8, 1078: 4, 1107: 5, 1136: 8, 1151: 6, 1155: 8, 1156: 8, 1157: 4, 1162: 8, 1164: 8, 1168: 7, 1170: 8, 1173: 8, 1183: 8, 1186: 2, 1191: 2, 1227: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1379: 8, 1384: 8, 1407: 8, 1419: 8, 1427: 6, 1456: 4, 1470: 8, 1479: 8
     },{
     67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 356: 4, 544: 8, 593: 8, 608: 8, 688: 6, 809: 8, 832: 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1107: 5, 1136: 8, 1151: 6, 1155: 8, 1156: 8, 1157: 4, 1162: 8, 1164: 8, 1168: 7, 1170: 8, 1173: 8, 1180: 8, 1183: 8, 1186: 2, 1191: 2, 1210: 8, 1227: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1371: 8, 1384: 8, 1407: 8, 1414: 3, 1419: 8, 1427: 6, 1456: 4, 1470: 8, 1911: 8
+  }],
+  CAR.SANTA_FE_2022: [{
+  }],
+  CAR.SANTA_FE_HEV_2022: [{
   }],
   CAR.PALISADE: [{
     67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 356: 4, 544: 8, 549: 8, 576: 8, 593: 8, 608: 8, 688: 6, 809: 8, 832: 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 913: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1064: 8, 1078: 4, 1107: 5, 1123: 8, 1136: 8, 1151: 6, 1155: 8, 1156: 8, 1157: 4, 1162: 8, 1164: 8, 1168: 7, 1170: 8, 1173: 8, 1180: 8, 1186: 2, 1191: 2, 1193: 8, 1210: 8, 1225: 8, 1227: 8, 1265: 4, 1280: 8, 1287: 4, 1290: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1371: 8, 1378: 8, 1384: 8, 1407: 8, 1419: 8, 1427: 6, 1456: 4, 1470: 8, 2000: 8, 2005: 8, 2008: 8
@@ -662,8 +668,8 @@ if Params().get_bool("FingerprintTwoSet"):
   }
 
 CHECKSUM = {
-  "crc8": [CAR.SANTA_FE, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SELTOS, CAR.AVANTE, CAR.SOUL_EV, CAR.K5_DL3, CAR.K5_DL3_HEV],
-  "6B": [CAR.SORENTO, CAR.GENESIS],
+  "crc8": [CAR.SANTA_FE, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SELTOS, CAR.AVANTE, CAR.SOUL_EV, CAR.K5_DL3, CAR.K5_DL3_HEV, CAR.SANTA_FE_HEV_2022],
+  "6B": [CAR.SORENTO, CAR.GENESIS, CAR.SANTA_FE_2022],
 }
 
 FEATURES = {
@@ -673,19 +679,19 @@ FEATURES = {
   "use_tcu_gears": {CAR.K5, CAR.SONATA_LF, CAR.VELOSTER, CAR.SONATA_LF_TURBO, CAR.STINGER, CAR.SPORTAGE},
   # Use E_GEAR Message for Gear Selection
   "use_elect_gears": {CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.KONA_EV, CAR.KONA_HEV, CAR.IONIQ_EV, CAR.IONIQ_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NEXO,
-                      CAR.K5_HEV, CAR.K7_HEV, CAR.NIRO_EV, CAR.NIRO_HEV, CAR.SOUL_EV, CAR.K5_DL3_HEV},
+                      CAR.K5_HEV, CAR.K7_HEV, CAR.NIRO_EV, CAR.NIRO_HEV, CAR.SOUL_EV, CAR.K5_DL3_HEV, CAR.SANTA_FE_HEV_2022},
 
   # send LFA MFA message for new HKG models
   # Insert your car in this if you want turn LFA icon on.
-  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER, CAR.KONA_N, CAR.K5_DL3, CAR.K5_DL3_HEV},
+  "send_lfahda_mfa": {CAR.GRANDEUR_IG_FL_HEV, CAR.GRANDEUR_IG_FL, CAR.SONATA, CAR.PALISADE, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.KONA_EV, CAR.NIRO_EV, CAR.KONA_HEV, CAR.SELTOS, CAR.SOUL_EV, CAR.NEXO, CAR.MOHAVE, CAR.STINGER, CAR.KONA_N, CAR.K5_DL3, CAR.K5_DL3_HEV, CAR.SANTA_FE_HEV_2022},
 
   "send_hda_mfa": {CAR.GRANDEUR_IG_HEV},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
   # Insert your car in this if you see front collision error on your cluster.
-  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE},
+  "use_fca": {CAR.GRANDEUR_IG_FL_HEV, CAR.SONATA, CAR.AVANTE, CAR.I30, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA_HEV, CAR.SELTOS, CAR.MOHAVE, CAR.SANTA_FE_HEV_2022},
 }
 
-HYBRID_CAR = {CAR.K5_HEV, CAR.IONIQ_HEV, CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.K7_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NIRO_HEV, CAR.KONA_HEV, CAR.K5_DL3_HEV}
+HYBRID_CAR = {CAR.K5_HEV, CAR.IONIQ_HEV, CAR.SONATA_HEV, CAR.SONATA_LF_HEV, CAR.K7_HEV, CAR.GRANDEUR_IG_HEV, CAR.GRANDEUR_IG_FL_HEV, CAR.NIRO_HEV, CAR.KONA_HEV, CAR.K5_DL3_HEV, CAR.SANTA_FE_HEV_2022}
 EV_CAR = {CAR.IONIQ_EV, CAR.KONA_EV, CAR.NIRO_EV, CAR.NEXO, CAR.SOUL_EV}
 
 if Params().get_bool("UseRadarTrack"):
@@ -709,6 +715,8 @@ if Params().get_bool("UseRadarTrack"):
     CAR.IONIQ_EV: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.IONIQ_HEV: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.SANTA_FE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.SANTA_FE_2022: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.SANTA_FE_HEV_2022: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.PALISADE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.VELOSTER: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GRANDEUR_IG: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -755,6 +763,8 @@ else:
     CAR.IONIQ_EV: dbc_dict('hyundai_kia_generic', None),
     CAR.IONIQ_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.SANTA_FE: dbc_dict('hyundai_kia_generic', None),
+    CAR.SANTA_FE_2022: dbc_dict('hyundai_kia_generic', None),
+    CAR.SANTA_FE_HEV_2022: dbc_dict('hyundai_kia_generic', None),
     CAR.PALISADE: dbc_dict('hyundai_kia_generic', None),
     CAR.VELOSTER: dbc_dict('hyundai_kia_generic', None),
     CAR.GRANDEUR_IG: dbc_dict('hyundai_kia_generic', None),
