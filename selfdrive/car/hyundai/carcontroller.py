@@ -198,7 +198,7 @@ class CarController():
     self.sm = messaging.SubMaster(['controlsState', 'radarState', 'longitudinalPlan'])
 
   def update(self, c, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
-             left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, v_future):
+             left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, v_future, v_speeds):
 
     self.vFuture = v_future
     path_plan = self.NC.update_lateralPlan()
@@ -737,7 +737,7 @@ class CarController():
             elif aReqValue > 0.0:
               accel = interp(CS.lead_distance, [14.0, 15.0], [max(accel, aReqValue, faccel), aReqValue])
             elif aReqValue < 0.0 and CS.lead_distance <= 4.2 and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
-              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0-(0.5*(3.0-CS.cruiseGapSet))]))
+              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0-(0.5*(3.0-CS.cruiseGapSet))]))
             elif aReqValue < 0.0 and lead_objspd <= -15:
               accel = interp(abs(lead_objspd), [15.0, 30.0], [(accel + aReqValue)/2, min(accel, aReqValue)])
             elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
@@ -825,6 +825,8 @@ class CarController():
     # str_log3 = 'ST1/ST2={}/{} CI/D={}/{:.1f} TM/D/V={:03.0f}/{:03.0f}/{:03.0f}'.format(int(self.sm['radarState'].leadOne.status), int(self.sm['radarState'].leadTwo.status), \
     #  int(self.NC.cut_in), (self.sm['radarState'].leadOne.dRel - self.sm['radarState'].leadTwo.dRel), self.NC.cut_in_run_timer, self.sm['radarState'].leadOne.dRel, (self.sm['radarState'].leadOne.vRel * CV.MS_TO_KPH * 0.45))
     # trace1.printf3('{}'.format(str_log3))
+    v_speed_out = ' '.join(map(str, v_speeds))
+    trace1.printf3('{:s}'.format(v_speed_out))
 
     self.cc_timer += 1
     if self.cc_timer > 100:
