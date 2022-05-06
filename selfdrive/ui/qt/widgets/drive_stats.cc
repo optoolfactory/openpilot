@@ -45,7 +45,7 @@ DriveStats::DriveStats(QWidget* parent) : QFrame(parent) {
   main_layout->addStretch();
   add_stats_layouts("지난 주", week_);
 
-  QString OPKR_SERVER = QString::fromStdString(Params().get("OPKRServer"));
+  /*QString OPKR_SERVER = QString::fromStdString(Params().get("OPKRServer"));
   QString TARGET_SERVER = "";
   if (OPKR_SERVER == "0") {
     TARGET_SERVER = util::getenv("API_HOST", "https://api.retropilot.org").c_str();
@@ -61,7 +61,7 @@ DriveStats::DriveStats(QWidget* parent) : QFrame(parent) {
     QString url = TARGET_SERVER + "/v1.1/devices/" + *dongleId + "/stats";
     RequestRepeater* repeater = new RequestRepeater(this, url, "ApiCache_DriveStats", 30);
     QObject::connect(repeater, &RequestRepeater::requestDone, this, &DriveStats::parseResponse);
-  }
+  }*/
 
   setStyleSheet(R"(
     DriveStats {
