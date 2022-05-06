@@ -261,8 +261,8 @@ void DevicePanel::poweroff() {
 }
 
 SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
-  //gitRemoteLbl = new LabelControl("Git Remote");
-  //gitBranchLbl = new LabelControl("Git Branch");
+  gitRemoteLbl = new LabelControl("Git Remote");
+  gitBranchLbl = new LabelControl("Git Branch");
   gitCommitLbl = new LabelControl("Git Commit");
   osVersionLbl = new LabelControl("OS Version");
   versionLbl = new LabelControl("Version");
