@@ -8,6 +8,7 @@
 #include <QProcess> // opkr
 #include <QDateTime> // opkr
 #include <QTimer> // opkr
+#include <QFileInfo> // opkr
 
 #ifndef QCOM
 #include "selfdrive/ui/qt/offroad/networking.h"
@@ -284,13 +285,31 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
     
     if (!last_ping.length()) {
       desc += QString("인터넷에 연결되어 있지 않습니다. 업데이트확인을 위해 WiFi를 연결하세요.");
+      if (ConfirmationDialog::alert(desc, this)) {}
     } else if (commit_local == commit_remote) {
       desc += QString("로컬과 리모트가 일치합니다. 업데이트가 필요 없습니다.");
+      if (ConfirmationDialog::alert(desc, this)) {}
     } else {
-      desc += QString("업데이트가 있습니다. 적용하려면 확인버튼을 누르세요.");
-    }
-    if (ConfirmationDialog::confirm(desc, this)) {
-      std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh");
+      if (QFileInfo::exists("/data/OPKR_Updates.txt")) {
+        QFileInfo fileInfo;
+        fileInfo.setFile("/data/OPKR_Updates.txt");
+        const std::string txt = util::read_file("/data/OPKR_Updates.txt");
+        if (UpdateInfoDialog::confirm(desc + "\n" + QString::fromStdString(txt), this)) {
+          std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh");
+        }
+      } else {
+        QString cmd1 = "wget https://raw.githubusercontent.com/openpilotkr/openpilot/"+QString::fromStdString(params.get("GitBranch"))+"/OPKR_Updates.txt -O /data/OPKR_Updates.txt";
+        QProcess::execute(cmd1);
+        QTimer::singleShot(2000, []() {});
+        if (QFileInfo::exists("/data/OPKR_Updates.txt")) {
+          QFileInfo fileInfo;
+          fileInfo.setFile("/data/OPKR_Updates.txt");
+          const std::string txt = util::read_file("/data/OPKR_Updates.txt");
+          if (UpdateInfoDialog::confirm(desc + "\n" + QString::fromStdString(txt), this)) {
+            std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh");
+          }
+        }
+      }
     }
   });
 
@@ -638,10 +657,12 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new SteerWarningFixToggle());
   layout->addWidget(new IgnoreCanErroronISGToggle());
   layout->addWidget(new FCA11MessageToggle());
-  layout->addWidget(new MadModeEnabledToggle());
+  layout->addWidget(new UFCModeEnabledToggle());
   layout->addWidget(new StockLKASEnabledatDisenagedStatusToggle());
   layout->addWidget(new C2WithCommaPowerToggle());
   layout->addWidget(new JoystickModeToggle());
+  layout->addWidget(new NoSmartMDPSToggle());
+  layout->addWidget(new UserSpecificFeature());
   layout->addWidget(new TimeZoneSelectCombo());
   const char* cal_ok = "cp -f /data/openpilot/selfdrive/assets/addon/param/CalibrationParams /data/params/d/";
   auto calokbtn = new ButtonControl("캘리브레이션 강제 활성화", "실행");
