@@ -611,7 +611,7 @@ class CarState(CarStateBase):
     elif CP.carFingerprint in FEATURES["use_elect_gears"]:
       signals += [
         ("Elect_Gear_Shifter", "ELECT_GEAR"),
-        ("Elect_Gear_Step", "ELECT_GEAR")
+        ("Elect_Gear_Step", "ELECT_GEAR"),
         ("Elect_Motor_Speed", "ELECT_GEAR")
       ]
       checks += [("ELECT_GEAR", 20)]
