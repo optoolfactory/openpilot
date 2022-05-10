@@ -259,7 +259,7 @@ class CarState(CarStateBase):
         ret.engineRpm = cp.vl["E_EMS11"]["N"] # opkr
       else:
         ret.gas = cp.vl["E_EMS11"]["Accel_Pedal_Pos"] / 254.
-        ret.engineRpm = 9999
+        ret.engineRpm = cp.vl["ELECT_GEAR"]["Elect_Motor_Speed"] * 30 # opkr, may multiply deceleration ratio in line with engine rpm
       ret.gasPressed = ret.gas > 0
     else:
       ret.gas = cp.vl["EMS12"]["PV_AV_CAN"] / 100.
@@ -609,6 +609,7 @@ class CarState(CarStateBase):
       signals += [
         ("Elect_Gear_Shifter", "ELECT_GEAR"),
         ("Elect_Gear_Step", "ELECT_GEAR")
+        ("Elect_Motor_Speed", "ELECT_GEAR")
       ]
       checks += [("ELECT_GEAR", 20)]
     else:
