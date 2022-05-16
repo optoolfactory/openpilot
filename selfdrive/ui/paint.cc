@@ -719,7 +719,6 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
         nvgFontSize(s->vg, (int)(bb_uomFontSize*1.5));
       }
       nvgText(s->vg, 0, 0, bb_uom, NULL);
-      }
       nvgRestore(s->vg);
     }
   }
