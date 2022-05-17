@@ -555,7 +555,7 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
     }
   });
   layout->addWidget(recorddelbtn);
-  const char* realdata_del = "rm -rf /storage/emulated/0/realdata/*";
+  const char* realdata_del = "rm -rf /data/media/0/realdata/*";
   auto realdatadelbtn = new ButtonControl("주행로그 전부 삭제", "실행");
   QObject::connect(realdatadelbtn, &ButtonControl::clicked, [=]() {
     if (ConfirmationDialog::confirm("저장된 주행로그를 모두 삭제합니다. 진행하시겠습니까?", this)){
