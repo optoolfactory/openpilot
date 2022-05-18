@@ -9,12 +9,19 @@
 #include "selfdrive/ui/ui.h"
 #include <QComboBox>
 #include <QAbstractItemView>
+#include <QMessageBox>
+#include <QProcess>
 
 class SwitchOpenpilot : public ButtonControl {
   Q_OBJECT
 
 public:
   SwitchOpenpilot();
+  void executeProgram(const QString &tcmd);
+
+private slots:
+  void printMsg();
+  void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
   Params params;
@@ -22,6 +29,10 @@ private:
   QString githubid;
   QString githubrepo;
   QString githubbranch;
+
+  QProcess *textMsgProcess;
+  QMessageBox *outbox;
+  QString outdata;
 
   void refresh();
   void getUserID(const QString &userid);
