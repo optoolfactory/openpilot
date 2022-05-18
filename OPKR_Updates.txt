@@ -1,5 +1,7 @@
 ☞ Use two fingers to scroll down ☜
 
+2022-05-18
+- joint model
 2022-05-16
 - Might be fixed cal&loc issue after current update
 - Add event to avoid collision at low speed when SCC is not activated
