@@ -682,7 +682,7 @@ if Params().get_bool("UseRadarTrack"):
     CAR.GRANDEUR_IG_HEV: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GRANDEUR_IG_FL: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GRANDEUR_IG_FL_HEV: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
-    CAR.NEXO: dbc_dict('hyundai_kia_generic_nexo', 'hyundai_kia_mando_front_radar'),
+    CAR.NEXO: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     # kia
     CAR.K3: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K5: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -725,7 +725,7 @@ else:
     CAR.GRANDEUR_IG_HEV: dbc_dict('hyundai_kia_generic', None),
     CAR.GRANDEUR_IG_FL: dbc_dict('hyundai_kia_generic', None),
     CAR.GRANDEUR_IG_FL_HEV: dbc_dict('hyundai_kia_generic', None),
-    CAR.NEXO: dbc_dict('hyundai_kia_generic_nexo', None),
+    CAR.NEXO: dbc_dict('hyundai_kia_generic', None),
     # kia
     CAR.K3: dbc_dict('hyundai_kia_generic', None),
     CAR.K5: dbc_dict('hyundai_kia_generic', None),
