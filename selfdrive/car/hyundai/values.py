@@ -86,6 +86,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   # hyundai
   CAR.AVANTE_AD: HyundaiCarInfo("Hyundai Avante", video_link="https://youtu.be/_EdYQtV52-c"),
   CAR.AVANTE_CN7: HyundaiCarInfo("Hyundai Avante 2021", video_link="https://youtu.be/_EdYQtV52-c"),
+  CAR.AVANTE_HEV_CN7: HyundaiCarInfo("Hyundai Avante Hybrid 2021"),
   CAR.I30_PD: HyundaiCarInfo("Hyundai I30", "All"),
   CAR.SONATA_DN8: HyundaiCarInfo("Hyundai Sonata 2020-22", "All", video_link="https://www.youtube.com/watch?v=ix63r9kE3Fw"),
   CAR.SONATA_HEV_DN8: HyundaiCarInfo("Hyundai Sonata Hybrid 2021-22", "All"),
@@ -114,6 +115,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   CAR.K3_BD: HyundaiCarInfo("Kia K3 2018-21"),
   CAR.K5_JF: HyundaiCarInfo("Kia K5 2021-22", "SCC + LFA"),
   CAR.K5_HEV_JF: HyundaiCarInfo("Kia K5 Hybrid 2017"),
+  CAR.K5_DL3: HyundaiCarInfo("Kia K5 2021"),
   CAR.SPORTAGE_QL: HyundaiCarInfo("Kia Sportage"),
   CAR.SORENTO_UM: HyundaiCarInfo("Kia Sorento 2018-19", video_link="https://www.youtube.com/watch?v=Fkh3s6WHJz8"),
   CAR.STINGER_CK: HyundaiCarInfo("Kia Stinger 2018", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0"),
