@@ -44,6 +44,7 @@ class CAR:
   IONIQ_EV_AE = "HYUNDAI IONIQ ELECTRIC (AE)"
   IONIQ_HEV_AE = "HYUNDAI IONIQ HYBRID (AE)"
   SANTAFE_TM = "HYUNDAI SANTAFE (TM)"
+  SANTAFE_HEV_TM = "HYUNDAI SANTAFE HYBRID (TM)"
   PALISADE_LX2 = "HYUNDAI PALISADE (LX2)"
   VELOSTER_JS = "HYUNDAI VELOSTER (JS)"
   GRANDEUR_IG = "HYUNDAI GRANDEUR (IG)"
@@ -99,6 +100,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   CAR.IONIQ_EV_AE: HyundaiCarInfo("Hyundai Ioniq Electric 2019", "All"),
   CAR.IONIQ_HEV_AE: HyundaiCarInfo("Hyundai Ioniq Hybrid 2020-22", "SCC + LFA"),
   CAR.SANTAFE_TM: HyundaiCarInfo("Hyundai Santa Fe 2019-20", "All"),
+  CAR.SANTAFE_HEV_TM: HyundaiCarInfo("Hyundai Santa Fe Hybrid 2022", "All"),
   CAR.PALISADE_LX2: [
     HyundaiCarInfo("Hyundai Palisade 2020-21", "All", video_link="https://youtu.be/TAnDqjF4fDY?t=456"),
     HyundaiCarInfo("Kia Telluride 2020"),
@@ -414,6 +416,44 @@ if Params().get_bool("FingerprintTwoSet"):
       (Ecu.transmission, 0x7e1, None): [b'\xf1\x87VDJLT17895112DN4\x88fVf\x99\x88\x88\x88\x87fVe\x88vhwwUFU\x97eFex\x99\xff\xb7\x82\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB2\x11\x1am\xda',],
     },
     # hyundai
+    CAR.AVANTE_CN7: {
+      (Ecu.fwdRadar, 0x7d0, None): [
+        b'\xf1\x00CN7_ SCC F-CUP      1.00 1.01 99110-AA000         ',
+        b'\xf1\x00CN7_ SCC FHCUP      1.00 1.01 99110-AA000         ',
+        b'\xf1\x8799110AA000\xf1\x00CN7_ SCC FHCUP      1.00 1.01 99110-AA000         ',
+        b'\xf1\x8799110AA000\xf1\x00CN7_ SCC F-CUP      1.00 1.01 99110-AA000         ',
+      ],
+      (Ecu.eps, 0x7d4, None): [
+        b'\xf1\x87\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf1\x00CN7 MDPS C 1.00 1.06 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00 4CNDC106',
+        b'\xf1\x8756310/AA070\xf1\x00CN7 MDPS C 1.00 1.06 56310/AA070 4CNDC106',
+        b'\xf1\x8756310AA050\x00\xf1\x00CN7 MDPS C 1.00 1.06 56310AA050\x00 4CNDC106',
+      ],
+      (Ecu.fwdCamera, 0x7c4, None): [
+        b'\xf1\x00CN7 MFC  AT USA LHD 1.00 1.00 99210-AB000 200819',
+        b'\xf1\x00CN7 MFC  AT USA LHD 1.00 1.03 99210-AA000 200819',
+        b'\xf1\x00CN7 MFC  AT USA LHD 1.00 1.01 99210-AB000 210205',
+      ],
+      (Ecu.esp, 0x7d1, None): [
+        b'\xf1\x00CN ESC \t 101 \x10\x03 58910-AB800',
+        b'\xf1\x8758910-AA800\xf1\x00CN ESC \t 104 \x08\x03 58910-AA800',
+        b'\xf1\x8758910-AB800\xf1\x00CN ESC \t 101 \x10\x03 58910-AB800',
+      ],
+      (Ecu.transmission, 0x7e1, None): [
+        b'\xf1\x00HT6WA280BLHT6VA640A1CCN0N20NS5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x00HT6WA280BLHT6VA640A1CCN0N20NS5\x00\x00\x00\x00\x00\x00\xe8\xba\xce\xfa',
+        b'\xf1\x87CXMQFM2135005JB2E\xb9\x89\x98W\xa9y\x97h\xa9\x98\x99wxvwh\x87\177\xffx\xff\xff\xff,,\xf1\x89HT6VA640A1\xf1\x82CCN0N20NS5\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x87CXMQFM1916035JB2\x88vvgg\x87Wuwgev\xa9\x98\x88\x98h\x99\x9f\xffh\xff\xff\xff\xa5\xee\xf1\x89HT6VA640A1\xf1\x82CCN0N20NS5\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x87CXLQF40189012JL2f\x88\x86\x88\x88vUex\xb8\x88\x88\x88\x87\x88\x89fh?\xffz\xff\xff\xff\x08z\xf1\x89HT6VA640A1\xf1\x82CCN0N20NS5\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x87CXMQFM2728305JB2E\x97\x87xw\x87vwgw\x84x\x88\x88w\x89EI\xbf\xff{\xff\xff\xff\xe6\x0e\xf1\x89HT6VA640A1\xf1\x82CCN0N20NS5\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x87CXMQFM3806705JB2\x89\x87wwx\x88g\x86\x99\x87\x86xwwv\x88yv\x7f\xffz\xff\xff\xffV\x15\xf1\x89HT6VA640A1\xf1\x82CCN0N20NS5\x00\x00\x00\x00\x00\x00',
+      ],
+      (Ecu.engine, 0x7e0, None): [
+        b'\xf1\x82CNCWD0AMFCXCSFFA',
+        b'\xf1\x82CNCWD0AMFCXCSFFB',
+        b'\xf1\x82CNCVD0AMFCXCSFFB',
+        b'\xf1\x870\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf1\x82CNDWD0AMFCXCSG8A',
+      ],
+    },
     CAR.I30_PD: {
       (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00PD__ SCC F-CUP      1.00 1.01 99110-G3100         ',],
       (Ecu.esp, 0x7d1, None): [b'\xf1\x00PD ESC \x11 100 \a\x03 58910-G3AC0',],
@@ -636,23 +676,23 @@ if Params().get_bool("FingerprintTwoSet"):
   }
 
 CHECKSUM = {
-  "crc8": [CAR.SANTAFE_TM, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SELTOS_SP2, CAR.AVANTE_CN7, CAR.SOUL_EV_SK3],
+  "crc8": [CAR.SANTAFE_TM, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SELTOS_SP2, CAR.AVANTE_CN7, CAR.SOUL_EV_SK3, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM, CAR.K5_DL3],
   "6B": [CAR.SORENTO_UM, CAR.GENESIS_DH],
 }
 
 FEATURES = {
   # Use Cluster for Gear Selection, rather than Transmission
-  "use_cluster_gears": {CAR.AVANTE_CN7, CAR.KONA_OS, CAR.I30_PD, CAR.K7_YG, CAR.GRANDEUR_IG, CAR.GRANDEUR_FL_IG},
+  "use_cluster_gears": {CAR.AVANTE_AD, CAR.KONA_OS, CAR.I30_PD, CAR.K7_YG, CAR.GRANDEUR_IG, CAR.GRANDEUR_FL_IG},
   # Use TCU Message for Gear Selection
   "use_tcu_gears": {CAR.K5_JF, CAR.SONATA_LF, CAR.VELOSTER_JS, CAR.SONATA_TURBO_LF, CAR.STINGER_CK},
   # Use E_GEAR Message for Gear Selection
   "use_elect_gears": {CAR.SONATA_HEV_DN8, CAR.SONATA_HEV_LF, CAR.KONA_EV_OS, CAR.KONA_HEV_OS, CAR.IONIQ_EV_AE, CAR.IONIQ_HEV_AE, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.NEXO_FE,
-                      CAR.K5_HEV_JF, CAR.K7_HEV_YG, CAR.NIRO_EV_DE, CAR.NIRO_HEV_DE, CAR.SOUL_EV_SK3, CAR.AVANTE_HEV_CN7},
+                      CAR.K5_HEV_JF, CAR.K7_HEV_YG, CAR.NIRO_EV_DE, CAR.NIRO_HEV_DE, CAR.SOUL_EV_SK3, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM},
 
   # send LFA MFA message for new HKG models
   # Insert your car in this if you want turn LFA icon on.
   "send_lfahda_mfa": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SANTAFE_TM, CAR.KONA_EV_OS, CAR.NIRO_EV_DE, CAR.KONA_HEV_OS,
-                      CAR.SELTOS_SP2, CAR.SOUL_EV_SK3, CAR.NEXO_FE, CAR.MOHAVE_HM, CAR.STINGER_CK, CAR.AVANTE_CN7, CAR.AVANTE_HEV_CN7, CAR.K5_DL3},
+                      CAR.SELTOS_SP2, CAR.SOUL_EV_SK3, CAR.NEXO_FE, CAR.MOHAVE_HM, CAR.STINGER_CK, CAR.AVANTE_CN7, CAR.AVANTE_HEV_CN7, CAR.K5_DL3, CAR.SANTA_FE_HEV_2022, CAR.GENESIS_G70_IK},
 
   "send_hda_mfa": {CAR.GRANDEUR_IG, CAR.GRANDEUR_HEV_IG},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
