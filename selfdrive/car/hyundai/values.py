@@ -59,7 +59,7 @@ class CAR:
   K5_DL3 = "KIA K5 (DL3)"
   SPORTAGE_QL = "KIA SPORTAGE (QL)"
   SORENTO_UM = "KIA SORENTO (UM)"
-  STINGER_CK= "KIA STINGER (CK)"
+  STINGER_CK = "KIA STINGER (CK)"
   NIRO_EV_DE = "KIA NIRO EV (DE)"
   NIRO_HEV_DE = "KIA NIRO HYBRID (DE)"
   K7_YG = "KIA K7 (YG)"
@@ -71,7 +71,7 @@ class CAR:
 
 @dataclass
 class HyundaiCarInfo(CarInfo):
-  package: str = "SCC + LKAS"
+  package: str="SCC + LKAS"
   good_torque: bool = True
 
 
