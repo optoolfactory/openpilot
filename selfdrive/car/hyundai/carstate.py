@@ -334,7 +334,7 @@ class CarState(CarStateBase):
       gear = cp.vl["TCU12"]["CUR_GR"]
       ret.gearStep = 0
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
-      if self.CP.carFingerprint == CAR.NEXO:
+      if self.CP.carFingerprint == CAR.NEXO_FE:
         gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter_NEXO"] # NEXO's gear info from neokii. If someone can send me a cabana, I will find more clear info.
       else:
         gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
