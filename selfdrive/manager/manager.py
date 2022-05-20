@@ -285,8 +285,6 @@ def manager_init() -> None:
     os.chmod(os.path.join(BASEDIR, "cereal"), 0o755)
     os.chmod(os.path.join(BASEDIR, "cereal", "libmessaging_shared.so"), 0o755)
 
-  os.system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh")
-
 def manager_prepare() -> None:
   for p in managed_processes.values():
     p.prepare()
