@@ -900,7 +900,11 @@ class Controls:
       controlsState.lateralControlState.indiState = lac_log
     elif lat_tuning == 'torque':
       controlsState.lateralControlState.torqueState = lac_log
-    controlsState.steeringAngleDesiredDeg = self.desired_angle_deg
+      
+    if lat_tuning == 'torque':
+      controlsState.steeringAngleDesiredDeg = lac_log.desiredLateralAccel
+    else:
+      controlsState.steeringAngleDesiredDeg = self.desired_angle_deg
 
     self.pm.send('controlsState', dat)
 

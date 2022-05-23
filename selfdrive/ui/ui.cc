@@ -420,9 +420,10 @@ static void update_status(UIState *s) {
   if (!s->scene.auto_gitpull && (s->sm->frame - s->scene.started_frame > 15*UI_FREQ)) {
     if (params.getBool("GitPullOnBoot")) {
       s->scene.auto_gitpull = true;
-      system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh");
+      system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &");
     } else if (s->sm->frame - s->scene.started_frame > 20*UI_FREQ) {
       s->scene.auto_gitpull = true;
+      system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh &");
     }
   }
 

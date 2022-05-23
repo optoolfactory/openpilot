@@ -20,7 +20,6 @@
 #include "selfdrive/ui/ui.h"
 
 SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Change to another open pilot code. You can change it by entering ID/repository/branch.") {
-
   QObject::connect(this, &ButtonControl::clicked, [=]() {
     if (text() == "CHANGE") {
       QString userid = InputDialog::getText("First: Input the Git ID.", this);
@@ -41,17 +40,18 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Ch
               QDateTime a = QDateTime::currentDateTime();
               QString as = a.toString(time_format);
               QString cmd1 = "mv /data/openpilot /data/openpilot_" + as;
-              QString cmd2 = "git clone -b " + githubbranch + " --single-branch https://github.com/" + githubid + "/" + githubrepo + ".git /data/openpilot";
+              QString tcmd = "git clone -b " + githubbranch + " --single-branch https://github.com/" + githubid + "/" + githubrepo + ".git /data/openpilot";
               QString cmd3 = "rm -f /data/openpilot_" + as + "/prebuilt";
               QProcess::execute("pkill -f thermald");
               QProcess::execute(cmd1);
               QProcess::execute(cmd3);
-              QProcess::execute(cmd2);
-              QProcess::execute("chmod -R g-rwx /data/openpilot");
-              QProcess::execute("chmod -R o-rwx /data/openpilot");
-              QProcess::execute("chmod 755 /data/openpilot");
-              QProcess::execute("chmod 755 /data/openpilot/cereal");
-              QProcess::execute("reboot");
+              textMsgProcess = new QProcess(this);
+              outbox = new QMessageBox(this);
+              outbox->setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
+              QObject::connect(textMsgProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg()));
+              QObject::connect(textMsgProcess, SIGNAL(readyReadStandardError()), this, SLOT(printMsg()));
+              QObject::connect(textMsgProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
+              executeProgram(tcmd);
             }
           }
         }
@@ -61,6 +61,34 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Ch
     }
   });
   refresh();
+}
+
+void SwitchOpenpilot::printMsg() {
+  QByteArray datao;
+  QByteArray datae;
+  datao = textMsgProcess->readAllStandardOutput();
+  datae = textMsgProcess->readAllStandardError();
+  QString texto = QString::fromLocal8Bit(datao);
+  QString texte = QString::fromLocal8Bit(datae);
+  outdata = texto+texte;
+  outbox->setText(outdata);
+  outbox->show();
+}
+
+void SwitchOpenpilot::executeProgram(const QString &tcmd) {
+  QString program = QString(tcmd);
+  textMsgProcess->start(program);
+  textMsgProcess->waitForStarted();
+}
+
+void SwitchOpenpilot::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+  if(exitStatus == QProcess::NormalExit) {
+    QProcess::execute("chmod -R g-rwx /data/openpilot");
+    QProcess::execute("chmod -R o-rwx /data/openpilot");
+    QProcess::execute("chmod 755 /data/openpilot");
+    QProcess::execute("chmod 755 /data/openpilot/cereal");
+    QProcess::execute("reboot");
+  }
 }
 
 void SwitchOpenpilot::refresh() {
