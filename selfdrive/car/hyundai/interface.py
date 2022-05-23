@@ -108,96 +108,135 @@ class CarInterface(CarInterfaceBase):
       set_lat_tune(ret.lateralTuning, LatTunes.TORQUE)
 
     # genesis
-    if candidate == CAR.GENESIS:
-      ret.mass = 1900. + STD_CARGO_KG
+    if candidate == CAR.GENESIS_DH:
+      ret.mass = 1930. + STD_CARGO_KG
       ret.wheelbase = 3.01
-    elif candidate == CAR.GENESIS_G70:
-      ret.mass = 1640. + STD_CARGO_KG
-      ret.wheelbase = 2.84
-    elif candidate == CAR.GENESIS_G80:
+    elif candidate == CAR.GENESIS_G70_IK:
+      ret.mass = 1595. + STD_CARGO_KG
+      ret.wheelbase = 2.835
+    elif candidate == CAR.GENESIS_G80_DH:
       ret.mass = 1855. + STD_CARGO_KG
       ret.wheelbase = 3.01
-    elif candidate == CAR.GENESIS_G90:
-      ret.mass = 2200
-      ret.wheelbase = 3.15
+    elif candidate == CAR.GENESIS_G90_HI:
+      ret.mass = 2120. + STD_CARGO_KG
+      ret.wheelbase = 3.16
+    elif candidate == CAR.GENESIS_EQ900_HI:
+      ret.mass = 2130. + STD_CARGO_KG
+      ret.wheelbase = 3.16
     # hyundai
-    elif candidate == CAR.SANTA_FE:
-      ret.mass = 1694 + STD_CARGO_KG
+    elif candidate == CAR.SANTAFE_TM:
+      ret.mass = 1694. + STD_CARGO_KG
       ret.wheelbase = 2.765
-    elif candidate in [CAR.SANTA_FE_2022, CAR.SANTA_FE_HEV_2022]:
-      ret.mass = 1750 + STD_CARGO_KG
-      ret.wheelbase = 2.766
-    elif candidate in (CAR.SONATA, CAR.SONATA_HEV):
-      ret.mass = 1513. + STD_CARGO_KG
+    elif candidate == CAR.SANTAFE_HEV_TM:
+      ret.mass = 1907. + STD_CARGO_KG
+      ret.wheelbase = 2.765
+    elif candidate == CAR.SONATA_DN8:
+      ret.mass = 1465. + STD_CARGO_KG
+      ret.wheelbase = 2.84
+    elif candidate == CAR.SONATA_HEV_DN8:
+      ret.mass = 1505. + STD_CARGO_KG
       ret.wheelbase = 2.84
     elif candidate == CAR.SONATA_LF:
-      ret.mass = 4497. * CV.LB_TO_KG
-      ret.wheelbase = 2.804
-    elif candidate == CAR.SONATA_LF_TURBO:
+      ret.mass = 1465. + STD_CARGO_KG
+      ret.wheelbase = 2.805
+    elif candidate == CAR.SONATA_TURBO_LF:
       ret.mass = 1470. + STD_CARGO_KG
       ret.wheelbase = 2.805
-    elif candidate == CAR.SONATA_LF_HEV:
+    elif candidate == CAR.SONATA_HEV_LF:
       ret.mass = 1595. + STD_CARGO_KG
       ret.wheelbase = 2.805
-    elif candidate == CAR.PALISADE:
-      ret.mass = 1999. + STD_CARGO_KG
+    elif candidate == CAR.PALISADE_LX2:
+      ret.mass = 1885. + STD_CARGO_KG
       ret.wheelbase = 2.90
-    elif candidate == CAR.AVANTE:
-      ret.mass = 1245. + STD_CARGO_KG
+    elif candidate == CAR.AVANTE_AD:
+      ret.mass = 1250. + STD_CARGO_KG
+      ret.wheelbase = 2.7
+    elif candidate == CAR.AVANTE_CN7:
+      ret.mass = 1225. + STD_CARGO_KG
       ret.wheelbase = 2.72
-    elif candidate == CAR.I30:
+    elif candidate == CAR.AVANTE_HEV_CN7:
+      ret.mass = 1335. + STD_CARGO_KG
+      ret.wheelbase = 2.72
+    elif candidate == CAR.I30_PD:
       ret.mass = 1380. + STD_CARGO_KG
       ret.wheelbase = 2.65
-    elif candidate in (CAR.KONA, CAR.KONA_N):
-      ret.mass = 1275. + STD_CARGO_KG
-      ret.wheelbase = 2.7
-    elif candidate in (CAR.KONA_HEV, CAR.KONA_EV):
-      ret.mass = 1425. + STD_CARGO_KG
+    elif candidate == CAR.KONA_OS:
+      ret.mass = 1325. + STD_CARGO_KG
       ret.wheelbase = 2.6
-    elif candidate in (CAR.IONIQ_HEV, CAR.IONIQ_EV):
-      ret.mass = 1490. + STD_CARGO_KG   #weight per hyundai site https://www.hyundaiusa.com/ioniq-electric/specifications.aspx
+    elif candidate == CAR.KONA_HEV_OS:
+      ret.mass = 1395. + STD_CARGO_KG
+      ret.wheelbase = 2.6
+    elif candidate == CAR.KONA_EV_OS:
+      ret.mass = 1685. + STD_CARGO_KG
+      ret.wheelbase = 2.6
+    elif candidate == CAR.IONIQ_HEV_AE:
+      ret.mass = 1380. + STD_CARGO_KG
       ret.wheelbase = 2.7
-    elif candidate in (CAR.GRANDEUR_IG, CAR.GRANDEUR_IG_HEV):
+    elif candidate == CAR.IONIQ_EV_AE:
+      ret.mass = 1445. + STD_CARGO_KG
+      ret.wheelbase = 2.7
+    elif candidate == CAR.GRANDEUR_IG:
+      ret.mass = 1560. + STD_CARGO_KG
+      ret.wheelbase = 2.845
+    elif candidate == CAR.GRANDEUR_HEV_IG:
       ret.mass = 1675. + STD_CARGO_KG
       ret.wheelbase = 2.845
-    elif candidate in (CAR.GRANDEUR_IG_FL, CAR.GRANDEUR_IG_FL_HEV):
+    elif candidate == CAR.GRANDEUR_FL_IG:
+      ret.mass = 1625. + STD_CARGO_KG
+      ret.wheelbase = 2.885
+    elif candidate == CAR.GRANDEUR_HEV_FL_IG:
       ret.mass = 1675. + STD_CARGO_KG
       ret.wheelbase = 2.885
-    elif candidate == CAR.VELOSTER:
-      ret.mass = 3558. * CV.LB_TO_KG
-      ret.wheelbase = 2.80
-    elif candidate == CAR.NEXO:
+    elif candidate == CAR.VELOSTER_JS:
+      ret.mass = 1285. + STD_CARGO_KG
+      ret.wheelbase = 2.65
+    elif candidate == CAR.TUCSON_TL:
+      ret.mass = 1550. + STD_CARGO_KG
+      ret.wheelbase = 2.67
+    elif candidate == CAR.NEXO_FE:
       ret.mass = 1885. + STD_CARGO_KG
       ret.wheelbase = 2.79
     # kia
-    elif candidate == CAR.SORENTO:
-      ret.mass = 1985. + STD_CARGO_KG
+    elif candidate == CAR.SORENTO_UM:
+      ret.mass = 1910. + STD_CARGO_KG
       ret.wheelbase = 2.78
-    elif candidate in (CAR.K5, CAR.K5_HEV, CAR.K5_DL3, CAR.K5_DL3_HEV):
+    elif candidate == CAR.K5_JF:
+      ret.wheelbase = 2.805
+      ret.mass = 1475. + STD_CARGO_KG
+    elif candidate == CAR.K5_HEV_JF:
       ret.wheelbase = 2.805
       ret.mass = 1600. + STD_CARGO_KG
-    elif candidate == CAR.STINGER:
-      ret.mass = 1825.0 + STD_CARGO_KG
-      ret.wheelbase = 2.906 # https://www.kia.com/us/en/stinger/specs
-    elif candidate == CAR.K3:
+    elif candidate == CAR.K5_DL3:
+      ret.wheelbase = 2.85
+      ret.mass = 1450. + STD_CARGO_KG
+    elif candidate == CAR.STINGER_CK:
+      ret.mass = 1650. + STD_CARGO_KG
+      ret.wheelbase = 2.905
+    elif candidate == CAR.K3_BD:
       ret.mass = 1260. + STD_CARGO_KG
       ret.wheelbase = 2.70
-    elif candidate == CAR.SPORTAGE:
-      ret.mass = 1985. + STD_CARGO_KG
-      ret.wheelbase = 2.78
-    elif candidate in (CAR.NIRO_HEV, CAR.NIRO_EV):
-      ret.mass = 1737. + STD_CARGO_KG
+    elif candidate == CAR.SPORTAGE_QL:
+      ret.mass = 1510. + STD_CARGO_KG
+      ret.wheelbase = 2.67
+    elif candidate == CAR.NIRO_HEV_DE:
+      ret.mass = 1425. + STD_CARGO_KG
       ret.wheelbase = 2.7
-    elif candidate in (CAR.K7, CAR.K7_HEV):
+    elif candidate == CAR.NIRO_EV_DE:
+      ret.mass = 1755. + STD_CARGO_KG
+      ret.wheelbase = 2.7
+    elif candidate == CAR.K7_YG:
+      ret.mass = 1565. + STD_CARGO_KG
+      ret.wheelbase = 2.855
+    elif candidate == CAR.K7_HEV_YG:
       ret.mass = 1680. + STD_CARGO_KG
       ret.wheelbase = 2.855
-    elif candidate == CAR.SELTOS:
-      ret.mass = 1310. + STD_CARGO_KG
+    elif candidate == CAR.SELTOS_SP2:
+      ret.mass = 1425. + STD_CARGO_KG
+      ret.wheelbase = 2.63
+    elif candidate == CAR.SOUL_EV_SK3:
+      ret.mass = 1695. + STD_CARGO_KG
       ret.wheelbase = 2.6
-    elif candidate == CAR.SOUL_EV:
-      ret.mass = 1375. + STD_CARGO_KG
-      ret.wheelbase = 2.6
-    elif candidate == CAR.MOHAVE:
+    elif candidate == CAR.MOHAVE_HM:
       ret.mass = 2285. + STD_CARGO_KG
       ret.wheelbase = 2.895
 

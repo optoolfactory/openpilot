@@ -42,9 +42,9 @@ def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
   left_lane_warning = 0
   right_lane_warning = 0
   if left_lane_depart:
-    left_lane_warning = 1 if fingerprint in (CAR.GENESIS_G90, CAR.GENESIS_G80) else 2
+    left_lane_warning = 1 if fingerprint in (CAR.GENESIS_G90_HI, CAR.GENESIS_G80_DH) else 2
   if right_lane_depart:
-    right_lane_warning = 1 if fingerprint in (CAR.GENESIS_G90, CAR.GENESIS_G80) else 2
+    right_lane_warning = 1 if fingerprint in (CAR.GENESIS_G90_HI, CAR.GENESIS_G80_DH) else 2
 
   return sys_warning, sys_state, left_lane_warning, right_lane_warning
 
@@ -792,7 +792,7 @@ class CarController():
         self.aq_value_raw = aReqValue
         can_sends.append(create_scc11(self.packer, frame, set_speed, lead_visible, self.scc_live, self.dRel, self.vRel, self.yRel, 
          self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.acc_standstill, self.gapsettingdance, self.stopped, radar_recog, CS.scc11))
-        if (CS.brake_check or CS.cancel_check) and self.car_fingerprint != CAR.NIRO_EV:
+        if (CS.brake_check or CS.cancel_check) and self.car_fingerprint != CAR.NIRO_EV_DE:
           can_sends.append(create_scc12(self.packer, accel, enabled, self.scc_live, CS.out.gasPressed, 1, 
            CS.out.stockAeb, self.car_fingerprint, CS.out.vEgo * CV.MS_TO_KPH, self.stopped, self.acc_standstill, radar_recog, CS.scc12))
         else:
@@ -829,8 +829,7 @@ class CarController():
 
     # str_log3 = 'ST1/ST2={}/{} CI/D={}/{:.1f} TM/D/V={:03.0f}/{:03.0f}/{:03.0f}'.format(int(self.sm['radarState'].leadOne.status), int(self.sm['radarState'].leadTwo.status), \
     #  int(self.NC.cut_in), (self.sm['radarState'].leadOne.dRel - self.sm['radarState'].leadTwo.dRel), self.NC.cut_in_run_timer, self.sm['radarState'].leadOne.dRel, (self.sm['radarState'].leadOne.vRel * CV.MS_TO_KPH * 0.45))
-    str_log3 = 'HEV_BATT_LVL={}'.format(int(CS.hevBattLvl))
-    trace1.printf3('{}'.format(str_log3))
+    # trace1.printf3('{}'.format(str_log3))
 
     self.cc_timer += 1
     if self.cc_timer > 100:
