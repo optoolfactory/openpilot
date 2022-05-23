@@ -357,7 +357,7 @@ class CarState(CarStateBase):
         ret.stockFcw = cp_scc.vl["SCC12"]["CF_VSM_Warn"] == 2
 
     # Blind Spot Detection and Lane Change Assist signals
-    if self.CP.bsmAvailable or self.CP.enableBsm:
+    if self.CP.bsmAvailable:
       ret.leftBlindspot = cp.vl["LCA11"]["CF_Lca_IndLeft"] != 0
       ret.rightBlindspot = cp.vl["LCA11"]["CF_Lca_IndRight"] != 0
 
@@ -567,7 +567,7 @@ class CarState(CarStateBase):
         ("SAS11", 100)
       ]
 
-    if CP.bsmAvailable or CP.enableBsm:
+    if CP.bsmAvailable:
       signals += [
         ("CF_Lca_IndLeft", "LCA11"),
         ("CF_Lca_IndRight", "LCA11"),
