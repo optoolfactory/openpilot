@@ -68,6 +68,7 @@ class CAR:
   # GENESIS
   GENESIS_DH = "GENESIS (DH)"
   GENESIS_G70_IK = "GENESIS G70 (IK)"
+  GENESIS_G70_2020 = "GENESIS G70 2020"  
   GENESIS_G80_DH = "GENESIS G80 (DH)"
   GENESIS_G90_HI = "GENESIS G90 (HI)"
   GENESIS_EQ900_HI = "GENESIS EQ900 (HI)"
@@ -131,6 +132,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   # genesis
   CAR.GENESIS_DH: HyundaiCarInfo("Genesis 2015-2016", min_enable_speed=19 * CV.MPH_TO_MS, harness=Harness.hyundai_j),
   CAR.GENESIS_G70_IK: HyundaiCarInfo("Genesis G70 2018", "All", harness=Harness.hyundai_f),
+  CAR.GENESIS_G70_2020: HyundaiCarInfo("Genesis G70 2020", "All", harness=Harness.hyundai_f),
   CAR.GENESIS_G80_DH: HyundaiCarInfo("Genesis G80 2017", "All", harness=Harness.hyundai_h),
   CAR.GENESIS_G90_HI: HyundaiCarInfo("Genesis G90 2017", "All", harness=Harness.hyundai_c),
   CAR.GENESIS_EQ900_HI: HyundaiCarInfo("Genesis EQ900", "All"),
@@ -421,6 +423,34 @@ if Params().get_bool("FingerprintTwoSet"):
       (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00IK  MFC  AT USA LHD 1.00 1.01 95740-G9000 170920',],
       (Ecu.transmission, 0x7e1, None): [b'\xf1\x87VDJLT17895112DN4\x88fVf\x99\x88\x88\x88\x87fVe\x88vhwwUFU\x97eFex\x99\xff\xb7\x82\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB2\x11\x1am\xda',],
     },
+
+    CAR.GENESIS_G70_2020: {
+      (Ecu.eps, 0x7d4, None): [
+        b'\xf1\x00IK  MDPS R 1.00 1.07 57700-G9220 4I2VL107',
+        b'\xf1\x00IK  MDPS R 1.00 1.07 57700-G9420 4I4VL107',
+        b'\xf1\x00IK  MDPS R 1.00 1.08 57700-G9420 4I4VL108',
+      ],
+      (Ecu.transmission, 0x7e1, None): [
+        b'\xf1\x87VCJLP18407832DN3\x88vXfvUVT\x97eFU\x87d7v\x88eVeveFU\x89\x98\x7f\xff\xb2\xb0\xf1\x81E25\x00\x00\x00',
+        b'\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB4\xecE\xefL',
+        b'\xf1\x87VDKLT18912362DN4wfVfwefeveVUwfvw\x88vWfvUFU\x89\xa9\x8f\xff\x87w\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB4\xecE\xefL',
+        b'\xf1\x87VDJLC18480772DK9\x88eHfwfff\x87eFUeDEU\x98eFe\x86T5DVyo\xff\x87s\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33KB5\x9f\xa5&\x81',
+      ],
+      (Ecu.fwdRadar, 0x7d0, None): [
+        b'\xf1\x00IK__ SCC F-CUP      1.00 1.02 96400-G9100         ',
+        b'\xf1\x00IK__ SCC F-CUP      1.00 1.02 96400-G9100         \xf1\xa01.02',
+        b'\xf1\x00IK__ SCC FHCUP      1.00 1.02 96400-G9000         ',
+      ],
+      (Ecu.fwdCamera, 0x7c4, None): [
+        b'\xf1\x00IK  MFC  AT USA LHD 1.00 1.01 95740-G9000 170920',
+        b'\xf1\x00IK  MFC  AT KOR LHD 1.00 1.01 95740-G9000 170920',
+      ],
+      (Ecu.engine, 0x7e0, None): [
+        b'\xf1\x81640J0051\x00\x00\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x81640H0051\x00\x00\x00\x00\x00\x00\x00\x00',
+      ],
+    },
+
     # hyundai
     CAR.AVANTE_CN7: {
       (Ecu.fwdRadar, 0x7d0, None): [
@@ -727,7 +757,7 @@ FEATURES = {
   "send_hda_mfa": {CAR.GRANDEUR_IG, CAR.GRANDEUR_HEV_IG},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
   # Insert your car in this if you see front collision error on your cluster.
-  "use_fca": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.AVANTE_CN7, CAR.I30_PD, CAR.PALISADE_LX2, CAR.GENESIS_G70_IK, CAR.GENESIS_G90_HI, CAR.KONA_HEV_OS, CAR.KONA_EV_OS, CAR.SELTOS_SP2, CAR.MOHAVE_HM, CAR.KIA_FORTE},
+  "use_fca": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.AVANTE_CN7, CAR.I30_PD, CAR.PALISADE_LX2, CAR.GENESIS_G70_IK, CAR.GENESIS_G70_2020, CAR.GENESIS_G90_HI, CAR.KONA_HEV_OS, CAR.KONA_EV_OS, CAR.SELTOS_SP2, CAR.MOHAVE_HM, CAR.KIA_FORTE},
 }
 
 HYBRID_CAR = {CAR.K5_HEV_JF, CAR.IONIQ_HEV_AE, CAR.SONATA_HEV_DN8, CAR.SONATA_HEV_LF, CAR.K7_HEV_YG, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.NIRO_HEV_DE, CAR.KONA_HEV_OS, CAR.AVANTE_HEV_CN7}
@@ -738,6 +768,7 @@ if Params().get_bool("UseRadarTrack"):
     # genesis
     CAR.GENESIS_DH: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G70_IK: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.GENESIS_G70_2020: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G80_DH: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G90_HI: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_EQ900_HI: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -787,6 +818,7 @@ else:
     # genesis
     CAR.GENESIS_DH: dbc_dict('hyundai_kia_generic', None),
     CAR.GENESIS_G70_IK: dbc_dict('hyundai_kia_generic', None),
+    CAR.GENESIS_G70_2020: dbc_dict('hyundai_kia_generic', None), # 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G80_DH: dbc_dict('hyundai_kia_generic', None),
     CAR.GENESIS_G90_HI: dbc_dict('hyundai_kia_generic', None),
     CAR.GENESIS_EQ900_HI: dbc_dict('hyundai_kia_generic', None),
