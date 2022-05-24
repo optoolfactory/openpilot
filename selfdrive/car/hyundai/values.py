@@ -4,7 +4,7 @@ from typing import Dict, List, Union
 from cereal import car
 from common.conversions import Conversions as CV
 from selfdrive.car import dbc_dict
-from selfdrive.car.docs_definitions import CarInfo
+from selfdrive.car.docs_definitions import CarInfo, Harness
 from common.params import Params
 Ecu = car.CarParams.Ecu
 
@@ -22,12 +22,6 @@ class CarControllerParams:
     self.STEER_DRIVER_FACTOR = 1
 
 class CAR:
-  # GENESIS
-  GENESIS_DH = "GENESIS (DH)"
-  GENESIS_G70_IK = "GENESIS G70 (IK)"
-  GENESIS_G80_DH = "GENESIS G80 (DH)"
-  GENESIS_G90_HI = "GENESIS G90 (HI)"
-  GENESIS_EQ900_HI = "GENESIS EQ900 (HI)"
   # HYUNDAI
   AVANTE_AD = "HYUNDAI AVANTE (AD)"
   AVANTE_CN7 = "HYUNDAI AVANTE (CN7)"
@@ -54,7 +48,9 @@ class CAR:
   GRANDEUR_HEV_FL_IG = "HYUNDAI GRANDEUR HYBRID FL (IG)"
   TUCSON_TL = "HYUNDAI TUCSON (TL)"
   NEXO_FE = "HYUNDAI NEXO (FE)"
+
   # KIA
+  KIA_FORTE = "KIA FORTE E 2018 & GT 2021"  
   K3_BD = "KIA K3 (BD)"
   K5_JF = "KIA K5 (JF)"
   K5_HEV_JF = "KIA K5 HYBRID (JF)"
@@ -71,6 +67,13 @@ class CAR:
   SOUL_EV_SK3 = "KIA SOUL EV (SK3)"
   MOHAVE_HM = "KIA MOHAVE (HM)"
 
+  # GENESIS
+  GENESIS_DH = "GENESIS (DH)"
+  GENESIS_G70_IK = "GENESIS G70 (IK)"
+  GENESIS_G70_2020 = "GENESIS G70 2020"  
+  GENESIS_G80_DH = "GENESIS G80 (DH)"
+  GENESIS_G90_HI = "GENESIS G90 (HI)"
+  GENESIS_EQ900_HI = "GENESIS EQ900 (HI)"
 
 @dataclass
 class HyundaiCarInfo(CarInfo):
@@ -79,58 +82,64 @@ class HyundaiCarInfo(CarInfo):
 
 
 CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
-  # genesis
-  CAR.GENESIS_DH: HyundaiCarInfo("Genesis 2015-2016"),
-  CAR.GENESIS_G70_IK: HyundaiCarInfo("Genesis G70 2018", "All"),
-  CAR.GENESIS_G80_DH: HyundaiCarInfo("Genesis G80 2017", "All"),
-  CAR.GENESIS_G90_HI: HyundaiCarInfo("Genesis G90 2017", "All"),
-  CAR.GENESIS_EQ900_HI: HyundaiCarInfo("Genesis EQ900", "All"),
-
   # hyundai
   CAR.AVANTE_AD: HyundaiCarInfo("Hyundai Avante", video_link="https://youtu.be/_EdYQtV52-c"),
   CAR.AVANTE_CN7: HyundaiCarInfo("Hyundai Avante 2021", video_link="https://youtu.be/_EdYQtV52-c"),
   CAR.AVANTE_HEV_CN7: HyundaiCarInfo("Hyundai Avante Hybrid 2021"),
   CAR.I30_PD: HyundaiCarInfo("Hyundai I30", "All"),
-  CAR.SONATA_DN8: HyundaiCarInfo("Hyundai Sonata 2020-22", "All", video_link="https://www.youtube.com/watch?v=ix63r9kE3Fw"),
-  CAR.SONATA_HEV_DN8: HyundaiCarInfo("Hyundai Sonata Hybrid 2021-22", "All"),
+  CAR.SONATA_DN8: HyundaiCarInfo("Hyundai Sonata 2020-22", "All", video_link="https://www.youtube.com/watch?v=ix63r9kE3Fw", harness=Harness.hyundai_a),
+  CAR.SONATA_HEV_DN8: HyundaiCarInfo("Hyundai Sonata Hybrid 2021-22", "All", harness=Harness.hyundai_a),
   CAR.SONATA_LF: HyundaiCarInfo("Hyundai LF Sonata"),
   CAR.SONATA_TURBO_LF: HyundaiCarInfo("Hyundai LF Sonata Turbo"),
   CAR.SONATA_HEV_LF: HyundaiCarInfo("Hyundai LF Sonata Hybrid"),
-  CAR.KONA_OS: HyundaiCarInfo("Hyundai Kona 2020"),
+  CAR.KONA_OS: HyundaiCarInfo("Hyundai Kona 2020", harness=Harness.hyundai_b),
   CAR.KONA_N_OS: HyundaiCarInfo("Hyundai Kona 2020"),
-  CAR.KONA_EV_OS: HyundaiCarInfo("Hyundai Kona Electric 2018-19"),
-  CAR.KONA_HEV_OS: HyundaiCarInfo("Hyundai Kona Hybrid 2020", video_link="https://youtu.be/_EdYQtV52-c"),
-  CAR.IONIQ_EV_AE: HyundaiCarInfo("Hyundai Ioniq Electric 2019", "All"),
-  CAR.IONIQ_HEV_AE: HyundaiCarInfo("Hyundai Ioniq Hybrid 2020-22", "SCC + LFA"),
-  CAR.SANTAFE_TM: HyundaiCarInfo("Hyundai Santa Fe 2019-20", "All"),
-  CAR.SANTAFE_HEV_TM: HyundaiCarInfo("Hyundai Santa Fe Hybrid 2022", "All"),
+  CAR.KONA_EV_OS: HyundaiCarInfo("Hyundai Kona Electric 2018-19", harness=Harness.hyundai_g),
+  CAR.KONA_HEV_OS: HyundaiCarInfo("Hyundai Kona Hybrid 2020", video_link="https://youtu.be/_EdYQtV52-c", harness=Harness.hyundai_i),
+  CAR.IONIQ_EV_AE: HyundaiCarInfo("Hyundai Ioniq Electric 2019", "All", harness=Harness.hyundai_c),
+  CAR.IONIQ_HEV_AE: HyundaiCarInfo("Hyundai Ioniq Hybrid 2020-22", "SCC + LFA", harness=Harness.hyundai_h),
+  CAR.SANTAFE_TM: HyundaiCarInfo("Hyundai Santa Fe 2019-20", "All", harness=Harness.hyundai_d),
+  CAR.SANTAFE_HEV_TM: HyundaiCarInfo("Hyundai Santa Fe Hybrid 2022", "All", harness=Harness.hyundai_l),
   CAR.PALISADE_LX2: [
-    HyundaiCarInfo("Hyundai Palisade 2020-21", "All", video_link="https://youtu.be/TAnDqjF4fDY?t=456"),
-    HyundaiCarInfo("Kia Telluride 2020"),
+    HyundaiCarInfo("Hyundai Palisade 2020-21", "All", video_link="https://youtu.be/TAnDqjF4fDY?t=456", harness=Harness.hyundai_h),
+    HyundaiCarInfo("Kia Telluride 2020", harness=Harness.hyundai_h),
   ],
-  CAR.VELOSTER_JS: HyundaiCarInfo("Hyundai Veloster 2019-20", "All"),
-  CAR.GRANDEUR_IG: HyundaiCarInfo("Hyundai Grandeur IG", "All"),
-  CAR.GRANDEUR_HEV_IG: HyundaiCarInfo("Hyundai Grandeur IG Hybrid", "All"),
-  CAR.GRANDEUR_FL_IG: HyundaiCarInfo("Hyundai Grandeur IG FL", "All"),
-  CAR.GRANDEUR_HEV_FL_IG: HyundaiCarInfo("Hyundai Grandeur IG FL Hybrid", "All"),
+  CAR.VELOSTER_JS: HyundaiCarInfo("Hyundai Veloster 2019-20", "All", min_enable_speed=5. * CV.MPH_TO_MS, harness=Harness.hyundai_e),
+  CAR.GRANDEUR_IG: HyundaiCarInfo("Hyundai Grandeur IG", "All", harness=Harness.hyundai_c),
+  CAR.GRANDEUR_HEV_IG: HyundaiCarInfo("Hyundai Grandeur IG Hybrid", "All", harness=Harness.hyundai_c),
+  CAR.GRANDEUR_FL_IG: HyundaiCarInfo("Hyundai Grandeur IG FL", "All", harness=Harness.hyundai_k),
+  CAR.GRANDEUR_HEV_FL_IG: HyundaiCarInfo("Hyundai Grandeur IG FL Hybrid", "All", harness=Harness.hyundai_k),
   CAR.TUCSON_TL: HyundaiCarInfo("Hyundai Tucson", "All"),
   CAR.NEXO_FE: HyundaiCarInfo("Hyundai Nexo", "All"),
 
   # Kia
+  CAR.KIA_FORTE: [
+    HyundaiCarInfo("Kia Forte 2018", harness=Harness.hyundai_b),
+    HyundaiCarInfo("Kia Forte 2019-21", harness=Harness.hyundai_g),
+  ],  
   CAR.K3_BD: HyundaiCarInfo("Kia K3 2018-21"),
-  CAR.K5_JF: HyundaiCarInfo("Kia K5 2021-22", "SCC + LFA"),
+  CAR.K5_JF: HyundaiCarInfo("Kia K5 2021-22", "SCC + LFA", harness=Harness.hyundai_a),
   CAR.K5_HEV_JF: HyundaiCarInfo("Kia K5 Hybrid 2017"),
   CAR.K5_DL3: HyundaiCarInfo("Kia K5 2021"),
+  CAR.K5_HEV_DL3: HyundaiCarInfo("Kia K5 Hybrid 2021"),
   CAR.SPORTAGE_QL: HyundaiCarInfo("Kia Sportage"),
   CAR.SORENTO_UM: HyundaiCarInfo("Kia Sorento 2018-19", video_link="https://www.youtube.com/watch?v=Fkh3s6WHJz8"),
-  CAR.STINGER_CK: HyundaiCarInfo("Kia Stinger 2018", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0"),
+  CAR.STINGER_CK: HyundaiCarInfo("Kia Stinger 2018", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0", harness=Harness.hyundai_c),
   CAR.NIRO_EV_DE: HyundaiCarInfo("Kia Niro Electric 2019-22", "All", video_link="https://www.youtube.com/watch?v=lT7zcG6ZpGo"),
-  CAR.NIRO_HEV_DE: HyundaiCarInfo("Kia Niro Plug-In Hybrid 2019"),
+  CAR.NIRO_HEV_DE: HyundaiCarInfo("Kia Niro Plug-In Hybrid 2019", min_enable_speed=10. * CV.MPH_TO_MS, harness=Harness.hyundai_c),
   CAR.K7_YG: HyundaiCarInfo("Kia K7 2016-19"),
   CAR.K7_HEV_YG: HyundaiCarInfo("Kia K7 Hybrid 2016-19"),
-  CAR.SELTOS_SP2: HyundaiCarInfo("Kia Seltos 2021"),
+  CAR.SELTOS_SP2: HyundaiCarInfo("Kia Seltos 2021", harness=Harness.hyundai_a),
   CAR.SOUL_EV_SK3: HyundaiCarInfo("Kia Soul EV 2019"),
   CAR.MOHAVE_HM: HyundaiCarInfo("Kia Mohave 2019"),
+
+  # genesis
+  CAR.GENESIS_DH: HyundaiCarInfo("Genesis 2015-2016", min_enable_speed=19 * CV.MPH_TO_MS, harness=Harness.hyundai_j),
+  CAR.GENESIS_G70_IK: HyundaiCarInfo("Genesis G70 2018", "All", harness=Harness.hyundai_f),
+  CAR.GENESIS_G70_2020: HyundaiCarInfo("Genesis G70 2020", "All", harness=Harness.hyundai_f),
+  CAR.GENESIS_G80_DH: HyundaiCarInfo("Genesis G80 2017", "All", harness=Harness.hyundai_h),
+  CAR.GENESIS_G90_HI: HyundaiCarInfo("Genesis G90 2017", "All", harness=Harness.hyundai_c),
+  CAR.GENESIS_EQ900_HI: HyundaiCarInfo("Genesis EQ900", "All"),
 }
 
 class Buttons:
@@ -424,6 +433,34 @@ if Params().get_bool("FingerprintTwoSet"):
       (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00IK  MFC  AT USA LHD 1.00 1.01 95740-G9000 170920',],
       (Ecu.transmission, 0x7e1, None): [b'\xf1\x87VDJLT17895112DN4\x88fVf\x99\x88\x88\x88\x87fVe\x88vhwwUFU\x97eFex\x99\xff\xb7\x82\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB2\x11\x1am\xda',],
     },
+
+    CAR.GENESIS_G70_2020: {
+      (Ecu.eps, 0x7d4, None): [
+        b'\xf1\x00IK  MDPS R 1.00 1.07 57700-G9220 4I2VL107',
+        b'\xf1\x00IK  MDPS R 1.00 1.07 57700-G9420 4I4VL107',
+        b'\xf1\x00IK  MDPS R 1.00 1.08 57700-G9420 4I4VL108',
+      ],
+      (Ecu.transmission, 0x7e1, None): [
+        b'\xf1\x87VCJLP18407832DN3\x88vXfvUVT\x97eFU\x87d7v\x88eVeveFU\x89\x98\x7f\xff\xb2\xb0\xf1\x81E25\x00\x00\x00',
+        b'\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB4\xecE\xefL',
+        b'\xf1\x87VDKLT18912362DN4wfVfwefeveVUwfvw\x88vWfvUFU\x89\xa9\x8f\xff\x87w\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB4\xecE\xefL',
+        b'\xf1\x87VDJLC18480772DK9\x88eHfwfff\x87eFUeDEU\x98eFe\x86T5DVyo\xff\x87s\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33KB5\x9f\xa5&\x81',
+      ],
+      (Ecu.fwdRadar, 0x7d0, None): [
+        b'\xf1\x00IK__ SCC F-CUP      1.00 1.02 96400-G9100         ',
+        b'\xf1\x00IK__ SCC F-CUP      1.00 1.02 96400-G9100         \xf1\xa01.02',
+        b'\xf1\x00IK__ SCC FHCUP      1.00 1.02 96400-G9000         ',
+      ],
+      (Ecu.fwdCamera, 0x7c4, None): [
+        b'\xf1\x00IK  MFC  AT USA LHD 1.00 1.01 95740-G9000 170920',
+        b'\xf1\x00IK  MFC  AT KOR LHD 1.00 1.01 95740-G9000 170920',
+      ],
+      (Ecu.engine, 0x7e0, None): [
+        b'\xf1\x81640J0051\x00\x00\x00\x00\x00\x00\x00\x00',
+        b'\xf1\x81640H0051\x00\x00\x00\x00\x00\x00\x00\x00',
+      ],
+    },
+
     # hyundai
     CAR.AVANTE_CN7: {
       (Ecu.fwdRadar, 0x7d0, None): [
@@ -607,6 +644,30 @@ if Params().get_bool("FingerprintTwoSet"):
       (Ecu.transmission, 0x7e1, None): [b'\xf1\x816U2V8051\x00\x00\xf1\x006U2V0_C2\x00\x006U2V8051\x00\x00DJS0T16NS1\xba\x02\xb8\x80',],
     },
     # kia
+    CAR.KIA_FORTE: {
+      (Ecu.eps, 0x7D4, None): [
+        b'\xf1\x00BD  MDPS C 1.00 1.02 56310-XX000 4BD2C102',
+        b'\xf1\x00BD  MDPS C 1.00 1.08 56310/M6300 4BDDC108',
+        b'\xf1\x00BD  MDPS C 1.00 1.08 56310M6300\x00 4BDDC108',
+      ],
+      (Ecu.fwdCamera, 0x7C4, None): [
+        b'\xf1\x00BD  LKAS AT USA LHD 1.00 1.04 95740-M6000 J33',
+      ],
+      (Ecu.fwdRadar, 0x7D0, None): [
+        b'\xf1\x00BD__ SCC H-CUP      1.00 1.02 99110-M6000         ',
+      ],
+      (Ecu.engine, 0x7e0, None): [
+        b'\x01TBDM1NU06F200H01',
+        b'391182B945\x00',
+      ],
+      (Ecu.esp, 0x7d1, None): [
+        b'\xf1\x816VGRAH00018.ELF\xf1\x00\x00\x00\x00\x00\x00\x00',
+      ],
+      (Ecu.transmission, 0x7e1, None): [
+        b'\xf1\x816U2VC051\x00\x00\xf1\x006U2V0_C2\x00\x006U2VC051\x00\x00DBD0T16SS0\x00\x00\x00\x00',
+        b"\xf1\x816U2VC051\x00\x00\xf1\x006U2V0_C2\x00\x006U2VC051\x00\x00DBD0T16SS0\xcf\x1e'\xc3",
+      ],
+    },    
     CAR.K5_JF: {
       (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00JF__ SCC F-CUP      1.00 1.00 96400-D4110         ',],
       (Ecu.esp, 0x7d1, None): [b'\xf1\x00JF ESC \v 11 \x18\x030 58920-D5180',],
@@ -730,7 +791,7 @@ FEATURES = {
   "send_hda_mfa": {CAR.GRANDEUR_IG, CAR.GRANDEUR_HEV_IG},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
   # Insert your car in this if you see front collision error on your cluster.
-  "use_fca": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.AVANTE_CN7, CAR.I30_PD, CAR.PALISADE_LX2, CAR.GENESIS_G70_IK, CAR.GENESIS_G90_HI, CAR.KONA_HEV_OS, CAR.KONA_EV_OS, CAR.SELTOS_SP2, CAR.MOHAVE_HM},
+  "use_fca": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.AVANTE_CN7, CAR.I30_PD, CAR.PALISADE_LX2, CAR.GENESIS_G70_IK, CAR.GENESIS_G70_2020, CAR.GENESIS_G90_HI, CAR.KONA_HEV_OS, CAR.KONA_EV_OS, CAR.SELTOS_SP2, CAR.MOHAVE_HM, CAR.KIA_FORTE},
 }
 
 HYBRID_CAR = {CAR.K5_HEV_JF, CAR.IONIQ_HEV_AE, CAR.SONATA_HEV_DN8, CAR.SONATA_HEV_LF, CAR.K7_HEV_YG, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.NIRO_HEV_DE, CAR.KONA_HEV_OS, CAR.AVANTE_HEV_CN7, CAR.K5_HEV_DL3}
@@ -741,6 +802,7 @@ if Params().get_bool("UseRadarTrack"):
     # genesis
     CAR.GENESIS_DH: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G70_IK: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.GENESIS_G70_2020: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G80_DH: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G90_HI: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_EQ900_HI: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -770,6 +832,7 @@ if Params().get_bool("UseRadarTrack"):
     CAR.TUCSON_TL: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.NEXO_FE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     # kia
+    CAR.KIA_FORTE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),    
     CAR.K3_BD: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K5_JF: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K5_HEV_JF: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -791,6 +854,7 @@ else:
     # genesis
     CAR.GENESIS_DH: dbc_dict('hyundai_kia_generic', None),
     CAR.GENESIS_G70_IK: dbc_dict('hyundai_kia_generic', None),
+    CAR.GENESIS_G70_2020: dbc_dict('hyundai_kia_generic', None), # 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G80_DH: dbc_dict('hyundai_kia_generic', None),
     CAR.GENESIS_G90_HI: dbc_dict('hyundai_kia_generic', None),
     CAR.GENESIS_EQ900_HI: dbc_dict('hyundai_kia_generic', None),
@@ -820,6 +884,7 @@ else:
     CAR.TUCSON_TL: dbc_dict('hyundai_kia_generic', None),
     CAR.NEXO_FE: dbc_dict('hyundai_kia_generic', None),
     # kia
+    CAR.KIA_FORTE: dbc_dict('hyundai_kia_generic', None),
     CAR.K3_BD: dbc_dict('hyundai_kia_generic', None),
     CAR.K5_JF: dbc_dict('hyundai_kia_generic', None),
     CAR.K5_HEV_JF: dbc_dict('hyundai_kia_generic', None),
