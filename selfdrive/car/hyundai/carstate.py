@@ -72,6 +72,7 @@ class CarState(CarStateBase):
     self.cruise_set_speed_kph = 0
     self.cruise_set_mode = int(Params().get("CruiseStatemodeSelInit", encoding="utf8"))
     self.gasPressed = False
+    self.scc_bus = 0
 
     self.sm = messaging.SubMaster(['controlsState'])
 
