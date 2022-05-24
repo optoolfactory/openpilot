@@ -1,5 +1,7 @@
 ☞ Use two fingers to scroll down ☜
 
+2022-05-24
+- Hybrid Lateral Control by ATOM
 2022-05-21
 - vehicle name/spec update, ★You must reselect car in Developer Menu
 2022-05-18

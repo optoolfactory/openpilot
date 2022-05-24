@@ -4,7 +4,8 @@ from common.params import Params
 from decimal import Decimal
 
 class LongTunes(Enum):
-  PEDAL = 0
+  OPKR = 0
+  OTHER = 1
 
 class LatTunes(Enum):
   INDI = 0
@@ -24,19 +25,22 @@ class LatTunes(Enum):
   PID_L = 14
   PID_M = 15
   TORQUE = 16
-
+  ATOM = 17
 
 ###### LONG ######
 def set_long_tune(tune, name):
   # Improved longitudinal tune
-  if name == LongTunes.PEDAL:
-    tune.deadzoneBP = [0., 8.05]
-    tune.deadzoneV = [.0, .14]
-    tune.kpBP = [0., 5., 20.]
-    tune.kpV = [1.3, 1.0, 0.7]
-    tune.kiBP = [0., 5., 12., 20., 27.]
-    tune.kiV = [.35, .23, .20, .17, .1]
-  # Default longitudinal tune
+  if name == LongTunes.OPKR:
+    tune.kpBP = [0., 4., 9., 17., 23., 31.]
+    tune.kpV = [1.2, 1.1, 1.0, 0.9, 0.75, 0.65]
+    tune.kiBP = [0., 4., 9., 17., 23., 31.]
+    tune.kiV = [0.27, 0.24, 0.23, 0.2, 0.17, 0.15]
+    tune.deadzoneBP = [0., 4.]
+    tune.deadzoneV = [0., 0.1]
+    tune.kdBP = [0., 4., 9., 17., 23., 31.]
+    tune.kdV = [0.9, 1.0, 0.85, 0.7, 0.5, 0.4]
+    tune.kfBP = [0., 4., 9., 17., 23., 31.]
+    tune.kfV = [1., 1., 1., 1., 1., 1.]
   else:
     raise NotImplementedError('This longitudinal tune does not exist')
 
@@ -44,7 +48,39 @@ def set_long_tune(tune, name):
 ###### LAT ######
 def set_lat_tune(tune, name, max_lat_accel=2.5, FRICTION=.1):
   params = Params()
-  if name == LatTunes.TORQUE:
+  if name == LatTunes.ATOM:
+    tune.init('atom')
+
+    # 1. TORQUE
+    TorqueKp = float(Decimal(params.get("TorqueKp", encoding="utf8")) * Decimal('0.1'))
+    TorqueKf = float(Decimal(params.get("TorqueKf", encoding="utf8")) * Decimal('0.1'))
+    TorqueKi = float(Decimal(params.get("TorqueKi", encoding="utf8")) * Decimal('0.1'))
+    TorqueFriction = float(Decimal(params.get("TorqueFriction", encoding="utf8")) * Decimal('0.001'))
+    TorqueUseAngle = params.get_bool('TorqueUseAngle')
+    max_lat_accel = float(Decimal(params.get("TorqueMaxLatAccel", encoding="utf8")) * Decimal('0.1'))
+
+    tune.atom.torque.useSteeringAngle = TorqueUseAngle  #  False
+    tune.atom.torque.kp = TorqueKp / max_lat_accel        # 2.0 / 2.5 = 0.8
+    tune.atom.torque.kf = TorqueKf / max_lat_accel        # 1.0 / 2.5 = 0.4
+    tune.atom.torque.ki = TorqueKi / max_lat_accel        # 0.5 / 2.5 = 0.2
+    tune.atom.torque.friction = TorqueFriction
+
+
+
+    # 2. LQR
+    Scale = float(Decimal(params.get("Scale", encoding="utf8")) * Decimal('1.0'))
+    LqrKi = float(Decimal(params.get("LqrKi", encoding="utf8")) * Decimal('0.001'))
+    DcGain = float(Decimal(params.get("DcGain", encoding="utf8")) * Decimal('0.00001'))
+
+    tune.atom.lqr.scale = Scale     #1700.0
+    tune.atom.lqr.ki = LqrKi      #0.01
+    tune.atom.lqr.dcGain =  DcGain  #0.0027
+    tune.atom.lqr.a = [0., 1., -0.22619643, 1.21822268]
+    tune.atom.lqr.b = [-1.92006585e-04, 3.95603032e-05]
+    tune.atom.lqr.c = [1., 0.]
+    tune.atom.lqr.k = [-110.73572306, 451.22718255]
+    tune.atom.lqr.l = [0.3233671, 0.3185757]      
+  elif name == LatTunes.TORQUE:
     TorqueKp = float(Decimal(params.get("TorqueKp", encoding="utf8")) * Decimal('0.1'))
     TorqueKf = float(Decimal(params.get("TorqueKf", encoding="utf8")) * Decimal('0.1'))
     TorqueKi = float(Decimal(params.get("TorqueKi", encoding="utf8")) * Decimal('0.1'))

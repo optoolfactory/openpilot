@@ -185,6 +185,7 @@ class CarController():
     self.fca11supcnt = self.fca11inc = self.fca11alivecnt = self.fca11cnt13 = 0
     self.fca11maxcnt = 0xD
 
+    self.str_log2 = 'Hybrid'
     if CP.lateralTuning.which() == 'pid':
       self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.2f}/{:0.5f}'.format(CP.lateralTuning.pid.kpV[1], CP.lateralTuning.pid.kiV[1], CP.lateralTuning.pid.kdV[0], CP.lateralTuning.pid.kf)
     elif CP.lateralTuning.which() == 'indi':

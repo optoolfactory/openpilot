@@ -62,17 +62,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerLimitTimer = 0.8
     tire_stiffness_factor = 1.
 
-    ret.longitudinalTuning.kpBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kpV = [1.2, 1.1, 1.0, 0.9, 0.75, 0.65]
-    ret.longitudinalTuning.kiBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kiV = [0.27, 0.24, 0.23, 0.2, 0.17, 0.15]
-
-    ret.longitudinalTuning.deadzoneBP = [0., 4.]
-    ret.longitudinalTuning.deadzoneV = [0., 0.1]
-    ret.longitudinalTuning.kdBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kdV = [0.9, 1.0, 0.85, 0.7, 0.5, 0.4]
-    ret.longitudinalTuning.kfBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kfV = [1., 1., 1., 1., 1., 1.]
+    set_long_tune(ret.longitudinalTuning, LongTunes.OPKR)
 
     ret.stoppingControl = False
     ret.vEgoStopping = 0.5  # 1.0, 0.5
@@ -90,7 +80,7 @@ class CarInterface(CarInterfaceBase):
     ret.aqValueRaw = 0
 
     params = Params()
-
+    ret.torqueMaxSpeed = float( params.get("TorqueMaxSpeed", encoding="utf8") ) * CV.KPH_TO_MS
     tire_stiffness_factor = float(Decimal(params.get("TireStiffnessFactorAdj", encoding="utf8")) * Decimal('0.01'))
     ret.steerActuatorDelay = float(Decimal(params.get("SteerActuatorDelayAdj", encoding="utf8")) * Decimal('0.01'))
     ret.steerRateCost = float(Decimal(params.get("SteerRateCostAdj", encoding="utf8")) * Decimal('0.01'))
@@ -106,6 +96,8 @@ class CarInterface(CarInterfaceBase):
       set_lat_tune(ret.lateralTuning, LatTunes.LQR)
     elif lat_control_method == 3:
       set_lat_tune(ret.lateralTuning, LatTunes.TORQUE)
+    elif lat_control_method == 4:
+      set_lat_tune(ret.lateralTuning, LatTunes.ATOM)    # Hybrid tune  
 
     # genesis
     if candidate == CAR.GENESIS_DH:
@@ -200,6 +192,9 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1885. + STD_CARGO_KG
       ret.wheelbase = 2.79
     # kia
+    elif candidate == CAR.KIA_FORTE:
+      ret.mass = 3558. * CV.LB_TO_KG
+      ret.wheelbase = 2.80
     elif candidate == CAR.SORENTO_UM:
       ret.mass = 1910. + STD_CARGO_KG
       ret.wheelbase = 2.78
