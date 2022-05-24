@@ -211,6 +211,7 @@ def manager_init() -> None:
     ("SshEnabled", "1"),
     ("UserSpecificFeature", "0"),
     ("OpkrWakeUp", "0"),
+    ("TorqueMaxSpeed", "35"),
    ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

@@ -3581,25 +3581,25 @@ LateralControl::LateralControl() : AbstractControl("LatControl(Reboot)", "Set th
   hlayout->addWidget(&btnminus);
   hlayout->addWidget(&btnplus);
 
+  auto str = QString::fromStdString(params.get("LateralControlMethod"));
+  latcontrol = str.toInt();  
+
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("LateralControlMethod"));
-    int latcontrol = str.toInt();
-    latcontrol = latcontrol - 1;
-    if (latcontrol <= -1) {
-      latcontrol = 3;
-    }
+    latcontrol--;
+    if (latcontrol < 0)  
+        latcontrol = 4;
+
     QString latcontrols = QString::number(latcontrol);
     params.put("LateralControlMethod", latcontrols.toStdString());
     refresh();
   });
 
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("LateralControlMethod"));
-    int latcontrol = str.toInt();
-    latcontrol = latcontrol + 1;
-    if (latcontrol >= 4) {
+    latcontrol++;
+
+    if (latcontrol > 4) 
       latcontrol = 0;
-    }
+    
     QString latcontrols = QString::number(latcontrol);
     params.put("LateralControlMethod", latcontrols.toStdString());
     refresh();
@@ -3607,17 +3607,20 @@ LateralControl::LateralControl() : AbstractControl("LatControl(Reboot)", "Set th
   refresh();
 }
 
-void LateralControl::refresh() {
-  QString latcontrol = QString::fromStdString(params.get("LateralControlMethod"));
-  if (latcontrol == "0") {
-    label.setText(QString::fromStdString("PID"));
-  } else if (latcontrol == "1") {
-    label.setText(QString::fromStdString("INDI"));
-  } else if (latcontrol == "2") {
-    label.setText(QString::fromStdString("LQR"));
-  } else if (latcontrol == "3") {
-    label.setText(QString::fromStdString("TORQUE"));
+void LateralControl::refresh() 
+{
+
+  QString  str;
+  switch( latcontrol )
+  {
+    case 0 : str = "0.PID"; break;
+    case 1 : str = "1.INDI";  break;
+    case 2 : str = "2.LQR";  break;
+    case 3 : str = "3.TORQUE";  break;
+    case 4 : str = "4.HYBRID";  break;
   }
+
+  label.setText( str );
 }
 
 PidKp::PidKp() : AbstractControl("Kp", "Adjust Kp", "../assets/offroad/icon_shell.png") {
@@ -4123,6 +4126,65 @@ void ActuatorEffectiveness::refresh() {
   QString valuefs = QString::number(valuef);
   label.setText(QString::fromStdString(valuefs.toStdString()));
 }
+
+
+TorqueMaxSpeed::TorqueMaxSpeed() : AbstractControl("TorqueMaxSpeed", "Adjust TorqueMaxSpeed", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  auto str = QString::fromStdString(params.get("TorqueMaxSpeed"));
+  dTorqueMaxSpeed = str.toFloat();
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    dTorqueMaxSpeed -= 0.5;
+    if (dTorqueMaxSpeed <= 20) dTorqueMaxSpeed = 20;
+
+    QString values = QString::number(dTorqueMaxSpeed);
+    params.put("TorqueMaxSpeed", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    dTorqueMaxSpeed += 0.5;
+    if (dTorqueMaxSpeed <= 20) dTorqueMaxSpeed = 20;
+
+    QString values = QString::number(dTorqueMaxSpeed);
+    params.put("TorqueMaxSpeed", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void TorqueMaxSpeed::refresh() {
+  label.setText(QString::fromStdString(params.get("TorqueMaxSpeed")));
+}
+
+
 
 Scale::Scale() : AbstractControl("Scale", "Adjust Scale", "../assets/offroad/icon_shell.png") {
 

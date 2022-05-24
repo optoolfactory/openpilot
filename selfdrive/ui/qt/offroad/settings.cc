@@ -746,6 +746,17 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
     layout->addWidget(new TorqueKi());
     layout->addWidget(new TorqueFriction());
     layout->addWidget(new TorqueUseAngle());
+  } else if (lat_control == "4") {
+    layout->addWidget(new TorqueMaxLatAccel());
+    layout->addWidget(new TorqueKp());
+    layout->addWidget(new TorqueKf());
+    layout->addWidget(new TorqueKi());
+    layout->addWidget(new TorqueFriction());
+    layout->addWidget(new TorqueUseAngle());
+    layout->addWidget(new TorqueMaxSpeed()); 
+    layout->addWidget(new Scale());
+    layout->addWidget(new LqrKi());
+    layout->addWidget(new DcGain());    
   }
 
   layout->addWidget(horizontal_line());
