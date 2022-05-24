@@ -72,7 +72,7 @@ class CarState(CarStateBase):
     self.cruise_set_speed_kph = 0
     self.cruise_set_mode = int(Params().get("CruiseStatemodeSelInit", encoding="utf8"))
     self.gasPressed = False
-    self.scc_bus = 0
+
 
     self.sm = messaging.SubMaster(['controlsState'])
 
@@ -147,7 +147,7 @@ class CarState(CarStateBase):
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.CP.mdpsBus == 1 else cp
     cp_sas = cp2 if self.CP.sasBus else cp
-    cp_scc = cp_cam if self.CP.sccBus == 2 else cp2 if self.scc_bus == 1 else cp
+    cp_scc = cp_cam if self.CP.sccBus == 2 else cp2 if self.CP.sccBus == 1 else cp
     cp_fca = cp_cam if (self.CP.fcaBus == 2) else cp
 
     self.prev_cruise_buttons = self.cruise_buttons
