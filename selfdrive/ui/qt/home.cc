@@ -136,7 +136,7 @@ void HomeWindow::mousePressCommon(QMouseEvent* e, int nDir)
 
 void HomeWindow::mousePressPID(QMouseEvent* e, int nDir )
 {
-     int  nMenuPos = QUIState::ui_state.scene.list_count - QUIState::ui_state.scene.live_tune_panel_list;
+     int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
      
 
      if( nMenuPos == 0 )
@@ -184,7 +184,7 @@ void HomeWindow::mousePressPID(QMouseEvent* e, int nDir )
 
 void HomeWindow::mousePressINDI(QMouseEvent* e, int nDir)
 {
-   int  nMenuPos = QUIState::ui_state.scene.list_count - QUIState::ui_state.scene.live_tune_panel_list;
+   int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
 
         if ( nMenuPos == 0   ) 
         {
@@ -225,7 +225,7 @@ void HomeWindow::mousePressINDI(QMouseEvent* e, int nDir)
 
 void HomeWindow::mousePressLQR(QMouseEvent* e, int nDir)
 {
-     int  nMenuPos = QUIState::ui_state.scene.list_count - QUIState::ui_state.scene.live_tune_panel_list;
+     int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
 
 
         if ( nMenuPos == 0  ) 
@@ -260,7 +260,7 @@ void HomeWindow::mousePressLQR(QMouseEvent* e, int nDir)
 
 void HomeWindow::mousePressTORQ(QMouseEvent* e, int nDir)
 {
-     int  nMenuPos = QUIState::ui_state.scene.list_count - QUIState::ui_state.scene.live_tune_panel_list;
+     int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
 
      int max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel;
 
