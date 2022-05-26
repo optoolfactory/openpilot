@@ -519,11 +519,11 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
       int  nLoop = QUIState::ui_state.scene.list_count;
 
       if (QUIState::ui_state.scene.lateralControlMethod == 2 ) {
-         nLoop += 2;
+         nLoop = 5;
       } else if (QUIState::ui_state.scene.lateralControlMethod == 3 ) {
-        nLoop += 4;
+        nLoop = 7;
       } else if (QUIState::ui_state.scene.lateralControlMethod < 2 ) {
-        nLoop += 3;
+        nLoop = 6;
     }
 
       if( QUIState::ui_state.scene.live_tune_panel_list > nLoop )  return;
