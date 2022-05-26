@@ -526,7 +526,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
         nLoop = 6;
     }
 
-      if( QUIState::ui_state.scene.live_tune_panel_list > nLoop )  return;
+      if( QUIState::ui_state.scene.live_tune_panel_list < nLoop )  return;
       QUIState::ui_state.scene.live_tune_panel_list = 0;
         return;
       }
