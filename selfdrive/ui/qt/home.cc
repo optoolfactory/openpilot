@@ -69,246 +69,148 @@ void HomeWindow::showDriverView(bool show) {
 }
 
 
-int HomeWindow::clip( int &x, int lo, int hi)
+int HomeWindow::clip(int &x, int lo, int hi)
 {
   int  nMin = hi;
 
-  if( hi > x )  nMin = x;
-
-  if( lo > nMin )
+  if (hi > x) nMin = x;
+  if (lo > nMin) {
     x = lo;
-  else
+  } else {
     x = nMin;
-
-
+  }
   return x;
 }
   
 
-void HomeWindow::mousePressCommon(QMouseEvent* e, int nDir)
-{
-    int  live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list;
+void HomeWindow::mousePressCommon(QMouseEvent* e, int nDir) {
+  int live_tune_panel_list = QUIState::ui_state.scene.live_tune_panel_list;
 
-      if ( live_tune_panel_list == 0 ) 
-      {
-        QUIState::ui_state.scene.cameraOffset +=  5*nDir;
-
-        clip( QUIState::ui_state.scene.cameraOffset, -1000, 1000 );
-
-        QString value = QString::number(QUIState::ui_state.scene.cameraOffset);
-        Params().put("CameraOffsetAdj", value.toStdString());
-      }
-      else if (QUIState::ui_state.scene.live_tune_panel_list == 1) 
-      {
-        QUIState::ui_state.scene.pathOffset +=  5*nDir;
-
-        if( nDir < 0 )
-        {
-          if (QUIState::ui_state.scene.pathOffset < -1000) QUIState::ui_state.scene.pathOffset = -1000;
-        }
-        else
-        {
-          if (QUIState::ui_state.scene.pathOffset > 1000) QUIState::ui_state.scene.pathOffset = 1000;
-        }
-
-        QString value = QString::number(QUIState::ui_state.scene.pathOffset);
-        Params().put("PathOffsetAdj", value.toStdString());
-      }
-      else if (QUIState::ui_state.scene.live_tune_panel_list == 2) 
-      {
-        QUIState::ui_state.scene.osteerRateCost +=  1*nDir;
-
-
-        if( nDir < 0 )
-        {
-          if (QUIState::ui_state.scene.osteerRateCost < 1) QUIState::ui_state.scene.osteerRateCost = 1;
-        }
-        else
-        {
-           if (QUIState::ui_state.scene.osteerRateCost > 200) QUIState::ui_state.scene.osteerRateCost = 200;
-
-        }
-
-        QString value = QString::number(QUIState::ui_state.scene.osteerRateCost);
-        Params().put("SteerRateCostAdj", value.toStdString());
-      }
+  if (live_tune_panel_list == 0) {
+    QUIState::ui_state.scene.cameraOffset += 5*nDir;
+    clip(QUIState::ui_state.scene.cameraOffset, -1000, 1000);
+    QString value = QString::number(QUIState::ui_state.scene.cameraOffset);
+    Params().put("CameraOffsetAdj", value.toStdString());
+  } else if (live_tune_panel_list == 1) {
+    QUIState::ui_state.scene.pathOffset += 5*nDir;
+    clip(QUIState::ui_state.scene.pathOffset, -1000, 1000);
+    QString value = QString::number(QUIState::ui_state.scene.pathOffset);
+    Params().put("PathOffsetAdj", value.toStdString());
+  } else if (live_tune_panel_list == 2) {
+    QUIState::ui_state.scene.osteerRateCost += nDir;
+    clip(QUIState::ui_state.scene.osteerRateCost, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.osteerRateCost);
+    Params().put("SteerRateCostAdj", value.toStdString());
+  }
 }
 
-void HomeWindow::mousePressPID(QMouseEvent* e, int nDir )
-{
-     int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
-     
+void HomeWindow::mousePressPID(QMouseEvent* e, int nDir) {
+  int nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
 
-     if( nMenuPos == 0 )
-     {
-          QUIState::ui_state.scene.pidKp += 1 * nDir;
-
-          // 50
-          clip( QUIState::ui_state.scene.pidKp, 1, 50 );
-
-
-          QString value = QString::number(QUIState::ui_state.scene.pidKp);
-          Params().put("PidKp", value.toStdString());
-     }
-     else if( nMenuPos == 1 )
-     {
-          QUIState::ui_state.scene.pidKi += 1 * nDir;
-          clip( QUIState::ui_state.scene.pidKi, 1, 100 );
-      // 100
-
-
-          QString value = QString::number(QUIState::ui_state.scene.pidKi);
-          Params().put("PidKi", value.toStdString());       
-     }
-     else if( nMenuPos == 2 )
-     {
-          QUIState::ui_state.scene.pidKd += 5 * nDir;
-          // 300 
-          clip( QUIState::ui_state.scene.pidKd, 0, 300 );
-
-          QString value = QString::number(QUIState::ui_state.scene.pidKd);
-          Params().put("PidKd", value.toStdString());
-     }
-     else if( nMenuPos == 3 )
-     {
-          QUIState::ui_state.scene.pidKf += 1 * nDir;
-
-          clip( QUIState::ui_state.scene.pidKf, 1, 50 );
-          // 50
-
-          QString value = QString::number(QUIState::ui_state.scene.pidKf);
-          Params().put("PidKf", value.toStdString());
-     }
+  if (nMenuPos == 0) {
+    QUIState::ui_state.scene.pidKp += nDir;
+    // 50
+    clip(QUIState::ui_state.scene.pidKp, 1, 50);
+    QString value = QString::number(QUIState::ui_state.scene.pidKp);
+    Params().put("PidKp", value.toStdString());
+  } else if (nMenuPos == 1) {
+    QUIState::ui_state.scene.pidKi += nDir;
+    clip(QUIState::ui_state.scene.pidKi, 1, 100);
+    // 100
+    QString value = QString::number(QUIState::ui_state.scene.pidKi);
+    Params().put("PidKi", value.toStdString());
+  } else if (nMenuPos == 2) {
+    QUIState::ui_state.scene.pidKd += 5*nDir;
+    // 300
+    clip(QUIState::ui_state.scene.pidKd, 0, 300);
+    QString value = QString::number(QUIState::ui_state.scene.pidKd);
+    Params().put("PidKd", value.toStdString());
+  } else if (nMenuPos == 3) {
+    QUIState::ui_state.scene.pidKf += nDir;
+    clip(QUIState::ui_state.scene.pidKf, 1, 50);
+    // 50
+    QString value = QString::number(QUIState::ui_state.scene.pidKf);
+    Params().put("PidKf", value.toStdString());
+  }
 }
 
+void HomeWindow::mousePressINDI(QMouseEvent* e, int nDir) {
+  int nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
 
-void HomeWindow::mousePressINDI(QMouseEvent* e, int nDir)
-{
-   int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
-
-        if ( nMenuPos == 0   ) 
-        {
-          QUIState::ui_state.scene.indiInnerLoopGain += nDir;
-
-          clip( QUIState::ui_state.scene.indiInnerLoopGain, 1, 200 );
- 
-          QString value = QString::number(QUIState::ui_state.scene.indiInnerLoopGain);
-          Params().put("InnerLoopGain", value.toStdString());
-        } 
-        else if ( nMenuPos ==1  ) 
-        {
-          QUIState::ui_state.scene.indiOuterLoopGain = nDir;
-
-          clip( QUIState::ui_state.scene.indiOuterLoopGain, 1, 200 );
-          QString value = QString::number(QUIState::ui_state.scene.indiOuterLoopGain);
-          Params().put("OuterLoopGain", value.toStdString());
-        } 
-        else if (nMenuPos ==2  ) 
-        {
-          QUIState::ui_state.scene.indiTimeConstant = nDir;
-
-          clip( QUIState::ui_state.scene.indiTimeConstant, 1, 200 );
-
-          QString value = QString::number(QUIState::ui_state.scene.indiTimeConstant);
-          Params().put("TimeConstant", value.toStdString());
-        } 
-        else if ( nMenuPos == 3  ) 
-        {
-          QUIState::ui_state.scene.indiActuatorEffectiveness = nDir;
-
-          clip( QUIState::ui_state.scene.indiActuatorEffectiveness, 1, 200 );
-          QString value = QString::number(QUIState::ui_state.scene.indiActuatorEffectiveness);
-          Params().put("ActuatorEffectiveness", value.toStdString());
-        }
+  if (nMenuPos == 0) {
+    QUIState::ui_state.scene.indiInnerLoopGain += nDir;
+    clip(QUIState::ui_state.scene.indiInnerLoopGain, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiInnerLoopGain);
+    Params().put("InnerLoopGain", value.toStdString());
+  } else if (nMenuPos == 1) {
+    QUIState::ui_state.scene.indiOuterLoopGain += nDir;
+    clip(QUIState::ui_state.scene.indiOuterLoopGain, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiOuterLoopGain);
+    Params().put("OuterLoopGain", value.toStdString());
+  } else if (nMenuPos == 2) {
+    QUIState::ui_state.scene.indiTimeConstant += nDir;
+    clip(QUIState::ui_state.scene.indiTimeConstant, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiTimeConstant);
+    Params().put("TimeConstant", value.toStdString());
+  } else if (nMenuPos == 3) {
+    QUIState::ui_state.scene.indiActuatorEffectiveness += nDir;
+    clip(QUIState::ui_state.scene.indiActuatorEffectiveness, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiActuatorEffectiveness);
+    Params().put("ActuatorEffectiveness", value.toStdString());
+  }
 }
 
+void HomeWindow::mousePressLQR(QMouseEvent* e, int nDir) {
+  int nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
 
-void HomeWindow::mousePressLQR(QMouseEvent* e, int nDir)
-{
-     int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
-
-
-        if ( nMenuPos == 0  ) 
-        {
-          QUIState::ui_state.scene.lqrScale += 50 * nDir;
-
-          clip( QUIState::ui_state.scene.lqrScale, 1, 50 );
-
-          QString value = QString::number(QUIState::ui_state.scene.lqrScale);
-          Params().put("Scale", value.toStdString());
-        }
-        else if ( nMenuPos ==1  ) 
-        {
-          QUIState::ui_state.scene.lqrKi += nDir;
-
-          clip( QUIState::ui_state.scene.lqrKi, 1, 100 );
-
-          QString value = QString::number(QUIState::ui_state.scene.lqrKi);
-          Params().put("LqrKi", value.toStdString());
-        } 
-        else if (nMenuPos ==2  ) 
-        {
-          QUIState::ui_state.scene.lqrDcGain += 5 * nDir;
-
-          clip( QUIState::ui_state.scene.lqrDcGain, 5, 500 );
-
-          QString value = QString::number(QUIState::ui_state.scene.lqrDcGain);
-          Params().put("DcGain", value.toStdString());
-        }
+  if (nMenuPos == 0) {
+    QUIState::ui_state.scene.lqrScale += 50*nDir;
+    clip(QUIState::ui_state.scene.lqrScale, 1, 50);
+    QString value = QString::number(QUIState::ui_state.scene.lqrScale);
+    Params().put("Scale", value.toStdString());
+  } else if (nMenuPos == 1) {
+    QUIState::ui_state.scene.lqrKi += nDir;
+    clip(QUIState::ui_state.scene.lqrKi, 1, 100);
+    QString value = QString::number(QUIState::ui_state.scene.lqrKi);
+    Params().put("LqrKi", value.toStdString());
+  } else if (nMenuPos == 2) {
+    QUIState::ui_state.scene.lqrDcGain += 5*nDir;
+    clip(QUIState::ui_state.scene.lqrDcGain, 5, 500);
+    QString value = QString::number(QUIState::ui_state.scene.lqrDcGain);
+    Params().put("DcGain", value.toStdString());
+  }
 }
 
+void HomeWindow::mousePressTORQ(QMouseEvent* e, int nDir) {
+  int nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
+  int max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel;
 
-void HomeWindow::mousePressTORQ(QMouseEvent* e, int nDir)
-{
-     int  nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
-
-     int max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel;
-
-        if ( nMenuPos == 0  ) 
-        {
-          QUIState::ui_state.scene.torqueKp += nDir;
-
-          clip( QUIState::ui_state.scene.torqueKp, 1, max_lat_accel );
-          QString value = QString::number(QUIState::ui_state.scene.torqueKp);
-          Params().put("TorqueKp", value.toStdString());
-        } 
-        else if ( nMenuPos == 1  ) 
-        {
-          QUIState::ui_state.scene.torqueKf += nDir;
-
-          clip( QUIState::ui_state.scene.torqueKf, 1, max_lat_accel );
-
-          QString value = QString::number(QUIState::ui_state.scene.torqueKf);
-          Params().put("TorqueKf", value.toStdString());
-        } 
-        else if ( nMenuPos == 2  ) 
-        {
-          QUIState::ui_state.scene.torqueKi += nDir;
-
-          clip( QUIState::ui_state.scene.torqueKi, 1, max_lat_accel );
-
-          QString value = QString::number(QUIState::ui_state.scene.torqueKi);
-          Params().put("TorqueKi", value.toStdString());
-        } 
-        else if ( nMenuPos == 3  ) 
-        {
-          QUIState::ui_state.scene.torqueMaxLatAccel += nDir;
-
-          clip( QUIState::ui_state.scene.torqueMaxLatAccel, 1, 50 );
- 
-          QString value = QString::number(QUIState::ui_state.scene.torqueMaxLatAccel);
-          Params().put("TorqueMaxLatAccel", value.toStdString());
-        } 
-        else if ( nMenuPos == 4  ) 
-        {
-          QUIState::ui_state.scene.torqueFriction = QUIState::ui_state.scene.torqueFriction - 5;
-
-          clip( QUIState::ui_state.scene.torqueFriction, 0, 300 );
-  
-          QString value = QString::number(QUIState::ui_state.scene.torqueFriction);
-          Params().put("TorqueFriction", value.toStdString());
-        }
-
+  if (nMenuPos == 0) {
+    QUIState::ui_state.scene.torqueKp += nDir;
+    clip(QUIState::ui_state.scene.torqueKp, 1, max_lat_accel);
+    QString value = QString::number(QUIState::ui_state.scene.torqueKp);
+    Params().put("TorqueKp", value.toStdString());
+  } else if (nMenuPos == 1) {
+    QUIState::ui_state.scene.torqueKf += nDir;
+    clip(QUIState::ui_state.scene.torqueKf, 1, max_lat_accel);
+    QString value = QString::number(QUIState::ui_state.scene.torqueKf);
+    Params().put("TorqueKf", value.toStdString());
+  } else if (nMenuPos == 2) {
+    QUIState::ui_state.scene.torqueKi += nDir;
+    clip(QUIState::ui_state.scene.torqueKi, 1, max_lat_accel);
+    QString value = QString::number(QUIState::ui_state.scene.torqueKi);
+    Params().put("TorqueKi", value.toStdString());
+  } else if (nMenuPos == 3) {
+    QUIState::ui_state.scene.torqueMaxLatAccel += nDir;
+    clip(QUIState::ui_state.scene.torqueMaxLatAccel, 1, 50);
+    QString value = QString::number(QUIState::ui_state.scene.torqueMaxLatAccel);
+    Params().put("TorqueMaxLatAccel", value.toStdString());
+  } else if (nMenuPos == 4) {
+    QUIState::ui_state.scene.torqueFriction += 5*nDir;
+    clip(QUIState::ui_state.scene.torqueFriction, 0, 300);
+    QString value = QString::number(QUIState::ui_state.scene.torqueFriction);
+    Params().put("TorqueFriction", value.toStdString());
+  }
 }
 
 void HomeWindow::mousePressEvent(QMouseEvent* e) 
@@ -482,74 +384,56 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
     return;
   }
   // opkr live ui tune
-  if ( QUIState::ui_state.scene.live_tune_panel_enable && QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top ) 
-  {
+  if (QUIState::ui_state.scene.live_tune_panel_enable && QUIState::ui_state.scene.started && !sidebar->isVisible() && !QUIState::ui_state.scene.map_on_top) {
     int nBtnDir = 0;
 
-    if (  livetunepanel_left_btn.ptInRect(e->x(), e->y())) 
-    {
-        nBtnDir = -1;
-
-      }
-    else if ( livetunepanel_right_btn.ptInRect(e->x(), e->y())) 
-    {
-       nBtnDir = 1;
-      }
-    else if ( livetunepanel_left_above_btn.ptInRect(e->x(), e->y())) 
-    {
+    if (livetunepanel_left_btn.ptInRect(e->x(), e->y())) {
+      nBtnDir = -1;
+    } else if (livetunepanel_right_btn.ptInRect(e->x(), e->y())) {
+      nBtnDir = 1;
+    } else if (livetunepanel_left_above_btn.ptInRect(e->x(), e->y())) {
       QUIState::ui_state.scene.live_tune_panel_list -= 1;
-      int  nLoop = 2;
+      int nLoop = 2;
 
-      if( QUIState::ui_state.scene.live_tune_panel_list >= 0) return;
-      if (QUIState::ui_state.scene.lateralControlMethod == 2 ) {
+      if (QUIState::ui_state.scene.live_tune_panel_list >= 0) return;
+      if (QUIState::ui_state.scene.lateralControlMethod == 2) {
         nLoop = 2;
-      } else if (QUIState::ui_state.scene.lateralControlMethod == 3 ) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 3) {
         nLoop = 4;
-      } else if (QUIState::ui_state.scene.lateralControlMethod < 2 ) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod < 2) {
         nLoop = 3;
       }
 
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count + nLoop;
       //clip( QUIState::ui_state.scene.live_tune_panel_list, 1, 0 );
-        return;
-      }
-    else if (  livetunepanel_right_above_btn.ptInRect(e->x(), e->y())) 
-    {
+      return;
+    } else if (livetunepanel_right_above_btn.ptInRect(e->x(), e->y())) {
       QUIState::ui_state.scene.live_tune_panel_list += 1;
-      int  nLoop = QUIState::ui_state.scene.list_count;
+      int nLoop = QUIState::ui_state.scene.list_count;
 
-      if (QUIState::ui_state.scene.lateralControlMethod == 2 ) {
+      if (QUIState::ui_state.scene.lateralControlMethod == 2) {
          nLoop = 6; //3+3
-      } else if (QUIState::ui_state.scene.lateralControlMethod == 3 ) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 3) {
         nLoop = 8; //3+5
-      } else if (QUIState::ui_state.scene.lateralControlMethod < 2 ) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod < 2) {
         nLoop = 7; //3+4
+      }
+
+      if(QUIState::ui_state.scene.live_tune_panel_list < nLoop) return;
+      QUIState::ui_state.scene.live_tune_panel_list = 0;
+      return;
     }
 
-      if( QUIState::ui_state.scene.live_tune_panel_list < nLoop )  return;
-      QUIState::ui_state.scene.live_tune_panel_list = 0;
-        return;
-      }
-
-    if( nBtnDir )
-    {
-      mousePressCommon(  e, nBtnDir );
-      // 0. PID
-      if( QUIState::ui_state.scene.lateralControlMethod == 0 )
-      {
-         mousePressPID( e, nBtnDir );
-      }
-      else if ( QUIState::ui_state.scene.lateralControlMethod == 1) // 1. INDI
-      {        
-        mousePressINDI( e, nBtnDir );
-      }
-      else if ( QUIState::ui_state.scene.lateralControlMethod == 2) // 2. LQR
-      {
-        mousePressLQR( e, nBtnDir );
-      }
-      else if ( QUIState::ui_state.scene.lateralControlMethod == 3) // 3. TORQ
-      {
-        mousePressTORQ( e, nBtnDir );
+    if (nBtnDir) {
+      mousePressCommon(e, nBtnDir);
+      if (QUIState::ui_state.scene.lateralControlMethod == 0) {  // 0. PID
+        mousePressPID(e, nBtnDir);
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 1) {  // 1. INDI
+        mousePressINDI(e, nBtnDir);
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 2) {  // 2. LQR
+        mousePressLQR(e, nBtnDir);
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 3) {  // 3. TORQ
+        mousePressTORQ(e, nBtnDir);
       }
       return;
     }
