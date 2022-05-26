@@ -171,7 +171,7 @@ void HomeWindow::mousePressPID(QMouseEvent* e, int nDir )
      }
      else if( nMenuPos == 3 )
      {
-          QUIState::ui_state.scene.pidKf = QUIState::ui_state.scene.pidKf - 1;
+          QUIState::ui_state.scene.pidKf += 1 * nDir;
 
           clip( QUIState::ui_state.scene.pidKf, 1, 50 );
           // 50
