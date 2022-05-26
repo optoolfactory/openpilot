@@ -76,6 +76,7 @@ class CarInterface(CarInterfaceBase):
     ret.vCruisekph = 0
     ret.resSpeed = 0
     ret.vFuture = 0
+    ret.vFutureA = 0
     ret.aqValue = 0
     ret.aqValueRaw = 0
 
@@ -359,6 +360,10 @@ class CarInterface(CarInterfaceBase):
       self.CP.vFuture = self.CC.vFuture
     else:
       self.CP.vFuture = 0
+    if self.CC.vFutureA >= 1:
+      self.CP.vFutureA = self.CC.vFutureA
+    else:
+      self.CP.vFutureA = 0
     self.CP.aqValue = self.CC.aq_value
     self.CP.aqValueRaw = self.CC.aq_value_raw
 
@@ -403,6 +408,6 @@ class CarInterface(CarInterfaceBase):
     ret = self.CC.update(c, c.enabled, self.CS, self.frame, c.actuators,
                          c.cruiseControl.cancel, hud_control.visualAlert, hud_control.leftLaneVisible,
                          hud_control.rightLaneVisible, hud_control.leftLaneDepart, hud_control.rightLaneDepart,
-                         hud_control.setSpeed, hud_control.leadVisible, hud_control.vFuture)
+                         hud_control.setSpeed, hud_control.leadVisible, hud_control.vFuture, hud_control.vFutureA)
     self.frame += 1
     return ret
