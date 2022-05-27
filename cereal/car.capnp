@@ -403,6 +403,7 @@ struct CarControl {
     rightLaneDepart @8: Bool;
     leftLaneDepart @9: Bool;
     vFuture @10:Float32;
+    vFutureA @11:Float32;
 
     enum VisualAlert {
       # these are the choices from the Honda
@@ -535,6 +536,7 @@ struct CarParams {
   aqValue @80: Float32;
   aqValueRaw @81: Float32;
   torqueMaxSpeed @83: Float32;
+  vFutureA @84: Float32;
 
   struct LateralParams {
     torqueBP @0 :List(Int32);

@@ -142,7 +142,7 @@ class Controls:
     self.lateral_control_method = 0
     if self.CP.steerControlType == car.CarParams.SteerControlType.angle:
       self.LaC = LatControlAngle(self.CP, self.CI)
-      self.lateral_control_method = 4
+      self.lateral_control_method = 5
     elif self.CP.lateralTuning.which() == 'pid':
       self.LaC = LatControlPID(self.CP, self.CI)
       self.lateral_control_method = 0
@@ -754,10 +754,14 @@ class Controls:
     speeds = self.sm['longitudinalPlan'].speeds # 17 lists
     if len(speeds) > 1:
       v_future = speeds[0]
+      v_future_a = speeds[-1]
     else:
       v_future = 100.0
+      v_future_a = 100.0
     v_future_speed= float((v_future * CV.MS_TO_MPH + 10.0) if CS.isMph else (v_future * CV.MS_TO_KPH))
+    v_future_speed_a= float((v_future_a * CV.MS_TO_MPH + 10.0) if CS.isMph else (v_future_a * CV.MS_TO_KPH))
     hudControl.vFuture = v_future_speed
+    hudControl.vFutureA = v_future_speed_a
 
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown
     ldw_allowed = self.is_ldw_enabled and CS.vEgo > LDW_MIN_SPEED and not recent_blinker \
