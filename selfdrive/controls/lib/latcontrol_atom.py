@@ -229,22 +229,32 @@ class LatControlATOM(LatControl):
       # 2. log
       atom_log.active = True
       atom_log.i = lqr_log.i
-      if selected == 0:
+      if selected == 0 or selected == 3:
         atom_log.saturated = pid_log.saturated
         atom_log.steeringAngleDeg = pid_log.steeringAngleDeg
       elif selected == 1:
-        atom_log.saturated = indi_log.saturated
-        atom_log.steeringAngleDeg = indi_log.steeringAngleDeg
+        atom_log.saturated = ind_log.saturated
+        atom_log.steeringAngleDeg = ind_log.steeringAngleDeg
       elif selected == 2:
         atom_log.saturated = lqr_log.saturated
         atom_log.steeringAngleDeg = lqr_log.steeringAngleDeg
-      atom_log.lqrOutput = lqr_log.lqrOutput
-      atom_log.output = output_torque      
+        atom_log.lqrOutput = lqr_log.lqrOutput
+      atom_log.output = output_torque
+
+      atom_log.rateSetPoint = ind_log.rateSetPoint
+      atom_log.accelSetPoint = ind_log.accelSetPoint
+      atom_log.accelError = ind_log.accelError
+      atom_log.delayedOutput = ind_log.delayedOutput
+      atom_log.delta = ind_log.delta
 
       atom_log.p1 = toq_log.p
       atom_log.i1 = toq_log.i
       atom_log.d1 = toq_log.d
       atom_log.f1 = toq_log.f
+
+      atom_log.p2 = pid_log.p
+      atom_log.i2 = pid_log.i
+      atom_log.f2 = pid_log.f
       atom_log.selected = selected
     
     self.output_torque = output_torque

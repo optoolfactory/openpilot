@@ -679,7 +679,21 @@ struct ControlsState @0x97ff69c53601abf1 {
     d1 @11 :Float32;
     f1 @12 :Float32;
     selected @13 :Float32;
-  } 
+    steeringRateDeg @14 :Float32;
+    angleError @15 :Float32;
+    p2 @16 :Float32;
+    i2 @17 :Float32;
+    f2 @18 :Float32;
+    steeringAccelDeg @19 :Float32;
+    rateSetPoint @20 :Float32;
+    accelSetPoint @21 :Float32;
+    accelError @22 :Float32;
+    delayedOutput @23 :Float32;
+    delta @24 :Float32;
+    steeringRateDesiredDeg @25 :Float32;
+    actualLateralAccel @26 :Float32;
+    desiredLateralAccel @27 :Float32;
+  }
 
   struct LateralLQRState {
     active @0 :Bool;
