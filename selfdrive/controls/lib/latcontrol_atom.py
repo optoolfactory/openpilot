@@ -227,13 +227,17 @@ class LatControlATOM(LatControl):
       output_torque = clip( output_torque, -self.steer_max, self.steer_max )
 
       # 2. log
-      atom_log.active = True    
-      atom_log.steeringAngleDeg = lqr_log.steeringAngleDeg
+      atom_log.active = True
       atom_log.i = lqr_log.i
       if selected == 0:
-        atom_log.saturated = lqr_log.saturated
-      elif selected == 2:
         atom_log.saturated = pid_log.saturated
+        atom_log.steeringAngleDeg = pid_log.steeringAngleDeg
+      elif selected == 1:
+        atom_log.saturated = indi_log.saturated
+        atom_log.steeringAngleDeg = indi_log.steeringAngleDeg
+      elif selected == 2:
+        atom_log.saturated = lqr_log.saturated
+        atom_log.steeringAngleDeg = lqr_log.steeringAngleDeg
       atom_log.lqrOutput = lqr_log.lqrOutput
       atom_log.output = output_torque      
 
