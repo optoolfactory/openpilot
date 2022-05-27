@@ -333,7 +333,7 @@ static void ui_draw_debug(UIState *s) {
         case  3: szLaCMethod = "TORQUE"; break;
         case  4: szLaCMethod = "MULTI"; break;
       }
-    switch( scene.multi_lat_selected  )
+    switch( (int)scene.multi_lat_selected  )
       {
         case  0: szLaCMethodCur = "PID"; break;
         case  1: szLaCMethodCur = "INDI"; break;
