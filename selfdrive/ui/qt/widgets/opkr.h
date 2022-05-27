@@ -1394,22 +1394,6 @@ private:
   void refresh();
 };
 
-class TorqueMaxSpeed : public AbstractControl {
-  Q_OBJECT
-
-public:
-  TorqueMaxSpeed();
-
-private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-  Params params;
-  double  dTorqueMaxSpeed;
-
-  void refresh();
-};
-
 class Scale : public AbstractControl {
   Q_OBJECT
 
@@ -2312,4 +2296,71 @@ private:
   Params params;
 
   void refresh();
+};
+
+class MultipleLatSelect : public AbstractControl {
+  Q_OBJECT
+
+public:
+  MultipleLatSelect();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class MultipleLateralSpeed : public AbstractControl {
+  Q_OBJECT
+
+public:
+  MultipleLateralSpeed();
+
+private:
+  QLabel label1;
+  QPushButton btnplusl;
+  QLabel labell;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QLabel labelr;
+  QPushButton btnminusr;
+  QPushButton btn1;
+  QPushButton btn2;
+  QPushButton btn3;
+  Params params;
+  
+  void refresh1();
+  void refresh2();
+  void refresh3();
+  void refreshl();
+  void refreshr();
+};
+
+class MultipleLateralAngle : public AbstractControl {
+  Q_OBJECT
+
+public:
+  MultipleLateralAngle();
+
+private:
+  QLabel label1;
+  QPushButton btnplusl;
+  QLabel labell;
+  QPushButton btnminusl;
+  QPushButton btnplusr;
+  QLabel labelr;
+  QPushButton btnminusr;
+  QPushButton btn1;
+  QPushButton btn2;
+  QPushButton btn3;
+  Params params;
+  
+  void refresh1();
+  void refresh2();
+  void refresh3();
+  void refreshl();
+  void refreshr();
 };
