@@ -401,7 +401,7 @@ class CarState(CarStateBase):
   @staticmethod
   def get_can_parser(CP):
     signals = [
-      # sig_name, sig_address
+      # signal_name, signal_address
       ("WHL_SPD_FL", "WHL_SPD11"),
       ("WHL_SPD_FR", "WHL_SPD11"),
       ("WHL_SPD_RL", "WHL_SPD11"),
@@ -414,7 +414,7 @@ class CarState(CarStateBase):
       ("CF_Gway_DrvSeatBeltSw", "CGW1"),
       ("CF_Gway_DrvDrSw", "CGW1"),       # Driver Door
       ("CF_Gway_AstDrSw", "CGW1"),       # Passenger door
-      ("CF_Gway_RLDrSw", "CGW2"),        # Rear reft door
+      ("CF_Gway_RLDrSw", "CGW2"),        # Rear left door
       ("CF_Gway_RRDrSw", "CGW2"),        # Rear right door
       ("CF_Gway_TurnSigLh", "CGW1"),
       ("CF_Gway_TurnSigRh", "CGW1"),
