@@ -190,11 +190,16 @@ class LatControlATOM(LatControl):
       if not active:
         self.reset()
     else:
-      lqr_output_torque, lqr_desired_angle, lqr_log  = self.LaLqr.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
-      toq_output_torque, toq_desired_angle, toq_log  = self.LaToq.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
-      ind_output_torque, ind_desired_angle, ind_log  = self.LaInd.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
-      pid_output_torque, pid_desired_angle, pid_log  = self.LaPid.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
       if self.multi_lateral_option == 0:
+        if 2 in self.multi_lat_spd_opt:
+          lqr_output_torque, lqr_desired_angle, lqr_log  = self.LaLqr.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+        if 3 in self.multi_lat_spd_opt:
+          toq_output_torque, toq_desired_angle, toq_log  = self.LaToq.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+        if 1 in self.multi_lat_spd_opt:
+          ind_output_torque, ind_desired_angle, ind_log  = self.LaInd.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+        if 0 in self.multi_lat_spd_opt:
+          pid_output_torque, pid_desired_angle, pid_log  = self.LaPid.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+
         speed1 = (self.multi_lat_spd_val[0] * (CV.MPH_TO_MS if CS.isMph else CV.KPH_TO_MS))
         speed2 = (self.multi_lat_spd_val[1] * (CV.MPH_TO_MS if CS.isMph else CV.KPH_TO_MS))
         if CS.vEgo < speed1:
@@ -213,6 +218,14 @@ class LatControlATOM(LatControl):
           selected = self.multi_lat_spd_opt[2] if delta1 > delta2 else self.multi_lat_spd_opt[1]
 
       elif self.multi_lateral_option == 1:
+        if 2 in self.multi_lat_ang_opt:
+          lqr_output_torque, lqr_desired_angle, lqr_log  = self.LaLqr.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+        if 3 in self.multi_lat_ang_opt:
+          toq_output_torque, toq_desired_angle, toq_log  = self.LaToq.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+        if 1 in self.multi_lat_ang_opt:
+          ind_output_torque, ind_desired_angle, ind_log  = self.LaInd.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+        if 0 in self.multi_lat_ang_opt:
+          pid_output_torque, pid_desired_angle, pid_log  = self.LaPid.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
         ang1 = self.multi_lat_ang_val[0]
         ang2 = self.multi_lat_ang_val[1]
         steer_ang = abs(CS.steeringAngleDeg)
@@ -236,33 +249,32 @@ class LatControlATOM(LatControl):
 
       # 2. log
       atom_log.active = True
-      atom_log.i = lqr_log.i
-      if selected == 0 or selected == 3:
+      if selected == 0:
         atom_log.saturated = pid_log.saturated
         atom_log.steeringAngleDeg = pid_log.steeringAngleDeg
+        atom_log.p2 = pid_log.p
+        atom_log.i2 = pid_log.i
+        atom_log.f2 = pid_log.f
       elif selected == 1:
         atom_log.saturated = ind_log.saturated
         atom_log.steeringAngleDeg = ind_log.steeringAngleDeg
+        atom_log.rateSetPoint = ind_log.rateSetPoint
+        atom_log.accelSetPoint = ind_log.accelSetPoint
+        atom_log.accelError = ind_log.accelError
+        atom_log.delayedOutput = ind_log.delayedOutput
+        atom_log.delta = ind_log.delta
       elif selected == 2:
+        atom_log.i = lqr_log.i
         atom_log.saturated = lqr_log.saturated
         atom_log.steeringAngleDeg = lqr_log.steeringAngleDeg
         atom_log.lqrOutput = lqr_log.lqrOutput
+      elif selected == 3:
+        atom_log.p1 = toq_log.p
+        atom_log.i1 = toq_log.i
+        atom_log.d1 = toq_log.d
+        atom_log.f1 = toq_log.f
+
       atom_log.output = output_torque
-
-      atom_log.rateSetPoint = ind_log.rateSetPoint
-      atom_log.accelSetPoint = ind_log.accelSetPoint
-      atom_log.accelError = ind_log.accelError
-      atom_log.delayedOutput = ind_log.delayedOutput
-      atom_log.delta = ind_log.delta
-
-      atom_log.p1 = toq_log.p
-      atom_log.i1 = toq_log.i
-      atom_log.d1 = toq_log.d
-      atom_log.f1 = toq_log.f
-
-      atom_log.p2 = pid_log.p
-      atom_log.i2 = pid_log.i
-      atom_log.f2 = pid_log.f
       atom_log.selected = selected
     
     self.output_torque = output_torque
