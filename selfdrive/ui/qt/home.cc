@@ -493,7 +493,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
       } else if (QUIState::ui_state.scene.lateralControlMethod < 2) {
         nLoop = 3;
       } else if (QUIState::ui_state.scene.lateralControlMethod == 4) {
-        nLoop = 11;
+        nLoop = 15;
       }
 
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count + nLoop;
@@ -510,7 +510,7 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
       } else if (QUIState::ui_state.scene.lateralControlMethod < 2) { // 0. PID,  1. INDI
         nLoop = 7; //3+4
       } else if (QUIState::ui_state.scene.lateralControlMethod == 4) { // 4. MULTI
-        nLoop = 15; //3+12
+        nLoop = 19; //3+12
       }
 
       if(QUIState::ui_state.scene.live_tune_panel_list < nLoop) return;
