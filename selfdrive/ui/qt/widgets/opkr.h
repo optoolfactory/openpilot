@@ -2320,6 +2320,7 @@ public:
   MultipleLateralSpeed();
 
 private:
+  QLabel label1;
   QPushButton btnplusl;
   QLabel labell;
   QPushButton btnminusl;
@@ -2331,7 +2332,11 @@ private:
   QPushButton btn3;
   Params params;
   
-  void refresh();
+  void refresh1();
+  void refresh2();
+  void refresh3();
+  void refreshl();
+  void refreshr();
 };
 
 class MultipleLateralAngle : public AbstractControl {
@@ -2341,6 +2346,7 @@ public:
   MultipleLateralAngle();
 
 private:
+  QLabel label1;
   QPushButton btnplusl;
   QLabel labell;
   QPushButton btnminusl;
@@ -2352,5 +2358,9 @@ private:
   QPushButton btn3;
   Params params;
   
-  void refresh();
+  void refresh1();
+  void refresh2();
+  void refresh3();
+  void refreshl();
+  void refreshr();
 };
