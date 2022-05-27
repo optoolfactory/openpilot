@@ -151,12 +151,12 @@ class LatControlATOM(LatControl):
     self.lqr = CP.lateralTuning.atom.lqr
     self.torque = CP.lateralTuning.atom.torque
     self.indi = CP.lateralTuning.atom.indi
-    self.pid = CP.lateralTuning.atom.pid
+    self.pid1 = CP.lateralTuning.atom.pid
 
     self.LaLqr = LatCtrlLqrATOM( CP, CI, self.lqr )
     self.LaToq = LatCtrlToqATOM( CP, CI, self.torque )
     self.LaInd = LatCtrlIndATOM( CP, CI, self.indi )
-    self.LaPid = LatCtrlPidATOM( CP, CI, self.pid )
+    self.LaPid = LatCtrlPidATOM( CP, CI, self.pid1 )
 
     self.output_torque = 0
     self.reset()
