@@ -7133,7 +7133,7 @@ MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
   btn1.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
-    font-size: 45px;
+    font-size: 50px;
     font-weight: 500;
     color: #e0e879;
     background-color: #808080;
@@ -7141,7 +7141,7 @@ MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
   btn2.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
-    font-size: 45px;
+    font-size: 50px;
     font-weight: 500;
     color: #e0e879;
     background-color: #808080;
@@ -7149,7 +7149,7 @@ MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
   btn3.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
-    font-size: 45px;
+    font-size: 50px;
     font-weight: 500;
     color: #e0e879;
     background-color: #808080;
@@ -7186,10 +7186,10 @@ MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusl.setFixedSize(90, 100);
-  btnplusl.setFixedSize(90, 100);
-  btnminusr.setFixedSize(90, 100);
-  btnplusr.setFixedSize(90, 100);
+  btnminusl.setFixedSize(70, 100);
+  btnplusl.setFixedSize(70, 100);
+  btnminusr.setFixedSize(70, 100);
+  btnplusr.setFixedSize(70, 100);
   btn1.setFixedSize(170, 100);
   btn2.setFixedSize(170, 100);
   btn3.setFixedSize(170, 100);
@@ -7320,11 +7320,11 @@ void MultipleLateralSpeed::refresh1() {
   if (list[0] == "0") {
     btn1.setText("PID");
   } else if (list[0] == "1") {
-    btn1.setText("INDI");
+    btn1.setText("IND");
   } else if (list[0] == "2") {
     btn1.setText("LQR");
   } else if (list[0] == "3") {
-    btn1.setText("TORQ");
+    btn1.setText("TOQ");
   }
 }
 
@@ -7375,7 +7375,7 @@ MultipleLateralAngle::MultipleLateralAngle() : AbstractControl("", "", "") {
   btn1.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
-    font-size: 45px;
+    font-size: 50px;
     font-weight: 500;
     color: #e0e879;
     background-color: #808080;
@@ -7383,7 +7383,7 @@ MultipleLateralAngle::MultipleLateralAngle() : AbstractControl("", "", "") {
   btn2.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
-    font-size: 45px;
+    font-size: 50px;
     font-weight: 500;
     color: #e0e879;
     background-color: #808080;
@@ -7391,7 +7391,7 @@ MultipleLateralAngle::MultipleLateralAngle() : AbstractControl("", "", "") {
   btn3.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
-    font-size: 45px;
+    font-size: 50px;
     font-weight: 500;
     color: #e0e879;
     background-color: #808080;
@@ -7428,10 +7428,10 @@ MultipleLateralAngle::MultipleLateralAngle() : AbstractControl("", "", "") {
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btnminusl.setFixedSize(90, 100);
-  btnplusl.setFixedSize(90, 100);
-  btnminusr.setFixedSize(90, 100);
-  btnplusr.setFixedSize(90, 100);
+  btnminusl.setFixedSize(70, 100);
+  btnplusl.setFixedSize(70, 100);
+  btnminusr.setFixedSize(70, 100);
+  btnplusr.setFixedSize(70, 100);
   btn1.setFixedSize(170, 100);
   btn2.setFixedSize(170, 100);
   btn3.setFixedSize(170, 100);
