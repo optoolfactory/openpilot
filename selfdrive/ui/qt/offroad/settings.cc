@@ -747,16 +747,26 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
     layout->addWidget(new TorqueFriction());
     layout->addWidget(new TorqueUseAngle());
   } else if (lat_control == "4") {
+    layout->addWidget(new MultipleLatSelect());
+    layout->addWidget(new MultipleLateralSpeed());
+    layout->addWidget(new MultipleLateralAngle());
     layout->addWidget(new TorqueMaxLatAccel());
     layout->addWidget(new TorqueKp());
     layout->addWidget(new TorqueKf());
     layout->addWidget(new TorqueKi());
     layout->addWidget(new TorqueFriction());
     layout->addWidget(new TorqueUseAngle());
-    layout->addWidget(new TorqueMaxSpeed()); 
     layout->addWidget(new Scale());
     layout->addWidget(new LqrKi());
-    layout->addWidget(new DcGain());    
+    layout->addWidget(new DcGain());
+    layout->addWidget(new InnerLoopGain());
+    layout->addWidget(new OuterLoopGain());
+    layout->addWidget(new TimeConstant());
+    layout->addWidget(new ActuatorEffectiveness());
+    layout->addWidget(new PidKp());
+    layout->addWidget(new PidKi());
+    layout->addWidget(new PidKd());
+    layout->addWidget(new PidKf());
   }
 
   layout->addWidget(horizontal_line());
