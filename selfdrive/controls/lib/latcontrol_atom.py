@@ -4,6 +4,7 @@ import numpy as np
 from cereal import log
 from common.realtime import DT_CTRL
 from common.numpy_fast import clip, interp
+from common.filter_simple import FirstOrderFilter
 
 from common.params import Params
 from decimal import Decimal
