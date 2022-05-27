@@ -7123,9 +7123,9 @@ void MultipleLatSelect::refresh() {
 }
 
 MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
-  labell1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  labell1.setText("SPD: ");
-  hlayout->addWidget(&labell1);
+  label1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label1.setText("SPD: ");
+  hlayout->addWidget(&label1);
   labell.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labell.setStyleSheet("color: #e0e879");
   labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
@@ -7365,9 +7365,9 @@ void MultipleLateralSpeed::refreshr() {
 }
 
 MultipleLateralAngle::MultipleLateralAngle() : AbstractControl("", "", "") {
-  labell1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  labell1.setText("ANG: ");
-  hlayout->addWidget(&labell1);
+  label1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label1.setText("ANG: ");
+  hlayout->addWidget(&label1);
   labell.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
   labell.setStyleSheet("color: #e0e879");
   labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
