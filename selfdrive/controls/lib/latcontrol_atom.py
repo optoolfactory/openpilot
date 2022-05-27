@@ -168,20 +168,22 @@ class LatControlATOM(LatControl):
 
 
     self.multi_lateral_method = int(Params().get("MultipleLateralUse", encoding="utf8"))
-    self.multi_lat_spdMethod = list(map(int, Params().get("MultipleLateralOpS", encoding="utf8").split(',')))
-    self.multi_lat_spdBP = list(map(int, Params().get("MultipleLateralSpd", encoding="utf8").split(',')))
-    self.multi_lat_angMethod = list(map(int, Params().get("MultipleLateralOpA", encoding="utf8").split(',')))
-    self.multi_lat_angBP = list(map(int, Params().get("MultipleLateralAng", encoding="utf8").split(',')))
+    self.multi_lat_spdMethod  = list(map(int, Params().get("MultipleLateralOpS", encoding="utf8").split(',')))
+    self.multi_lat_spdBP      = list(map(int, Params().get("MultipleLateralSpd", encoding="utf8").split(',')))
+    self.multi_lat_angMethod  = list(map(int, Params().get("MultipleLateralOpA", encoding="utf8").split(',')))
+    self.multi_lat_angBP      = list(map(int, Params().get("MultipleLateralAng", encoding="utf8").split(',')))
 
     
     if self.multi_lateral_method == LaMethod.LM_TEST:
       self.lat_fun0 = self.method_func( self.multi_lat_angMethod[0] )
       self.lat_fun1 = self.method_func( self.multi_lat_angMethod[1] )
       self.lat_fun2 = self.method_func( self.multi_lat_angMethod[2] )
+      self.latBP = self.multi_lat_angBP
     else:
       self.lat_fun0 = None
       self.lat_fun1 = None
       self.lat_fun2 = None
+      self.latBP = None
 
   def method_func(self, BP ):
     lat_fun = None
@@ -203,14 +205,17 @@ class LatControlATOM(LatControl):
     self.LaInd.speed = 0.
     self.LaPid.reset()
 
-  def method_test(self, active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk):  # angle
+  def method_angle(self, active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk):  # angle
+    steer_ang = abs(CS.steeringAngleDeg)
     output_torque0, desired_angle0, lqr_log0  = self.lat_fun0( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
     output_torque1, desired_angle1, lqr_log1  = self.lat_fun1( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
     output_torque2, desired_angle2, lqr_log2  = self.lat_fun2( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
 
-    output_torque = interp( CS.vEgo, self.multi_lat_angBP, [output_torque0, output_torque1, output_torque2] )
-    desired_angle = interp( CS.vEgo, self.multi_lat_angBP, [desired_angle0, desired_angle1, desired_angle2] )
+    output_torque = interp( steer_ang, self.latBP, [output_torque0, output_torque1, output_torque2] )
+    desired_angle = interp( steer_ang, self.latBP, [desired_angle0, desired_angle1, desired_angle2] )
     return output_torque, desired_angle, lqr_log0
+
+
 
   def update(self, active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk):
     atom_log = log.ControlsState.LateralATOMState.new_message()
@@ -291,7 +296,7 @@ class LatControlATOM(LatControl):
         output_torque = interp( selected, [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
       elif self.multi_lateral_method == LaMethod.LM_TEST:
 
-        output_torque, desired_angle, lqr_log  =  self.method_test( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+        output_torque, desired_angle, lqr_log  =  self.method_angle( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
 
 
       output_torque = clip( output_torque, -self.steer_max, self.steer_max )
