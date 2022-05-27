@@ -159,6 +159,7 @@ class LatControlATOM(LatControl):
   def update(self, active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk):
     atom_log = log.ControlsState.LateralATOMState.new_message()
 
+    selected = 3
     if CS.vEgo < MIN_STEER_SPEED or not active:
       output_torque = 0.0
       lqr_desired_angle = 0.
