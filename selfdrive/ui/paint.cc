@@ -350,10 +350,10 @@ static void ui_draw_debug(UIState *s) {
         }
     } else {
       if( szLaCMethod )
-          ui_print(s, ui_viz_rx_center, bdr_s+335, szLaCMethod );
+          ui_print(s, ui_viz_rx_center, bdr_s+320, szLaCMethod );
       if (scene.lateralControlMethod == 4) {
         if( szLaCMethodCur )
-            ui_print(s, ui_viz_rx_center, bdr_s+370, szLaCMethodCur );
+            ui_print(s, ui_viz_rx_center, bdr_s+355, szLaCMethodCur );
         }
     }
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
