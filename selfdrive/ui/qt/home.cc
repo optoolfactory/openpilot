@@ -213,6 +213,96 @@ void HomeWindow::mousePressTORQ(QMouseEvent* e, int nDir) {
   }
 }
 
+void HomeWindow::mousePressMULTI(QMouseEvent* e, int nDir) {
+  int nMenuPos = QUIState::ui_state.scene.live_tune_panel_list - QUIState::ui_state.scene.list_count;
+  int max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel;
+  if (nMenuPos == 0) {
+    QUIState::ui_state.scene.pidKp += nDir;
+    // 50
+    clip(QUIState::ui_state.scene.pidKp, 1, 50);
+    QString value = QString::number(QUIState::ui_state.scene.pidKp);
+    Params().put("PidKp", value.toStdString());
+  } else if (nMenuPos == 1) {
+    QUIState::ui_state.scene.pidKi += nDir;
+    clip(QUIState::ui_state.scene.pidKi, 1, 100);
+    // 100
+    QString value = QString::number(QUIState::ui_state.scene.pidKi);
+    Params().put("PidKi", value.toStdString());
+  } else if (nMenuPos == 2) {
+    QUIState::ui_state.scene.pidKd += 5*nDir;
+    // 300
+    clip(QUIState::ui_state.scene.pidKd, 0, 300);
+    QString value = QString::number(QUIState::ui_state.scene.pidKd);
+    Params().put("PidKd", value.toStdString());
+  } else if (nMenuPos == 3) {
+    QUIState::ui_state.scene.pidKf += nDir;
+    clip(QUIState::ui_state.scene.pidKf, 1, 50);
+    // 50
+    QString value = QString::number(QUIState::ui_state.scene.pidKf);
+    Params().put("PidKf", value.toStdString());
+  } else if (nMenuPos == 4) {
+    QUIState::ui_state.scene.indiInnerLoopGain += nDir;
+    clip(QUIState::ui_state.scene.indiInnerLoopGain, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiInnerLoopGain);
+    Params().put("InnerLoopGain", value.toStdString());
+  } else if (nMenuPos == 5) {
+    QUIState::ui_state.scene.indiOuterLoopGain += nDir;
+    clip(QUIState::ui_state.scene.indiOuterLoopGain, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiOuterLoopGain);
+    Params().put("OuterLoopGain", value.toStdString());
+  } else if (nMenuPos == 6) {
+    QUIState::ui_state.scene.indiTimeConstant += nDir;
+    clip(QUIState::ui_state.scene.indiTimeConstant, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiTimeConstant);
+    Params().put("TimeConstant", value.toStdString());
+  } else if (nMenuPos == 7) {
+    QUIState::ui_state.scene.indiActuatorEffectiveness += nDir;
+    clip(QUIState::ui_state.scene.indiActuatorEffectiveness, 1, 200);
+    QString value = QString::number(QUIState::ui_state.scene.indiActuatorEffectiveness);
+    Params().put("ActuatorEffectiveness", value.toStdString());
+  } else if (nMenuPos == 8) {
+    QUIState::ui_state.scene.lqrScale += 50*nDir;
+    clip(QUIState::ui_state.scene.lqrScale, 1, 50);
+    QString value = QString::number(QUIState::ui_state.scene.lqrScale);
+    Params().put("Scale", value.toStdString());
+  } else if (nMenuPos == 9) {
+    QUIState::ui_state.scene.lqrKi += nDir;
+    clip(QUIState::ui_state.scene.lqrKi, 1, 100);
+    QString value = QString::number(QUIState::ui_state.scene.lqrKi);
+    Params().put("LqrKi", value.toStdString());
+  } else if (nMenuPos == 10) {
+    QUIState::ui_state.scene.lqrDcGain += 5*nDir;
+    clip(QUIState::ui_state.scene.lqrDcGain, 5, 500);
+    QString value = QString::number(QUIState::ui_state.scene.lqrDcGain);
+    Params().put("DcGain", value.toStdString());
+  } else if (nMenuPos == 11) {
+    QUIState::ui_state.scene.torqueKp += nDir;
+    clip(QUIState::ui_state.scene.torqueKp, 1, max_lat_accel);
+    QString value = QString::number(QUIState::ui_state.scene.torqueKp);
+    Params().put("TorqueKp", value.toStdString());
+  } else if (nMenuPos == 12) {
+    QUIState::ui_state.scene.torqueKf += nDir;
+    clip(QUIState::ui_state.scene.torqueKf, 1, max_lat_accel);
+    QString value = QString::number(QUIState::ui_state.scene.torqueKf);
+    Params().put("TorqueKf", value.toStdString());
+  } else if (nMenuPos == 13) {
+    QUIState::ui_state.scene.torqueKi += nDir;
+    clip(QUIState::ui_state.scene.torqueKi, 1, max_lat_accel);
+    QString value = QString::number(QUIState::ui_state.scene.torqueKi);
+    Params().put("TorqueKi", value.toStdString());
+  } else if (nMenuPos == 14) {
+    QUIState::ui_state.scene.torqueMaxLatAccel += nDir;
+    clip(QUIState::ui_state.scene.torqueMaxLatAccel, 1, 50);
+    QString value = QString::number(QUIState::ui_state.scene.torqueMaxLatAccel);
+    Params().put("TorqueMaxLatAccel", value.toStdString());
+  } else if (nMenuPos == 15) {
+    QUIState::ui_state.scene.torqueFriction += 5*nDir;
+    clip(QUIState::ui_state.scene.torqueFriction, 0, 300);
+    QString value = QString::number(QUIState::ui_state.scene.torqueFriction);
+    Params().put("TorqueFriction", value.toStdString());
+  }
+}
+
 void HomeWindow::mousePressEvent(QMouseEvent* e) 
 {
   //float max_lat_accel = QUIState::ui_state.scene.torqueMaxLatAccel;
@@ -402,6 +492,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
         nLoop = 4;
       } else if (QUIState::ui_state.scene.lateralControlMethod < 2) {
         nLoop = 3;
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 4) {
+        nLoop = 11;
       }
 
       QUIState::ui_state.scene.live_tune_panel_list = QUIState::ui_state.scene.list_count + nLoop;
@@ -415,8 +507,10 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
          nLoop = 6; //3+3
       } else if (QUIState::ui_state.scene.lateralControlMethod == 3) { // 3. TORQ
         nLoop = 8; //3+5
-      } else if (QUIState::ui_state.scene.lateralControlMethod < 2) {
+      } else if (QUIState::ui_state.scene.lateralControlMethod < 2) { // 0. PID,  1. INDI
         nLoop = 7; //3+4
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 4) { // 4. MULTI
+        nLoop = 15; //3+12
       }
 
       if(QUIState::ui_state.scene.live_tune_panel_list < nLoop) return;
@@ -434,6 +528,8 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
         mousePressLQR(e, nBtnDir);
       } else if (QUIState::ui_state.scene.lateralControlMethod == 3) {  // 3. TORQ
         mousePressTORQ(e, nBtnDir);
+      } else if (QUIState::ui_state.scene.lateralControlMethod == 4) {  // 4. MULTI
+        mousePressMULTI(e, nBtnDir);
       }
       return;
     }
