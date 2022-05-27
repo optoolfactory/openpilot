@@ -85,14 +85,14 @@ def set_lat_tune(tune, name, max_lat_accel=2.5, FRICTION=.1):
     TimeConstant = float(Decimal(params.get("TimeConstant", encoding="utf8")) * Decimal('0.1'))
     ActuatorEffectiveness = float(Decimal(params.get("ActuatorEffectiveness", encoding="utf8")) * Decimal('0.1'))
 
-    tune.atom.innerLoopGainBP = [0.]
-    tune.atom.innerLoopGainV = [InnerLoopGain] # 4.0, third tune. Highest value that still gives smooth control. Effects turning into curves.
-    tune.atom.outerLoopGainBP = [0.]
-    tune.atom.outerLoopGainV = [OuterLoopGain] # 3.0, forth tune. Highest value that still gives smooth control. Effects lane centering.
-    tune.atom.timeConstantBP = [0.]
-    tune.atom.timeConstantV = [TimeConstant] # 1.0, second tune. Lowest value with smooth actuation. Avoid the noise of actuator gears thrashing.
-    tune.atom.actuatorEffectivenessBP = [0.]
-    tune.atom.actuatorEffectivenessV = [ActuatorEffectiveness] # 1.0, first tune. Lowest value without oversteering. May vary with speed.
+    tune.atom.indi.innerLoopGainBP = [0.]
+    tune.atom.indi.innerLoopGainV = [InnerLoopGain] # 4.0, third tune. Highest value that still gives smooth control. Effects turning into curves.
+    tune.atom.indi.outerLoopGainBP = [0.]
+    tune.atom.indi.outerLoopGainV = [OuterLoopGain] # 3.0, forth tune. Highest value that still gives smooth control. Effects lane centering.
+    tune.atom.indi.timeConstantBP = [0.]
+    tune.atom.indi.timeConstantV = [TimeConstant] # 1.0, second tune. Lowest value with smooth actuation. Avoid the noise of actuator gears thrashing.
+    tune.atom.indi.actuatorEffectivenessBP = [0.]
+    tune.atom.indi.actuatorEffectivenessV = [ActuatorEffectiveness] # 1.0, first tune. Lowest value without oversteering. May vary with speed.
 
     # 4. PID
     PidKp = float(Decimal(params.get("PidKp", encoding="utf8")) * Decimal('0.01'))
@@ -100,13 +100,13 @@ def set_lat_tune(tune, name, max_lat_accel=2.5, FRICTION=.1):
     PidKd = float(Decimal(params.get("PidKd", encoding="utf8")) * Decimal('0.01'))
     PidKf = float(Decimal(params.get("PidKf", encoding="utf8")) * Decimal('0.00001'))
 
-    tune.atom.kpBP = [0., 9.]
-    tune.atom.kpV = [0.1, PidKp]
-    tune.atom.kiBP = [0., 9.]
-    tune.atom.kiV = [0.01, PidKi]
-    tune.atom.kdBP = [0.]
-    tune.atom.kdV = [PidKd]
-    tune.atom.kf = PidKf
+    tune.atom.pid.kpBP = [0., 9.]
+    tune.atom.pid.kpV = [0.1, PidKp]
+    tune.atom.pid.kiBP = [0., 9.]
+    tune.atom.pid.kiV = [0.01, PidKi]
+    tune.atom.pid.kdBP = [0.]
+    tune.atom.pid.kdV = [PidKd]
+    tune.atom.pid.kf = PidKf
 
   elif name == LatTunes.TORQUE:
     TorqueKp = float(Decimal(params.get("TorqueKp", encoding="utf8")) * Decimal('0.1'))
