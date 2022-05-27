@@ -114,6 +114,10 @@ class LatCtrlIndATOM(LatControlINDI):
 
     self.steer_filter = FirstOrderFilter(0., self.RC, DT_CTRL)
 
+    self.sat_count_rate = 1.0 * DT_CTRL 
+    self.sat_limit = CP.steerLimitTimer 
+    self.sat_count = 0. 
+
     self.li_timer = 0
     self.live_tune_enabled = False
 
@@ -134,6 +138,10 @@ class LatCtrlPidATOM(LatControlPID):
     self.live_tune_enabled = False
 
     self.steer_max = 1.0
+
+    self.sat_count_rate = 1.0 * DT_CTRL 
+    self.sat_limit = CP.steerLimitTimer 
+    self.sat_count = 0. 
 
 
 class LatControlATOM(LatControl):
