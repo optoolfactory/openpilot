@@ -37,6 +37,9 @@ class LatCtrlToqATOM(LatControlTorque):
     self.friction = TORQUE.friction
     self.kf = TORQUE.kf
 
+    self.live_tune_enabled = False
+    self.lt_timer = 0
+
 
 class LatCtrlLqrATOM(LatControlLQR):
   def __init__(self, CP, CI, LQR):
@@ -63,6 +66,8 @@ class LatCtrlLqrATOM(LatControlLQR):
     self.x_hat = np.array([[0], [0]])
     self.i_unwind_rate = 0.3 * DT_CTRL
     self.i_rate = 1.0 * DT_CTRL
+
+    self.ll_timer = 0
 
     self.reset()
 
@@ -109,6 +114,8 @@ class LatCtrlIndATOM(LatControlINDI):
 
     self.steer_filter = FirstOrderFilter(0., self.RC, DT_CTRL)
 
+    self.li_timer = 0
+
     self.reset()
 
 class LatCtrlPidATOM(LatControlPID):
@@ -121,6 +128,8 @@ class LatCtrlPidATOM(LatControlPID):
 
     self.mpc_frame = 0
     self.params = Params()
+
+    self.lp_timer = 0
 
     self.steer_max = 1.0
 
