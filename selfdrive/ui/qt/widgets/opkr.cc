@@ -7115,15 +7115,13 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
 }
 
 void MultipleLatSelect::refresh() {
-  //QString method = QString::fromStdString(params.get("MultipleLateralUse"));
   QString strMethod;
 
-  //int method = method.toInt();
   switch( m_nMethod )
   {
-    case 0 : strMethod = "Speed"; break;
-    case 1 : strMethod = "Angle"; break;
-    case 2 : strMethod = "Test"; break;
+    case 0 : strMethod = "0.Speed"; break;
+    case 1 : strMethod = "1.Angle"; break;
+    case 2 : strMethod = "2.Angle.L"; break;
     default :
       strMethod = "None"; 
       break;
