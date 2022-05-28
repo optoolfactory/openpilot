@@ -324,20 +324,37 @@ static void ui_draw_debug(UIState *s) {
 
 
     char const* szLaCMethod = nullptr;
-    if ( !scene.animated_rpm ) 
-    {
-      switch( scene.lateralControlMethod  )
+    char const* szLaCMethodCur = nullptr;
+    switch( scene.lateralControlMethod  )
       {
         case  0: szLaCMethod = "PID"; break;
         case  1: szLaCMethod = "INDI"; break;
         case  2: szLaCMethod = "LQR"; break;
         case  3: szLaCMethod = "TORQUE"; break;
-        case  4: szLaCMethod = "HYBRID"; break;
+        case  4: szLaCMethod = "MULTI"; break;
       }
-
+    switch( (int)scene.multi_lat_selected  )
+      {
+        case  0: szLaCMethodCur = "PID"; break;
+        case  1: szLaCMethodCur = "INDI"; break;
+        case  2: szLaCMethodCur = "LQR"; break;
+        case  3: szLaCMethodCur = "TORQUE"; break;
+      }
+    if ( !scene.animated_rpm )
+    {
       if( szLaCMethod )
           ui_print(s, ui_viz_rx_center, bdr_s+295, szLaCMethod );
-
+      if (scene.lateralControlMethod == 4) {
+        if( szLaCMethodCur )
+            ui_print(s, ui_viz_rx_center, bdr_s+330, szLaCMethodCur );
+        }
+    } else {
+      if( szLaCMethod )
+          ui_print(s, ui_viz_rx_center, bdr_s+320, szLaCMethod );
+      if (scene.lateralControlMethod == 4) {
+        if( szLaCMethodCur )
+            ui_print(s, ui_viz_rx_center, bdr_s+355, szLaCMethodCur );
+        }
     }
     nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
     if (scene.osm_enabled) {

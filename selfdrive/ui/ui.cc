@@ -150,6 +150,7 @@ static void update_state(UIState *s) {
       scene.output_scale = scene.controls_state.getLateralControlState().getTorqueState().getOutput();
     } else if (scene.lateralControlMethod == 4) {
       scene.output_scale = scene.controls_state.getLateralControlState().getAtomState().getOutput();
+      scene.multi_lat_selected = scene.controls_state.getLateralControlState().getAtomState().getSelected();
     }
 
     scene.alertTextMsg1 = scene.controls_state.getAlertTextMsg1(); //debug1
