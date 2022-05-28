@@ -298,7 +298,7 @@ class LatControlATOM(LatControl):
         desired_angle = interp( selected, [0, 1, 2, 3], [pid_desired_angle, ind_desired_angle, lqr_desired_angle, toq_desired_angle] )
         output_torque = interp( selected, [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
       elif self.multi_lateral_method == LaMethod.LM_TEST:
-
+        selected = 4
         output_torque, desired_angle, lqr_log  =  self.method_angle( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
 
 
