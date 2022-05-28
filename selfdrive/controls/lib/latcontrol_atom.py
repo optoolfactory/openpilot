@@ -207,13 +207,13 @@ class LatControlATOM(LatControl):
 
   def method_angle(self, active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk):  # angle
     steer_ang = abs(CS.steeringAngleDeg)
-    output_torque0, desired_angle0, lqr_log0  = self.lat_fun0( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
-    output_torque1, desired_angle1, lqr_log1  = self.lat_fun1( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
-    output_torque2, desired_angle2, lqr_log2  = self.lat_fun2( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+    output_torque0, desired_angle0, log0  = self.lat_fun0( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+    output_torque1, desired_angle1, log1  = self.lat_fun1( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+    output_torque2, desired_angle2, log2  = self.lat_fun2( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
 
-    output_torque = interp( steer_ang, self.latBP, [output_torque0, output_torque1, output_torque2] )
     desired_angle = interp( steer_ang, self.latBP, [desired_angle0, desired_angle1, desired_angle2] )
-    return output_torque, desired_angle, lqr_log0
+    output_torque = interp( steer_ang, self.latBP, [output_torque0, output_torque1, output_torque2] )
+    return output_torque, desired_angle, log0
 
 
 
@@ -229,7 +229,7 @@ class LatControlATOM(LatControl):
     ind_output_torque = 0
     lqr_output_torque = 0
     toq_output_torque = 0
-    
+
     desired_angle = 0
     output_torque = 0
     if CS.vEgo < MIN_STEER_SPEED or not active:

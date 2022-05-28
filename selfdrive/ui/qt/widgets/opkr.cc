@@ -7120,7 +7120,7 @@ void MultipleLatSelect::refresh() {
   } else if (option == "1") { {
     label.setText(QString::fromStdString("Angle"));
   }
-  } else //if (option == "2") { {
+  } else { //if (option == "2") { {
     label.setText(QString::fromStdString("Test"));
   }  
 }
