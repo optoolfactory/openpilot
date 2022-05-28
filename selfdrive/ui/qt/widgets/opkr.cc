@@ -7087,26 +7087,30 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
   hlayout->addWidget(&btnminus);
   hlayout->addWidget(&btnplus);
 
+  m_nMethod = int( params.get("MultipleLateralUse") )
+
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("MultipleLateralUse"));
-    int value = str.toInt();
-    value = value - 1;
-    if (value < 0) {
-      value = 2;
+    //auto str = QString::fromStdString(params.get("MultipleLateralUse"));
+    //int value = str.toInt();
+    m_nMethod -= 1;
+    if (m_nMethod < 0) {
+      m_nMethod = 2;
     }
-    QString values = QString::number(value);
+
+    QString values = QString::number(m_nMethod);
     params.put("MultipleLateralUse", values.toStdString());
     refresh();
   });
   
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("MultipleLateralUse"));
-    int value = str.toInt();
-    value = value + 1;
-    if (value > 2) {
-      value = 0;
+    // auto str = QString::fromStdString(params.get("MultipleLateralUse"));
+    // int value = str.toInt();
+  
+    m_nMethod += 1; // value + 1;
+    if (m_nMethod > 2) {
+      m_nMethod = 0;
     }
-    QString values = QString::number(value);
+    QString values = QString::number(m_nMethod);
     params.put("MultipleLateralUse", values.toStdString());
     refresh();
   });
@@ -7114,15 +7118,22 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
 }
 
 void MultipleLatSelect::refresh() {
-  QString option = QString::fromStdString(params.get("MultipleLateralUse"));
-  if (option == "0") {
-    label.setText(QString::fromStdString("Speed"));
-  } else if (option == "1") { {
-    label.setText(QString::fromStdString("Angle"));
+  //QString method = QString::fromStdString(params.get("MultipleLateralUse"));
+  QString strMethod;
+
+  //int method = method.toInt();
+  switch( m_nMethod )
+  {
+    case 0 : strMethod = "Speed"; break;
+    case 1 : strMethod = "Angle"; break;
+    case 2 : strMethod = "Test"; break;
+    default :
+      strMethod = "None"; 
+      break;
   }
-  } else { //if (option == "2") { {
-    label.setText(QString::fromStdString("Test"));
-  }  
+
+
+  label.setText( strMethod );
 }
 
 MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
