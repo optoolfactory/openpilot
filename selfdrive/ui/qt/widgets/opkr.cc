@@ -7087,11 +7087,10 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
   hlayout->addWidget(&btnminus);
   hlayout->addWidget(&btnplus);
 
-  m_nMethod = int( params.get("MultipleLateralUse") )
+  auto str = QString::fromStdString(params.get("MultipleLateralUse"));
+  m_nMethod = str.toInt();
 
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    //auto str = QString::fromStdString(params.get("MultipleLateralUse"));
-    //int value = str.toInt();
     m_nMethod -= 1;
     if (m_nMethod < 0) {
       m_nMethod = 2;
@@ -7103,10 +7102,8 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
   });
   
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    // auto str = QString::fromStdString(params.get("MultipleLateralUse"));
-    // int value = str.toInt();
   
-    m_nMethod += 1; // value + 1;
+    m_nMethod += 1;
     if (m_nMethod > 2) {
       m_nMethod = 0;
     }
