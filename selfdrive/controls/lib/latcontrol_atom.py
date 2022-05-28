@@ -146,7 +146,7 @@ class LatCtrlPidATOM(LatControlPID):
 class LaMethod:
   LM_SPEED = 0  
   LM_ANGLE = 1
-  LM_TEST  = 2
+  LM_ANGLEL  = 2
 
 
 class LatControlATOM(LatControl):
@@ -174,7 +174,7 @@ class LatControlATOM(LatControl):
     self.multi_lat_angBP      = list(map(int, Params().get("MultipleLateralAng", encoding="utf8").split(',')))
 
     
-    if self.multi_lateral_method == LaMethod.LM_TEST:
+    if self.multi_lateral_method == LaMethod.LM_ANGLEL:
       self.lat_fun0 = self.method_func( self.multi_lat_angMethod[0] )
       self.lat_fun1 = self.method_func( self.multi_lat_angMethod[1] )
       self.lat_fun2 = self.method_func( self.multi_lat_angMethod[2] )
@@ -188,13 +188,13 @@ class LatControlATOM(LatControl):
   def method_func(self, BP ):
     lat_fun = None
     if BP == 0:
-      lat_fun  = self.LaPid.update()
+      lat_fun  = self.LaPid.update
     elif BP == 1:
-      lat_fun  = self.LaInd.update()
+      lat_fun  = self.LaInd.update
     elif BP == 2:
-      lat_fun  = self.LaLqr.update()
+      lat_fun  = self.LaLqr.update
     elif BP == 3:
-      lat_fun  = self.LaToq.update()
+      lat_fun  = self.LaToq.update
     return lat_fun       
 
   def reset(self):
@@ -207,13 +207,13 @@ class LatControlATOM(LatControl):
 
   def method_angle(self, active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk):  # angle
     steer_ang = abs(CS.steeringAngleDeg)
-    output_torque0, desired_angle0, lqr_log0  = self.lat_fun0( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
-    output_torque1, desired_angle1, lqr_log1  = self.lat_fun1( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
-    output_torque2, desired_angle2, lqr_log2  = self.lat_fun2( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+    output_torque0, desired_angle0, log0  = self.lat_fun0( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+    output_torque1, desired_angle1, log1  = self.lat_fun1( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+    output_torque2, desired_angle2, log2  = self.lat_fun2( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
 
-    output_torque = interp( steer_ang, self.latBP, [output_torque0, output_torque1, output_torque2] )
     desired_angle = interp( steer_ang, self.latBP, [desired_angle0, desired_angle1, desired_angle2] )
-    return output_torque, desired_angle, lqr_log0
+    output_torque = interp( steer_ang, self.latBP, [output_torque0, output_torque1, output_torque2] )
+    return output_torque, desired_angle
 
 
 
@@ -229,6 +229,7 @@ class LatControlATOM(LatControl):
     ind_output_torque = 0
     lqr_output_torque = 0
     toq_output_torque = 0
+
     desired_angle = 0
     output_torque = 0
     if CS.vEgo < MIN_STEER_SPEED or not active:
@@ -296,9 +297,9 @@ class LatControlATOM(LatControl):
 
         desired_angle = interp( selected, [0, 1, 2, 3], [pid_desired_angle, ind_desired_angle, lqr_desired_angle, toq_desired_angle] )
         output_torque = interp( selected, [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-      elif self.multi_lateral_method == LaMethod.LM_TEST:
-
-        output_torque, desired_angle, lqr_log  =  self.method_angle( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
+      elif self.multi_lateral_method == LaMethod.LM_ANGLEL:
+        selected = 4
+        output_torque, desired_angle  =  self.method_angle( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
 
 
       output_torque = clip( output_torque, -self.steer_max, self.steer_max )
@@ -329,6 +330,7 @@ class LatControlATOM(LatControl):
         atom_log.i1 = toq_log.i
         atom_log.d1 = toq_log.d
         atom_log.f1 = toq_log.f
+
 
       atom_log.output = output_torque
       atom_log.selected = selected

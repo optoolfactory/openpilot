@@ -2310,6 +2310,9 @@ private:
   QLabel label;
   Params params;
   
+  int    m_nMethod;
+
+
   void refresh();
 };
 
