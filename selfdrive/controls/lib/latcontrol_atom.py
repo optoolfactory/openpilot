@@ -188,13 +188,13 @@ class LatControlATOM(LatControl):
   def method_func(self, BP ):
     lat_fun = None
     if BP == 0:
-      lat_fun  = self.LaPid.update()
+      lat_fun  = self.LaPid.update
     elif BP == 1:
-      lat_fun  = self.LaInd.update()
+      lat_fun  = self.LaInd.update
     elif BP == 2:
-      lat_fun  = self.LaLqr.update()
+      lat_fun  = self.LaLqr.update
     elif BP == 3:
-      lat_fun  = self.LaToq.update()
+      lat_fun  = self.LaToq.update
     return lat_fun       
 
   def reset(self):
