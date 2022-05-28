@@ -7091,8 +7091,8 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
     auto str = QString::fromStdString(params.get("MultipleLateralUse"));
     int value = str.toInt();
     value = value - 1;
-    if (value <= -1) {
-      value = 1;
+    if (value < 0) {
+      value = 2;
     }
     QString values = QString::number(value);
     params.put("MultipleLateralUse", values.toStdString());
@@ -7103,7 +7103,7 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
     auto str = QString::fromStdString(params.get("MultipleLateralUse"));
     int value = str.toInt();
     value = value + 1;
-    if (value >= 2) {
+    if (value > 2) {
       value = 0;
     }
     QString values = QString::number(value);
@@ -7117,9 +7117,12 @@ void MultipleLatSelect::refresh() {
   QString option = QString::fromStdString(params.get("MultipleLateralUse"));
   if (option == "0") {
     label.setText(QString::fromStdString("Speed"));
-  } else {
+  } else if (option == "1") { {
     label.setText(QString::fromStdString("Angle"));
   }
+  } else //if (option == "2") { {
+    label.setText(QString::fromStdString("Test"));
+  }  
 }
 
 MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
