@@ -23,6 +23,7 @@ from decimal import Decimal
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
 LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
+LaneChangeState = log.LateralPlan.LaneChangeState
 
 
 def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
@@ -175,6 +176,11 @@ class CarController():
     self.enable_steer_more = self.params.get_bool("AvoidLKASFaultBeyond")
     self.no_mdps_mods = self.params.get_bool("NoSmartMDPS")
 
+    self.user_specific_feature = int(self.params.get("UserSpecificFeature", encoding="utf8"))
+    self.user_specific_feature_on = False
+    self.user_specific_prev_gap = 2.0
+    self.gap_cnt = 0
+
     self.radar_disabled_conf = self.params.get_bool("RadarDisable")
     self.prev_cruiseButton = 0
     self.gapsettingdance = 4
@@ -185,6 +191,10 @@ class CarController():
     self.objdiststat = 0
     self.fca11supcnt = self.fca11inc = self.fca11alivecnt = self.fca11cnt13 = 0
     self.fca11maxcnt = 0xD
+
+    self.lkas_onoff_counter = 0
+    self.lkas_temp_disabled = False
+    self.lkas_temp_disabled_timer = 0
 
     self.str_log2 = 'MultiLateral'
     if CP.lateralTuning.which() == 'pid':
@@ -325,10 +335,10 @@ class CarController():
       self.need_brake_timer += 1
       if self.need_brake_timer > 50:
         self.need_brake = True
-    elif not CS.cruise_active and 1 < self.dRel < (CS.out.vEgo * CV.MS_TO_KPH * 0.6) < 12 and self.vRel*3.6 < -(CS.out.vEgo * CV.MS_TO_KPH * 0.7) and \
+    elif not CS.cruise_active and 1 < self.dRel < (CS.out.vEgo * CV.MS_TO_KPH * 0.5) < 13 and self.vRel*3.6 < -(CS.out.vEgo * CV.MS_TO_KPH * 0.6) and \
      5 < (CS.out.vEgo * CV.MS_TO_KPH) < 20 and not (CS.out.brakeLights or CS.out.brakePressed or CS.out.gasPressed): # generate an event to avoid collision when SCC is not activated at low speed.
       self.need_brake_timer += 1
-      if self.need_brake_timer > 25:
+      if self.need_brake_timer > 20:
         self.need_brake = True
     else:
       self.need_brake = False
@@ -343,13 +353,32 @@ class CarController():
     if clu11_speed > enabled_speed or not lkas_active or CS.out.gearShifter != GearShifter.drive:
       enabled_speed = clu11_speed
 
+    if CS.cruise_active: # to toggle lkas, hold gap button for 1 sec
+      if CS.cruise_buttons == 3:
+        self.lkas_onoff_counter += 1
+        if self.lkas_onoff_counter > 100:
+          self.lkas_onoff_counter = 0
+          self.lkas_temp_disabled = not self.lkas_temp_disabled
+          if self.lkas_temp_disabled:
+            self.lkas_temp_disabled_timer = 0
+          else:
+            self.lkas_temp_disabled_timer = 15
+      else:
+        if self.lkas_temp_disabled_timer:
+          self.lkas_temp_disabled_timer -= 1
+        self.lkas_onoff_counter = 0
+    else:
+      self.lkas_onoff_counter = 0
+      if self.lkas_temp_disabled_timer:
+        self.lkas_temp_disabled_timer -= 1
+
     can_sends = []
-    can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
+    can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active and not self.lkas_temp_disabled,
                                    cut_steer_temp, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
                                    left_lane_warning, right_lane_warning, 0, self.ldws_fix))
 
     if CS.CP.mdpsBus: # send lkas11 bus 1 if mdps is bus 1
-      can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
+      can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active and not self.lkas_temp_disabled,
                                    cut_steer_temp, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
                                    left_lane_warning, right_lane_warning, 1, self.ldws_fix))
       if frame % 2: # send clu11 to mdps if it is not on bus 0
@@ -461,24 +490,54 @@ class CarController():
           self.resume_cnt += 1
         else:
           self.resume_cnt = 0
+        if self.user_specific_feature == 60: # for D.Fyffe
+          if self.switch_timer > 0:
+            self.switch_timer -= 1
+          elif CS.cruiseGapSet != 2.0 and path_plan.laneChangeState != LaneChangeState.off:
+            can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+              else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+            self.user_specific_feature_on = True
+            self.gap_cnt += 1
+            if self.gap_cnt >= randint(6, 8):
+              self.gap_cnt = 0
+              self.switch_timer = randint(30, 36)
+          elif self.user_specific_feature_on and path_plan.laneChangeState == LaneChangeState.off and CS.cruiseGapSet != self.user_specific_prev_gap:
+            can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+              else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+            self.gap_cnt += 1
+            if self.gap_cnt >= randint(6, 8):
+              self.gap_cnt = 0
+              self.switch_timer = randint(30, 36)
+          elif (CS.out.leftBlinker or CS.out.rightBlinker) and CS.cruiseGapSet != 2.0 and CS.out.vEgo >= LANE_CHANGE_SPEED_MIN:
+            self.user_specific_prev_gap = CS.cruiseGapSet
+          elif self.user_specific_prev_gap == CS.cruiseGapSet and CS.cruiseGapSet != 2.0 and path_plan.laneChangeState == LaneChangeState.off:
+            self.user_specific_prev_gap = 0
+            self.user_specific_feature_on = False
+          else:
+            self.user_specific_feature_on = False
     else:
       self.on_speed_control = False
       self.curv_speed_control = False
       self.cruise_gap_adjusting = False
       self.standstill_res_button = False
       self.auto_res_starting = False
+      self.user_specific_feature_on = False
 
     if not enabled:
       self.cruise_init = False
+      self.lkas_temp_disabled = False
     if CS.cruise_buttons == 4:
       self.cancel_counter += 1
       self.auto_res_starting = False
       self.standstill_res_button = False
+      if self.lkas_temp_disabled:
+        self.lkas_temp_disabled = False
+        self.lkas_temp_disabled_timer = 15
     elif CS.cruise_active:
       self.cruise_init = True
       self.cancel_counter = 0
       self.auto_res_limit_timer = 0
-      self.auto_res_delay_timer = 0
+      self.auto_res_delay_timer = 0          
       if self.res_speed_timer > 0:
         self.res_speed_timer -= 1
         self.auto_res_starting = False
@@ -490,6 +549,9 @@ class CarController():
       if CS.out.brakeLights:
         self.auto_res_limit_timer = 0
         self.auto_res_delay_timer = 0
+        if CS.out.brakePressed and self.lkas_temp_disabled:
+          self.lkas_temp_disabled = False
+          self.lkas_temp_disabled_timer = 15
       else:
         if self.auto_res_limit_timer < self.auto_res_limit_sec:
           self.auto_res_limit_timer += 1

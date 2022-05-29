@@ -385,6 +385,11 @@ class CarInterface(CarInterfaceBase):
     elif self.CC.mode_change_timer and self.CS.out.cruiseState.modeSel == 5:
       events.add(EventName.modeChangeMaponly)
 
+    if self.CC.lkas_temp_disabled:
+      events.add(EventName.lkasDisabled)
+    elif self.CC.lkas_temp_disabled_timer:
+      events.add(EventName.lkasEnabled)
+
   # handle button presses
     for b in ret.buttonEvents:
       # do disable on button down
