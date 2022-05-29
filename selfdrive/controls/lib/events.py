@@ -995,8 +995,22 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.lkasDisabled: {
-    ET.PERMANENT: NormalPermanentAlert("LKAS 꺼져있습니다 : 오픈파일럿 사용을 위해 LKAS를 켜세요"),
-    ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
+    # ET.PERMANENT: NormalPermanentAlert("LKAS 꺼져있습니다 : 오픈파일럿 사용을 위해 LKAS를 켜세요"),
+    # ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
+    ET.WARNING: Alert(
+      "LKAS is Off status",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.disengage, 1., alert_rate=0.5),
   },
 
+  EventName.lkasEnabled: {
+    # ET.PERMANENT: NormalPermanentAlert("LKAS 꺼져있습니다 : 오픈파일럿 사용을 위해 LKAS를 켜세요"),
+    # ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
+    ET.WARNING: Alert(
+      "LKAS turned On",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.engage, 1.),
+  },
 }
