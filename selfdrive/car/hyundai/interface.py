@@ -342,8 +342,6 @@ class CarInterface(CarInterfaceBase):
       events.add(EventName.brakeHold)
     if self.CC.auto_res_starting:
       events.add(EventName.resCruise)
-    if self.CC.lkas_temp_disabled:
-      events.add(EventName.lkasDisabled)
     if self.CS.cruiseState_standstill or self.CC.standstill_status == 1:
       #events.add(EventName.standStill)
       self.CP.standStill = True
@@ -380,6 +378,11 @@ class CarInterface(CarInterfaceBase):
       events.add(EventName.modeChangeOneway)
     elif self.CC.mode_change_timer and self.CS.out.cruiseState.modeSel == 5:
       events.add(EventName.modeChangeMaponly)
+
+    if self.CC.lkas_temp_disabled:
+      events.add(EventName.lkasDisabled)
+    else self.CC.lkas_temp_disabled_timer:
+      events.add(EventName.buttonEnable)
 
   # handle button presses
     for b in ret.buttonEvents:

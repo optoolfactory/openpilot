@@ -194,6 +194,7 @@ class CarController():
 
     self.lkas_onoff_counter = 0
     self.lkas_temp_disabled = False
+    self.lkas_temp_disabled_timer = 0
 
     self.str_log2 = 'MultiLateral'
     if CP.lateralTuning.which() == 'pid':
@@ -358,8 +359,16 @@ class CarController():
         if self.lkas_onoff_counter > 100:
           self.lkas_onoff_counter = 0
           self.lkas_temp_disabled = not self.lkas_temp_disabled
+          if self.lkas_temp_disabled:
+            self.lkas_temp_disabled__timer = 0
+          else:
+            self.lkas_temp_disabled__timer = 1
       else:
+        self.lkas_temp_disabled_timer -= 1 if self.lkas_temp_disabled_timer:
         self.lkas_onoff_counter = 0
+    else:
+      self.lkas_onoff_counter = 0
+      self.lkas_temp_disabled_timer -= 1 if self.lkas_temp_disabled_timer:
 
     can_sends = []
     can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active and not self.lkas_temp_disabled,
