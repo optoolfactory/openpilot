@@ -360,9 +360,9 @@ class CarController():
           self.lkas_onoff_counter = 0
           self.lkas_temp_disabled = not self.lkas_temp_disabled
           if self.lkas_temp_disabled:
-            self.lkas_temp_disabled__timer = 0
+            self.lkas_temp_disabled_timer = 0
           else:
-            self.lkas_temp_disabled__timer = 1
+            self.lkas_temp_disabled_timer = 1
       else:
         if self.lkas_temp_disabled_timer:
           self.lkas_temp_disabled_timer -= 1
@@ -525,10 +525,14 @@ class CarController():
 
     if not enabled:
       self.cruise_init = False
+      self.lkas_temp_disabled = False
     if CS.cruise_buttons == 4:
       self.cancel_counter += 1
       self.auto_res_starting = False
       self.standstill_res_button = False
+      if self.lkas_temp_disabled:
+        self.lkas_temp_disabled = False
+        self.lkas_temp_disabled_timer = 1
     elif CS.cruise_active:
       self.cruise_init = True
       self.cancel_counter = 0
@@ -545,6 +549,9 @@ class CarController():
       if CS.out.brakeLights:
         self.auto_res_limit_timer = 0
         self.auto_res_delay_timer = 0
+        if CS.out.brakePressed and self.lkas_temp_disabled:
+          self.lkas_temp_disabled = False
+          self.lkas_temp_disabled_timer = 1
       else:
         if self.auto_res_limit_timer < self.auto_res_limit_sec:
           self.auto_res_limit_timer += 1
