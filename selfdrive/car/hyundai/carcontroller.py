@@ -23,6 +23,7 @@ from decimal import Decimal
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
 LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
+LaneChangeState = log.LateralPlan.LaneChangeState
 
 
 def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
@@ -174,6 +175,11 @@ class CarController():
     self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
     self.enable_steer_more = self.params.get_bool("AvoidLKASFaultBeyond")
     self.no_mdps_mods = self.params.get_bool("NoSmartMDPS")
+
+    self.user_specific_feature = int(self.params.get("UserSpecificFeature", encoding="utf8"))
+    self.user_specific_feature_on = False
+    self.user_specific_prev_gap = 2.0
+    self.gap_cnt = 0
 
     self.radar_disabled_conf = self.params.get_bool("RadarDisable")
     self.prev_cruiseButton = 0
@@ -473,12 +479,38 @@ class CarController():
           self.resume_cnt += 1
         else:
           self.resume_cnt = 0
+        if self.user_specific_feature == 60: # for D.Fyffe
+          if self.switch_timer > 0:
+            self.switch_timer -= 1
+          elif CS.cruiseGapSet != 2.0 and path_plan.laneChangeState != LaneChangeState.off:
+            can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+              else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+            self.user_specific_feature_on = True
+            self.gap_cnt += 1
+            if self.gap_cnt >= randint(6, 8):
+              self.gap_cnt = 0
+              self.switch_timer = randint(30, 36)
+          elif self.user_specific_feature_on and path_plan.laneChangeState == LaneChangeState.off and CS.cruiseGapSet != self.user_specific_prev_gap:
+            can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+              else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+            self.gap_cnt += 1
+            if self.gap_cnt >= randint(6, 8):
+              self.gap_cnt = 0
+              self.switch_timer = randint(30, 36)
+          elif (CS.out.leftBlinker or CS.out.rightBlinker) and CS.cruiseGapSet != 2.0 and CS.out.vEgo >= LANE_CHANGE_SPEED_MIN:
+            self.user_specific_prev_gap = CS.cruiseGapSet
+          elif self.user_specific_prev_gap == CS.cruiseGapSet and CS.cruiseGapSet != 2.0 and path_plan.laneChangeState == LaneChangeState.off:
+            self.user_specific_prev_gap = 0
+            self.user_specific_feature_on = False
+          else:
+            self.user_specific_feature_on = False
     else:
       self.on_speed_control = False
       self.curv_speed_control = False
       self.cruise_gap_adjusting = False
       self.standstill_res_button = False
       self.auto_res_starting = False
+      self.user_specific_feature_on = False
 
     if not enabled:
       self.cruise_init = False
