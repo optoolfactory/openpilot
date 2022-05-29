@@ -186,6 +186,9 @@ class CarController():
     self.fca11supcnt = self.fca11inc = self.fca11alivecnt = self.fca11cnt13 = 0
     self.fca11maxcnt = 0xD
 
+    self.lkas_onoff_counter = 0
+    self.lkas_temp_disabled = False
+
     self.str_log2 = 'MultiLateral'
     if CP.lateralTuning.which() == 'pid':
       self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.2f}/{:0.5f}'.format(CP.lateralTuning.pid.kpV[1], CP.lateralTuning.pid.kiV[1], CP.lateralTuning.pid.kdV[0], CP.lateralTuning.pid.kf)
@@ -325,10 +328,10 @@ class CarController():
       self.need_brake_timer += 1
       if self.need_brake_timer > 50:
         self.need_brake = True
-    elif not CS.cruise_active and 1 < self.dRel < (CS.out.vEgo * CV.MS_TO_KPH * 0.6) < 12 and self.vRel*3.6 < -(CS.out.vEgo * CV.MS_TO_KPH * 0.7) and \
+    elif not CS.cruise_active and 1 < self.dRel < (CS.out.vEgo * CV.MS_TO_KPH * 0.5) < 13 and self.vRel*3.6 < -(CS.out.vEgo * CV.MS_TO_KPH * 0.6) and \
      5 < (CS.out.vEgo * CV.MS_TO_KPH) < 20 and not (CS.out.brakeLights or CS.out.brakePressed or CS.out.gasPressed): # generate an event to avoid collision when SCC is not activated at low speed.
       self.need_brake_timer += 1
-      if self.need_brake_timer > 25:
+      if self.need_brake_timer > 20:
         self.need_brake = True
     else:
       self.need_brake = False
@@ -343,13 +346,22 @@ class CarController():
     if clu11_speed > enabled_speed or not lkas_active or CS.out.gearShifter != GearShifter.drive:
       enabled_speed = clu11_speed
 
+    if CS.cruise_active: # to toggle lkas, hold gap button for 1 sec
+      if CS.cruise_buttons == 3:
+        self.lkas_onoff_counter += 1
+        if self.lkas_onoff_counter > 100:
+          self.lkas_onoff_counter = 0
+          self.lkas_temp_disabled = not self.lkas_temp_disabled
+      else:
+        self.lkas_onoff_counter = 0
+
     can_sends = []
-    can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
+    can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active and not self.lkas_temp_disabled,
                                    cut_steer_temp, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
                                    left_lane_warning, right_lane_warning, 0, self.ldws_fix))
 
     if CS.CP.mdpsBus: # send lkas11 bus 1 if mdps is bus 1
-      can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
+      can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active and not self.lkas_temp_disabled,
                                    cut_steer_temp, CS.lkas11, sys_warning, sys_state, enabled, left_lane, right_lane,
                                    left_lane_warning, right_lane_warning, 1, self.ldws_fix))
       if frame % 2: # send clu11 to mdps if it is not on bus 0
@@ -478,7 +490,7 @@ class CarController():
       self.cruise_init = True
       self.cancel_counter = 0
       self.auto_res_limit_timer = 0
-      self.auto_res_delay_timer = 0
+      self.auto_res_delay_timer = 0          
       if self.res_speed_timer > 0:
         self.res_speed_timer -= 1
         self.auto_res_starting = False
