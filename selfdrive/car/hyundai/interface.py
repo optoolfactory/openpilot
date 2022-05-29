@@ -382,7 +382,7 @@ class CarInterface(CarInterfaceBase):
     if self.CC.lkas_temp_disabled:
       events.add(EventName.lkasDisabled)
     elif self.CC.lkas_temp_disabled_timer:
-      events.add(EventName.pcmEnable)
+      events.add(EventName.lkasEnabled)
 
   # handle button presses
     for b in ret.buttonEvents:
