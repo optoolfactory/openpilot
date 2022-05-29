@@ -362,7 +362,7 @@ class CarController():
           if self.lkas_temp_disabled:
             self.lkas_temp_disabled_timer = 0
           else:
-            self.lkas_temp_disabled_timer = 1
+            self.lkas_temp_disabled_timer = 15
       else:
         if self.lkas_temp_disabled_timer:
           self.lkas_temp_disabled_timer -= 1
