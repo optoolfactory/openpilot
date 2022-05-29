@@ -364,11 +364,13 @@ class CarController():
           else:
             self.lkas_temp_disabled__timer = 1
       else:
-        self.lkas_temp_disabled_timer -= 1 if self.lkas_temp_disabled_timer:
+        if self.lkas_temp_disabled_timer:
+          self.lkas_temp_disabled_timer -= 1
         self.lkas_onoff_counter = 0
     else:
       self.lkas_onoff_counter = 0
-      self.lkas_temp_disabled_timer -= 1 if self.lkas_temp_disabled_timer:
+      if self.lkas_temp_disabled_timer:
+        self.lkas_temp_disabled_timer -= 1
 
     can_sends = []
     can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active and not self.lkas_temp_disabled,
