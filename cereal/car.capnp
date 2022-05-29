@@ -147,6 +147,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     curvSpeedDown @124;
     standstillResButton @125;
     routineDriveOn @126;
+    lkasEnabled @127;
   }
 }
 
