@@ -530,9 +530,6 @@ class CarController():
       self.cancel_counter += 1
       self.auto_res_starting = False
       self.standstill_res_button = False
-      if self.lkas_temp_disabled:
-        self.lkas_temp_disabled = False
-        self.lkas_temp_disabled_timer = 15
     elif CS.cruise_active:
       self.cruise_init = True
       self.cancel_counter = 0
@@ -549,9 +546,6 @@ class CarController():
       if CS.out.brakeLights:
         self.auto_res_limit_timer = 0
         self.auto_res_delay_timer = 0
-        if CS.out.brakePressed and self.lkas_temp_disabled:
-          self.lkas_temp_disabled = False
-          self.lkas_temp_disabled_timer = 15
       else:
         if self.auto_res_limit_timer < self.auto_res_limit_sec:
           self.auto_res_limit_timer += 1
