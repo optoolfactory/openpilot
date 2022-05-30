@@ -235,6 +235,7 @@ class Controls:
     self.osm_off_spdlimit_init = False
     self.v_cruise_kph_set_timer = 0
     self.safety_speed = 0
+    self.lkas_temporary_off = False
     try:
       self.roadname_and_slc = Params().get("RoadList", encoding="utf8").strip().splitlines()[1].split(',')
     except:
@@ -659,7 +660,7 @@ class Controls:
       actuators.accel, actuators.oaccel = self.LoC.update(self.active and CS.cruiseState.speed > 1., CS, self.CP, long_plan, pid_accel_limits, t_since_plan, self.sm['radarState'])
 
       # Steering PID loop and lateral MPC
-      lat_active = self.active and not CS.steerFaultPermanent and not (CS.vEgo < self.CP.minSteerSpeed and self.no_mdps_mods)
+      lat_active = self.active and not CS.steerFaultPermanent and not (CS.vEgo < self.CP.minSteerSpeed and self.no_mdps_mods) and not self.lkas_temporary_off
       desired_curvature, desired_curvature_rate = get_lag_adjusted_curvature(self.CP, CS.vEgo,
                                                                              lat_plan.psis,
                                                                              lat_plan.curvatures,
@@ -815,13 +816,13 @@ class Controls:
           self.hkg_stock_lkas_timer = 0
       if not self.hkg_stock_lkas:
         # send car controls over can
-        self.last_actuators, can_sends, self.safety_speed = self.CI.apply(CC)
+        self.last_actuators, can_sends, self.safety_speed, self.lkas_temporary_off = self.CI.apply(CC)
         self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
         CC.actuatorsOutput = self.last_actuators
     else:
       if not self.read_only and self.initialized:
         # send car controls over can
-        self.last_actuators, can_sends, self.safety_speed = self.CI.apply(CC)
+        self.last_actuators, can_sends, self.safety_speed, self.lkas_temporary_off = self.CI.apply(CC)
         self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
         CC.actuatorsOutput = self.last_actuators
 
