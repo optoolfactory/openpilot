@@ -751,6 +751,7 @@ FEATURES = {
 
   # send LFA MFA message for new HKG models
   # Insert your car in this if you want turn LFA icon on.
+  # need to add lfa modded cars which are changed from lkas to lfa cam
   "send_lfahda_mfa": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SANTAFE_TM, CAR.KONA_EV_OS, CAR.NIRO_EV_DE, CAR.KONA_HEV_OS,
                       CAR.SELTOS_SP2, CAR.SOUL_EV_SK3, CAR.NEXO_FE, CAR.MOHAVE_HM, CAR.STINGER_CK, CAR.AVANTE_CN7, CAR.AVANTE_HEV_CN7, CAR.K5_DL3, CAR.SANTAFE_HEV_TM, CAR.GENESIS_G70_IK},
 
