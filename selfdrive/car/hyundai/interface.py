@@ -323,26 +323,27 @@ class CarInterface(CarInterfaceBase):
     #   events.events.remove(EventName.pedalPressed)
     if ret.vEgo < self.CP.minSteerSpeed and self.no_mdps_mods:
       events.add(car.CarEvent.EventName.belowSteerSpeed)
-    if self.CC.lanechange_manual_timer and ret.vEgo > 0.3:
-      events.add(EventName.laneChangeManual)
-    if self.CC.emergency_manual_timer:
-      events.add(EventName.emgButtonManual)
-    #if self.CC.driver_steering_torque_above_timer:
-    #  events.add(EventName.driverSteering)
     if self.CC.need_brake and not self.CC.longcontrol:
       events.add(EventName.needBrake)
-    if self.CC.standstill_res_button:
-      events.add(EventName.standstillResButton)
-    if self.CC.cruise_gap_adjusting:
-      events.add(EventName.gapAdjusting)
-    if self.CC.on_speed_control and ret.vEgo > 0.3:
-      events.add(EventName.camSpeedDown)
-    if self.CC.curv_speed_control and ret.vEgo > 8.3:
-      events.add(EventName.curvSpeedDown)
-    if self.CC.autohold_popup_timer:
-      events.add(EventName.brakeHold)
-    if self.CC.auto_res_starting:
-      events.add(EventName.resCruise)
+    if not self.CC.lkas_temp_disabled:
+      if self.CC.lanechange_manual_timer and ret.vEgo > 0.3:
+        events.add(EventName.laneChangeManual)
+      if self.CC.emergency_manual_timer:
+        events.add(EventName.emgButtonManual)
+      #if self.CC.driver_steering_torque_above_timer:
+      #  events.add(EventName.driverSteering)
+      if self.CC.standstill_res_button:
+        events.add(EventName.standstillResButton)
+      if self.CC.cruise_gap_adjusting:
+        events.add(EventName.gapAdjusting)
+      if self.CC.on_speed_control and ret.vEgo > 0.3:
+        events.add(EventName.camSpeedDown)
+      if self.CC.curv_speed_control and ret.vEgo > 8.3:
+        events.add(EventName.curvSpeedDown)
+      if self.CC.autohold_popup_timer:
+        events.add(EventName.brakeHold)
+      if self.CC.auto_res_starting:
+        events.add(EventName.resCruise)
     if self.CS.cruiseState_standstill or self.CC.standstill_status == 1:
       #events.add(EventName.standStill)
       self.CP.standStill = True
@@ -379,6 +380,11 @@ class CarInterface(CarInterfaceBase):
       events.add(EventName.modeChangeOneway)
     elif self.CC.mode_change_timer and self.CS.out.cruiseState.modeSel == 5:
       events.add(EventName.modeChangeMaponly)
+
+    if self.CC.lkas_temp_disabled:
+      events.add(EventName.lkasDisabled)
+    elif self.CC.lkas_temp_disabled_timer:
+      events.add(EventName.lkasEnabled)
 
   # handle button presses
     for b in ret.buttonEvents:
