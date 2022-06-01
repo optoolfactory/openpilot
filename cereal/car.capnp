@@ -538,8 +538,6 @@ struct CarParams {
   aqValueRaw @81: Float32;
   vFutureA @83: Float32;
 
-  maxSteeringAngleDeg1 @84: Float32;
-
   struct LateralParams {
     torqueBP @0 :List(Int32);
     torqueV @1 :List(Int32);
