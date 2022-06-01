@@ -241,6 +241,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"LongLogDisplay", PERSISTENT},
     {"OpkrBlindSpotDetect", PERSISTENT},
     {"OpkrMaxAngleLimit", PERSISTENT},
+    {"OpkrMaxSteerAngle", PERSISTENT},
     {"OpkrSpeedLimitOffset", PERSISTENT},
     {"OpkrLiveSteerRatio", PERSISTENT},
     {"OpkrVariableSteerMax", PERSISTENT},
