@@ -31,6 +31,9 @@
 #include "selfdrive/ui/qt/qt_window.h"
 #include "selfdrive/ui/qt/widgets/opkr.h"
 
+#include "selfdrive/ui/qt/params/steerview.h"
+
+
 TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   // param, title, desc, icon
   std::vector<std::tuple<QString, QString, QString, QString>> toggles{
@@ -600,7 +603,10 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new LeftCurvOffset());
   layout->addWidget(new RightCurvOffset());
   layout->addWidget(new BlindSpotDetectToggle());
+
   layout->addWidget(new MaxAngleLimit());
+  layout->addWidget(new CSteerview());
+  
   layout->addWidget(new SteerAngleCorrection());
   layout->addWidget(new TurnSteeringDisableToggle());
   layout->addWidget(new CruiseOverMaxSpeedToggle());

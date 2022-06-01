@@ -104,6 +104,7 @@ def manager_init() -> None:
     ("LongLogDisplay", "0"),
     ("OpkrBlindSpotDetect", "1"),
     ("OpkrMaxAngleLimit", "90"),
+    ("OpkrMaxSteerAngle", "90"),
     ("OpkrSpeedLimitOffset", "0"),
     ("OpkrLiveSteerRatio", "1"),
     ("OpkrVariableSteerMax", "0"),
