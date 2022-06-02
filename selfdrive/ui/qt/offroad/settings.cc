@@ -62,12 +62,6 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "../assets/offroad/icon_metric.png",
     },
     {
-      "UploadRaw",
-      "Upload Raw Logs",
-      "Upload full logs and full resolution video by default while on Wi-Fi. If not enabled, individual logs can be marked for upload at useradmin.comma.ai.",
-      "../assets/offroad/icon_network.png",
-    },
-    {
       "RecordFront",
       "Record and Upload Driver Camera",
       "Upload data from the driver facing camera and help improve the driver monitoring algorithm.",
@@ -104,12 +98,6 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "OpkrEnableUploader",
       "Enable Sending Log to Server",
       "Activate the upload process to transmit system logs and other driving data to the server. Upload it only off-road.",
-      "../assets/offroad/icon_shell.png",
-    },
-    {
-      "CommaStockUI",
-      "Use Comma Stock UI",
-      "Use the Stock UI of the comma on the driving screen. You can switch to real-time by pressing the box in the upper left corner of the driving screen.",
       "../assets/offroad/icon_shell.png",
     },
   };
@@ -170,11 +158,12 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   auto resetCalibBtn = new ButtonControl("Reset Calibration", "RESET", " ");
   connect(resetCalibBtn, &ButtonControl::showDescription, this, &DevicePanel::updateCalibDescription);
   connect(resetCalibBtn, &ButtonControl::clicked, [&]() {
-    if (ConfirmationDialog::confirm("Are you sure you want to reset calibration? Device will be rebooted.", this)) {
+    if (ConfirmationDialog::confirm("Are you sure you want to reset calibration?", this)) {
       params.remove("CalibrationParams");
       params.remove("LiveParameters");
-      QTimer::singleShot(1000, []() {
-        Hardware::reboot();
+      params.putBool("OnRoadRefresh", true);
+      QTimer::singleShot(3000, []() {
+        params.putBool("OnRoadRefresh", false);
       });
     }
   });
