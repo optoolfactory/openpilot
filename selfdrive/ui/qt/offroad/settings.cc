@@ -200,10 +200,10 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
       height: 120px;
       border-radius: 15px;
     }
-    #refresh_btn { background-color: #c7deb1; }
-    #refresh_btn:pressed { background-color: #83c744; }
-    #reboot_btn { background-color: #f09f59; }
-    #reboot_btn:pressed { background-color: #f2d4bb; }
+    #refresh_btn { background-color: #83c744; }
+    #refresh_btn:pressed { background-color: #c7deb1; }
+    #reboot_btn { background-color: #ed8e3b; }
+    #reboot_btn:pressed { background-color: #f0bf97; }
     #poweroff_btn { background-color: #E22C2C; }
     #poweroff_btn:pressed { background-color: #FF2424; }
   )");
