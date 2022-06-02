@@ -236,7 +236,7 @@ void DevicePanel::updateCalibDescription() {
 
 void DevicePanel::refresh() {
   if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
-    if (ConfirmationDialog::confirm("Are you sure you want to refresh?", this)) {
+    if (ConfirmationDialog::confirm("리프레쉬를 하시겠습니까?", this)) {
       // Check engaged again in case it changed while the dialog was open
       if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
         Params().putBool("OnRoadRefresh", true);
