@@ -240,7 +240,7 @@ void DevicePanel::refresh() {
       // Check engaged again in case it changed while the dialog was open
       if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
         Params().putBool("OnRoadRefresh", true);
-        QTimer::singleShot(3000, [this]() {
+        QTimer::singleShot(3000, []() {
           Params().putBool("OnRoadRefresh", false);
         });
       }
