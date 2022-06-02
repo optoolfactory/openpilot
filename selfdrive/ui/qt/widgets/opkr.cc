@@ -1748,69 +1748,6 @@ void RightCurvOffset::refresh() {
   label.setText(QString::fromStdString(params.get("RightCurvOffsetAdj")));
 }
 
-MaxAngleLimit::MaxAngleLimit() : AbstractControl("최대 조향각 설정(각도)", "오파 가능한 핸들의 최대 조향각을 설정합니다. 각도를 90도이상 설정시 일부차량에서 오류가 발생할 수 있으니 참고하시기 바랍니다.", "../assets/offroad/icon_shell.png") {
-
-  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  label.setStyleSheet("color: #e0e879");
-  hlayout->addWidget(&label);
-
-  btnminus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnplus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnminus.setFixedSize(150, 100);
-  btnplus.setFixedSize(150, 100);
-  btnminus.setText("－");
-  btnplus.setText("＋");
-  hlayout->addWidget(&btnminus);
-  hlayout->addWidget(&btnplus);
-
-  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-    int value = str.toInt();
-    value = value - 10;
-    if (value <= 80) {
-      value = 80;
-    }
-    QString values = QString::number(value);
-    params.put("OpkrMaxAngleLimit", values.toStdString());
-    refresh();
-  });
-  
-  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-    int value = str.toInt();
-    value = value + 10;
-    if (value >= 360) {
-      value = 360;
-    }
-    QString values = QString::number(value);
-    params.put("OpkrMaxAngleLimit", values.toStdString());
-    refresh();
-  });
-  refresh();
-}
-
-void MaxAngleLimit::refresh() {
-  QString option = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-  if (option == "80") {
-    label.setText(QString::fromStdString("제한없음"));
-  } else {
-    label.setText(QString::fromStdString(params.get("OpkrMaxAngleLimit")));
-  }
-}
 
 SteerAngleCorrection::SteerAngleCorrection() : AbstractControl("스티어앵글 영점 조정", "직선주로에서 현재조향각이 0이 아닐겨우 SteerAngle 영점을 조정하여 0으로 맞춥니다. ex) 직선주로시 0.5도 인경우, 0.5로 세팅, -0.5도인경우 -0.5로 세팅", "../assets/offroad/icon_shell.png") {
 
