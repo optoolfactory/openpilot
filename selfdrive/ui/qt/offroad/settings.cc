@@ -162,7 +162,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
       params.remove("CalibrationParams");
       params.remove("LiveParameters");
       params.putBool("OnRoadRefresh", true);
-      QTimer::singleShot(3000, this, []() {
+      QTimer::singleShot(3000, [this]() {
         params.putBool("OnRoadRefresh", false);
       });
     }
