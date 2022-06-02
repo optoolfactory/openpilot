@@ -366,7 +366,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"MultipleLateralSpd", PERSISTENT},
     {"MultipleLateralOpA", PERSISTENT},
     {"MultipleLateralAng", PERSISTENT},
-    {"OnRoadRefresh", PERSISTENT},
+    {"OnRoadRefresh", CLEAR_ON_MANAGER_START},
 };
 
 } // namespace
