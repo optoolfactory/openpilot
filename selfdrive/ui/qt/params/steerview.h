@@ -12,11 +12,26 @@
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/ui.h"
 
-class MaxSteerAngle : public AbstractControl {
+class MaxAngleLimit : public AbstractControl {
   Q_OBJECT
 
 public:
-  MaxSteerAngle();
+  MaxAngleLimit();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class DriverSteerAngle : public AbstractControl {
+  Q_OBJECT
+
+public:
+  DriverSteerAngle();
 
 private:
   void refresh();
@@ -51,6 +66,10 @@ public slots:
 
 
  private:
+  QLabel *icon_label;
+  QPixmap  pix_plus;
+  QPixmap  pix_minus;
+
 
   QVBoxLayout *main_layout;
   QPushButton *title_label;

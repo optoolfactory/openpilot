@@ -1748,69 +1748,6 @@ void RightCurvOffset::refresh() {
   label.setText(QString::fromStdString(params.get("RightCurvOffsetAdj")));
 }
 
-MaxAngleLimit::MaxAngleLimit() : AbstractControl("Max Steering Angle", "Set the maximum steering angle of the handle where the openpilot is possible. Please note that some vehicles may experience errors if the angle is set above 90 degrees.", "../assets/offroad/icon_shell.png") {
-
-  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  label.setStyleSheet("color: #e0e879");
-  hlayout->addWidget(&label);
-
-  btnminus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnplus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnminus.setFixedSize(150, 100);
-  btnplus.setFixedSize(150, 100);
-  btnminus.setText("－");
-  btnplus.setText("＋");
-  hlayout->addWidget(&btnminus);
-  hlayout->addWidget(&btnplus);
-
-  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-    int value = str.toInt();
-    value = value - 10;
-    if (value <= 80) {
-      value = 80;
-    }
-    QString values = QString::number(value);
-    params.put("OpkrMaxAngleLimit", values.toStdString());
-    refresh();
-  });
-  
-  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-    int value = str.toInt();
-    value = value + 10;
-    if (value >= 360) {
-      value = 360;
-    }
-    QString values = QString::number(value);
-    params.put("OpkrMaxAngleLimit", values.toStdString());
-    refresh();
-  });
-  refresh();
-}
-
-void MaxAngleLimit::refresh() {
-  QString option = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-  if (option == "80") {
-    label.setText(QString::fromStdString("NoLimit"));
-  } else {
-    label.setText(QString::fromStdString(params.get("OpkrMaxAngleLimit")));
-  }
-}
 
 SteerAngleCorrection::SteerAngleCorrection() : AbstractControl("Str Angle Adjust", "On the straight path, adjust the SteerAngle zero to zero the current steering angle. ex) Set it to 0.5 degrees Celsius for a straight line, and -0.5 degrees Celsius for -0.5 degrees Celsius.", "../assets/offroad/icon_shell.png") {
 
