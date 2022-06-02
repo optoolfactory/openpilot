@@ -604,7 +604,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RightCurvOffset());
   layout->addWidget(new BlindSpotDetectToggle());
 
-  layout->addWidget(new MaxAngleLimit());
+
   layout->addWidget(new CSteerview());
   
   layout->addWidget(new SteerAngleCorrection());

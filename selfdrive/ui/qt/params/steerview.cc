@@ -23,10 +23,12 @@ CSteerview::CSteerview(QWidget *parent) : QFrame(parent)
   hlayout->setSpacing(20);
 
   // left icon 
-  QString icon = "../assets/offroad/icon_menu.png";   // icon_minus.png icon_plus.png  icon_menu.png
-  QPixmap pix(icon);
-  QLabel *icon_label = new QLabel();
-  icon_label->setPixmap(pix.scaledToWidth(80, Qt::SmoothTransformation));
+  pix_plus =  QPixmap( "../assets/offroad/icon_plus.png" ).scaledToWidth(80, Qt::SmoothTransformation);
+  pix_minus =  QPixmap( "../assets/offroad/icon_minus.png" ).scaledToWidth(80, Qt::SmoothTransformation);
+
+
+  icon_label = new QLabel();
+  icon_label->setPixmap(pix_plus );
   icon_label->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
   hlayout->addWidget(icon_label);
 
@@ -78,8 +80,8 @@ CSteerview::CSteerview(QWidget *parent) : QFrame(parent)
 
   QVBoxLayout *menu_layout = new QVBoxLayout(m_pChildFrame);
  // menu_layout->setContentsMargins(32, 5, 32, 32);
-  menu_layout->addWidget( new MaxSteerAngle() , 1, Qt::AlignTop | Qt::AlignHCenter ); 
-
+  menu_layout->addWidget( new DriverSteerAngle() , 1, Qt::AlignTop | Qt::AlignHCenter ); 
+  menu_layout->addWidget( new MaxAngleLimit() );
   // Update + Cancel buttons
   QHBoxLayout *btn_layout = new QHBoxLayout();
   btn_layout->setSpacing(30);
@@ -102,7 +104,9 @@ CSteerview::CSteerview(QWidget *parent) : QFrame(parent)
     btn_layout->addWidget(confirm_btn);
     QObject::connect(confirm_btn, &QPushButton::clicked, [=]() {
      // pmyWidget->setVisible(false);
-     m_pChildFrame->hide();
+     //m_pChildFrame->hide();
+     m_nSelect = 0;
+     refresh();
     });    
 
 
@@ -124,7 +128,9 @@ CSteerview::CSteerview(QWidget *parent) : QFrame(parent)
     btn_layout->addWidget(cancel_btn);
     QObject::connect(cancel_btn, &QPushButton::clicked, [=]() {
      // pmyWidget->setVisible(false);
-     m_pChildFrame->hide();
+     //m_pChildFrame->hide();
+     m_nSelect = 0;
+     refresh();
     });
 
 
@@ -160,10 +166,12 @@ void CSteerview::refresh()
   {
     // pmyWidget->setVisible(false);
     m_pChildFrame->hide();
+    icon_label->setPixmap(pix_plus);
   }
   else
   {
     m_pChildFrame->show();
+    icon_label->setPixmap(pix_minus);
     //pmyWidget->setVisible(true);
   }
 
@@ -172,7 +180,7 @@ void CSteerview::refresh()
 
 
 
-MaxSteerAngle::MaxSteerAngle() 
+DriverSteerAngle::DriverSteerAngle() 
   : AbstractControl("driver to openpilot Steer", 
                     "mprove the edge between the driver and the openpilot.", 
                     "../assets/offroad/icon_shell.png") 
@@ -235,12 +243,84 @@ MaxSteerAngle::MaxSteerAngle()
   refresh();
 }
 
-void MaxSteerAngle::refresh() 
+void DriverSteerAngle::refresh() 
 {
   if (m_dMaxSteerAngle <= 80 ) {
-    label.setText(QString::fromStdString("NoLimit"));
+    label.setText(QString::fromStdString("NO"));
   } else {
     QString values = QString::number(m_dMaxSteerAngle);
     label.setText( values );
+  }
+}
+
+
+/**
+ * @brief 
+ * 
+ */
+
+
+
+MaxAngleLimit::MaxAngleLimit() : AbstractControl("Max Steering Angle", "Set the maximum steering angle of the handle where the openpilot is possible. Please note that some vehicles may experience errors if the angle is set above 90 degrees.", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
+    int value = str.toInt();
+    value = value - 10;
+    if (value <= 80) {
+      value = 80;
+    }
+    QString values = QString::number(value);
+    params.put("OpkrMaxAngleLimit", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
+    int value = str.toInt();
+    value = value + 10;
+    if (value >= 360) {
+      value = 360;
+    }
+    QString values = QString::number(value);
+    params.put("OpkrMaxAngleLimit", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void MaxAngleLimit::refresh() {
+  QString option = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
+  if (option == "80") {
+    label.setText(QString::fromStdString("NoLimit"));
+  } else {
+    label.setText(QString::fromStdString(params.get("OpkrMaxAngleLimit")));
   }
 }
