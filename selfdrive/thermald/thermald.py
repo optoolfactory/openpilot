@@ -434,7 +434,11 @@ def thermald_thread() -> NoReturn:
     if TICI:
       set_offroad_alert_if_changed("Offroad_StorageMissing", (not Path("/data/media").is_mount()))
 
-    onroad_conditions["onroad_refresh"] = not params.get_bool("OnRoadRefresh")
+    onroad_refresh = params.get_bool("OnRoadRefresh")
+    if onroad_refresh:
+      onroad_conditions["onroad_refresh"] = False
+    else:
+      onroad_conditions["onroad_refresh"] = True
 
     # Handle offroad/onroad transition
     should_start = all(onroad_conditions.values())
@@ -451,7 +455,7 @@ def thermald_thread() -> NoReturn:
       if started_ts is None:
         started_ts = sec_since_boot()
         started_seen = True
-    elif not onroad_conditions["onroad_refresh"]:
+    elif not onroad_refresh:
       if onroad_conditions["ignition"] and (startup_conditions != startup_conditions_prev):
         cloudlog.event("Startup blocked", startup_conditions=startup_conditions, onroad_conditions=onroad_conditions)
 
