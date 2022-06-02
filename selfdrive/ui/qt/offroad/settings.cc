@@ -180,6 +180,11 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   QHBoxLayout *power_layout = new QHBoxLayout();
   power_layout->setSpacing(30);
 
+  QPushButton *refresh_btn = new QPushButton("Refresh");
+  refresh_btn->setObjectName("refresh_btn");
+  power_layout->addWidget(refresh_btn);
+  QObject::connect(refresh_btn, &QPushButton::clicked, this, &DevicePanel::refresh);
+
   QPushButton *reboot_btn = new QPushButton("Reboot");
   reboot_btn->setObjectName("reboot_btn");
   power_layout->addWidget(reboot_btn);
@@ -195,8 +200,10 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
       height: 120px;
       border-radius: 15px;
     }
-    #reboot_btn { background-color: #393939; }
-    #reboot_btn:pressed { background-color: #4a4a4a; }
+    #refresh_btn { background-color: #c7deb1; }
+    #refresh_btn:pressed { background-color: #83c744; }
+    #reboot_btn { background-color: #f09f59; }
+    #reboot_btn:pressed { background-color: #f2d4bb; }
     #poweroff_btn { background-color: #E22C2C; }
     #poweroff_btn:pressed { background-color: #FF2424; }
   )");
@@ -225,6 +232,22 @@ void DevicePanel::updateCalibDescription() {
     }
   }
   qobject_cast<ButtonControl *>(sender())->setDescription(desc);
+}
+
+void DevicePanel::refresh() {
+  if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
+    if (ConfirmationDialog::confirm("Are you sure you want to refresh?", this)) {
+      // Check engaged again in case it changed while the dialog was open
+      if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
+        Params().putBool("OnRoadRefresh", true);
+        QTimer::singleShot(3000, [this]() {
+          Params().putBool("OnRoadRefresh", false);
+        });
+      }
+    }
+  } else {
+    ConfirmationDialog::alert("Disengage to Refresh", this);
+  }
 }
 
 void DevicePanel::reboot() {
