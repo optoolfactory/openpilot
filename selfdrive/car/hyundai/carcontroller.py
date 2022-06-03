@@ -847,7 +847,7 @@ class CarController():
               accel = interp(abs(lead_objspd), [15.0, 30.0], [(accel + aReqValue)/2, min(accel, aReqValue)])
             elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
               if CS.cruiseGapSet <= 2.0:
-                stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2+(0.0.05*(3.0-CS.cruiseGapSet)), 0.85+(0.025*(3.0-CS.cruiseGapSet)), 1.0, 0.4, 1.0])
+                stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2+(0.05*(3.0-CS.cruiseGapSet)), 0.85+(0.025*(3.0-CS.cruiseGapSet)), 1.0, 0.4, 1.0])
               else:
                 stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [0.2, 0.85, 1.0, 0.4, 1.0])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
