@@ -7551,3 +7551,66 @@ void MultipleLateralAngle::refreshr() {
   QStringList list = QString::fromStdString(params.get("MultipleLateralAng")).split(",");
   labelr.setText(list[1]);
 }
+
+StoppingDist::StoppingDist() : AbstractControl("Stopping Distance(m)", "Car starts to stop under the value.", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("StoppingDist"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 30) {
+      value = 30;
+    }
+    QString values = QString::number(value);
+    params.put("StoppingDist", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("StoppingDist"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 60) {
+      value = 60;
+    }
+    QString values = QString::number(value);
+    params.put("StoppingDist", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void StoppingDist::refresh() {
+  auto strs = QString::fromStdString(params.get("StoppingDist"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.1;
+  QString valuefs = QString::number(valuef);
+  label.setText(QString::fromStdString(valuefs.toStdString()));
+}
