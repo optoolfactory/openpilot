@@ -838,10 +838,10 @@ class CarController():
               accel = interp(CS.lead_distance, [14.0, 15.0], [max(accel, aReqValue, faccel), aReqValue])
             elif aReqValue < 0.0 and CS.lead_distance < min(self.stoppingdist+1.5, 6.0) and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
               if CS.lead_distance < self.stoppingdist:
-                accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0-(0.5*(3.0-CS.cruiseGapSet))]))
-              elif abs(lead_objspd) > 0.8:
-                accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0-(0.5*(3.0-CS.cruiseGapSet))]))
-              elif abs(lead_objspd) <= 0.8:
+                accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0-(0.75*(3.0-CS.cruiseGapSet))]))
+              elif abs(lead_objspd) > 1.0:
+                accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0-(0.75*(3.0-CS.cruiseGapSet))]))
+              elif abs(lead_objspd) <= 1.0:
                 accel = self.accel + DT_CTRL
             elif aReqValue < 0.0 and lead_objspd <= -15:
               accel = interp(abs(lead_objspd), [15.0, 30.0], [(accel + aReqValue)/2, min(accel, aReqValue)])
