@@ -110,6 +110,7 @@ class CarController():
     self.auto_res_delay = int(self.params.get("AutoRESDelay", encoding="utf8")) * 100
     self.auto_res_delay_timer = 0
     self.stopped = False
+    self.stoppingdist = float(Decimal(self.params.get("StoppingDist", encoding="utf8"))*Decimal('0.1'))
 
     self.longcontrol = CP.openpilotLongitudinalControl
     #self.scc_live is true because CP.radarOffCan is False
@@ -835,8 +836,8 @@ class CarController():
               pass
             elif aReqValue > 0.0:
               accel = interp(CS.lead_distance, [14.0, 15.0], [max(accel, aReqValue, faccel), aReqValue])
-            elif aReqValue < 0.0 and CS.lead_distance < 5.0 and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
-              if CS.lead_distance < 3.5:
+            elif aReqValue < 0.0 and CS.lead_distance < 6.0 and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
+              if CS.lead_distance < self.stoppingdist:
                 accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0-(0.5*(3.0-CS.cruiseGapSet))]))
               elif abs(lead_objspd) > 0.5:
                 accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0-(0.5*(3.0-CS.cruiseGapSet))]))

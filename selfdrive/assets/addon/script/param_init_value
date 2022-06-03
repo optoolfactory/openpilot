@@ -142,3 +142,4 @@ MultipleLateralOpS:3,2,0
 MultipleLateralSpd:30,80
 MultipleLateralOpA:0,2,3
 MultipleLateralAng:10,30
+StoppingDist:3.5
