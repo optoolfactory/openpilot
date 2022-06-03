@@ -52,6 +52,7 @@ def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
 
 class CarController():
   def __init__(self, dbc_name, CP, VM):
+    self.CP = CP
     self.p = CarControllerParams(CP)
     self.packer = CANPacker(dbc_name)
     self.angle_limit_counter = 0
@@ -217,13 +218,13 @@ class CarController():
 
 
   def smooth_steer( self, apply_torque, CS ):
-    if abs(CS.out.steeringAngleDeg) > self.CP.maxSteeringAngleDeg:
-      if CS.out.steeringPressed:
-        self.steer_timer_apply_torque -= 0.002 #self.DT_STEER   # 0.01 1sec, 0.005  2sec   0.002  5sec
-      else:
-        self.steer_timer_apply_torque -= 0.001  # 10 sec
-    elif CS.out.steeringPressed:
-      self.steer_timer_apply_torque -= 0.001
+    if self.CP.smoothSteer.maxSteeringAngle and abs(CS.out.steeringAngleDeg) > self.CP.smoothSteer.maxSteeringAngle:
+      if self.CP.smoothSteer.maxDriverAngleWait and CS.out.steeringPressed:
+        self.steer_timer_apply_torque -= self.CP.smoothSteer.maxDriverAngleWait # 0.002 #self.DT_STEER   # 0.01 1sec, 0.005  2sec   0.002  5sec
+      elif self.CP.smoothSteer.maxSteerAngleWait:
+        self.steer_timer_apply_torque -= self.CP.smoothSteer.maxSteerAngleWait # 0.001  # 10 sec
+    elif self.CP.smoothSteer.driverAngleWait and CS.out.steeringPressed:
+      self.steer_timer_apply_torque -= self.CP.smoothSteer.driverAngleWait #0.001
     else:
       if self.steer_timer_apply_torque >= 1:
           return int(round(float(apply_torque)))
@@ -278,7 +279,10 @@ class CarController():
     self.p.STEER_DELTA_DOWN = self.steerDeltaDown
 
     # Steering Torque
-    if 0 <= self.driver_steering_torque_above_timer < 100:
+    if self.CP.smoothSteer.method == 1:
+      new_steer = int(round(actuators.steer * self.steerMax))
+      new_steer = self.smooth_steer( new_steer, CS )
+    elif 0 <= self.driver_steering_torque_above_timer < 100:
       new_steer = int(round(actuators.steer * self.steerMax * (self.driver_steering_torque_above_timer / 100)))
     else:
       new_steer = int(round(actuators.steer * self.steerMax))

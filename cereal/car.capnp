@@ -460,7 +460,7 @@ struct CarParams {
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
-  maxSteeringAngleDeg @54 :Float32;
+  smoothSteer @54 :SmoothSteerData;
   unsafeMode @62 :Int16;
   alternativeExperience @65 :Int16;      # panda flag for features like no disengage on gas 
 
@@ -537,6 +537,15 @@ struct CarParams {
   aqValue @80: Float32;
   aqValueRaw @81: Float32;
   vFutureA @83: Float32;
+
+  struct SmoothSteerData
+  {
+    method @0: Int8;
+    maxSteeringAngle @1 :Float32;
+    maxDriverAngleWait @2 :Float32;
+    maxSteerAngleWait @3 :Float32;
+    driverAngleWait @4 :Float32;
+  }
 
   struct LateralParams {
     torqueBP @0 :List(Int32);

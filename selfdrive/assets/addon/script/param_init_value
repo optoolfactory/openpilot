@@ -57,7 +57,11 @@ DebugUi3:0
 LongLogDisplay:0
 OpkrBlindSpotDetect:1
 OpkrMaxAngleLimit:90
-OpkrMaxSteerAngle:90
+OpkrSteerMethod:0
+OpkrMaxSteeringAngle:90
+OpkrMaxDriverAngleWait:0.002
+OpkrMaxSteerAngleWait:0.001
+OpkrDriverAngleWait:0.001
 OpkrSpeedLimitOffset:0
 OpkrLiveSteerRatio:1
 OpkrVariableSteerMax:0
