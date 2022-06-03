@@ -749,6 +749,18 @@ public:
   }
 };
 
+class SpeedCameraOffsetToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  SpeedCameraOffsetToggle() : ToggleControl("Speed CameraOffset", "This increase offset at low speed and decrease offset at low speed. If you feel car moves to right at low speed.", "../assets/offroad/icon_shell.png", Params().getBool("SpeedCameraOffset")) {
+    QObject::connect(this, &SpeedCameraOffsetToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("SpeedCameraOffset", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
