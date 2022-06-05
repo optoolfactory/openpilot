@@ -52,6 +52,15 @@ class CarInterface(CarInterfaceBase):
     ret.openpilotLongitudinalControl = Params().get_bool("RadarDisable") or ret.sccBus == 2
     ret.safetyParam = 0
 
+
+
+    ret.smoothSteer.method = int( Params().get("OpkrSteerMethod", encoding="utf8") )   # 1
+    ret.smoothSteer.maxSteeringAngle = float( Params().get("OpkrMaxSteeringAngle", encoding="utf8") )   # 90
+    ret.smoothSteer.maxDriverAngleWait = float( Params().get("OpkrMaxDriverAngleWait", encoding="utf8") )  # 0.002
+    ret.smoothSteer.maxSteerAngleWait = float( Params().get("OpkrMaxSteerAngleWait", encoding="utf8") )   # 0.001  # 10 sec
+    ret.smoothSteer.driverAngleWait = float( Params().get("OpkrDriverAngleWait", encoding="utf8") )  #0.001
+    #ret.steeringPressed
+    #ret.maxSteeringAngleDeg = 90
     ret.minSteerSpeed = 16.67 # m/s
 
     # Most Hyundai car ports are community features for now
@@ -62,17 +71,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerLimitTimer = 0.8
     tire_stiffness_factor = 1.
 
-    ret.longitudinalTuning.kpBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kpV = [1.2, 1.1, 1.0, 0.9, 0.75, 0.65]
-    ret.longitudinalTuning.kiBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kiV = [0.27, 0.24, 0.23, 0.2, 0.17, 0.15]
-
-    ret.longitudinalTuning.deadzoneBP = [0., 4.]
-    ret.longitudinalTuning.deadzoneV = [0., 0.1]
-    ret.longitudinalTuning.kdBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kdV = [0.9, 1.0, 0.85, 0.7, 0.5, 0.4]
-    ret.longitudinalTuning.kfBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kfV = [1., 1., 1., 1., 1., 1.]
+    set_long_tune(ret.longitudinalTuning, LongTunes.OPKR)
 
     ret.stoppingControl = False
     ret.vEgoStopping = 0.5  # 1.0, 0.5
@@ -86,11 +85,11 @@ class CarInterface(CarInterfaceBase):
     ret.vCruisekph = 0
     ret.resSpeed = 0
     ret.vFuture = 0
+    ret.vFutureA = 0
     ret.aqValue = 0
     ret.aqValueRaw = 0
 
     params = Params()
-
     tire_stiffness_factor = float(Decimal(params.get("TireStiffnessFactorAdj", encoding="utf8")) * Decimal('0.01'))
     ret.steerActuatorDelay = float(Decimal(params.get("SteerActuatorDelayAdj", encoding="utf8")) * Decimal('0.01'))
     ret.steerRateCost = float(Decimal(params.get("SteerRateCostAdj", encoding="utf8")) * Decimal('0.01'))
@@ -106,6 +105,8 @@ class CarInterface(CarInterfaceBase):
       set_lat_tune(ret.lateralTuning, LatTunes.LQR)
     elif lat_control_method == 3:
       set_lat_tune(ret.lateralTuning, LatTunes.TORQUE)
+    elif lat_control_method == 4:
+      set_lat_tune(ret.lateralTuning, LatTunes.ATOM)    # Hybrid tune  
 
     # genesis
     if candidate == CAR.GENESIS_DH:
@@ -200,6 +201,9 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1885. + STD_CARGO_KG
       ret.wheelbase = 2.79
     # kia
+    elif candidate == CAR.KIA_FORTE:
+      ret.mass = 3558. * CV.LB_TO_KG
+      ret.wheelbase = 2.80
     elif candidate == CAR.SORENTO_UM:
       ret.mass = 1910. + STD_CARGO_KG
       ret.wheelbase = 2.78
@@ -333,26 +337,27 @@ class CarInterface(CarInterfaceBase):
     #   events.events.remove(EventName.pedalPressed)
     if ret.vEgo < self.CP.minSteerSpeed and self.no_mdps_mods:
       events.add(car.CarEvent.EventName.belowSteerSpeed)
-    if self.CC.lanechange_manual_timer and ret.vEgo > 0.3:
-      events.add(EventName.laneChangeManual)
-    if self.CC.emergency_manual_timer:
-      events.add(EventName.emgButtonManual)
-    #if self.CC.driver_steering_torque_above_timer:
-    #  events.add(EventName.driverSteering)
     if self.CC.need_brake and not self.CC.longcontrol:
       events.add(EventName.needBrake)
-    if self.CC.standstill_res_button:
-      events.add(EventName.standstillResButton)
-    if self.CC.cruise_gap_adjusting:
-      events.add(EventName.gapAdjusting)
-    if self.CC.on_speed_control and ret.vEgo > 0.3:
-      events.add(EventName.camSpeedDown)
-    if self.CC.curv_speed_control and ret.vEgo > 8.3:
-      events.add(EventName.curvSpeedDown)
-    if self.CC.autohold_popup_timer:
-      events.add(EventName.brakeHold)
-    if self.CC.auto_res_starting:
-      events.add(EventName.resCruise)
+    if not self.CC.lkas_temp_disabled:
+      if self.CC.lanechange_manual_timer and ret.vEgo > 0.3:
+        events.add(EventName.laneChangeManual)
+      if self.CC.emergency_manual_timer:
+        events.add(EventName.emgButtonManual)
+      #if self.CC.driver_steering_torque_above_timer:
+      #  events.add(EventName.driverSteering)
+      if self.CC.standstill_res_button:
+        events.add(EventName.standstillResButton)
+      if self.CC.cruise_gap_adjusting:
+        events.add(EventName.gapAdjusting)
+      if self.CC.on_speed_control and ret.vEgo > 0.3:
+        events.add(EventName.camSpeedDown)
+      if self.CC.curv_speed_control and ret.vEgo > 8.3:
+        events.add(EventName.curvSpeedDown)
+      if self.CC.autohold_popup_timer:
+        events.add(EventName.brakeHold)
+      if self.CC.auto_res_starting:
+        events.add(EventName.resCruise)
     if self.CS.cruiseState_standstill or self.CC.standstill_status == 1:
       #events.add(EventName.standStill)
       self.CP.standStill = True
@@ -370,6 +375,10 @@ class CarInterface(CarInterfaceBase):
       self.CP.vFuture = self.CC.vFuture
     else:
       self.CP.vFuture = 0
+    if self.CC.vFutureA >= 1:
+      self.CP.vFutureA = self.CC.vFutureA
+    else:
+      self.CP.vFutureA = 0
     self.CP.aqValue = self.CC.aq_value
     self.CP.aqValueRaw = self.CC.aq_value_raw
 
@@ -385,6 +394,11 @@ class CarInterface(CarInterfaceBase):
       events.add(EventName.modeChangeOneway)
     elif self.CC.mode_change_timer and self.CS.out.cruiseState.modeSel == 5:
       events.add(EventName.modeChangeMaponly)
+
+    if self.CC.lkas_temp_disabled:
+      events.add(EventName.lkasDisabled)
+    elif self.CC.lkas_temp_disabled_timer:
+      events.add(EventName.lkasEnabled)
 
   # handle button presses
     for b in ret.buttonEvents:
@@ -414,6 +428,6 @@ class CarInterface(CarInterfaceBase):
     ret = self.CC.update(c, c.enabled, self.CS, self.frame, c.actuators,
                          c.cruiseControl.cancel, hud_control.visualAlert, hud_control.leftLaneVisible,
                          hud_control.rightLaneVisible, hud_control.leftLaneDepart, hud_control.rightLaneDepart,
-                         hud_control.setSpeed, hud_control.leadVisible, hud_control.vFuture)
+                         hud_control.setSpeed, hud_control.leadVisible, hud_control.vFuture, hud_control.vFutureA)
     self.frame += 1
     return ret
