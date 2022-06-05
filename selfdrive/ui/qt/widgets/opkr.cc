@@ -1748,69 +1748,6 @@ void RightCurvOffset::refresh() {
   label.setText(QString::fromStdString(params.get("RightCurvOffsetAdj")));
 }
 
-MaxAngleLimit::MaxAngleLimit() : AbstractControl("최대 조향각 설정(각도)", "오파 가능한 핸들의 최대 조향각을 설정합니다. 각도를 90도이상 설정시 일부차량에서 오류가 발생할 수 있으니 참고하시기 바랍니다.", "../assets/offroad/icon_shell.png") {
-
-  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  label.setStyleSheet("color: #e0e879");
-  hlayout->addWidget(&label);
-
-  btnminus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnplus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  btnminus.setFixedSize(150, 100);
-  btnplus.setFixedSize(150, 100);
-  btnminus.setText("－");
-  btnplus.setText("＋");
-  hlayout->addWidget(&btnminus);
-  hlayout->addWidget(&btnplus);
-
-  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-    int value = str.toInt();
-    value = value - 10;
-    if (value <= 80) {
-      value = 80;
-    }
-    QString values = QString::number(value);
-    params.put("OpkrMaxAngleLimit", values.toStdString());
-    refresh();
-  });
-  
-  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-    int value = str.toInt();
-    value = value + 10;
-    if (value >= 360) {
-      value = 360;
-    }
-    QString values = QString::number(value);
-    params.put("OpkrMaxAngleLimit", values.toStdString());
-    refresh();
-  });
-  refresh();
-}
-
-void MaxAngleLimit::refresh() {
-  QString option = QString::fromStdString(params.get("OpkrMaxAngleLimit"));
-  if (option == "80") {
-    label.setText(QString::fromStdString("제한없음"));
-  } else {
-    label.setText(QString::fromStdString(params.get("OpkrMaxAngleLimit")));
-  }
-}
 
 SteerAngleCorrection::SteerAngleCorrection() : AbstractControl("스티어앵글 영점 조정", "직선주로에서 현재조향각이 0이 아닐겨우 SteerAngle 영점을 조정하여 0으로 맞춥니다. ex) 직선주로시 0.5도 인경우, 0.5로 세팅, -0.5도인경우 -0.5로 세팅", "../assets/offroad/icon_shell.png") {
 
@@ -2216,7 +2153,7 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl("자동 인게이지 속도
 void AutoEnableSpeed::refresh() {
   QString option = QString::fromStdString(params.get("AutoEnableSpeed"));
   if (option == "-3") {
-    label.setText(QString::fromStdString("기어D"));
+    label.setText(QString::fromStdString("기어D모드"));
   } else if (option == "0") {
     label.setText(QString::fromStdString("출발시"));
   } else {
@@ -3581,25 +3518,25 @@ LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조�
   hlayout->addWidget(&btnminus);
   hlayout->addWidget(&btnplus);
 
+  auto str = QString::fromStdString(params.get("LateralControlMethod"));
+  latcontrol = str.toInt();  
+
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("LateralControlMethod"));
-    int latcontrol = str.toInt();
-    latcontrol = latcontrol - 1;
-    if (latcontrol <= -1) {
-      latcontrol = 3;
-    }
+    latcontrol--;
+    if (latcontrol < 0)  
+        latcontrol = 4;
+
     QString latcontrols = QString::number(latcontrol);
     params.put("LateralControlMethod", latcontrols.toStdString());
     refresh();
   });
 
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
-    auto str = QString::fromStdString(params.get("LateralControlMethod"));
-    int latcontrol = str.toInt();
-    latcontrol = latcontrol + 1;
-    if (latcontrol >= 4) {
+    latcontrol++;
+
+    if (latcontrol > 4) 
       latcontrol = 0;
-    }
+    
     QString latcontrols = QString::number(latcontrol);
     params.put("LateralControlMethod", latcontrols.toStdString());
     refresh();
@@ -3607,17 +3544,20 @@ LateralControl::LateralControl() : AbstractControl("조향제어(Reboot)", "조�
   refresh();
 }
 
-void LateralControl::refresh() {
-  QString latcontrol = QString::fromStdString(params.get("LateralControlMethod"));
-  if (latcontrol == "0") {
-    label.setText(QString::fromStdString("PID"));
-  } else if (latcontrol == "1") {
-    label.setText(QString::fromStdString("INDI"));
-  } else if (latcontrol == "2") {
-    label.setText(QString::fromStdString("LQR"));
-  } else if (latcontrol == "3") {
-    label.setText(QString::fromStdString("TORQUE"));
+void LateralControl::refresh() 
+{
+
+  QString  str;
+  switch( latcontrol )
+  {
+    case 0 : str = "0.PID"; break;
+    case 1 : str = "1.INDI";  break;
+    case 2 : str = "2.LQR";  break;
+    case 3 : str = "3.TORQUE";  break;
+    case 4 : str = "4.MULTI";  break;
   }
+
+  label.setText( str );
 }
 
 PidKp::PidKp() : AbstractControl("Kp", "Kp값을 조정합니다.", "../assets/offroad/icon_shell.png") {
@@ -7053,4 +6993,624 @@ void UserSpecificFeature::refresh() {
   auto strs = QString::fromStdString(params.get("UserSpecificFeature"));
   edit.setText(QString::fromStdString(strs.toStdString()));
   btn.setText("SET");
+}
+
+MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl", "Multiple Lateral Tune by Speed/Angle.", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("◀");
+  btnplus.setText("▶");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  auto str = QString::fromStdString(params.get("MultipleLateralUse"));
+  m_nMethod = str.toInt();
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    m_nMethod -= 1;
+    if (m_nMethod < 0) {
+      m_nMethod = 2;
+    }
+
+    QString values = QString::number(m_nMethod);
+    params.put("MultipleLateralUse", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+  
+    m_nMethod += 1;
+    if (m_nMethod > 2) {
+      m_nMethod = 0;
+    }
+    QString values = QString::number(m_nMethod);
+    params.put("MultipleLateralUse", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void MultipleLatSelect::refresh() {
+  QString strMethod;
+
+  switch( m_nMethod )
+  {
+    case 0 : strMethod = "0.Speed"; break;
+    case 1 : strMethod = "1.Angle"; break;
+    case 2 : strMethod = "2.Angle.L"; break;
+    default :
+      strMethod = "None"; 
+      break;
+  }
+
+
+  label.setText( strMethod );
+}
+
+MultipleLateralSpeed::MultipleLateralSpeed() : AbstractControl("", "", "") {
+  label1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label1.setText("SPD: ");
+  hlayout->addWidget(&label1);
+  labell.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  labell.setStyleSheet("color: #e0e879");
+  labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  labelr.setStyleSheet("color: #e0e879");
+  btn1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btn2.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btn3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btnminusl.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplusl.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminusr.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplusr.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminusl.setFixedSize(70, 100);
+  btnplusl.setFixedSize(70, 100);
+  btnminusr.setFixedSize(70, 100);
+  btnplusr.setFixedSize(70, 100);
+  btn1.setFixedSize(170, 100);
+  btn2.setFixedSize(170, 100);
+  btn3.setFixedSize(170, 100);
+
+  hlayout->addWidget(&btn1);
+  hlayout->addWidget(&btnminusl);
+  hlayout->addWidget(&labell);
+  hlayout->addWidget(&btnplusl);
+  hlayout->addWidget(&btn2);
+  hlayout->addWidget(&btnminusr);
+  hlayout->addWidget(&labelr);
+  hlayout->addWidget(&btnplusr);
+  hlayout->addWidget(&btn3);
+
+  btnminusl.setText("－");
+  btnplusl.setText("＋");
+  btnminusr.setText("－");
+  btnplusr.setText("＋");
+
+  QObject::connect(&btn1, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralOpS")).split(",");
+    int value = list[0].toInt();
+    value = value + 1;
+    if (value >= 4) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralOpS", str.toStdString());
+    refresh1();
+  });
+
+  QObject::connect(&btn2, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralOpS")).split(",");
+    int value = list[1].toInt();
+    value = value + 1;
+    if (value >= 4) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralOpS", str.toStdString());
+    refresh2();
+  });
+
+  QObject::connect(&btn3, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralOpS")).split(",");
+    int value = list[2].toInt();
+    value = value + 1;
+    if (value >= 4) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[2] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralOpS", str.toStdString());
+    refresh3();
+  });
+
+  QObject::connect(&btnminusl, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralSpd")).split(",");
+    int value = list[0].toInt();
+    value = value - 5;
+    if (value <= 5) {
+      value = 5;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralSpd", str.toStdString());
+    refreshl();
+  });
+
+  QObject::connect(&btnplusl, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralSpd")).split(",");
+    int value = list[0].toInt();
+    int valuem = list[1].toInt();
+    value = value + 5;
+    if (value >= (valuem - 5)) {
+      value = valuem - 5;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralSpd", str.toStdString());
+    refreshl();
+  });
+
+  QObject::connect(&btnminusr, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralSpd")).split(",");
+    int value = list[1].toInt();
+    int valuem = list[0].toInt();
+    value = value - 5;
+    if (value <= (valuem + 5)) {
+      value = valuem + 5;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralSpd", str.toStdString());
+    refreshr();
+  });
+
+  QObject::connect(&btnplusr, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralSpd")).split(",");
+    int value = list[1].toInt();
+    value = value + 5;
+    if (value >= 110) {
+      value = 110;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralSpd", str.toStdString());
+    refreshr();
+  });
+  refresh1();
+  refresh2();
+  refresh3();
+  refreshl();
+  refreshr();
+}
+
+void MultipleLateralSpeed::refresh1() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralOpS")).split(",");
+  if (list[0] == "0") {
+    btn1.setText("PID");
+  } else if (list[0] == "1") {
+    btn1.setText("IND");
+  } else if (list[0] == "2") {
+    btn1.setText("LQR");
+  } else if (list[0] == "3") {
+    btn1.setText("TOQ");
+  }
+}
+
+void MultipleLateralSpeed::refresh2() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralOpS")).split(",");
+  if (list[1] == "0") {
+    btn2.setText("PID");
+  } else if (list[1] == "1") {
+    btn2.setText("IND");
+  } else if (list[1] == "2") {
+    btn2.setText("LQR");
+  } else if (list[1] == "3") {
+    btn2.setText("TOQ");
+  }
+}
+
+void MultipleLateralSpeed::refresh3() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralOpS")).split(",");
+  if (list[2] == "0") {
+    btn3.setText("PID");
+  } else if (list[2] == "1") {
+    btn3.setText("IND");
+  } else if (list[2] == "2") {
+    btn3.setText("LQR");
+  } else if (list[2] == "3") {
+    btn3.setText("TOQ");
+  }
+}
+
+void MultipleLateralSpeed::refreshl() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralSpd")).split(",");
+  labell.setText(list[0]);
+}
+
+void MultipleLateralSpeed::refreshr() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralSpd")).split(",");
+  labelr.setText(list[1]);
+}
+
+MultipleLateralAngle::MultipleLateralAngle() : AbstractControl("", "", "") {
+  label1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label1.setText("ANG: ");
+  hlayout->addWidget(&label1);
+  labell.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  labell.setStyleSheet("color: #e0e879");
+  labelr.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  labelr.setStyleSheet("color: #e0e879");
+  btn1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btn2.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btn3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btnminusl.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplusl.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminusr.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplusr.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminusl.setFixedSize(70, 100);
+  btnplusl.setFixedSize(70, 100);
+  btnminusr.setFixedSize(70, 100);
+  btnplusr.setFixedSize(70, 100);
+  btn1.setFixedSize(170, 100);
+  btn2.setFixedSize(170, 100);
+  btn3.setFixedSize(170, 100);
+
+  hlayout->addWidget(&btn1);
+  hlayout->addWidget(&btnminusl);
+  hlayout->addWidget(&labell);
+  hlayout->addWidget(&btnplusl);
+  hlayout->addWidget(&btn2);
+  hlayout->addWidget(&btnminusr);
+  hlayout->addWidget(&labelr);
+  hlayout->addWidget(&btnplusr);
+  hlayout->addWidget(&btn3);
+
+  btnminusl.setText("－");
+  btnplusl.setText("＋");
+  btnminusr.setText("－");
+  btnplusr.setText("＋");
+
+  QObject::connect(&btn1, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralOpA")).split(",");
+    int value = list[0].toInt();
+    value = value + 1;
+    if (value >= 4) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralOpA", str.toStdString());
+    refresh1();
+  });
+
+  QObject::connect(&btn2, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralOpA")).split(",");
+    int value = list[1].toInt();
+    value = value + 1;
+    if (value >= 4) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralOpA", str.toStdString());
+    refresh2();
+  });
+
+  QObject::connect(&btn3, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralOpA")).split(",");
+    int value = list[2].toInt();
+    value = value + 1;
+    if (value >= 4) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[2] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralOpA", str.toStdString());
+    refresh3();
+  });
+
+  QObject::connect(&btnminusl, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralAng")).split(",");
+    int value = list[0].toInt();
+    value = value - 5;
+    if (value <= 5) {
+      value = 5;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralAng", str.toStdString());
+    refreshl();
+  });
+
+  QObject::connect(&btnplusl, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralAng")).split(",");
+    int value = list[0].toInt();
+    int valuem = list[1].toInt();
+    value = value + 5;
+    if (value >= (valuem - 5)) {
+      value = valuem - 5;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralAng", str.toStdString());
+    refreshl();
+  });
+
+  QObject::connect(&btnminusr, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralAng")).split(",");
+    int value = list[1].toInt();
+    int valuem = list[0].toInt();
+    value = value - 5;
+    if (value <= (valuem + 5)) {
+      value = valuem + 5;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralAng", str.toStdString());
+    refreshr();
+  });
+
+  QObject::connect(&btnplusr, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("MultipleLateralAng")).split(",");
+    int value = list[1].toInt();
+    value = value + 5;
+    if (value >= 90) {
+      value = 90;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("MultipleLateralAng", str.toStdString());
+    refreshr();
+  });
+  refresh1();
+  refresh2();
+  refresh3();
+  refreshl();
+  refreshr();
+}
+
+void MultipleLateralAngle::refresh1() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralOpA")).split(",");
+  if (list[0] == "0") {
+    btn1.setText("PID");
+  } else if (list[0] == "1") {
+    btn1.setText("IND");
+  } else if (list[0] == "2") {
+    btn1.setText("LQR");
+  } else if (list[0] == "3") {
+    btn1.setText("TOQ");
+  }
+}
+
+void MultipleLateralAngle::refresh2() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralOpA")).split(",");
+  if (list[1] == "0") {
+    btn2.setText("PID");
+  } else if (list[1] == "1") {
+    btn2.setText("IND");
+  } else if (list[1] == "2") {
+    btn2.setText("LQR");
+  } else if (list[1] == "3") {
+    btn2.setText("TOQ");
+  }
+}
+
+void MultipleLateralAngle::refresh3() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralOpA")).split(",");
+  if (list[2] == "0") {
+    btn3.setText("PID");
+  } else if (list[2] == "1") {
+    btn3.setText("IND");
+  } else if (list[2] == "2") {
+    btn3.setText("LQR");
+  } else if (list[2] == "3") {
+    btn3.setText("TOQ");
+  }
+}
+
+void MultipleLateralAngle::refreshl() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralAng")).split(",");
+  labell.setText(list[0]);
+}
+
+void MultipleLateralAngle::refreshr() {
+  QStringList list = QString::fromStdString(params.get("MultipleLateralAng")).split(",");
+  labelr.setText(list[1]);
+}
+
+StoppingDist::StoppingDist() : AbstractControl("Stopping Distance(m)", "Car starts to stop under the value.", "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("－");
+  btnplus.setText("＋");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("StoppingDist"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 30) {
+      value = 30;
+    }
+    QString values = QString::number(value);
+    params.put("StoppingDist", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("StoppingDist"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 60) {
+      value = 60;
+    }
+    QString values = QString::number(value);
+    params.put("StoppingDist", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void StoppingDist::refresh() {
+  auto strs = QString::fromStdString(params.get("StoppingDist"));
+  int valuei = strs.toInt();
+  float valuef = valuei * 0.1;
+  QString valuefs = QString::number(valuef);
+  label.setText(QString::fromStdString(valuefs.toStdString()));
 }
