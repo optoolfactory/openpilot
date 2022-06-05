@@ -31,6 +31,9 @@
 #include "selfdrive/ui/qt/qt_window.h"
 #include "selfdrive/ui/qt/widgets/opkr.h"
 
+#include "selfdrive/ui/qt/widgets/steerWidget.h"
+
+
 TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   // param, title, desc, icon
   std::vector<std::tuple<QString, QString, QString, QString>> toggles{
@@ -57,12 +60,6 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "미터법 사용",
       "mi/h 대신 km/h 단위로 속도를 표시합니다.",
       "../assets/offroad/icon_metric.png",
-    },
-    {
-      "UploadRaw",
-      "주행 로그 업로드",
-      "업로드 프로세스 활성화 시 모든 로그 및 풀 해상도 비디오를 업로드합니다.(WiFi 사용중에만 작동) 기능이 꺼진 경우, my.comma.ai/useradmin에 업로드를 위해 개별 로그는 기록될 수 있습니다.",
-      "../assets/offroad/icon_network.png",
     },
     {
       "RecordFront",
@@ -101,12 +98,6 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "OpkrEnableUploader",
       "주행로그 서버 전송",
       "시스템로그 및 기타 주행데이터를 서버로 전송하기 위해 업로드 프로세스를 활성화 합니다. 오프로드 상태에서만 업로드 합니다.",
-      "../assets/offroad/icon_shell.png",
-    },
-    {
-      "CommaStockUI",
-      "Comma 기본 UI 사용",
-      "주행화면을 콤마의 순정 UI를 사용합니다. 주행화면 좌측상단의 박스를 눌러도 실시간 전환 가능합니다.",
       "../assets/offroad/icon_shell.png",
     },
   };
@@ -170,8 +161,9 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
     if (ConfirmationDialog::confirm("캘리브레이션을 초기화 하시겠습니까? 자동 재부팅됩니다.", this)) {
       params.remove("CalibrationParams");
       params.remove("LiveParameters");
-      QTimer::singleShot(1000, []() {
-        Hardware::reboot();
+      params.putBool("OnRoadRefresh", true);
+      QTimer::singleShot(3000, [this]() {
+        params.putBool("OnRoadRefresh", false);
       });
     }
   });
@@ -188,6 +180,11 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   QHBoxLayout *power_layout = new QHBoxLayout();
   power_layout->setSpacing(30);
 
+  QPushButton *refresh_btn = new QPushButton("리프레쉬");
+  refresh_btn->setObjectName("refresh_btn");
+  power_layout->addWidget(refresh_btn);
+  QObject::connect(refresh_btn, &QPushButton::clicked, this, &DevicePanel::refresh);
+
   QPushButton *reboot_btn = new QPushButton("재시작");
   reboot_btn->setObjectName("reboot_btn");
   power_layout->addWidget(reboot_btn);
@@ -203,8 +200,10 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
       height: 120px;
       border-radius: 15px;
     }
-    #reboot_btn { background-color: #393939; }
-    #reboot_btn:pressed { background-color: #4a4a4a; }
+    #refresh_btn { background-color: #83c744; }
+    #refresh_btn:pressed { background-color: #c7deb1; }
+    #reboot_btn { background-color: #ed8e3b; }
+    #reboot_btn:pressed { background-color: #f0bf97; }
     #poweroff_btn { background-color: #E22C2C; }
     #poweroff_btn:pressed { background-color: #FF2424; }
   )");
@@ -214,7 +213,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
 void DevicePanel::updateCalibDescription() {
   QString desc =
       "openpilot requires the device to be mounted within 4° left or right and "
-      "within 5° up or down. openpilot is continuously calibrating, resetting is rarely required.";
+      "within 8° up or down. openpilot is continuously calibrating, resetting is rarely required.";
   std::string calib_bytes = Params().get("CalibrationParams");
   if (!calib_bytes.empty()) {
     try {
@@ -233,6 +232,22 @@ void DevicePanel::updateCalibDescription() {
     }
   }
   qobject_cast<ButtonControl *>(sender())->setDescription(desc);
+}
+
+void DevicePanel::refresh() {
+  if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
+    if (ConfirmationDialog::confirm("리프레쉬를 하시겠습니까?", this)) {
+      // Check engaged again in case it changed while the dialog was open
+      if (QUIState::ui_state.status == UIStatus::STATUS_DISENGAGED) {
+        Params().putBool("OnRoadRefresh", true);
+        QTimer::singleShot(3000, []() {
+          Params().putBool("OnRoadRefresh", false);
+        });
+      }
+    }
+  } else {
+    ConfirmationDialog::alert("Disengage to Refresh", this);
+  }
 }
 
 void DevicePanel::reboot() {
@@ -460,7 +475,7 @@ void SoftwarePanel::updateLabels() {
     lastUpdate = timeAgo(QDateTime::fromString(tm, "yyyy-MM-dd HH:mm:ss"));
   }
 
-  versionLbl->setText(getBrandVersion());
+  versionLbl->setText("OPKR");
   lastUpdateLbl->setText(lastUpdate);
   updateBtn->setText("CHECK");
   updateBtn->setEnabled(true);
@@ -600,7 +615,10 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new LeftCurvOffset());
   layout->addWidget(new RightCurvOffset());
   layout->addWidget(new BlindSpotDetectToggle());
-  layout->addWidget(new MaxAngleLimit());
+
+
+  layout->addWidget(new CSteerWidget());
+  
   layout->addWidget(new SteerAngleCorrection());
   layout->addWidget(new TurnSteeringDisableToggle());
   layout->addWidget(new CruiseOverMaxSpeedToggle());
@@ -633,6 +651,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new OPKREdgeOffset());
   layout->addWidget(new ToAvoidLKASFaultToggle());
   layout->addWidget(new ToAvoidLKASFault());
+  layout->addWidget(new SpeedCameraOffsetToggle());
 }
 
 DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
@@ -746,6 +765,27 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
     layout->addWidget(new TorqueKi());
     layout->addWidget(new TorqueFriction());
     layout->addWidget(new TorqueUseAngle());
+  } else if (lat_control == "4") {
+    layout->addWidget(new MultipleLatSelect());
+    layout->addWidget(new MultipleLateralSpeed());
+    layout->addWidget(new MultipleLateralAngle());
+    layout->addWidget(new TorqueMaxLatAccel());
+    layout->addWidget(new TorqueKp());
+    layout->addWidget(new TorqueKf());
+    layout->addWidget(new TorqueKi());
+    layout->addWidget(new TorqueFriction());
+    layout->addWidget(new TorqueUseAngle());
+    layout->addWidget(new Scale());
+    layout->addWidget(new LqrKi());
+    layout->addWidget(new DcGain());
+    layout->addWidget(new InnerLoopGain());
+    layout->addWidget(new OuterLoopGain());
+    layout->addWidget(new TimeConstant());
+    layout->addWidget(new ActuatorEffectiveness());
+    layout->addWidget(new PidKp());
+    layout->addWidget(new PidKi());
+    layout->addWidget(new PidKd());
+    layout->addWidget(new PidKf());
   }
 
   layout->addWidget(horizontal_line());
@@ -758,6 +798,7 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new DynamicTRBySpeed());
   layout->addWidget(new RadarLongHelperOption());
   layout->addWidget(new StoppingDistAdjToggle());
+  layout->addWidget(new StoppingDist());
   layout->addWidget(new E2ELongToggle());
   layout->addWidget(new StockDecelonCamToggle());
   //layout->addWidget(new RadarDisableToggle());
