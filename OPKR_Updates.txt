@@ -1,5 +1,8 @@
 ☞ Use two fingers to scroll down ☜
 
+2022-06-03
+- added VC & opkr long stopping distance adjustment
+  (distance car start slowing down for stopped lead car).
 2022-05-29
 - LKAS On/Off Toggle(Holding Gap Button for 1 sec) while SCC
 2022-05-27

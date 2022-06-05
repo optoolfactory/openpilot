@@ -31,7 +31,7 @@
 #include "selfdrive/ui/qt/qt_window.h"
 #include "selfdrive/ui/qt/widgets/opkr.h"
 
-#include "selfdrive/ui/qt/params/steerview.h"
+#include "selfdrive/ui/qt/widgets/steerWidget.h"
 
 
 TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
@@ -617,7 +617,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new BlindSpotDetectToggle());
 
 
-  layout->addWidget(new CSteerview());
+  layout->addWidget(new CSteerWidget());
   
   layout->addWidget(new SteerAngleCorrection());
   layout->addWidget(new TurnSteeringDisableToggle());
@@ -651,6 +651,7 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new OPKREdgeOffset());
   layout->addWidget(new ToAvoidLKASFaultToggle());
   layout->addWidget(new ToAvoidLKASFault());
+  layout->addWidget(new SpeedCameraOffsetToggle());
 }
 
 DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {

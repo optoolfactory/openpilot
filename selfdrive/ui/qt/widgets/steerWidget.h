@@ -12,50 +12,15 @@
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/ui.h"
 
-class MaxAngleLimit : public AbstractControl {
-  Q_OBJECT
-
-public:
-  MaxAngleLimit();
-
-private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-  Params params;
-  
-  void refresh();
-};
-
-class DriverSteerAngle : public AbstractControl {
-  Q_OBJECT
-
-public:
-  DriverSteerAngle();
-
-private:
-  void refresh();
-
-private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-  Params params;
-
-  float  m_dMaxSteerAngle;
-  
-  
 
 
-};
-
-class CSteerview : public QFrame 
+class CSteerWidget : public QFrame 
 {
   Q_OBJECT
 
 public:
-  explicit CSteerview(QWidget *parent = 0);
-  ~CSteerview();
+  explicit CSteerWidget(QWidget *parent = 0);
+  ~CSteerWidget();
 
 private:
   void showEvent(QShowEvent *event) override;
@@ -65,7 +30,12 @@ public slots:
   void refresh();
 
 
+private:
+  void  FrameSmooth(QWidget *parent);
+  void  FrameNormal(QWidget *parent);
+
  private:
+  Params params; 
   QLabel *icon_label;
   QPixmap  pix_plus;
   QPixmap  pix_minus;
@@ -77,9 +47,11 @@ public slots:
   QLabel *description = nullptr;  
 
 
-  QLabel label;
+  QPushButton  *method_label;
   int    m_nSelect;
+  int    m_bShow;
 
-   QFrame *m_pChildFrame; 
+   QFrame *m_pChildFrame1;
+   QFrame *m_pChildFrame2;
 };
 
