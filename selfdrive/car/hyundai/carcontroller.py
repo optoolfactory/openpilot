@@ -842,11 +842,11 @@ class CarController():
               accel = interp(CS.lead_distance, [14.0, 15.0], [max(accel, aReqValue, faccel), aReqValue])
             elif aReqValue < 0.0 and CS.lead_distance < self.stoppingdist and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
               if CS.lead_distance < 2.0:
-                accel = self.accel - (DT_CTRL * 10.0)
+                accel = self.accel - (DT_CTRL * 5.0)
               elif CS.lead_distance < self.stoppingdist:
-                accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 4.0], [1.0, 3.0]))
+                accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [1.0, 3.0], [1.0, 4.0]))
             elif aReqValue < 0.0 and self.stopping_dist_adj_enabled:
-              stock_weight = interp(abs(lead_objspd), [3.0, 10.0, 25.0, 50.0], [0.1, 1.0, 1.0, 0.0])
+              stock_weight = interp(abs(lead_objspd), [2.0, 6.0, 20.0, 50.0], [0.2, 1.0, 1.0, 0.1])
               accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
             elif aReqValue < 0.0:
               stock_weight = interp(CS.lead_distance, [6.0, 10.0, 18.0, 25.0, 32.0], [1.0, 0.85, 1.0, 0.4, 1.0])
@@ -925,7 +925,7 @@ class CarController():
        CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
     trace1.printf2( '{}'.format( str_log2 ) )
 
-    str_log3 = 'V/D/R/A/M/G={:.1f}/{:.1f}/{:.1f}/{:.2f}//{:.1f}/{:1.0f}'.format(CS.clu_Vanz, CS.lead_distance, CS.lead_objspd, CS.scc12["aReqValue"], self.stoppingdist, CS.cruiseGapSet)
+    str_log3 = 'V/D/R/A/M/G={:.1f}/{:.1f}/{:.1f}/{:.2f}/{:.1f}/{:1.0f}'.format(CS.clu_Vanz, CS.lead_distance, CS.lead_objspd, CS.scc12["aReqValue"], self.stoppingdist, CS.cruiseGapSet)
     trace1.printf3('{}'.format(str_log3))
 
     self.cc_timer += 1
