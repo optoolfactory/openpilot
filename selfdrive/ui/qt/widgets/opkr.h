@@ -761,6 +761,18 @@ public:
   }
 };
 
+class HoldForSettingToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  HoldForSettingToggle() : ToggleControl("Hold Button for Setting Menu", "Use 0.5 sec delay to enter setting menu. This is to prevent being touched in setting menu when you use external program(Mixplorer, etc)", "../assets/offroad/icon_shell.png", Params().getBool("HoldForSetting")) {
+    QObject::connect(this, &HoldForSettingToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("HoldForSetting", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
