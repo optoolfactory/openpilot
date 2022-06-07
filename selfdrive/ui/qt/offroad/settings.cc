@@ -411,11 +411,10 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   addItem(gitresetbtn);
 
   const char* gitpull_cancel = "/data/openpilot/selfdrive/assets/addon/script/gitpull_cancel.sh ''";
-  auto gitpullcanceltbtn = new ButtonControl("Cancel Git Pull", "RUN");
+  auto gitpullcanceltbtn = new ButtonControl("GitPull Restore", "RUN");
   QObject::connect(gitpullcanceltbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("Return to the state before GitPull. Do you want to proceed?", this)){
-      std::system(gitpull_cancel);
-    }
+    std::system(gitpull_cancel);
+    GitPullCancel::confirm(this);
   });
   addItem(gitpullcanceltbtn);
 

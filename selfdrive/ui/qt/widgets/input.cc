@@ -1,6 +1,7 @@
 #include "selfdrive/ui/qt/widgets/input.h"
 
 #include <QPushButton>
+#include <QProcess>
 
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/qt/util.h"
@@ -303,3 +304,67 @@ bool UpdateInfoDialog::confirm(const QString &prompt_text, QWidget *parent) {
   auto d = UpdateInfoDialog(prompt_text, "Update", "Cancel", parent);
   return d.exec();
 }
+
+// Git Pull Cancel
+
+GitPullCancel::GitPullCancel(const QString &confirm_text, const QString &cancel_text,
+                               QWidget *parent) : QDialogBase(parent) {
+  QStringList commit_list = QString::fromStdString(params.get("GitCommits")).split("\n");
+  QFrame *container = new QFrame(this);
+  container->setStyleSheet("QFrame { background-color: #1B1B1B; }");
+  QVBoxLayout *main_layout = new QVBoxLayout(container);
+  main_layout->setContentsMargins(32, 32, 32, 32);
+
+  QLabel *title = new QLabel("Select a commit you want to go back and then press Ok to apply", this);
+  title->setStyleSheet("font-size: 50px; font-weight: bold; color: #AEFF82;");
+  main_layout->addWidget(title, 0, Qt::AlignTop);
+
+  QListWidget *listWidget = new QListWidget();
+  for (QString contents : commit_list) {
+    listWidget->addItem(contents);
+  }
+  listWidget->setStyleSheet("font-size: 45px; font-weight: light; color: #FFFFFF;");
+  main_layout->addWidget(new ScrollView(listWidget, this), 1);
+
+  // Ok + Cancel buttons
+  QHBoxLayout *btn_layout = new QHBoxLayout();
+  btn_layout->setSpacing(30);
+  main_layout->addLayout(btn_layout);
+
+  if (confirm_text.length()) {
+    QPushButton* confirm_btn = new QPushButton(confirm_text);
+    btn_layout->addWidget(confirm_btn);
+    QObject::connect(confirm_btn, &QPushButton::clicked, [=]() {
+      int num = listWidget->currentRow();
+      if (num != -1) {
+        QString str = listWidget->currentItem()->text();
+        QStringList hash = str.split(",");
+        if (ConfirmationDialog::confirm("This will run below command\ngit reset --hard " + hash[0], this)) {
+          QString cmd0 = "git reset --hard " + hash[0];
+          QProcess::execute("pkill -f thermald");
+          QProcess::execute("rm -f /data/openpilot/prebuilt");
+          QProcess::execute(cmd0);
+          QProcess::execute("reboot");
+        }
+      } else {
+        ConfirmationDialog::alert("No selection.", this);
+      }
+    });
+  }
+
+  if (cancel_text.length()) {
+    QPushButton* cancel_btn = new QPushButton(cancel_text);
+    btn_layout->addWidget(cancel_btn);
+    QObject::connect(cancel_btn, &QPushButton::clicked, this, &GitPullCancel::reject);
+  }
+
+  QVBoxLayout *outer_layout = new QVBoxLayout(this);
+  outer_layout->setContentsMargins(30, 30, 30, 30);
+  outer_layout->addWidget(container);
+}
+
+bool GitPullCancel::confirm(QWidget *parent) {
+  auto d = GitPullCancel("Ok", "Cancel", parent);
+  return d.exec();
+}
+
