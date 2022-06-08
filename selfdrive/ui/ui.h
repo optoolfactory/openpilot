@@ -265,15 +265,13 @@ typedef struct UIScene {
   float gpsAccuracy;
 
   // modelV2
-  float left_blindspot_probs[2];
-  float right_blindspot_probs[2];
+  float lane_blindspot_probs[2];
   float lane_line_probs[4];
   float road_edge_stds[2];
   line_vertices_data track_vertices;
   line_vertices_data lane_line_vertices[4];
   line_vertices_data road_edge_vertices[2];
-  line_vertices_data left_blindspot_vertices[2];
-  line_vertices_data right_blindspot_vertices[2];
+  line_vertices_data lane_blindspot_vertices[2];
   line_vertices_data stop_line_vertices;
 
   bool dm_active, engageable;
