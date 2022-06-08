@@ -136,7 +136,7 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
     update_blindspot_data(s, lane_lines[i], 0, 0.025 * scene.left_blindspot_probs[i], 0, &scene.left_blindspot_vertices[i], max_idx);
     update_blindspot_data(s, lane_lines[i], 0.025 * scene.right_blindspot_probs[i], 0, 0, &scene.right_blindspot_vertices[i], max_idx);
   }   
-   update_blindspot_data( s, )
+
 
   // update stop lines
   if (scene.stop_line) {
