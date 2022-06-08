@@ -201,27 +201,21 @@ static void ui_draw_vision_lane_lines(UIState *s) {
 
  
   // paint left blindspot line
-  /*
 
+  NVGcolor color;
   if( scene.leftblindspot )
   {
-    for (int i = 0; i < std::size(scene.left_blindspot_vertices); i++) {
-      NVGcolor color = nvgRGBAf(1.0, 0.0, 0.0, std::clamp<float>(1.0 - scene.road_edge_stds[i], 0.0, 1.0));
-      ui_draw_line(s, scene.left_blindspot_vertices[i], &color, nullptr);
-    }
+    color = nvgRGBAf(1.0, 0.0, 0.0, std::clamp<float>(1.0 - scene.lane_blindspot_probs[0], 0.0, 1.0));
+    ui_draw_line(s, scene.lane_blindspot_vertices[0], &color, nullptr);
+ 
   }
 
   if( scene.rightblindspot )
   {
-    for (int i = 0; i < std::size(scene.right_blindspot_vertices); i++) {
-      NVGcolor color = nvgRGBAf(1.0, 0.0, 0.0, std::clamp<float>(1.0 - scene.road_edge_stds[i], 0.0, 1.0));
-      ui_draw_line(s, scene.right_blindspot_vertices[i], &color, nullptr);
-    }
+    color = nvgRGBAf(1.0, 0.0, 0.0, std::clamp<float>(1.0 - scene.lane_blindspot_probs[1], 0.0, 1.0));
+    ui_draw_line(s, scene.lane_blindspot_vertices[1], &color, nullptr);
   }
 
-
-
-  */
 
   // paint path
   ui_draw_line(s, scene.track_vertices, nullptr, &track_bg);
