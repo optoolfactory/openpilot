@@ -198,6 +198,21 @@ static void ui_draw_vision_lane_lines(UIState *s) {
     track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h * .4,
                                         COLOR_WHITE_ALPHA(150), COLOR_WHITE_ALPHA(20));
   }
+
+ 
+  // paint left blindspot line
+  /*
+  for (int i = 0; i < std::size(scene.left_blindspot_vertices); i++) {
+    NVGcolor color = nvgRGBAf(1.0, 0.0, 0.0, std::clamp<float>(1.0 - scene.road_edge_stds[i], 0.0, 1.0));
+    ui_draw_line(s, scene.left_blindspot_vertices[i], &color, nullptr);
+  }
+
+  for (int i = 0; i < std::size(scene.right_blindspot_vertices); i++) {
+    NVGcolor color = nvgRGBAf(1.0, 0.0, 0.0, std::clamp<float>(1.0 - scene.road_edge_stds[i], 0.0, 1.0));
+    ui_draw_line(s, scene.right_blindspot_vertices[i], &color, nullptr);
+  }
+  */
+
   // paint path
   ui_draw_line(s, scene.track_vertices, nullptr, &track_bg);
 }
