@@ -146,7 +146,7 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
    // update blindspot line
   for (int i = 0; i < std::size(scene.lane_blindspot_vertices); i++) {
     scene.lane_blindspot_probs[i] = lane_line_probs[i];
-    update_blindspot_data(s, i, lane_lines[i], 2.5 * scene.left_blindspot_probs[i], 0, &scene.lane_blindspot_vertices[i], max_idx);
+    update_blindspot_data(s, i, lane_lines[i], 2.5 * scene.lane_blindspot_probs[i], 0, &scene.lane_blindspot_vertices[i], max_idx);
   }   
 
 
