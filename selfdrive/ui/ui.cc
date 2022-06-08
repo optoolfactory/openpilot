@@ -77,11 +77,11 @@ static void update_blindspot_data(const UIState *s, int lr, const cereal::ModelD
   if( lr == 0 )
   {
     y_off1 = y_off;
-    y_off2 = 0;
+    y_off2 = -0.01;
   }
   else
   {
-      y_off1 = 0;
+      y_off1 = 0.01;
       y_off2 = y_off;  
   }
      
@@ -146,7 +146,7 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
    // update blindspot line
   for (int i = 0; i < std::size(scene.lane_blindspot_vertices); i++) {
     scene.lane_blindspot_probs[i] = lane_line_probs[i];
-    update_blindspot_data(s, i, lane_lines[i+1], 2.5 * scene.lane_blindspot_probs[i], 0, &scene.lane_blindspot_vertices[i], max_idx);
+    update_blindspot_data(s, i, lane_lines[i+1], 2.8 * scene.lane_blindspot_probs[i], 0, &scene.lane_blindspot_vertices[i], max_idx);
   }   
 
 
