@@ -391,7 +391,8 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
         QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + str;
         QString cmd2 = "git -C /data/openpilot checkout --track origin/" + str;
         QString cmd3 = "git -C /data/openpilot checkout " + str;
-        QProcess::execute("git -C /data/openpilot reset --hard");
+        QString cmd4 = "git -C /data/openpilot reset --hard origin/" + current_branch;
+        QProcess::execute(cmd4);
         QProcess::execute(cmd1);
         QProcess::execute("git -C /data/openpilot fetch origin");
         QProcess::execute(cmd2);
