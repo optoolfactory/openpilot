@@ -300,10 +300,10 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
     
     if (!last_ping.length()) {
       desc += QString("인터넷에 연결되어 있지 않습니다. 업데이트확인을 위해 WiFi를 연결하세요.");
-      if (ConfirmationDialog::alert(desc, this)) {}
+      ConfirmationDialog::alert(desc, this);
     } else if (commit_local == commit_remote) {
       desc += QString("로컬과 리모트가 일치합니다. 업데이트가 필요 없습니다.");
-      if (ConfirmationDialog::alert(desc, this)) {}
+      ConfirmationDialog::alert(desc, this);
     } else {
       if (QFileInfo::exists("/data/OPKR_Updates.txt")) {
         QFileInfo fileInfo;
@@ -413,9 +413,8 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   const char* gitpull_cancel = "/data/openpilot/selfdrive/assets/addon/script/gitpull_cancel.sh ''";
   auto gitpullcanceltbtn = new ButtonControl("Git Pull 취소", "실행");
   QObject::connect(gitpullcanceltbtn, &ButtonControl::clicked, [=]() {
-    if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?", this)){
-      std::system(gitpull_cancel);
-    }
+    std::system(gitpull_cancel);
+    GitPullCancel::confirm(this);
   });
   addItem(gitpullcanceltbtn);
 
