@@ -360,20 +360,26 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
     height: 120px;
   )");
 
-  combobox.addItem("Select Branch you want to change");
-  QFile branchlistfile("/data/openpilot/selfdrive/assets/addon/script/branches");
-  if (branchlistfile.open(QIODevice::ReadOnly)) {
-    QTextStream carname(&branchlistfile);
-    while (!carname.atEnd()) {
-      QString line = carname.readLine();
-      combobox.addItem(line);
-    }
-    branchlistfile.close();
-  }
+  combobox.setFixedWidth(1055);
 
-  combobox.setFixedWidth(1205);
+  btn.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+
+  btn.setFixedSize(150, 100);
+  btn.setText("RELOAD");
+
+  QObject::connect(&btn, &QPushButton::clicked, [=]() {
+    refresh();
+  });
 
   hlayout->addWidget(&combobox);
+  hlayout->addWidget(&btn, Qt::AlignRight);
 
   QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated), [=](int index)
   {
@@ -398,6 +404,24 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
       if (ConfirmationDialog::alert("Your branch is already <" + current_branch + ">.", this)) {combobox.setCurrentIndex(0);}
     }
   });
+  refresh();
+}
+
+void BranchSelectCombo::refresh() {
+  combobox.clear();
+  combobox.addItem("Select Branch you want to change");
+  if (!QFile::exists("/data/branches")) {
+    std::system("git branch -r | sed 1d | awk -F '/' '{print $2}' > /data/branches")
+  }
+  QFile branchlistfile("/data/branches");
+  if (branchlistfile.open(QIODevice::ReadOnly)) {
+    QTextStream carname(&branchlistfile);
+    while (!carname.atEnd()) {
+      QString line = carname.readLine();
+      combobox.addItem(line);
+    }
+    branchlistfile.close();
+  }
 }
 
 TimeZoneSelectCombo::TimeZoneSelectCombo() : AbstractControl("", "", "") 
