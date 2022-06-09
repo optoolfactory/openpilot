@@ -773,6 +773,18 @@ public:
   }
 };
 
+class RTShieldToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  RTShieldToggle() : ToggleControl("Enable RTShield Process", "Seems regarding process stability. This uses resource.", "../assets/offroad/icon_shell.png", Params().getBool("RTShield")) {
+    QObject::connect(this, &RTShieldToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("RTShield", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
@@ -811,8 +823,11 @@ public:
   BranchSelectCombo();
 
 private:
+  QPushButton btn;
   QComboBox combobox;
   Params params;
+
+  void refresh();
 };
 
 class TimeZoneSelectCombo : public AbstractControl 
