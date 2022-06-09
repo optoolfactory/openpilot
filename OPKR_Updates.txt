@@ -1,5 +1,7 @@
 ☞ Use two fingers to scroll down ☜
 
+2022-06-09
+- add restore button to get back old commits
 2022-06-03
 - added VC & opkr long stopping distance adjustment
   (distance car start slowing down for stopped lead car).
