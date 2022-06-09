@@ -593,6 +593,7 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new RPMAnimatedMaxValue());
   layout->addWidget(new ShowStopLineToggle());
   layout->addWidget(new HoldForSettingToggle());
+  layout->addWidget(new RTShieldToggle());
 }
 
 DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
