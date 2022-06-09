@@ -391,6 +391,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
         QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + str;
         QString cmd2 = "git -C /data/openpilot checkout --track origin/" + str;
         QString cmd3 = "git -C /data/openpilot checkout " + str;
+        QProcess::execute("git -C /data/openpilot clean -d -f -f");
         QProcess::execute(cmd1);
         QProcess::execute("git -C /data/openpilot fetch origin");
         QProcess::execute(cmd2);
@@ -405,11 +406,11 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
 }
 
 void BranchSelectCombo::refresh() {
+  QProcess::execute("git -C /data/openpilot remote prune origin");
+  QProcess::execute("git -C /data/openpilot fetch origin");
   combobox.clear();
   combobox.addItem("Select Branch you want to change");
-  if (!QFile::exists("/data/branches")) {
-    std::system("git branch -r | sed 1d | awk -F '/' '{print $2}' > /data/branches");
-  }
+  std::system("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
   QFile branchlistfile("/data/branches");
   if (branchlistfile.open(QIODevice::ReadOnly)) {
     QTextStream carname(&branchlistfile);
