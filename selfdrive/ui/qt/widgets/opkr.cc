@@ -409,7 +409,7 @@ void BranchSelectCombo::refresh() {
   QProcess::execute("git -C /data/openpilot fetch origin");
   combobox.clear();
   combobox.addItem("Select Branch you want to change");
-  std::system("git -C /data/openpilot branch -r | sed 1d | awk -F '/' '{print $2}' > /data/branches");
+  std::system("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
   QFile branchlistfile("/data/branches");
   if (branchlistfile.open(QIODevice::ReadOnly)) {
     QTextStream carname(&branchlistfile);
