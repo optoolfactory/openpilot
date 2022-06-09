@@ -395,10 +395,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
         QProcess::execute("git -C /data/openpilot fetch origin");
         QProcess::execute(cmd2);
         QProcess::execute(cmd3);
-        QProcess::execute("git -C /data/openpilot pull");
-        QProcess::execute("pkill -f thermald");
-        QProcess::execute("rm -f /data/openpilot/prebuilt");
-        QProcess::execute("reboot");
+        std::system("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh");
       }
     } else if (combobox.currentIndex() != 0 && str == current_branch) {
       if (ConfirmationDialog::alert("Your branch is already <" + current_branch + ">.", this)) {combobox.setCurrentIndex(0);}
@@ -411,7 +408,7 @@ void BranchSelectCombo::refresh() {
   combobox.clear();
   combobox.addItem("Select Branch you want to change");
   if (!QFile::exists("/data/branches")) {
-    std::system("git branch -r | sed 1d | awk -F '/' '{print $2}' > /data/branches")
+    std::system("git branch -r | sed 1d | awk -F '/' '{print $2}' > /data/branches");
   }
   QFile branchlistfile("/data/branches");
   if (branchlistfile.open(QIODevice::ReadOnly)) {
