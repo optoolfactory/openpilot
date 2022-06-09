@@ -405,10 +405,12 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
 }
 
 void BranchSelectCombo::refresh() {
+  QProcess::execute("git -C /data/openpilot remote prune origin");
+  QProcess::execute("git -C /data/openpilot fetch origin");
   combobox.clear();
   combobox.addItem("Select Branch you want to change");
   if (!QFile::exists("/data/branches")) {
-    std::system("git branch -r | sed 1d | awk -F '/' '{print $2}' > /data/branches");
+    std::system("git -C /data/openpilot branch -r | sed 1d | awk -F '/' '{print $2}' > /data/branches");
   }
   QFile branchlistfile("/data/branches");
   if (branchlistfile.open(QIODevice::ReadOnly)) {
