@@ -235,13 +235,13 @@ RichTextDialog::RichTextDialog(const QString &prompt_text, const QString &btn_te
   QFrame *container = new QFrame(this);
   container->setStyleSheet("QFrame { background-color: #1B1B1B; }");
   QVBoxLayout *main_layout = new QVBoxLayout(container);
-  main_layout->setContentsMargins(32, 32, 32, 32);
+  main_layout->setContentsMargins(20, 20, 20, 20);
 
   QLabel *prompt = new QLabel(prompt_text, this);
   prompt->setWordWrap(true);
   prompt->setAlignment(Qt::AlignLeft);
   prompt->setTextFormat(Qt::RichText);
-  prompt->setStyleSheet("font-size: 42px; font-weight: light; color: #C9C9C9; margin: 45px;");
+  prompt->setStyleSheet("font-size: 40px; font-weight: light; color: #C9C9C9; margin: 25px;");
   main_layout->addWidget(new ScrollView(prompt, this), 1, Qt::AlignTop);
 
   // confirm button
@@ -250,7 +250,7 @@ RichTextDialog::RichTextDialog(const QString &prompt_text, const QString &btn_te
   QObject::connect(confirm_btn, &QPushButton::clicked, this, &QDialog::accept);
 
   QVBoxLayout *outer_layout = new QVBoxLayout(this);
-  outer_layout->setContentsMargins(100, 100, 100, 100);
+  outer_layout->setContentsMargins(10, 10, 10, 10);
   outer_layout->addWidget(container);
 }
 
@@ -261,7 +261,7 @@ bool RichTextDialog::alert(const QString &prompt_text, QWidget *parent) {
 
 // Update Info
 
-UpdateInfoDialog::UpdateInfoDialog(const QString &prompt_text, const QString &confirm_text, const QString &cancel_text,
+UpdateInfoDialog::UpdateInfoDialog(const QString &prompt_text, const QString &confirm_text, const QString &cancel_text, const QString &detail_text,
                                QWidget *parent) : QDialogBase(parent) {
   QFrame *container = new QFrame(this);
   container->setStyleSheet("QFrame { background-color: #1B1B1B; }");
@@ -295,13 +295,23 @@ UpdateInfoDialog::UpdateInfoDialog(const QString &prompt_text, const QString &co
     QObject::connect(cancel_btn, &QPushButton::clicked, this, &UpdateInfoDialog::reject);
   }
 
+  if (detail_text.length()) {
+    QPushButton* detail_btn = new QPushButton(detail_text);
+    btn_layout->addWidget(detail_btn);
+    QObject::connect(detail_btn, &QPushButton::clicked, [=]() {
+      std::system("git log -p -10 --color=always | /data/openpilot/selfdrive/assets/addon/aha/aha > /data/git_log.html");
+      const std::string txt = util::read_file("/data/git_log.html");
+      RichTextDialog::alert(QString::fromStdString(txt), this);
+    });
+  }
+
   QVBoxLayout *outer_layout = new QVBoxLayout(this);
   outer_layout->setContentsMargins(30, 30, 30, 30);
   outer_layout->addWidget(container);
 }
 
 bool UpdateInfoDialog::confirm(const QString &prompt_text, QWidget *parent) {
-  auto d = UpdateInfoDialog(prompt_text, "Update", "Cancel", parent);
+  auto d = UpdateInfoDialog(prompt_text, "Update", "Cancel", "Detail", parent);
   return d.exec();
 }
 

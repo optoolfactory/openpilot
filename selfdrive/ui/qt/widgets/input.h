@@ -77,7 +77,7 @@ class UpdateInfoDialog : public QDialogBase {
 
 public:
   explicit UpdateInfoDialog(const QString &prompt_text, const QString &confirm_text,
-                            const QString &cancel_text, QWidget* parent);
+                            const QString &cancel_text, const QString &detail_text, QWidget* parent);
   static bool confirm(const QString &prompt_text, QWidget *parent);
 };
 

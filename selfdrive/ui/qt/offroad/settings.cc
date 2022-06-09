@@ -297,7 +297,6 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
     QString commit_remote = QString::fromStdString(Params().get("GitCommitRemote").substr(0, 10));
     QString empty = "";
     desc += QString("LOCAL: %1  REMOTE: %2%3%4\n").arg(commit_local, commit_remote, empty, empty);
-    updateLabels();
     
     if (!last_ping.length()) {
       desc += QString("Network connection is missing or unstable. Check the connection.");
