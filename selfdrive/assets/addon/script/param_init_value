@@ -7,7 +7,7 @@ OpkrEnableLogger:0
 OpkrEnableGetoffAlert:0
 OpkrAutoResume:1
 OpkrVariableCruise:1
-OpkrLaneChangeSpeed:45
+OpkrLaneChangeSpeed:30
 OpkrAutoLaneChangeDelay:0
 OpkrSteerAngleCorrection:0
 PutPrebuiltOn:1
