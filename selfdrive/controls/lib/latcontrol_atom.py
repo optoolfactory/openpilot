@@ -144,7 +144,7 @@ class LatCtrlPidATOM(LatControlPID):
     self.sat_count = 0. 
 
 class LaMethod:
-  SPEED_LOWDT = 0  
+  SPEED_LOWDT = 0
   ANGLE_LOWDT = 1
   ANGLE_INTERP = 2
   SPEED_INTERP = 3
@@ -166,7 +166,6 @@ class LatControlATOM(LatControl):
 
     self.output_torque = 0
     self.reset()
-
 
     self.multi_lateral_method = int(Params().get("MultipleLateralUse", encoding="utf8"))
     self.multi_lat_spdMethod  = list(map(int, Params().get("MultipleLateralOpS", encoding="utf8").split(',')))
