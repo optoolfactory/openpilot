@@ -7052,7 +7052,7 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
     m_nMethod -= 1;
     if (m_nMethod < 0) {
-      m_nMethod = 2;
+      m_nMethod = 3;
     }
 
     QString values = QString::number(m_nMethod);
@@ -7063,7 +7063,7 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
   
     m_nMethod += 1;
-    if (m_nMethod > 2) {
+    if (m_nMethod > 3) {
       m_nMethod = 0;
     }
     QString values = QString::number(m_nMethod);
@@ -7078,9 +7078,10 @@ void MultipleLatSelect::refresh() {
 
   switch( m_nMethod )
   {
-    case 0 : strMethod = "0.Speed"; break;
-    case 1 : strMethod = "1.Angle"; break;
-    case 2 : strMethod = "2.Angle.L"; break;
+    case 0 : strMethod = "Spd_LowDlt"; break;
+    case 1 : strMethod = "Ang_LowDlt"; break;
+    case 2 : strMethod = "Ang_Interp"; break;
+    case 3 : strMethod = "Spd_Interp"; break;
     default :
       strMethod = "None"; 
       break;
