@@ -164,7 +164,6 @@ class LatControlATOM(LatControl):
     self.LaInd = LatCtrlIndATOM( CP, CI, self.indi )
     self.LaPid = LatCtrlPidATOM( CP, CI, self.pid1 )
 
-    self.output_torque = 0
     self.reset()
 
     self.multi_lateral_method = int(Params().get("MultipleLateralUse", encoding="utf8"))
@@ -188,6 +187,9 @@ class LatControlATOM(LatControl):
       self.lat_fun1 = None
       self.lat_fun2 = None
       self.latBP = None
+    
+    self.lat_atom_timer = 0
+    self.s_value = 0
 
   def method_func(self, BP ):
     lat_fun = None
@@ -267,21 +269,16 @@ class LatControlATOM(LatControl):
 
         speed1 = (self.multi_lat_spdBP[0] * (CV.MPH_TO_MS if CS.isMph else CV.KPH_TO_MS))
         speed2 = (self.multi_lat_spdBP[1] * (CV.MPH_TO_MS if CS.isMph else CV.KPH_TO_MS))
-        if CS.vEgo < speed1:
+        self.lat_atom_timer += 1
+        if self.lat_atom_timer > 300:
+          self.s_value = CS.vEgo
+          self.lat_atom_timer = 0
+        if self.s_value < speed1:
           selected = self.multi_lat_spdMethod[0]
-        elif speed1 <= CS.vEgo < speed2:
-          lat1 = interp( self.multi_lat_spdMethod[0], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          lat2 = interp( self.multi_lat_spdMethod[1], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          delta1 = abs(lat1 - self.output_torque)
-          delta2 = abs(lat2 - self.output_torque)
-          selected = self.multi_lat_spdMethod[1] if delta1 > delta2 else self.multi_lat_spdMethod[0]
+        elif speed1 <= self.s_value < speed2:
+          selected = self.multi_lat_spdMethod[1]
         else:
-          lat1 = interp( self.multi_lat_spdMethod[1], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          lat2 = interp( self.multi_lat_spdMethod[2], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          delta1 = abs(lat1 - self.output_torque)
-          delta2 = abs(lat2 - self.output_torque)
-          selected = self.multi_lat_spdMethod[2] if delta1 > delta2 else self.multi_lat_spdMethod[1]
-
+          selected = self.multi_lat_spdMethod[2]
         desired_angle = interp( selected, [0, 1, 2, 3], [pid_desired_angle, ind_desired_angle, lqr_desired_angle, toq_desired_angle] )
         output_torque = interp( selected, [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
       elif self.multi_lateral_method == LaMethod.ANGLE_LOWDT:
@@ -295,22 +292,16 @@ class LatControlATOM(LatControl):
           pid_output_torque, pid_desired_angle, pid_log  = self.LaPid.update( active, CS, CP, VM, params, last_actuators, desired_curvature, desired_curvature_rate, llk )
         ang1 = self.multi_lat_angBP[0]
         ang2 = self.multi_lat_angBP[1]
-        steer_ang = abs(CS.steeringAngleDeg)
-        if steer_ang < ang1:
+        self.lat_atom_timer += 1
+        if self.lat_atom_timer > 150:
+          self.s_value = abs(CS.steeringAngleDeg)
+          self.lat_atom_timer = 0
+        if self.s_value < ang1:
           selected = self.multi_lat_angMethod[0]
-        elif ang1 <= steer_ang < ang2:
-          lat1 = interp( self.multi_lat_angMethod[0], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          lat2 = interp( self.multi_lat_angMethod[1], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          delta1 = abs(lat1 - self.output_torque)
-          delta2 = abs(lat2 - self.output_torque)
-          selected = self.multi_lat_angMethod[1] if delta1 > delta2 else self.multi_lat_angMethod[0]
+        elif ang1 <= self.s_value < ang2:
+          selected = self.multi_lat_angMethod[1]
         else:
-          lat1 = interp( self.multi_lat_angMethod[1], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          lat2 = interp( self.multi_lat_angMethod[2], [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
-          delta1 = abs(lat1 - self.output_torque)
-          delta2 = abs(lat2 - self.output_torque)
-          selected = self.multi_lat_angMethod[2] if delta1 > delta2 else self.multi_lat_angMethod[1]
-
+          selected = self.multi_lat_angMethod[2]
         desired_angle = interp( selected, [0, 1, 2, 3], [pid_desired_angle, ind_desired_angle, lqr_desired_angle, toq_desired_angle] )
         output_torque = interp( selected, [0, 1, 2, 3], [pid_output_torque, ind_output_torque, lqr_output_torque, toq_output_torque] )
       elif self.multi_lateral_method == LaMethod.ANGLE_INTERP:
@@ -353,8 +344,5 @@ class LatControlATOM(LatControl):
 
       atom_log.output = output_torque
       atom_log.selected = selected
-    
-    self.output_torque = output_torque
-
 
     return output_torque, desired_angle, atom_log
