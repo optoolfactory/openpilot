@@ -36,6 +36,7 @@ class LatCtrlToqATOM(LatControlTorque):
     self.use_steering_angle = TORQUE.useSteeringAngle
     self.friction = TORQUE.friction
     self.kf = TORQUE.kf
+    self.steering_angle_deadzone_deg = TORQUE.steeringAngleDeadzoneDeg
 
     self.live_tune_enabled = False
     self.lt_timer = 0
@@ -206,7 +207,6 @@ class LatControlATOM(LatControl):
   def reset(self):
     super().reset()
     self.LaLqr.reset()
-    self.LaToq.reset()
     self.LaInd.steer_filter.x = 0.
     self.LaInd.speed = 0.
     self.LaPid.reset()
