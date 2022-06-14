@@ -7145,7 +7145,7 @@ MultipleLatSelect::MultipleLatSelect() : AbstractControl("Multi LateralControl",
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
     m_nMethod -= 1;
     if (m_nMethod < 0) {
-      m_nMethod = 2;
+      m_nMethod = 3;
     }
 
     QString values = QString::number(m_nMethod);
