@@ -801,6 +801,7 @@ if Params().get_bool("UseRadarTrack"):
     # genesis
     CAR.GENESIS_DH: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G70_IK: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.GENESIS_G70_2020: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),    
     CAR.GENESIS_G80_DH: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_G90_HI: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.GENESIS_EQ900_HI: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
