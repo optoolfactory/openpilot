@@ -386,9 +386,9 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
     combobox.itemData(combobox.currentIndex());
     branch_name1 = combobox.currentText();
     QString current_branch1 = QString::fromStdString(params.get("GitBranch"));
-    if (combobox.currentIndex() != 0 && branch_name != current_branch1) {
-      if (ConfirmationDialog::confirm("Now will checkout the branch, <" + branch_name + ">. The device will be rebooted if completed.", this)) {
-        QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + branch_name;
+    if (combobox.currentIndex() != 0 && branch_name1 != current_branch1) {
+      if (ConfirmationDialog::confirm("Now will checkout the branch, <" + branch_name1 + ">. The device will be rebooted if completed.", this)) {
+        QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + branch_name1;
         QString tcmd1 = "git -C /data/openpilot fetch origin";
         QProcess::execute("git -C /data/openpilot clean -d -f -f");
         QProcess::execute(cmd1); //오래안걸림
@@ -400,7 +400,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
         QObject::connect(textMsgProcess1, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
         executeProgram1(tcmd1);
       }
-    } else if (combobox.currentIndex() != 0 && branch_name == current_branch1) {
+    } else if (combobox.currentIndex() != 0 && branch_name1 == current_branch1) {
       if (ConfirmationDialog::alert("Your branch is already <" + current_branch1 + ">.", this)) {combobox.setCurrentIndex(0);}
     }
   });
