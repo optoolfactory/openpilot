@@ -7180,7 +7180,6 @@ void MultipleLatSelect::refresh() {
       break;
   }
 
-
   label.setText( strMethod );
 }
 
