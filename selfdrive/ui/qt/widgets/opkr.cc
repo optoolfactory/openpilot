@@ -1578,9 +1578,9 @@ LaneChangeSpeed::LaneChangeSpeed() : AbstractControl("차선변경 속도 설정
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("OpkrLaneChangeSpeed"));
     int value = str.toInt();
-    value = value - 5;
-    if (value <= 15) {
-      value = 15;
+    value = value - 1;
+    if (value <= -1) {
+      value = 100;
     }
     QString values = QString::number(value);
     params.put("OpkrLaneChangeSpeed", values.toStdString());
@@ -1590,9 +1590,9 @@ LaneChangeSpeed::LaneChangeSpeed() : AbstractControl("차선변경 속도 설정
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("OpkrLaneChangeSpeed"));
     int value = str.toInt();
-    value = value + 5;
-    if (value >= 160) {
-      value = 160;
+    value = value + 1;
+    if (value >= 101) {
+      value = 0;
     }
     QString values = QString::number(value);
     params.put("OpkrLaneChangeSpeed", values.toStdString());
@@ -1603,7 +1603,7 @@ LaneChangeSpeed::LaneChangeSpeed() : AbstractControl("차선변경 속도 설정
 
 void LaneChangeSpeed::refresh() {
   QString option = QString::fromStdString(params.get("OpkrLaneChangeSpeed"));
-  if (option == "15") {
+  if (option == "0") {
     label.setText(QString::fromStdString("Off"));
   } else {
     label.setText(QString::fromStdString(params.get("OpkrLaneChangeSpeed")));
