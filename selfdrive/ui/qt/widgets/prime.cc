@@ -186,7 +186,7 @@ SetupWidget::SetupWidget(QWidget* parent) : QFrame(parent) {
   finishRegistationLayout->setMargin(0);
   finishRegistationLayout->setSpacing(0);
 
-  QLabel* opkr = new QLabel("OPKR");
+  QLabel* opkr = new QLabel("Openpilot");
   opkr->setStyleSheet("font-size: 85px;"); // TODO: fit width
   finishRegistationLayout->addWidget(opkr, 0, Qt::AlignCenter);
   finishRegistationLayout->addSpacing(35);
