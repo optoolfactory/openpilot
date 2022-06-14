@@ -233,6 +233,7 @@ function launch {
   if [ -f "/data/params/d/CurvDecelOption" ]; then
     OSM_CURV_ENABLE=$(cat /data/params/d/CurvDecelOption)
   fi
+
   if [ -f /EON ]; then
     if [ "$OSM_ENABLE" == "1" ] || [ "$OSM_SL_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "3" ]; then
       if [ ! -f "/system/comma/usr/lib/libgfortran.so.5.0.0" ]; then
@@ -247,12 +248,17 @@ function launch {
         tar -zxvf /data/openpilot/selfdrive/mapd/assets/opspline.tar.gz -C /system/comma/usr/lib/python3.8/site-packages/
         mount -o remount,r /system
       fi
+      ./build.py && ./custom_dep.py && ./local_osm_install.py && ./manager.py
+    else
+      ./build.py && ./manager.py
     fi
-    ./build.py && ./manager.py
   else
-    ./custom_dep.py && ./build.py && ./manager.py
+    if [ "$OSM_ENABLE" == "1" ] || [ "$OSM_SL_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "3" ]; then
+      ./build.py && ./custom_dep.py && ./local_osm_install.py && ./manager.py
+    else
+      ./build.py && ./manager.py
+    fi
   fi
-  ./build.py && ./manager.py
 
   # if broken, keep on screen error
   while true; do sleep 1; done
