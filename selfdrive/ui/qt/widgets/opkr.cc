@@ -22,13 +22,13 @@
 SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Change to another open pilot code. You can change it by entering ID/repository/branch.") {
   QObject::connect(this, &ButtonControl::clicked, [=]() {
     if (text() == "CHANGE") {
-      QString userid = InputDialog::getText("First: Input the Git ID.", this);
+      QString userid = InputDialog::getText("First: Input the Git ID.", this, "github.com/<ID>/<Repository>.git -b <Branch>", false, 1, "openpilotkr");
       if (userid.length() > 0) {
         getUserID(userid);
-        QString repoid = InputDialog::getText("Second: Input the repository.", this);
+        QString repoid = InputDialog::getText("Second: Input the repository.", this, "github.com/"+userid+"/<Repository>.git -b <Branch>", false, 1, "openpilot");
         if (repoid.length() > 0) {
           getRepoID(repoid);
-          QString branchid = InputDialog::getText("Last: Input the branch name.", this);
+          QString branchid = InputDialog::getText("Last: Input the branch name.", this, "github.com/"+userid+"/"+repoid+".git -b <Branch>", false, 1, "OPKR");
           if (branchid.length() > 0) {
             getBranchID(branchid);
             githubbranch = branchid;
