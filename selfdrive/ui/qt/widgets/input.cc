@@ -299,7 +299,7 @@ UpdateInfoDialog::UpdateInfoDialog(const QString &prompt_text, const QString &co
     QPushButton* detail_btn = new QPushButton(detail_text);
     btn_layout->addWidget(detail_btn);
     QObject::connect(detail_btn, &QPushButton::clicked, [=]() {
-      std::system("git log -p -10 --color=always | /data/openpilot/selfdrive/assets/addon/aha/aha > /data/git_log.html");
+      std::system("git log -p -5 --color=always origin/$(git rev-parse --abbrev-ref HEAD) | /data/openpilot/selfdrive/assets/addon/aha/aha > /data/git_log.html");
       const std::string txt = util::read_file("/data/git_log.html");
       RichTextDialog::alert(QString::fromStdString(txt), this);
     });
@@ -353,6 +353,7 @@ GitPullCancel::GitPullCancel(const QString &confirm_text, const QString &cancel_
           QString cmd0 = "git reset --hard " + hash[0];
           QProcess::execute("pkill -f thermald");
           QProcess::execute("rm -f /data/openpilot/prebuilt");
+          QProcess::execute("git clean -d -f -f");
           QProcess::execute(cmd0);
           QProcess::execute("reboot");
         }
