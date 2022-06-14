@@ -72,9 +72,9 @@ def set_lat_tune(tune, name, max_lat_accel=2.5, FRICTION=.1):
     LqrKi = float(Decimal(params.get("LqrKi", encoding="utf8")) * Decimal('0.001'))
     DcGain = float(Decimal(params.get("DcGain", encoding="utf8")) * Decimal('0.00001'))
 
-    tune.atom.lqr.scale = Scale     #1700.0
-    tune.atom.lqr.ki = LqrKi      #0.01
-    tune.atom.lqr.dcGain =  DcGain  #0.0027
+    tune.atom.lqr.scale = 1680     #1700.0
+    tune.atom.lqr.ki = 0.01      #0.01
+    tune.atom.lqr.dcGain =  0.0027  #0.0027
     tune.atom.lqr.a = [0., 1., -0.22619643, 1.21822268]
     tune.atom.lqr.b = [-1.92006585e-04, 3.95603032e-05]
     tune.atom.lqr.c = [1., 0.]
