@@ -384,7 +384,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
   QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated), [=](int index)
   {
     combobox.itemData(combobox.currentIndex());
-    branch_name = combobox.currentText();
+    branch_name1 = combobox.currentText();
     QString current_branch1 = QString::fromStdString(params.get("GitBranch"));
     if (combobox.currentIndex() != 0 && branch_name != current_branch1) {
       if (ConfirmationDialog::confirm("Now will checkout the branch, <" + branch_name + ">. The device will be rebooted if completed.", this)) {
