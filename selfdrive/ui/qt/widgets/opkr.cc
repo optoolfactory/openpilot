@@ -50,7 +50,7 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Ch
               outbox->setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
               QObject::connect(textMsgProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg()));
               QObject::connect(textMsgProcess, SIGNAL(readyReadStandardError()), this, SLOT(printMsg()));
-              QObject::connect(textMsgProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
+              QObject::connect(textMsgProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished1(int, QProcess::ExitStatus)));
               executeProgram(tcmd);
             }
           }
