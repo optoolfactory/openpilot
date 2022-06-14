@@ -7171,14 +7171,14 @@ void MultipleLatSelect::refresh() {
 
   switch( m_nMethod )
   {
-    case 0 : strMethod = "0.Speed"; break;
-    case 1 : strMethod = "1.Angle"; break;
-    case 2 : strMethod = "2.Angle.L"; break;
+    case 0 : strMethod = "Spd_LowDlt"; break;
+    case 1 : strMethod = "Ang_LowDlt"; break;
+    case 2 : strMethod = "Ang_Interp"; break;
+    case 3 : strMethod = "Spd_Interp"; break;
     default :
       strMethod = "None"; 
       break;
   }
-
 
   label.setText( strMethod );
 }
