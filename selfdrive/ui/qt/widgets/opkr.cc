@@ -384,25 +384,55 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
   QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated), [=](int index)
   {
     combobox.itemData(combobox.currentIndex());
-    QString str = combobox.currentText();
+    branch_name = combobox.currentText();
     QString current_branch = QString::fromStdString(params.get("GitBranch"));
-    if (combobox.currentIndex() != 0 && str != current_branch) {
-      if (ConfirmationDialog::confirm("Now will checkout the branch, <" + str + ">. The device will be rebooted if completed.", this)) {
-        QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + str;
-        QString cmd2 = "git -C /data/openpilot checkout --track origin/" + str;
-        QString cmd3 = "git -C /data/openpilot checkout " + str;
+    if (combobox.currentIndex() != 0 && branch_name != current_branch) {
+      if (ConfirmationDialog::confirm("Now will checkout the branch, <" + branch_name + ">. The device will be rebooted if completed.", this)) {
+        QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + branch_name;
+        QString tcmd = "git -C /data/openpilot fetch origin";
         QProcess::execute("git -C /data/openpilot clean -d -f -f");
-        QProcess::execute(cmd1);
-        QProcess::execute("git -C /data/openpilot fetch origin");
-        QProcess::execute(cmd2);
-        QProcess::execute(cmd3);
-        std::system("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh");
+        QProcess::execute(cmd1); //오래안걸림
+        textMsgProcess = new QProcess(this);
+        outbox = new QMessageBox(this);
+        outbox->setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
+        QObject::connect(textMsgProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg()));
+        QObject::connect(textMsgProcess, SIGNAL(readyReadStandardError()), this, SLOT(printMsg()));
+        QObject::connect(textMsgProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
+        executeProgram(tcmd);
       }
-    } else if (combobox.currentIndex() != 0 && str == current_branch) {
+    } else if (combobox.currentIndex() != 0 && branch_name == current_branch) {
       if (ConfirmationDialog::alert("Your branch is already <" + current_branch + ">.", this)) {combobox.setCurrentIndex(0);}
     }
   });
   refresh();
+}
+
+void BranchSelectCombo::printMsg() {
+  QByteArray datao;
+  QByteArray datae;
+  datao = textMsgProcess->readAllStandardOutput();
+  datae = textMsgProcess->readAllStandardError();
+  QString texto = QString::fromLocal8Bit(datao);
+  QString texte = QString::fromLocal8Bit(datae);
+  outdata = texto+texte;
+  outbox->setText(outdata);
+  outbox->show();
+}
+
+void BranchSelectCombo::executeProgram(const QString &tcmd) {
+  QString program = QString(tcmd);
+  textMsgProcess->start(program);
+  textMsgProcess->waitForStarted();
+}
+
+void BranchSelectCombo::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+  QString cmd2 = "git -C /data/openpilot checkout --track origin/" + branch_name;
+  QString cmd3 = "git -C /data/openpilot checkout " + branch_name;
+  if(exitStatus == QProcess::NormalExit) {
+    QProcess::execute(cmd2);
+    QProcess::execute(cmd3);
+    std::system("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh");
+  }
 }
 
 void BranchSelectCombo::refresh() {

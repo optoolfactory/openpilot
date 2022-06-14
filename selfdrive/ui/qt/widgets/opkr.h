@@ -821,11 +821,21 @@ class BranchSelectCombo : public AbstractControl
 
 public:
   BranchSelectCombo();
+  void executeProgram(const QString &tcmd);
+
+private slots:
+  void printMsg();
+  void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
   QPushButton btn;
   QComboBox combobox;
   Params params;
+
+  QProcess *textMsgProcess;
+  QMessageBox *outbox;
+  QString outdata;
+  QString branch_name;
 
   void refresh();
 };
