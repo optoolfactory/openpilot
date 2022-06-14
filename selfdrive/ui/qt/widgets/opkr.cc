@@ -22,13 +22,13 @@
 SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Change to another open pilot code. You can change it by entering ID/repository/branch.") {
   QObject::connect(this, &ButtonControl::clicked, [=]() {
     if (text() == "CHANGE") {
-      QString userid = InputDialog::getText("First: Input the Git ID.", this);
+      QString userid = InputDialog::getText("First: Input the Git ID.", this, "github.com/<ID>/<Repository>.git -b <Branch>", false, 1, "openpilotkr");
       if (userid.length() > 0) {
         getUserID(userid);
-        QString repoid = InputDialog::getText("Second: Input the repository.", this);
+        QString repoid = InputDialog::getText("Second: Input the repository.", this, "github.com/"+userid+"/<Repository>.git -b <Branch>", false, 1, "openpilot");
         if (repoid.length() > 0) {
           getRepoID(repoid);
-          QString branchid = InputDialog::getText("Last: Input the branch name.", this);
+          QString branchid = InputDialog::getText("Last: Input the branch name.", this, "github.com/"+userid+"/"+repoid+".git -b <Branch>", false, 1, "OPKR");
           if (branchid.length() > 0) {
             getBranchID(branchid);
             githubbranch = branchid;
@@ -40,7 +40,7 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl("Change Repo/Branch", "", "Ch
               QDateTime a = QDateTime::currentDateTime();
               QString as = a.toString(time_format);
               QString cmd1 = "mv /data/openpilot /data/openpilot_" + as;
-              QString tcmd = "git clone -b " + githubbranch + " --single-branch https://github.com/" + githubid + "/" + githubrepo + ".git /data/openpilot";
+              QString tcmd = "git clone --progress -b " + githubbranch + " --single-branch https://github.com/" + githubid + "/" + githubrepo + ".git /data/openpilot";
               QString cmd3 = "rm -f /data/openpilot_" + as + "/prebuilt";
               QProcess::execute("pkill -f thermald");
               QProcess::execute(cmd1);
@@ -71,7 +71,7 @@ void SwitchOpenpilot::printMsg() {
   QString texto = QString::fromLocal8Bit(datao);
   QString texte = QString::fromLocal8Bit(datae);
   outdata = texto+texte;
-  outbox->setText(outdata);
+  outbox->setText(outdata.right(200));
   outbox->show();
 }
 
@@ -389,9 +389,9 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
     if (combobox.currentIndex() != 0 && branch_name1 != current_branch1) {
       if (ConfirmationDialog::confirm("Now will checkout the branch, <" + branch_name1 + ">. The device will be rebooted if completed.", this)) {
         QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + branch_name1;
-        QString tcmd1 = "git -C /data/openpilot fetch origin";
+        QString tcmd1 = "git -C /data/openpilot fetch --progress origin";
         QProcess::execute("git -C /data/openpilot clean -d -f -f");
-        QProcess::execute(cmd1); //오래안걸림
+        QProcess::execute(cmd1);
         textMsgProcess1 = new QProcess(this);
         outbox1 = new QMessageBox(this);
         outbox1->setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
@@ -415,7 +415,7 @@ void BranchSelectCombo::printMsg1() {
   QString texto1 = QString::fromLocal8Bit(datao1);
   QString texte1 = QString::fromLocal8Bit(datae1);
   outdata1 = texto1+texte1;
-  outbox1->setText(outdata1);
+  outbox1->setText(outdata1.right(200));
   outbox1->show();
 }
 
