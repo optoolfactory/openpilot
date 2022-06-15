@@ -66,7 +66,7 @@ def timestamp_local_osm_db():
 def is_local_osm_installed():
   api = overpy.Overpass()
   q = """
-      way(339201219);
+      way(616074250);
       (._;>;);
       out;
       """
