@@ -765,7 +765,7 @@ class HoldForSettingToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  HoldForSettingToggle() : ToggleControl("Hold Button for Setting Menu", "Use 0.5 sec delay to enter setting menu. This is to prevent being touched in setting menu when you use external program(Mixplorer, etc)", "../assets/offroad/icon_shell.png", Params().getBool("HoldForSetting")) {
+  HoldForSettingToggle() : ToggleControl("Hold Button for Setting Menu", "메뉴에 들어가려면 설정버튼을 0.5초이상 눌러야 합니다. 이것은 설정값이 의도치 않게 변경되는것을 막는것 입니다.(Mixplorer, etc)", "../assets/offroad/icon_shell.png", Params().getBool("HoldForSetting")) {
     QObject::connect(this, &HoldForSettingToggle::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("HoldForSetting", status);
