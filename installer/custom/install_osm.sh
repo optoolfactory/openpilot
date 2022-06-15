@@ -27,4 +27,4 @@ make install
 
 # Remove source files after installation
 cd ..
-rm -rf osm-3s_v0.7.56
+rm -rf osm-3s_v0.7.56*
