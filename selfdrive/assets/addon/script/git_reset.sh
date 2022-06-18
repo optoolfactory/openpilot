@@ -8,6 +8,12 @@ export PYTHONPATH=/data/openpilot
 cd /data/openpilot
 ping -q -c 1 -w 1 google.com &> /dev/null
 if [ "$?" == "0" ]; then
+  REMOVED_BRANCH=$(git branch -vv | grep ': gone]' | awk '{print $1}')
+  if [ "$REMOVED_BRANCH" != "" ]; then
+    git remote prune origin --dry-run
+    git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
+    sed -i "/$REMOVED_BRANCH/d" .git/config
+  fi
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   /data/data/com.termux/files/usr/bin/git clean -d -f -f
   /data/data/com.termux/files/usr/bin/git fetch --all
