@@ -12,7 +12,7 @@ if [ "$?" == "0" ]; then
   HASH=$(git rev-parse HEAD)
   /data/data/com.termux/files/usr/bin/git fetch
   REMOTE_HASH=$(git rev-parse --verify origin/$BRANCH)
-  /data/data/com.termux/files/usr/bin/git pull
+  /data/data/com.termux/files/usr/bin/git pull origin $BRANCH
 
   if [ "$HASH" != "$REMOTE_HASH" ]; then
     if [ -f "/data/openpilot/prebuilt" ]; then

@@ -12,7 +12,7 @@ if [ "$?" == "0" ]; then
   /data/data/com.termux/files/usr/bin/git clean -d -f -f
   /data/data/com.termux/files/usr/bin/git fetch --all
   /data/data/com.termux/files/usr/bin/git reset --hard origin/$CURRENT_BRANCH
-  /data/data/com.termux/files/usr/bin/git pull
+  /data/data/com.termux/files/usr/bin/git pull origin $CURRENT_BRANCH
 
   if [ -f "/data/openpilot/prebuilt" ]; then
     pkill -f thermald
