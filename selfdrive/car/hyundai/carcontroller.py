@@ -164,6 +164,7 @@ class CarController():
     self.stock_safety_decel_enabled = self.params.get_bool("UseStockDecelOnSS")
     self.joystick_debug_mode = self.params.get_bool("JoystickDebugMode")
     self.stop_line_enabled = self.params.get_bool("ShowStopLine")
+    self.e2e_long_enabled = self.params.get_bool("E2ELong")
 
     self.cc_timer = 0
     self.on_speed_control = False
@@ -871,6 +872,8 @@ class CarController():
           self.stopped = False
           stock_weight = 0.
 
+        # if self.e2e_long_enabled:
+        #   accel = faccel
         if self.stock_safety_decel_enabled:
           if CS.scc11["Navi_SCC_Camera_Act"] == 2 and accel > aReqValue:
             accel = aReqValue
@@ -915,8 +918,8 @@ class CarController():
        CS.out.steerFaultTemporary, CS.lkas_button_on, 0 < CS.lead_distance < 149, self.aq_value if self.longcontrol else CS.scc12["aReqValue"], v_future, v_future_a, CS.cruiseGapSet, self.timer1.sampleTime())
     trace1.printf2( '{}'.format( str_log2 ) )
 
-    str_log3 = 'V/D/R/A/M/G={:.1f}/{:.1f}/{:.1f}/{:.2f}/{:.1f}/{:1.0f}'.format(CS.clu_Vanz, CS.lead_distance, CS.lead_objspd, CS.scc12["aReqValue"], self.stoppingdist, CS.cruiseGapSet)
-    trace1.printf3('{}'.format(str_log3))
+    # str_log3 = 'V/D/R/A/M/G={:.1f}/{:.1f}/{:.1f}/{:.2f}/{:.1f}/{:1.0f}'.format(CS.clu_Vanz, CS.lead_distance, CS.lead_objspd, CS.scc12["aReqValue"], self.stoppingdist, CS.cruiseGapSet)
+    # trace1.printf3('{}'.format(str_log3))
 
     self.cc_timer += 1
     if self.cc_timer > 100:
@@ -928,6 +931,7 @@ class CarController():
       self.to_avoid_lkas_fault_enabled = self.params.get_bool("AvoidLKASFaultEnabled")
       self.to_avoid_lkas_fault_max_angle = int(self.params.get("AvoidLKASFaultMaxAngle", encoding="utf8"))
       self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
+      self.e2e_long_enabled = self.params.get_bool("E2ELong")
       if self.params.get_bool("OpkrLiveTunePanelEnable"):
         if CS.CP.lateralTuning.which() == 'pid':
           self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.1f}/{:0.5f}'.format(float(Decimal(self.params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
