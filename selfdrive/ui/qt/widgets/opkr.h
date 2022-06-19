@@ -785,6 +785,18 @@ public:
   }
 };
 
+class OSMOfflineUseToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  OSMOfflineUseToggle() : ToggleControl("Offline OSM(64G storage only)", "Local only OSM. This will download DBs from online.", "../assets/offroad/icon_shell.png", Params().getBool("OSMOfflineUse")) {
+    QObject::connect(this, &OSMOfflineUseToggle::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("OSMOfflineUse", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
