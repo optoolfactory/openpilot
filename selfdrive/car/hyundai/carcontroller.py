@@ -163,7 +163,6 @@ class CarController():
     self.osm_spdlimit_enabled = self.params.get_bool("OSMSpeedLimitEnable")
     self.stock_safety_decel_enabled = self.params.get_bool("UseStockDecelOnSS")
     self.joystick_debug_mode = self.params.get_bool("JoystickDebugMode")
-    self.stop_line_enabled = self.params.get_bool("ShowStopLine")
     self.e2e_long_enabled = self.params.get_bool("E2ELong")
     self.stopsign_enabled = self.params.get_bool("StopAtStopSign")
 
@@ -857,7 +856,7 @@ class CarController():
               self.stopped = True
             else:
               self.stopped = False
-          elif 0.1 < self.dRel < 90:
+          elif 0.1 < self.dRel < 80:
             self.stopped = False
             pass
           else:
