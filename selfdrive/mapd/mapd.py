@@ -12,7 +12,7 @@ from selfdrive.mapd.config import QUERY_RADIUS, MIN_DISTANCE_FOR_NEW_QUERY, FULL
 from common.params import Params
 
 
-_DEBUG = True
+_DEBUG = False
 
 
 def _debug(msg):
