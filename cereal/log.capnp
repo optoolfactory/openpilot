@@ -925,12 +925,10 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
   dynamicTRValue @37 :Float32;
 
   enum LongitudinalPlanSource {
-    cruise @0;
-    lead0 @1;
-    lead1 @2;
-    lead2 @3;
-    e2e @4;
-    stop @5;
+    lead0 @0;
+    lead1 @1;
+    cruise @2;
+    stop @3;
   }
 
   # deprecated

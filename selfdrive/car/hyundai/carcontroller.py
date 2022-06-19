@@ -165,6 +165,7 @@ class CarController():
     self.joystick_debug_mode = self.params.get_bool("JoystickDebugMode")
     self.stop_line_enabled = self.params.get_bool("ShowStopLine")
     self.e2e_long_enabled = self.params.get_bool("E2ELong")
+    self.stopsign_enabled = self.params.get_bool("StopAtStopSign")
 
     self.cc_timer = 0
     self.on_speed_control = False
@@ -861,19 +862,17 @@ class CarController():
             pass
           else:
             self.stopped = False
-            if self.stop_line_enabled:
+            if self.e2e_long_enabled or self.stopsign_enabled:
               if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
                 pass
               else:
-                accel = aReqValue
+                accel = aReqValue  
             else:
               accel = aReqValue
         else:
           self.stopped = False
           stock_weight = 0.
 
-        # if self.e2e_long_enabled:
-        #   accel = faccel
         if self.stock_safety_decel_enabled:
           if CS.scc11["Navi_SCC_Camera_Act"] == 2 and accel > aReqValue:
             accel = aReqValue
@@ -924,14 +923,15 @@ class CarController():
     self.cc_timer += 1
     if self.cc_timer > 100:
       self.cc_timer = 0
-      self.radar_helper_option = int(self.params.get("RadarLongHelper", encoding="utf8"))
-      self.stopping_dist_adj_enabled = self.params.get_bool("StoppingDistAdj")
-      self.standstill_res_count = int(self.params.get("RESCountatStandstill", encoding="utf8"))
-      self.opkr_cruisegap_auto_adj = self.params.get_bool("CruiseGapAdjust")
-      self.to_avoid_lkas_fault_enabled = self.params.get_bool("AvoidLKASFaultEnabled")
-      self.to_avoid_lkas_fault_max_angle = int(self.params.get("AvoidLKASFaultMaxAngle", encoding="utf8"))
-      self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
-      self.e2e_long_enabled = self.params.get_bool("E2ELong")
+      # self.radar_helper_option = int(self.params.get("RadarLongHelper", encoding="utf8"))
+      # self.stopping_dist_adj_enabled = self.params.get_bool("StoppingDistAdj")
+      # self.standstill_res_count = int(self.params.get("RESCountatStandstill", encoding="utf8"))
+      # self.opkr_cruisegap_auto_adj = self.params.get_bool("CruiseGapAdjust")
+      # self.to_avoid_lkas_fault_enabled = self.params.get_bool("AvoidLKASFaultEnabled")
+      # self.to_avoid_lkas_fault_max_angle = int(self.params.get("AvoidLKASFaultMaxAngle", encoding="utf8"))
+      # self.to_avoid_lkas_fault_max_frame = int(self.params.get("AvoidLKASFaultMaxFrame", encoding="utf8"))
+      # self.e2e_long_enabled = self.params.get_bool("E2ELong")
+      # self.stopsign_enabled = self.params.get_bool("StopAtStopSign")
       if self.params.get_bool("OpkrLiveTunePanelEnable"):
         if CS.CP.lateralTuning.which() == 'pid':
           self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.1f}/{:0.5f}'.format(float(Decimal(self.params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
