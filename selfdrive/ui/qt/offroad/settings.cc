@@ -594,6 +594,7 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new ShowStopLineToggle());
   layout->addWidget(new HoldForSettingToggle());
   layout->addWidget(new RTShieldToggle());
+  layout->addWidget(new OSMOfflineUseToggle());
 }
 
 DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
