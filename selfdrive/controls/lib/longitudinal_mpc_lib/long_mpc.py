@@ -420,7 +420,7 @@ class LongitudinalMpc:
     self.e2e_x = x[:]
     self.lead_0_obstacle = lead_0_obstacle[:]
     self.lead_1_obstacle = lead_1_obstacle[:]
-    self.cruise_target = cruise_target[:]
+    self.cruise_target = cruise_obstacle[:]
     self.stopline = stopline[:]
     self.stop_prob = model.stopLine.prob
 
