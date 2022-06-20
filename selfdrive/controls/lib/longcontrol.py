@@ -27,7 +27,7 @@ def long_control_state_trans(CP, active, long_control_state, v_ego, v_target,
   accelerating = v_target_future > v_target
   stopping_condition = stop or (v_ego < 2.0 and cruise_standstill) or \
                        (v_ego < CP.vEgoStopping and
-                        ((v_target_future < CP.vEgoStopping and not accelerating) or brake_pressed)) or (lo_mpc.e2e_x[11]<6.0 and lo_mpc.stopline[11]<6.0)
+                        ((v_target_future < CP.vEgoStopping and not accelerating) or brake_pressed)) or (0.5 < lo_mpc.e2e_x[11] < 6.0 and 0.5 < lo_mpc.stopline[11] < 6.0)
 
   starting_condition = v_target_future > CP.vEgoStarting and accelerating and (not cruise_standstill or dRel == 150 or dRel == 0) or gas_pressed
 
