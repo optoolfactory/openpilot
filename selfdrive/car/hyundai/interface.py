@@ -128,6 +128,9 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.SANTAFE_TM:
       ret.mass = 1694. + STD_CARGO_KG
       ret.wheelbase = 2.765
+    elif candidate == CAR.SANTAFE_TM_2022:
+      ret.mass = 1694. + STD_CARGO_KG
+      ret.wheelbase = 2.765
     elif candidate == CAR.SANTAFE_HEV_TM:
       ret.mass = 1907. + STD_CARGO_KG
       ret.wheelbase = 2.765
