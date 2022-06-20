@@ -361,7 +361,7 @@ class LongitudinalMpc:
     self.yref[:,1] = x
     self.yref[:,2] = v
     self.yref[:,3] = a
-    self.status = radarstate.leadOne.status or radarstate.leadTwo.status or stopping
+    self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
