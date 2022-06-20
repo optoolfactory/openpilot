@@ -33,6 +33,16 @@ if [ ! -f "/system/fonts/KaiGenGothicKR-Normal.ttf" ]; then
     chmod 644 /system/etc/fonts.xml
     chmod 644 /system/fonts/KaiGenGothicKR*
     mount -o remount,r /system
+fi
+
+if [ ! -f "/system/fonts/NotoSansArabic-Regular.ttf" ]; then
+    sleep 3
+    mount -o remount,rw /system
+    cp -rf /data/openpilot/selfdrive/assets/addon/font/NotoSansArabic* /system/fonts/
+    cp -rf /data/openpilot/selfdrive/assets/addon/font/fonts.xml /system/etc/fonts.xml
+    chmod 644 /system/etc/fonts.xml
+    chmod 644 /system/fonts/NotoSansArabic*
+    mount -o remount,r /system
     reboot
 fi
 
