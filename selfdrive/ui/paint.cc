@@ -238,7 +238,7 @@ static void ui_draw_world(UIState *s) {
     if (lead_two.getStatus() && (std::abs(lead_one.getDRel() - lead_two.getDRel()) > 3.0)) {
       draw_lead(s, lead_two, s->scene.lead_vertices[1]);
     }
-    if (s->scene.stop_line && !lead_one.getStatus()) {
+    if (s->scene.stop_line) {
       auto stop_line = (*s->sm)["modelV2"].getModelV2().getStopLine();
       if (stop_line.getProb() > .5) {
         ui_draw_stop_line(s, stop_line, s->scene.stop_line_vertices);

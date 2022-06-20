@@ -22,14 +22,14 @@ ACCEL_MAX_ISO = 2.0  # m/s^2
 
 
 def long_control_state_trans(CP, active, long_control_state, v_ego, v_target,
-                             v_target_future, brake_pressed, cruise_standstill, stop, gas_pressed, dRel, lo_mpc):
+                             v_target_future, brake_pressed, cruise_standstill, stop, gas_pressed):
   """Update longitudinal control state machine"""
   accelerating = v_target_future > v_target
   stopping_condition = stop or (v_ego < 2.0 and cruise_standstill) or \
                        (v_ego < CP.vEgoStopping and
-                        ((v_target_future < CP.vEgoStopping and not accelerating) or brake_pressed)) or (0.5 < lo_mpc.e2e_x[11] < 6.0 and 0.5 < lo_mpc.stopline[11] < 6.0)
+                        ((v_target_future < CP.vEgoStopping and not accelerating) or brake_pressed))
 
-  starting_condition = v_target_future > CP.vEgoStarting and accelerating and (not cruise_standstill or dRel == 150 or dRel == 0) or gas_pressed
+  starting_condition = v_target_future > CP.vEgoStarting and accelerating and not cruise_standstill or gas_pressed
 
   if not active:
     long_control_state = LongCtrlState.off
@@ -74,7 +74,6 @@ class LongControl():
     self.damping_timer = 0
     self.loc_timer = 0
 
-    self.lo_mpc = LongitudinalMpc()
 
   def reset(self, v_pid):
     """Reset PID controller and change setpoint"""
@@ -130,7 +129,7 @@ class LongControl():
       stop = False
     self.long_control_state = long_control_state_trans(CP, active, self.long_control_state, CS.vEgo,
                                                        v_target, v_target_future, CS.brakePressed,
-                                                       CS.cruiseState.standstill, stop, CS.gasPressed, dRel, self.lo_mpc)
+                                                       CS.cruiseState.standstill, stop, CS.gasPressed)
 
     if (self.long_control_state == LongCtrlState.off or (CS.brakePressed or CS.gasPressed)) and self.candidate != CAR.NIRO_EV_DE:
       self.pid.reset()
