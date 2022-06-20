@@ -9,6 +9,7 @@ from selfdrive.car.hyundai.values import CAR
 from common.conversions import Conversions as CV
 from common.params import Params
 from decimal import Decimal
+from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc
 
 import common.log as trace1
 LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
@@ -21,14 +22,14 @@ ACCEL_MAX_ISO = 2.0  # m/s^2
 
 
 def long_control_state_trans(CP, active, long_control_state, v_ego, v_target,
-                             v_target_future, brake_pressed, cruise_standstill, stop, gas_pressed):
+                             v_target_future, brake_pressed, cruise_standstill, stop, gas_pressed, dRel, lo_mpc):
   """Update longitudinal control state machine"""
   accelerating = v_target_future > v_target
   stopping_condition = stop or (v_ego < 2.0 and cruise_standstill) or \
                        (v_ego < CP.vEgoStopping and
-                        ((v_target_future < CP.vEgoStopping and not accelerating) or brake_pressed))
+                        ((v_target_future < CP.vEgoStopping and not accelerating) or brake_pressed)) or (0.5 < lo_mpc.e2e_x[11] < 6.0 and 0.5 < lo_mpc.stopline[11] < 6.0)
 
-  starting_condition = v_target_future > CP.vEgoStarting and accelerating and not cruise_standstill or gas_pressed
+  starting_condition = v_target_future > CP.vEgoStarting and accelerating and (not cruise_standstill or dRel == 150 or dRel == 0) or gas_pressed
 
   if not active:
     long_control_state = LongCtrlState.off
@@ -72,6 +73,8 @@ class LongControl():
     self.damping_timer3 = 1.0
     self.damping_timer = 0
     self.loc_timer = 0
+
+    self.lo_mpc = LongitudinalMpc()
 
   def reset(self, v_pid):
     """Reset PID controller and change setpoint"""
@@ -127,7 +130,7 @@ class LongControl():
       stop = False
     self.long_control_state = long_control_state_trans(CP, active, self.long_control_state, CS.vEgo,
                                                        v_target, v_target_future, CS.brakePressed,
-                                                       CS.cruiseState.standstill, stop, CS.gasPressed)
+                                                       CS.cruiseState.standstill, stop, CS.gasPressed, dRel, self.lo_mpc)
 
     if (self.long_control_state == LongCtrlState.off or (CS.brakePressed or CS.gasPressed)) and self.candidate != CAR.NIRO_EV_DE:
       self.pid.reset()
@@ -168,9 +171,9 @@ class LongControl():
       # Keep applying brakes until the car is stopped
       if not CS.standstill or output_accel > CP.stopAccel:
         output_accel -= CP.stoppingDecelRate * DT_CTRL
-      elif CS.standstill and CS.cruiseState.standstill and output_accel <= -0.5:
-        output_accel = -0.5
-      elif CS.standstill and output_accel < -0.5: # loosen brake at standstill, to mitigate load of brake
+      elif CS.standstill and CS.cruiseState.standstill and output_accel <= -0.7:
+        output_accel = -0.7
+      elif CS.standstill and output_accel < -0.7: # loosen brake at standstill, to mitigate load of brake
         output_accel += CP.stoppingDecelRate * DT_CTRL
       output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
       self.reset(CS.vEgo)
@@ -187,16 +190,12 @@ class LongControl():
     else:
       self.long_stat = "---"
 
-    if long_plan.longitudinalPlanSource == LongitudinalPlanSource.cruise:
-      self.long_plan_source = "cruise"
-    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.lead0:
+    if long_plan.longitudinalPlanSource == LongitudinalPlanSource.lead0:
       self.long_plan_source = "lead0"
     elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.lead1:
       self.long_plan_source = "lead1"
-    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.lead2:
-      self.long_plan_source = "lead2"
-    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.e2e:
-      self.long_plan_source = "e2e"
+    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.cruise:
+      self.long_plan_source = "cruise"
     elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.stop:
       self.long_plan_source = "stop"
     else:
