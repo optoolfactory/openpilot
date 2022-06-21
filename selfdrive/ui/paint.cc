@@ -152,16 +152,16 @@ static void ui_draw_stop_sign(UIState *s) {
   float radius_i = 5.0f;
   float radius_o = 75.0f;
 
-  if (s->scene.longitudinalPlan.e2ex[12] > 50 && s->scene.longitudinalPlan.stopline[12] < 10 && s->scene.radarDistance > 149 ) {
+  if (s->scene.longitudinalPlan.e2ex[12] > 30 && s->scene.longitudinalPlan.stopline[12] < 10 && s->scene.car_state.getVEgo() < 0.5) {
     nvgBeginPath(s->vg);
     nvgCircle(s->vg, center_x, center_y, radius_i+radius_o);
     NVGpaint stop_sign = nvgRadialGradient(s->vg, center_x, center_y, radius_i, radius_o, nvgRGBAf(0.0, 1.0, 0.0, 0.9), nvgRGBAf(0.0, 0.0, 0.0, 0.3));
     nvgFillPaint(s->vg, stop_sign);
     nvgFill(s->vg);
-  } else if (s->scene.longitudinalPlan.e2ex[12] < 100 && s->scene.longitudinalPlan.stopline[12] < 100 && s->scene.radarDistance > 149 ) {
+  } else if (s->scene.longitudinalPlan.e2ex[12] < 100 && s->scene.longitudinalPlan.stopline[12] < 100) {
     nvgBeginPath(s->vg);
     nvgCircle(s->vg, center_x, center_y, radius_i+radius_o);
-    NVGpaint stop_sign = nvgRadialGradient(s->vg, center_x, center_y, radius_i, radius_o, nvgRGBAf(1.0, 0.0, 0.0, 0.9), nvgRGBAf(0.0, 0.0, 0.0, 0.3));
+    NVGpaint stop_sign = nvgRadialGradient(s->vg, center_x, center_y, radius_i, radius_o, nvgRGBAf(1.0, 0.0, 0.0, 0.9), nvgRGBAf(0.0, 0.0, 0.0, 0.4));
     nvgFillPaint(s->vg, stop_sign);
     nvgFill(s->vg);
   }
