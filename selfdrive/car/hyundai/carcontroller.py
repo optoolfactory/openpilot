@@ -863,9 +863,9 @@ class CarController():
             self.stopped = False
             if self.e2e_long_enabled or self.stopsign_enabled:
               if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
-                pass
+                accel = faccel
               else:
-                accel = aReqValue  
+                accel = aReqValue
             else:
               accel = aReqValue
         else:

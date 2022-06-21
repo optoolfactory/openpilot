@@ -361,7 +361,7 @@ class LongitudinalMpc:
     self.yref[:,1] = x
     self.yref[:,2] = v
     self.yref[:,3] = a
-    self.status = radarstate.leadOne.status or radarstate.leadTwo.status or stopping
+    self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
@@ -394,7 +394,8 @@ class LongitudinalMpc:
     lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
-    stopline = model.stopLine.x * np.ones(N+1) if stopping else 400 * np.ones(N+1)
+    stopline = (model.stopLine.x + 6.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
+    stopline = np.ones(13) if stopline[12] < 1.0 else pass
 
     # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
     # when the leads are no factor.
@@ -405,14 +406,15 @@ class LongitudinalMpc:
                                v_upper)
     cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, self.desired_TR)
 
-    if 0.5 < radarstate.leadOne.dRel:
+    if 0.5 < carstate.radarDistance < 150:
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
-    elif x[11] < 100 and stopline[11] < 100:
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, (x+stopline)/2])
+    elif x[12] < 100 and stopline[12] < 100:
+      x = np.ones(13) * x[12]
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, (stopline+x)/2])
     else:
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
     
-    self.source = SOURCES[np.argmin(x_obstacles[11])]
+    self.source = SOURCES[np.argmin(x_obstacles[12])]
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
     self.params[:,4] = self.desired_TR  # shane
