@@ -350,6 +350,7 @@ class LongitudinalMpc:
     self.lo_timer += 1
     if self.lo_timer > 200:
       self.lo_timer = 0
+      self.e2e = Params().get_bool("E2ELong")
       self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
       self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
 
@@ -404,38 +405,26 @@ class LongitudinalMpc:
 
 
     if self.status:
-      self.e2e = False
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
-      self.source = SOURCES[np.argmin(x_obstacles[12])]
-      self.params[:,2] = np.min(x_obstacles, axis=1)
-      self.cruise_target = cruise_obstacle[:]
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])      
     elif x[12] < 100 and stopline[12] < 100:
-      self.e2e = True
-      cruise_target = T_IDXS * v_cruise + x[0]
-      x_targets = np.column_stack([lead_0_obstacle - (3/4) * get_safe_obstacle_distance(v),
-                                   lead_1_obstacle - (3/4) * get_safe_obstacle_distance(v),
-                                   cruise_target, x])
-      self.source = SOURCES[np.argmin(x_targets[12])]
-      self.params[:,2] = 1e3
-      self.cruise_target = cruise_target[:]
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, stop_line])
     else:
-      self.e2e = False
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
-      self.source = SOURCES[np.argmin(x_obstacles[12])]
-      self.params[:,2] = np.min(x_obstacles, axis=1)
-      self.cruise_target = cruise_obstacle[:]
-    
+
+    self.source = SOURCES[np.argmin(x_obstacles[12])]
+    self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
     self.params[:,4] = self.desired_TR  # shane
 
     self.e2e_x = x[:]
     self.lead_0_obstacle = lead_0_obstacle[:]
     self.lead_1_obstacle = lead_1_obstacle[:]
+    self.cruise_target = cruise_obstacle[:]
     self.stopline = stopline[:]
     self.stop_prob = model.stopLine.prob
 
     if self.e2e:
-      self.yref[:,1] = np.min(x_targets, axis=1)
+      self.yref[:,1] = np.min(x_obstacles, axis=1)
       for i in range(N):
         self.solver.set(i, "yref", self.yref[i])
       self.solver.set(N, "yref", self.yref[N][:COST_E_DIM])
