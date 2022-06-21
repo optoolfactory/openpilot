@@ -1213,7 +1213,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     } else {
       gap = "■■■■";
     }
-    bb_ry +=bb_ui_draw_measure(s, main_val.c_str(), gap.c_str(), "GEAR",
+    bb_ry +=bb_ui_draw_measure(s, main_val.c_str(), gap.c_str(), scene.charge_meter>0?"MAIN BAT":"GEAR",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color2,
         value_fontSize, label_fontSize, uom_fontSize, 2);
