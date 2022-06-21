@@ -1192,10 +1192,11 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
   if (0 < scene.gear_step && scene.gear_step < 9) {
     //char val_str[16];
     //char uom_str[6];
+    std::string main_val = "";
     if (scene.charge_meter > 0) {
-      std::string main_val = std::to_string(int(scene.charge_meter)) + "%";  
+      main_val = std::to_string(int(scene.charge_meter)) + "%";  
     } else {
-      std::string main_val = "S " + std::to_string(int(scene.gear_step));
+      main_val = "S " + std::to_string(int(scene.gear_step));
     }
     std::string gap = "";
     NVGcolor val_color = COLOR_YELLOW_ALPHA(200);
