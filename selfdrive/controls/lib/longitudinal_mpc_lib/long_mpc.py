@@ -392,8 +392,8 @@ class LongitudinalMpc:
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
     stopline = (model.stopLine.x + 6.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
-    stopline = np.ones(13) if stopline[12] < 1.0 else pass
-
+    if stopline[12] < 1.0:
+      stopline = np.ones(13)
 
     v_lower = v_ego + (T_IDXS * self.cruise_min_a * 1.05)
     v_upper = v_ego + (T_IDXS * self.cruise_max_a * 1.05)
