@@ -1199,7 +1199,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       main_val = "S " + std::to_string(int(scene.gear_step));
     }
     std::string gap = "";
-    NVGcolor val_color = COLOR_YELLOW_ALPHA(200);
+    NVGcolor val_color = COLOR_YELLOW_ALPHA(230);
     NVGcolor uom_color2 = COLOR_WHITE_ALPHA(200);
     if (scene.cruise_gap == 1) {
       uom_color2 = COLOR_RED_ALPHA(240);
