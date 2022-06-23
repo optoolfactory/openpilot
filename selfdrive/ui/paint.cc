@@ -142,13 +142,13 @@ static void draw_lead(UIState *s, const cereal::RadarState::LeadData::Reader &le
 }
 
 static void ui_draw_stop_line(UIState *s, const cereal::ModelDataV2::StopLineData::Reader &stop_line_data, const line_vertices_data &vd) {
-  NVGcolor color = nvgRGBAf(0.8, 0.0, 0.0, stop_line_data.getProb());
+  NVGcolor color = nvgRGBAf(0.7, 0.0, 0.0, stop_line_data.getProb());
   ui_draw_line(s, vd, &color, nullptr);
 }
 
 static void ui_draw_stop_sign(UIState *s) {
   float center_x = 1400.0f;
-  float center_y = 100.0f;
+  float center_y = 105.0f;
   float radius_i = 5.0f;
   float radius_o = 75.0f;
 
@@ -161,7 +161,7 @@ static void ui_draw_stop_sign(UIState *s) {
   } else if (s->scene.longitudinalPlan.e2ex[12] < 100 && s->scene.longitudinalPlan.stopline[12] < 100) {
     nvgBeginPath(s->vg);
     nvgCircle(s->vg, center_x, center_y, radius_i+radius_o);
-    NVGpaint stop_sign = nvgRadialGradient(s->vg, center_x, center_y, radius_i, radius_o, nvgRGBAf(1.0, 0.0, 0.0, 0.9), nvgRGBAf(0.0, 0.0, 0.0, 0.4));
+    NVGpaint stop_sign = nvgRadialGradient(s->vg, center_x, center_y, radius_i, radius_o, nvgRGBAf(1.0, 0.0, 0.0, 0.9), nvgRGBAf(0.0, 0.0, 0.0, 0.3));
     nvgFillPaint(s->vg, stop_sign);
     nvgFill(s->vg);
   }
@@ -259,7 +259,7 @@ static void ui_draw_world(UIState *s) {
     if (lead_two.getStatus() && (std::abs(lead_one.getDRel() - lead_two.getDRel()) > 3.0)) {
       draw_lead(s, lead_two, s->scene.lead_vertices[1]);
     }
-    if (s->scene.stop_line && s->scene.longitudinalPlan.stopline[12] > 1.1) {
+    if (s->scene.stop_line && s->scene.longitudinalPlan.stopline[12] > 3.0) {
       auto stop_line = (*s->sm)["modelV2"].getModelV2().getStopLine();
       if (stop_line.getProb() > .5) {
         ui_draw_stop_line(s, stop_line, s->scene.stop_line_vertices);
