@@ -229,6 +229,8 @@ class LongitudinalMpc:
     self.stopline = np.zeros(13, dtype=np.float64)
     self.stop_prob = 0.0
 
+    self.on_stopping = False
+
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.solver.reset()
@@ -392,10 +394,6 @@ class LongitudinalMpc:
     lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
-    stopline = (model.stopLine.x + 6.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
-    if stopline[12] < 1.0:
-      stopline = np.ones(13)
-
     v_lower = v_ego + (T_IDXS * self.cruise_min_a * 1.05)
     v_upper = v_ego + (T_IDXS * self.cruise_max_a * 1.05)
     v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
@@ -403,15 +401,22 @@ class LongitudinalMpc:
                                v_upper)
     cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, self.desired_TR)
 
+    stopline = (model.stopLine.x + 5.0) * np.ones(N+1) if stopping else 400 * np.ones(N+1)
+    x = (x[N] + 5.0) * np.ones(N+1)
 
-    if self.status:
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])      
-    elif x[12] < 100 and stopline[12] < 100:
-      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, stopline])
+    if self.status and not self.on_stopping:
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
+    elif x[N] > 30 and stopline[N] < 30 and self.v_ego < 6.0:
+      self.on_stopping = False
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle, x])
+    elif x[N] < 100 and stopline[N] < 100:
+      self.on_stopping = True
+      x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle*2, (stopline+x)/2])
     else:
+      self.on_stopping = False
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
 
-    self.source = SOURCES[np.argmin(x_obstacles[12])]
+    self.source = SOURCES[np.argmin(x_obstacles[N])]
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
     self.params[:,4] = self.desired_TR  # shane
