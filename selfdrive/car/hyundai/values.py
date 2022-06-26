@@ -63,6 +63,7 @@ class CAR:
   NIRO_EV_DE = "KIA NIRO EV (DE)"
   NIRO_HEV_DE = "KIA NIRO HYBRID (DE)"
   K7_YG = "KIA K7 (YG)"
+  K7_YG_2020 = "KIA K7 (YG) 2020"
   K7_HEV_YG = "KIA K7 HYBRID (YG)"
   SELTOS_SP2 = "KIA SELTOS (SP2)"
   SOUL_EV_SK3 = "KIA SOUL EV (SK3)"
@@ -788,7 +789,7 @@ FEATURES = {
   # Insert your car in this if you want turn LFA icon on.
   # need to add lfa modded cars which are changed from lkas to lfa cam
   "send_lfahda_mfa": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SANTAFE_TM, CAR.KONA_EV_OS, CAR.NIRO_EV_DE, CAR.KONA_HEV_OS,
-                      CAR.SELTOS_SP2, CAR.SOUL_EV_SK3, CAR.NEXO_FE, CAR.MOHAVE_HM, CAR.STINGER_CK, CAR.AVANTE_CN7, CAR.AVANTE_HEV_CN7, CAR.K5_DL3, CAR.SANTAFE_HEV_TM, CAR.SANTAFE_TM_2022, CAR.GENESIS_G70_IK, CAR.KONA_N_OS, CAR.K5_DL3, CAR.K5_HEV_DL3},
+                      CAR.SELTOS_SP2, CAR.SOUL_EV_SK3, CAR.NEXO_FE, CAR.MOHAVE_HM, CAR.STINGER_CK, CAR.AVANTE_CN7, CAR.AVANTE_HEV_CN7, CAR.K5_DL3, CAR.SANTAFE_HEV_TM, CAR.SANTAFE_TM_2022, CAR.GENESIS_G70_IK, CAR.KONA_N_OS, CAR.K5_DL3, CAR.K5_HEV_DL3, CAR.K7_YG_2020},
 
   "send_hda_mfa": {CAR.GRANDEUR_IG, CAR.GRANDEUR_HEV_IG},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
@@ -847,6 +848,7 @@ if Params().get_bool("UseRadarTrack"):
     CAR.NIRO_EV_DE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.NIRO_HEV_DE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K7_YG: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.K7_YG_2020: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K7_HEV_YG: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.SELTOS_SP2: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.SOUL_EV_SK3: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -900,6 +902,7 @@ else:
     CAR.NIRO_EV_DE: dbc_dict('hyundai_kia_generic', None),
     CAR.NIRO_HEV_DE: dbc_dict('hyundai_kia_generic', None),
     CAR.K7_YG: dbc_dict('hyundai_kia_generic', None),
+    CAR.K7_YG_2020: dbc_dict('hyundai_kia_generic', None),
     CAR.K7_HEV_YG: dbc_dict('hyundai_kia_generic', None),
     CAR.SELTOS_SP2: dbc_dict('hyundai_kia_generic', None),
     CAR.SOUL_EV_SK3: dbc_dict('hyundai_kia_generic', None),
