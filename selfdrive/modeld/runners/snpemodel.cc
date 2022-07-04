@@ -14,11 +14,10 @@ void PrintErrorStringAndExit() {
   std::exit(EXIT_FAILURE);
 }
 
-SNPEModel::SNPEModel(const char *path, float *loutput, size_t loutput_size, int runtime, bool luse_extra, bool luse_tf8) {
+SNPEModel::SNPEModel(const char *path, float *loutput, size_t loutput_size, int runtime, bool luse_extra) {
   output = loutput;
   output_size = loutput_size;
   use_extra = luse_extra;
-  use_tf8 = luse_tf8;
 #if defined(QCOM) || defined(QCOM2)
   if (runtime==USE_GPU_RUNTIME) {
     Runtime = zdl::DlSystem::Runtime_t::GPU;
@@ -71,16 +70,14 @@ SNPEModel::SNPEModel(const char *path, float *loutput, size_t loutput_size, int 
   printf("model: %s -> %s\n", input_tensor_name, output_tensor_name);
 
   zdl::DlSystem::UserBufferEncodingFloat userBufferEncodingFloat;
-  zdl::DlSystem::UserBufferEncodingTf8 userBufferEncodingTf8(0, 1./255); // network takes 0-1
   zdl::DlSystem::IUserBufferFactory& ubFactory = zdl::SNPE::SNPEFactory::getUserBufferFactory();
-  size_t size_of_input = use_tf8 ? sizeof(uint8_t) : sizeof(float);
 
   // create input buffer
   {
     const auto &inputDims_opt = snpe->getInputDimensions(input_tensor_name);
     const zdl::DlSystem::TensorShape& bufferShape = *inputDims_opt;
     std::vector<size_t> strides(bufferShape.rank());
-    strides[strides.size() - 1] = size_of_input;
+    strides[strides.size() - 1] = sizeof(float);
     size_t product = 1;
     for (size_t i = 0; i < bufferShape.rank(); i++) product *= bufferShape[i];
     size_t stride = strides[strides.size() - 1];
@@ -89,10 +86,7 @@ SNPEModel::SNPEModel(const char *path, float *loutput, size_t loutput_size, int 
       strides[i-1] = stride;
     }
     printf("input product is %lu\n", product);
-    inputBuffer = ubFactory.createUserBuffer(NULL,
-                                             product*size_of_input,
-                                             strides,
-                                             use_tf8 ? (zdl::DlSystem::UserBufferEncoding*)&userBufferEncodingTf8 : (zdl::DlSystem::UserBufferEncoding*)&userBufferEncodingFloat);
+    inputBuffer = ubFactory.createUserBuffer(NULL, product*sizeof(float), strides, &userBufferEncodingFloat);
 
     inputMap.add(input_tensor_name, inputBuffer.get());
   }
@@ -129,12 +123,6 @@ SNPEModel::SNPEModel(const char *path, float *loutput, size_t loutput_size, int 
     outputBuffer = ubFactory.createUserBuffer(output, output_size * sizeof(float), outputStrides, &userBufferEncodingFloat);
     outputMap.add(output_tensor_name, outputBuffer.get());
   }
-
-#ifdef USE_THNEED
-  if (Runtime == zdl::DlSystem::Runtime_t::GPU) {
-    thneed.reset(new Thneed());
-  }
-#endif
 }
 
 void SNPEModel::addRecurrent(float *state, int state_size) {
@@ -183,7 +171,7 @@ std::unique_ptr<zdl::DlSystem::IUserBuffer> SNPEModel::addExtra(float *state, in
 void SNPEModel::execute() {
 #ifdef USE_THNEED
   if (Runtime == zdl::DlSystem::Runtime_t::GPU) {
-    if (!thneed_recorded) {
+    if (thneed == NULL) {
       bool ret = inputBuffer->setBufferAddress(input);
       assert(ret == true);
       if (use_extra) {
@@ -195,7 +183,7 @@ void SNPEModel::execute() {
         PrintErrorStringAndExit();
       }
       memset(recurrent, 0, recurrent_size*sizeof(float));
-      thneed->record = true;
+      thneed = new Thneed();
       if (!snpe->execute(inputMap, outputMap)) {
         PrintErrorStringAndExit();
       }
@@ -227,7 +215,6 @@ void SNPEModel::execute() {
         assert(false);
       }
       free(outputs_golden);
-      thneed_recorded = true;
     } else {
       if (use_extra) {
         float *inputs[5] = {recurrent, trafficConvention, desire, extra, input};
