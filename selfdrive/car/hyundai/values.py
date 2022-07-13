@@ -802,7 +802,8 @@ FEATURES = {
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
   # Insert your car in this if you see front collision error on your cluster.
   "use_fca": {CAR.K7_YG_2020, CAR.SANTAFE_TM_2022, CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.AVANTE_CN7, CAR.I30_PD, CAR.PALISADE_LX2, 
-              CAR.GENESIS_G70_IK, CAR.GENESIS_G70_2020, CAR.GENESIS_G90_HI, CAR.KONA_HEV_OS, CAR.KONA_EV_OS, CAR.SELTOS_SP2, CAR.MOHAVE_HM, CAR.KIA_FORTE},
+              CAR.GENESIS_G70_IK, CAR.GENESIS_G70_2020, CAR.GENESIS_G90_HI, CAR.KONA_HEV_OS, CAR.KONA_EV_OS, CAR.SELTOS_SP2, CAR.MOHAVE_HM, CAR.KIA_FORTE,
+              CAR.KONA_N_OS},
 }
 
 HYBRID_CAR = {CAR.K5_HEV_JF, CAR.IONIQ_HEV_AE, CAR.SONATA_HEV_DN8, CAR.SONATA_HEV_LF, CAR.K7_HEV_YG, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, 
@@ -883,7 +884,7 @@ else:
     CAR.SONATA_TURBO_LF: dbc_dict('hyundai_kia_generic', None),
     CAR.SONATA_HEV_LF: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_OS: dbc_dict('hyundai_kia_generic', None),
-    CAR.KONA_N_OS: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.KONA_N_OS: dbc_dict('hyundai_kia_generic', 'None'),
     CAR.KONA_EV_OS: dbc_dict('hyundai_kia_generic', None),
     CAR.KONA_HEV_OS: dbc_dict('hyundai_kia_generic', None),
     CAR.IONIQ_EV_AE: dbc_dict('hyundai_kia_generic', None),
