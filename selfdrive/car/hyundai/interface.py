@@ -203,6 +203,9 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.NEXO_FE:
       ret.mass = 1885. + STD_CARGO_KG
       ret.wheelbase = 2.79
+    elif candidate == CAR.MAXCRUZE:
+      ret.mass = 1885. + STD_CARGO_KG
+      ret.wheelbase = 2.90      
     # kia
     elif candidate == CAR.KIA_FORTE:
       ret.mass = 3558. * CV.LB_TO_KG
