@@ -49,7 +49,8 @@ class CAR:
   GRANDEUR_HEV_FL_IG = "HYUNDAI GRANDEUR HYBRID FL (IG)"
   TUCSON_TL = "HYUNDAI TUCSON (TL)"
   NEXO_FE = "HYUNDAI NEXO (FE)"
-
+  MAXCRUZE = "HYUNDAI MAXCRUZE"
+  
   # KIA
   KIA_FORTE = "KIA FORTE E 2018 & GT 2021"  
   K3_BD = "KIA K3 (BD)"
@@ -114,7 +115,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   CAR.GRANDEUR_HEV_FL_IG: HyundaiCarInfo("Hyundai Grandeur IG FL Hybrid", "All", harness=Harness.hyundai_k),
   CAR.TUCSON_TL: HyundaiCarInfo("Hyundai Tucson", "All"),
   CAR.NEXO_FE: HyundaiCarInfo("Hyundai Nexo", "All"),
-
+  CAR.MAXCRUZE : HyundaiCarInfo("Hyundai Maxcruze", "All"),
   # Kia
   CAR.KIA_FORTE: [
     HyundaiCarInfo("Kia Forte 2018", harness=Harness.hyundai_b),
@@ -848,6 +849,8 @@ if Params().get_bool("UseRadarTrack"):
     CAR.GRANDEUR_HEV_FL_IG: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.TUCSON_TL: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.NEXO_FE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.MAXCRUZE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    
     # kia
     CAR.KIA_FORTE: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),    
     CAR.K3_BD: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -903,6 +906,7 @@ else:
     CAR.GRANDEUR_HEV_FL_IG: dbc_dict('hyundai_kia_generic', None),
     CAR.TUCSON_TL: dbc_dict('hyundai_kia_generic', None),
     CAR.NEXO_FE: dbc_dict('hyundai_kia_generic', None),
+    CAR.MAXCRUZE: dbc_dict('hyundai_kia_generic', None),
     # kia
     CAR.KIA_FORTE: dbc_dict('hyundai_kia_generic', None),
     CAR.K3_BD: dbc_dict('hyundai_kia_generic', None),
