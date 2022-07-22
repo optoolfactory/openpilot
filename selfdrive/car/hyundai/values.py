@@ -131,6 +131,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   CAR.STINGER_CK: HyundaiCarInfo("Kia Stinger 2018", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0", harness=Harness.hyundai_c),
   CAR.NIRO_EV_DE: HyundaiCarInfo("Kia Niro Electric 2019-22", "All", video_link="https://www.youtube.com/watch?v=lT7zcG6ZpGo"),
   CAR.NIRO_HEV_DE: HyundaiCarInfo("Kia Niro Plug-In Hybrid 2019", min_enable_speed=10. * CV.MPH_TO_MS, harness=Harness.hyundai_c),
+  CAR.NIRO_HEV_DE_2021: HyundaiCarInfo("Kia Niro Plug-In Hybrid 2021-22", "All", video_link="https://www.youtube.com/watch?v=lT7zcG6ZpGo"),
   CAR.K7_YG: HyundaiCarInfo("Kia K7 2016-19"),
   CAR.K7_YG_2020: HyundaiCarInfo("Kia K7 2020-22"),
   CAR.K7_HEV_YG: HyundaiCarInfo("Kia K7 Hybrid 2016-19"),
