@@ -182,6 +182,9 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.IONIQ_EV_AE:
       ret.mass = 1445. + STD_CARGO_KG
       ret.wheelbase = 2.7
+    elif candidate == CAR.IONIQ_EV_AE_2020:
+      ret.mass = 1445. + STD_CARGO_KG
+      ret.wheelbase = 2.7
     elif candidate == CAR.GRANDEUR_IG:
       ret.mass = 1560. + STD_CARGO_KG
       ret.wheelbase = 2.845
